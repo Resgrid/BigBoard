@@ -6,5 +6,24 @@
         },
         "is_top_level": true,
         "variables": {}
+    },
+    "pro.fing.cordova.gapreload": {
+        "source": {
+            "type": "registry",
+            "id": "pro.fing.cordova.gapreload"
+        },
+        "is_top_level": true,
+        "variables": {
+            "SERVER\\_HOST": "localhost"
+        }
+    },
+    "com.ququplay.websocket.WebSocket": {
+        "source": {
+            "type": "git",
+            "url": "https://github.com/mkuklis/phonegap-websocket",
+            "subdir": "."
+        },
+        "is_top_level": false,
+        "variables": {}
     }
 }

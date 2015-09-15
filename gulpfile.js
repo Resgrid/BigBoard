@@ -1,37 +1,45 @@
-var gulp = require('gulp')
-  del = require('del'),
-  cordova = require('cordova-lib').cordova.raw;
+var gulp = require('gulp'),
+    del = require('del'),
+    cordova = require('cordova-lib').cordova.raw,
+    liveReload = require('gulp-livereload'),
+    gutil = require('gulp-util'),
+    watch = require('gulp-watch'),
+    http = require('http'),
+    ecstatic = require('ecstatic'),
+    shell = require('gulp-shell'),
+    print = require('gulp-print');
 
-var APP_PATH = './app',
-  CORDOVA_PATH = './cordova/www';
+var watchGlob = 'www/**/*.{js,html,css}';
 
-gulp.task('del-cordova', function(cb) {
-  del([ CORDOVA_PATH + '/*' ], function() {
-      cb();
-  });
-});
+// Run the default task initially and start the live reload server
+gulp.task('dev', liveReloadServer);
 
-gulp.task('compile', [ 'del-cordova' ], function(cb) {
-  return gulp.src([ APP_PATH + '/**/*' ])
-      .pipe(gulp.dest(CORDOVA_PATH));
-});
+// reloader just pings the liveReload server and depends on the cordova prepare call
+gulp.task('prepareAndReload', ['prepare'], reloader);
 
-gulp.task('build', [ 'compile' ], function(cb) {
-  process.chdir(__dirname + '/cordova');
-  cordova
-      .build()
-      .then(function() {
-          process.chdir('../');
-          cb();
-      });
-});
+// runs 'cordova prepare' after rebuilding the whole 'www/' folder
+gulp.task('prepare', cordovaPrepare);
 
-gulp.task('emulate', [ 'compile' ], function(cb) {
-  process.chdir(__dirname + '/cordova');
-  cordova
-      .run({ platforms: [ 'ios' ] })
-      .then(function() {
-          process.chdir('../');
-          cb();
-      });
-});
+// BEGIN Dev/LiveReload
+function liveReloadServer() {
+    liveReload.listen();
+    //watch(watchGlob, ['prepareAndReload']);
+
+    watch(watchGlob, function(files){
+        files.pipe(print());
+        gulp.run('prepareAndReload');
+    });
+}
+
+function cordovaPrepare() {
+    return gulp.src('').pipe(shell(['cordova prepare']));
+}
+
+function reloader() {
+    return gulp.src('').pipe(liveReload());
+}
+//END Dev/LiveReload
+
+function prepareCordova() {
+    return gulp.src('').pipe(shell(['cordova-icon']));
+}

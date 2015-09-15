@@ -4,12 +4,42 @@
         "uninstalled": []
     },
     "config_munge": {
-        "files": {}
+        "files": {
+            "../../plugins/pro.fing.cordova.gapreload/gapreload.xml": {
+                "parents": {
+                    "/*": [
+                        {
+                            "xml": "<param name=\"SERVER_HOST\" value=\"$SERVER_HOST\" />",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<param name=\"SERVER_PORT\" value=\"$SERVER_PORT\" />",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<param name=\"LIVERELOAD_HOST\" value=\"$LIVERELOAD_HOST\" />",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<param name=\"LIVERELOAD_PORT\" value=\"$LIVERELOAD_PORT\" />",
+                            "count": 1
+                        }
+                    ]
+                }
+            }
+        }
     },
     "installed_plugins": {
         "cordova-plugin-whitelist": {
             "PACKAGE_NAME": "HelloCordova"
+        },
+        "pro.fing.cordova.gapreload": {
+            "PACKAGE_NAME": "Resgrid BigBoard"
         }
     },
-    "dependent_plugins": {}
+    "dependent_plugins": {
+        "com.ququplay.websocket.WebSocket": {
+            "PACKAGE_NAME": "Resgrid BigBoard"
+        }
+    }
 }

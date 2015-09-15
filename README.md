@@ -13,11 +13,7 @@ Resgrid is a software as a service (SaaS) logistics, management and communicatio
 
 Solution
 --------
- - Resgrid.AzureRedisCache
-   - Logic for interacting with Azure's Redis Cache
-   - Protobuf Serialization Logic
- - Resgrid.CacheExample
-   - Example of how to interact with the cache
+
 
 *******
 

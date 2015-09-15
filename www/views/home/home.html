@@ -1,60 +1,41 @@
-<div class="scrollable">
-    <div class="scrollable-content">
+<div ui-content-for="navbarAction">
+    <div class="btn-group pull-right">
+        <a ui-turn-on='dashboardMenu' class='btn'>
+            <i class="fa fa-ellipsis-v"></i>
+        </a>
+        <ul ui-state="dashboardMenu"  class="dropdown-menu"  ui-outer-click="Ui.turnOff('dashboardMenu')"
+            ui-outer-click-if="Ui.active('dashboardMenu')" role="menu" ui-show="dashboardMenu"
+            ui-turn-off="dashboardMenu">
 
-        <div class="list-group text-center">
-            <div class="list-group-item list-group-item-home">
-                <h1>Mobile Angular UI
-                    Demo <small>1.2</small>
-                </h1>
-            </div>
-            <div class="list-group-item list-group-item-home">
-                <div>
-                    <i class="fa fa-gamepad feature-icon text-primary"></i>
-                </div>
-                <div>
-                    <h3 class="home-heading">Play around a little</h3>
-                    Open the sidebar and start testing features
-                </div>
-            </div>
-
-
-            <div class="list-group-item list-group-item-home">
-                <div>
-                    <i class="fa fa-tachometer feature-icon  text-primary"></i>
-                </div>
-                <div>
-                    <h3 class="home-heading">Test responsiveness and speed</h3>
-                    Scroll, tap, navigate, test that everything is smooth
-                </div>
-            </div>
-
-
-            <div class="list-group-item list-group-item-home">
-                <div>
-                    <i class="fa fa-expand feature-icon  text-primary"></i>
-                </div>
-                <div>
-                    <h3 class="home-heading">Resize your browser</h3>
-                    Stretch and squeeze your browser window to see both mobile and desktop versions.
-                </div>
-            </div>
-
-            <div class="list-group-item list-group-item-home">
-                <div>
-                    <i class="fa fa-stethoscope feature-icon  text-primary"></i>
-                </div>
-                <div>
-                    <h3 class="home-heading">Submit an issue</h3>
-                    <p>Please submit any issue you'll find, <a href="https://github.com/mcasimir/mobile-angular-ui/issues" target='blank' id='#home-report'>reporting</a> your user agent string:<br>
-                    </p>
-                    <pre>{{userAgent}}</pre>
-                    <p>
-                        It would help a lot!
-                    </p>
-                </div>
-            </div>
-
-        </div>
-
+            <li><a ng-click="addWidget()"><i class="fa fa-plus"></i> Add Widget</a></li>
+            <li><a ng-click="clear()"><i class="fa fa-trash"></i> Clear</a></li>
+        </ul>
     </div>
+</div>
+
+<div gridster="gridsterOptions">
+    <ul>
+        <li gridster-item="widget" ng-repeat="widget in dashboard.widgets">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="btn-group pull-right">
+                        <a ui-turn-on='myDropdown{{widget.id}}' class='btn'>
+                            <i class="fa fa-ellipsis-v"></i>
+                        </a>
+                        <ul ui-state="myDropdown{{widget.id}}"  class="dropdown-menu"  ui-outer-click="Ui.turnOff('myDropdown' + widget.id)"
+                                ui-outer-click-if="Ui.active('myDropdown' + widget.id)" role="menu" ui-show="myDropdown{{widget.id}}"
+                                ui-turn-off="myDropdown{{widget.id}}">
+
+                            <li><a ng-click="openSettings(widget)"><i class="fa fa-cog"></i> Edit</a></li>
+                            <li><a ng-click="remove(widget)"><i class="fa fa-trash"></i> Remove</a></li>
+                        </ul>
+                    </div>
+                    <h3 class="panel-title">{{ widget.name }}</h3>
+                </div>
+                <div class="panel-body">
+                    {{lorem}}
+                </div>
+            </div>
+        </li>
+    </ul>
 </div>
