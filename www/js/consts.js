@@ -1,0 +1,61 @@
+//var _serviceUrlBase = 'http://resgridapi.local';
+var _serviceUrlBase = 'https://api.resgrid.com';
+var _serviceUrl = _serviceUrlBase + '/api/v3';
+
+angular.module('bigBoard')
+    .constant('SERVICEURL', _serviceUrl)
+    .constant('SERVICEURLBASE', _serviceUrlBase)
+    .constant('VERSION', '1.0.0')
+    .constant('RELEASEDATE', 'September 11th 2015')
+    .constant('NAME', 'Resgrid BigBoard')
+    .constant('MAPKEY', '');
+
+var CONSTS = {
+    EVENTS: {
+        COREDATASYNCED: 'coreDataSynced',
+        SETTINGS_SAVED: 'settingsSaved',
+        MESSAGE_RECIPIENT_ADDED: 'messageRecipientAdded',
+        REGISTRATION_OPERATION_FINISHED: 'registrationOperationFinished'
+    },
+    DATA: {
+        LOCALPERSONNEL: [],
+        LOCALGROUPS: []
+    },
+    STATUS: {
+        STANDINGBY: 0,
+        NOTRESPONDING: 1,
+        RESPONDING: 2,
+        ONSCENE: 3,
+        AVAILABLESTATION: 4,
+        RESPONDINGTOSTATION: 5,
+        RESPONDINGTOSCENE: 6
+    },
+    STAFFING: {
+        NORMAL: 0,
+        DELAYED: 1,
+        UNAVAILABLE: 2,
+        COMMITTED: 3,
+        ONSHIFT: 4
+    },
+    DETAILTYPES: {
+        NONE: 0,
+        STATIONS: 1,
+        CALLS: 2,
+        CALLSANDSTATIONS: 3
+    },
+    NOTETYPES: {
+        NONE: 0,
+        OPTIONAL: 1,
+        REQUIRED: 2
+    },
+    CUSTOMTYPES: {
+        PERSONNEL: 1,
+        UNIT: 2,
+        STAFFING: 3
+    },
+    MESSAGETYPES: {
+        NORMAL: 0,
+        CALLBACK: 1,
+        POLL: 2
+    }
+};

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self' http://microsoft.winjs.1.0 http://api.resgrid.com https://api.resgrid.com https://d37gvrvc0wt4s1.cloudfront.net https://maps.googleapis.com https://maps.gstatic.com https://csi.gstatic.com https://cdn.mxpnl.com https://secure.gravatar.com http://maps.googleapis.com https://mts.googleapis.com https://mts1.googleapis.com https://mts0.googleapis.com https://fonts.gstatic.com https://resgridapi.local https://api.resgrid.com 'unsafe-inline' data: https://api.rollbar.com https://api.resgrid.com http://resgridapi.local https://resgridapi.local http://api.mixpanel.com gap: https://ssl.gstatic.com 'unsafe-eval'; style-src https://fonts.googleapis.com https://fonts.gstatic.com https://resgrid.com http://api.resgrid.com https://api.resgrid.com https://resgridapi.local 'self' 'unsafe-inline'; media-src *">
+        <meta name="format-detection" content="telephone=no">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+        <link rel="stylesheet" type="text/css" href="css/index.css">
+        <link rel="stylesheet" type="text/css" href="css/libs/angular-gridster/angular-gridster.min.css">
+        <link rel="stylesheet" type="text/css" href="css/libs/mobile-angular-ui/mobile-angular-ui-base.css">
+
+        <title>Resgrid BigBoard</title>
+    </head>
+    <body ng-app="bigBoard">
+        <!-- Sidebars -->
+        <div ng-include="'templates/menu.html'"
+             ui-track-as-search-param='true'
+             class="sidebar sidebar-left"></div>
+
+        <div class="app"
+             ui-swipe-right='Ui.turnOn("uiSidebarLeft")'
+             ui-swipe-left='Ui.turnOff("uiSidebarLeft")'>
+
+            <!-- Navbars -->
+
+            <div class="navbar navbar-app navbar-absolute-top">
+                <div class="navbar-brand navbar-brand-center" ui-yield-to="title">
+                    Resgrid BigBoard
+                </div>
+                <div class="btn-group pull-left">
+                    <div ui-toggle="uiSidebarLeft" class="btn sidebar-toggle">
+                        <i class="fa fa-bars"></i> Menu
+                    </div>
+                </div>
+            </div>
+
+            <!-- App Body -->
+            <div class="app-body" ng-class="{loading: loading}">
+                <div ng-show="loading" class="app-content-loading">
+                    <i class="fa fa-spinner fa-spin loading-spinner"></i>
+                </div>
+                <div class="app-content">
+                    <ng-view></ng-view>
+                </div>
+            </div>
+
+        </div>
+
+        <div ui-yield-to="modals"></div>
+
+        <script type="text/javascript" src="cordova.js"></script>
+
+        <script type="text/javascript" src="js/libs/angular/angular.js"></script>
+        <script type="text/javascript" src="js/libs/angular-ui-router/angular-ui-router.js"></script>
+        <script type="text/javascript" src="js/libs/angular-gridster/angular-gridster.js"></script>
+        <script type="text/javascript" src="js/libs/javascript-detect-element-resize/detect-element-resize.js"></script>
+        <script type="text/javascript" src="js/libs/mobile-angular-ui/mobile-angular-ui.js"></script>
+        <script type="text/javascript" src="js/libs/mobile-angular-ui/mobile-angular-ui.gestures.js"></script>
+
+        <!-- Core App -->
+        <script type="text/javascript" src="js/app.js"></script>
+        <script type="text/javascript" src="js/consts.js"></script>
+
+        <!-- Service -->>
+
+        <!-- Controllers -->
+        <script type="text/javascript" src="js/controllers/bigboard.controllers.app.js"></script>
+        <script type="text/javascript" src="views/home/bigboard.controllers.home.js"></script>
+        <script type="text/javascript" src="views/about/bigboard.controllers.about.js"></script>
+        <script type="text/javascript" src="views/settings/bigboard.controllers.settings.js"></script>
+    </body>
+</html>
