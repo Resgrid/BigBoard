@@ -23,7 +23,8 @@
                     sizeY: 1,
                     sizeX: 1,
                     id: 1,
-                    name: "Widget 1",
+                    name: "Personnel",
+                    templateUrl: "widgets/personnel/personnel.html",
                     controller: "PersonnelWidgetCtrl"
                 }, {
                     col: 2,

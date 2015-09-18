@@ -1,4 +1,4 @@
-angular.module('bigBoard', ['ui.router', 'bigBoard.controllers', 'bigBoard.services', 'mobile-angular-ui', 'gridster'])
+angular.module('bigBoard', ['ui.router', 'bigBoard.controllers', 'bigBoard.services', 'mobile-angular-ui', 'gridster', 'angular.filter'])
     .config(configure)
     .run(function() {
 
