@@ -9,7 +9,7 @@ About Resgrid
 -------------
 Resgrid is a software as a service (SaaS) logistics, management and communications platform for first responders, volunteer fire departments, career fire, EMS, Search and Rescue (SAR), public safety, HAZMAT, CERT, disaster response, etc.
 
-Sign up for your free [Resgrid Account Today!](https://resgrid.com).
+[Sign up for your free Resgrid Account Today!](https://resgrid.com)
 
 
 ## Environment Setup ##
@@ -45,29 +45,28 @@ The solution is setup to with Live Reload for Cordova Serve, to use Live Reloadi
 
 *Open 1 command line window*
 
-	$ cordova server      # Starts the cordova file web server
+	$ cordova serve	  # Starts the cordova file web server
 
 *Open another command line window*
 
-	$ gulp dev    # Starts the file watcher and hooks into live reload
+	$ gulp dev		  # Starts the file watcher and hooks into live reload
 
 ## Solution ##
 
 
 
 ## Dependencies ##
-    - AngularJS(https://github.com/angular/angular)
-    - Cordova(https://cordova.apache.org/)
-    - Angular-Gridster(https://github.com/ManifestWebDesign/angular-gridster)
-    - Mobile AngularUI(https://github.com/mcasimir/mobile-angular-ui)
+    - [AngularJS](https://github.com/angular/angular)
+    - [Cordova](https://cordova.apache.org/)
+    - [Angular-Gridster](https://github.com/ManifestWebDesign/angular-gridster)
+    - [Mobile AngularUI](https://github.com/mcasimir/mobile-angular-ui)
 
 ## Notes ##
 
 
 ## Author's ##
-* Shawn Jackson (Twitter: @DesignLimbo Blog: http:\\designlimbo.com)
-* Jason Jarrett (Twitter: @staxmanade Blog: http:\\staxmanade.com)
+* Shawn Jackson (Twitter: @DesignLimbo Blog: http://designlimbo.com)
+* Jason Jarrett (Twitter: @staxmanade Blog: http://staxmanade.com)
 
-License
 ## License ##
 Apache 2.0
