@@ -57,7 +57,7 @@ form {
     width: 71.875%; /* 650/960 */
     max-width: 960px;
     text-align: left;
-    margin: 0px auto; /*auto centers the container */
+    /*margin: 0px auto;*/ /*auto centers the container */
     padding: 3.84615384615385%; /* 25/650 */
 }
 /*CSS3 multiple columns.*/
@@ -79,4 +79,17 @@ form {
 .columns ul li:first-child
 {
     margin-top:0px;
+}
+
+.alerts {
+    position:fixed;
+    width:300px;
+    right:30px;
+    top:30px;
+    z-index:10;
+}
+.alerts>.alert-dismissable {
+    position:relative;
+    z-index:11;
+    min-width:250px;
 }

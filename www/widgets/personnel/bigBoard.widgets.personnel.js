@@ -3,8 +3,8 @@
 
     angular.module('bigBoard.controllers').controller('PersonnelWidgetCtrl', personnelWidgetCtrl);
 
-    personnelWidgetCtrl.$inject = ['$scope'];
-    function personnelWidgetCtrl($scope) {
+    personnelWidgetCtrl.$inject = ['$scope', 'dataService'];
+    function personnelWidgetCtrl($scope, dataService) {
         $scope.remove = function(widget) {
             $scope.dashboard.widgets.splice($scope.dashboard.widgets.indexOf(widget), 1);
         };
@@ -23,7 +23,8 @@
             });
             */
         };
-
+        $scope.personnel = [];
+        /*
         $scope.personnel = [
             {
                 name: "Test User 1",
@@ -46,6 +47,17 @@
                 group: "Station 2"
             }
         ];
+        */
+
+        loadData();
+
+        function loadData() {
+            dataService.getPersonnelStatuses().then(function successCallback(response) {
+                $scope.personnel = response.data;
+            }, function errorCallback(response) {
+
+            });
+        }
     }
 
 })();

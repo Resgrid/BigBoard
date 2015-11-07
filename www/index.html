@@ -8,10 +8,13 @@
         <link rel="stylesheet" type="text/css" href="css/app.css">
         <link rel="stylesheet" type="text/css" href="css/libs/angular-gridster/angular-gridster.min.css">
         <link rel="stylesheet" type="text/css" href="css/libs/mobile-angular-ui/mobile-angular-ui-base.css">
+        <link rel="stylesheet" type="text/css" href="css/libs/ngToast/ngToast.css">
 
         <title>Resgrid BigBoard</title>
     </head>
     <body ng-app="bigBoard">
+        <toast></toast>
+
         <!-- Sidebars -->
         <div ng-include="'templates/menu.html'"
              ui-track-as-search-param='true'
@@ -62,6 +65,14 @@
         <script type="text/javascript" src="js/libs/mobile-angular-ui/mobile-angular-ui.js"></script>
         <script type="text/javascript" src="js/libs/mobile-angular-ui/mobile-angular-ui.gestures.js"></script>
         <script type="text/javascript" src="js/libs/angular-filter/angular-filter.min.js"></script>
+        <script type="text/javascript" src="js/libs/angular-local-storage/angular-local-storage.js"></script>
+        <script type="text/javascript" src="js/libs/angular-chrome-storage/angular-chrome-storage.js"></script>
+        <script type="text/javascript" src="js/libs/ngCordova/ng-cordova.js"></script>
+        <script type="text/javascript" src="js/libs/angular-animate/angular-animate.js"></script>
+        <script type="text/javascript" src="js/libs/angular-sanitize/angular-sanitize.js"></script>
+        <script type="text/javascript" src="js/libs/ngToast/ngToast.js"></script>
+        <script type='text/javascript' src="js/libs/cryptojs/aes.js"></script>
+        <script type='text/javascript' src="js/libs/angular-cryptography/mdo-angular-cryptography.js"></script>
 
         <!-- Core App -->
         <script type="text/javascript" src="js/app.js"></script>
@@ -73,7 +84,22 @@
         <!-- Directives -->
         <script type="text/javascript" src="js/directives/bigboard.directives.dyanmicController.js"></script>
 
+        <!-- Interceptors -->
+        <script type="text/javascript" src="js/interceptors/bigBoard.inteceptors.authHeader.js"></script>
+
+        <!-- Utils -->
+        <script type="text/javascript" src="js/utils/bigboard.utils.device.js"></script>
+
         <!-- Service -->
+        <script type="text/javascript" src="js/services/bigboard.services.analytics.js"></script>
+        <script type="text/javascript" src="js/services/bigboard.services.auth.js"></script>
+        <script type="text/javascript" src="js/services/bigboard.services.data.js"></script>
+        <script type="text/javascript" src="js/services/bigboard.services.device.js"></script>
+        <script type="text/javascript" src="js/services/bigboard.services.geo.js"></script>
+        <script type="text/javascript" src="js/services/bigboard.services.noty.js"></script>
+        <script type="text/javascript" src="js/services/bigboard.services.register.js"></script>
+        <script type="text/javascript" src="js/services/bigboard.services.settings.js"></script>
+        <script type="text/javascript" src="js/services/bigboard.services.utils.js"></script>
 
         <!-- Controllers -->
         <script type="text/javascript" src="views/home/bigboard.controllers.home.js"></script>

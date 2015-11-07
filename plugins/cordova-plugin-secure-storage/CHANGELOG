@@ -1,0 +1,39 @@
+Changelog
+=========
+
+2.1.0 - 2015-10-29
+------------------
+
+- Keychain accessibility setting for iOS.
+  [schaumiii]
+
+
+2.0.0 - 2015-10-28
+------------------
+
+- Update to use npm.
+  [ggozad]
+
+1.1.2 - 2015-04-16
+------------------
+
+- Fix Android key creation conflict.
+  [demetris-manikas]
+
+1.1.1 - 2015-04-13
+------------------
+
+- Android cleanup.
+  [demetris-manikas]
+
+1.1.0 - 2015-04-01
+------------------
+
+- Support the browser platform.
+  [ggozad]
+
+1.0.0 - 2015-03-30
+------------------
+
+- Initial release.
+  [ggozad]

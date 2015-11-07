@@ -1,5 +1,5 @@
-//var _serviceUrlBase = 'http://resgridapi.local';
-var _serviceUrlBase = 'https://api.resgrid.com';
+var _serviceUrlBase = 'http://resgridapi.local';
+//var _serviceUrlBase = 'https://api.resgrid.com';
 var _serviceUrl = _serviceUrlBase + '/api/v3';
 
 angular.module('bigBoard')
@@ -19,7 +19,8 @@ var CONSTS = {
     },
     DATA: {
         LOCALPERSONNEL: [],
-        LOCALGROUPS: []
+        LOCALGROUPS: [],
+        DEMO_TOKEN: 'Z1VLalNNbVQvcUR5bzBaaEF0TFJrZzYxc3BEclRxR3czYk5WYmNYMVNJaz0='
     },
     STATUS: {
         STANDINGBY: 0,

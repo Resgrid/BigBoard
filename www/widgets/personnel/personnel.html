@@ -1,4 +1,4 @@
-<div id="content">
+<div id="content" ng-controller="PersonnelWidgetCtrl">
         <div ng-repeat="(key, value) in personnel | groupBy: 'group'">
             <h5>{{key}}</h5>
             <div class="columns">

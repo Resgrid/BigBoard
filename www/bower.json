@@ -33,5 +33,8 @@
       "ttf": "css/libs/fonts",
       "woff": "css/libs/fonts"
     }
+  },
+  "resolutions": {
+    "angular": "~1.4.5"
   }
 }

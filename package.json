@@ -1,0 +1,50 @@
+{
+  "name": "bigboard",
+  "version": "1.0.0",
+  "description": "BigBoard to view information from the Resgrid system",
+  "main": "gulpfile.js",
+  "dependencies": {
+    "gulp": "^3.9.0",
+    "cordova-lib": "^5.3.1",
+    "gulp-livereload": "^3.8.0",
+    "ecstatic": "^1.0.0",
+    "del": "^2.0.2",
+    "gulp-watch": "^4.3.5",
+    "gulp-shell": "^0.4.3",
+    "gulp-util": "^3.0.6",
+    "gulp-print": "^1.2.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Resgrid/BigBoard.git"
+  },
+  "keywords": [
+    "resgrid",
+    "big",
+    "board",
+    "responder",
+    "fire",
+    "fighter",
+    "ems",
+    "sar",
+    "cert",
+    "dashboard"
+  ],
+  "author": "Resgrid, LLC.",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Resgrid/BigBoard/issues"
+  },
+  "homepage": "https://github.com/Resgrid/BigBoard#readme",
+  "cordovaPlugins": [
+    {
+      "locator": "https://github.com/crypho/cordova-plugin-secure-storage.git",
+      "id": "pro.fing.cordova.gapreload"
+    }
+  ],
+  "cordovaPlatforms": []
+}

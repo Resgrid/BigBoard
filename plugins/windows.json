@@ -35,6 +35,9 @@
         },
         "pro.fing.cordova.gapreload": {
             "PACKAGE_NAME": "Resgrid BigBoard"
+        },
+        "cordova-plugin-secure-storage": {
+            "PACKAGE_NAME": "Resgrid BigBoard"
         }
     },
     "dependent_plugins": {

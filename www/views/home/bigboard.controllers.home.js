@@ -29,11 +29,12 @@
                 }, {
                     col: 2,
                     row: 1,
-                    sizeY: 1,
-                    sizeX: 1,
+                    sizeY: 2,
+                    sizeX: 2,
                     id: 2,
-                    name: "Widget 2",
-                    controller: "PersonnelWidgetCtrl"
+                    name: "Map",
+                    templateUrl: "widgets/map/map.html",
+                    controller: "MapWidgetCtrl"
                 }]
             },
             '2': {
