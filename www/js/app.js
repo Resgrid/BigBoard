@@ -8,9 +8,11 @@ angular.module('bigBoard', ['ui.router',
                             'LocalStorageModule',
                             'ngCordova',
                             'ngToast',
+                            'mdo-angular-cryptography',
                             'chromeStorage'])
     .config(configure)
     .config(configureToast)
+    .config(configureCrypto)
     .run(function(settingsService, deviceUtils) {
 
         settingsService.init();
@@ -51,12 +53,19 @@ angular.module('bigBoard.utils', []);
 // END Configure Angular
 
 // START Configure Toast
-        configureToast.$inject = ['ngToastProvider'];
-        function configureToast(ngToastProvider) {
-            ngToastProvider.configure({
-                verticalPosition: 'top',
-                horizontalPosition: 'center',
-                maxNumber: 3
-            });
-        }
+configureToast.$inject = ['ngToastProvider'];
+function configureToast(ngToastProvider) {
+    ngToastProvider.configure({
+        verticalPosition: 'top',
+        horizontalPosition: 'center',
+        maxNumber: 3
+    });
+}
 // END Configure Toast
+
+// START Configure Config
+configureCrypto.$inject = ['$cryptoProvider'];
+function configureCrypto($cryptoProvider) {
+    $cryptoProvider.setCryptographyKey(window.ENCRYPTION_KEY);
+}
+// END Configure Config

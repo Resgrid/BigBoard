@@ -3,8 +3,8 @@
 
 	angular.module('bigBoard.services').factory('settingsService', settingsService);
 
-	settingsService.$inject = ['$q', 'localStorageService', 'chromeStorage', 'deviceUtils'];
-	function settingsService($q, localStorageService, chromeStorageService, deviceUtils) {
+	settingsService.$inject = ['$q', 'localStorageService', 'chromeStorage', 'deviceUtils', '$crypto'];
+	function settingsService($q, localStorageService, chromeStorageService, deviceUtils, $crypto) {
 	var localStorage = localStorageService;
 	var secureStorage;
 
@@ -37,12 +37,12 @@
 
 				// Prime username and password
 				secureStorage.get(
-					function (value) { userName = value },
+					function (value) { userName = $crypto.encrypt(value); },
 					function (error) { console.log('Error ' + error); },
 					'Username');
 
 				secureStorage.get(
-					function (value) { password = value },
+					function (value) { password = $crypto.encrypt(value); },
 					function (error) { console.log('Error ' + error); },
 					'Password');
 			}
@@ -64,7 +64,7 @@
 		},
 		getUsername: function () {
 			if (deviceUtils.isPhone() && secureStorage) {
-				return userName;
+				return $crypto.decrypt(userName);
 			}
 
 			return localStorage.get("Username");
@@ -72,7 +72,7 @@
 		setUsername: function (userName) {
 			if (deviceUtils.isPhone() && secureStorage) {
 				secureStorage.set(
-					function (key) { console.log('Set ' + key); },
+					function (key) { console.log('Set ' + key); $crypto.encrypt(userName); },
 					function (error) { console.log('Error ' + error); },
 					'Username', userName);
 			} else {
@@ -99,7 +99,7 @@
 		},
 		getPassword: function () {
 			if (deviceUtils.isPhone() && secureStorage) {
-				return password;
+				return $crypto.decrypt(password);
 			}
 
 			return localStorage.get("Password");
@@ -107,7 +107,7 @@
 		setPassword: function (password) {
 			if (deviceUtils.isPhone() && secureStorage) {
 				secureStorage.set(
-					function (key) { console.log('Set ' + key); },
+					function (key) { console.log('Set ' + key); $crypto.encrypt(password); },
 					function (error) { console.log('Error ' + error); },
 					'Password', password);
 			} else {
