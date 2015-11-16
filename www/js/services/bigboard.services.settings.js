@@ -10,6 +10,7 @@
 
 	var userName;
 	var password;
+	var token;
 
 	var stringToBoolean = function (string) {
 		switch (string.toString().toLowerCase()) {
@@ -45,6 +46,11 @@
 					function (value) { password = $crypto.encrypt(value); },
 					function (error) { console.log('Error ' + error); },
 					'Password');
+
+				secureStorage.get(
+					function (value) { token = $crypto.encrypt(value); },
+					function (error) { console.log('Error ' + error); },
+					'AuthToken');
 			}
 		},
 		areSettingsSet: function () {
@@ -69,14 +75,14 @@
 
 			return localStorage.get("Username");
 		},
-		setUsername: function (userName) {
+		setUsername: function (name) {
 			if (deviceUtils.isPhone() && secureStorage) {
 				secureStorage.set(
-					function (key) { console.log('Set ' + key); $crypto.encrypt(userName); },
+					function (key) { console.log('Set ' + key); userName = $crypto.encrypt(name); },
 					function (error) { console.log('Error ' + error); },
-					'Username', userName);
+					'Username', name);
 			} else {
-				localStorage.set("Username", userName);
+				localStorage.set("Username", name);
 			}
 		},
 		getEmailAddress: function () {
@@ -104,21 +110,32 @@
 
 			return localStorage.get("Password");
 		},
-		setPassword: function (password) {
+		setPassword: function (pw) {
 			if (deviceUtils.isPhone() && secureStorage) {
 				secureStorage.set(
-					function (key) { console.log('Set ' + key); $crypto.encrypt(password); },
+					function (key) { console.log('Set ' + key); password = $crypto.encrypt(password); },
 					function (error) { console.log('Error ' + error); },
-					'Password', password);
+					'Password', pw);
 			} else {
-				localStorage.set("Password", password);
+				localStorage.set("Password", pw);
 			}
 		},
 		getAuthToken: function () {
+			if (deviceUtils.isPhone() && secureStorage) {
+				return $crypto.decrypt(token);
+			}
+
 			return localStorage.get("AuthToken");
 		},
 		setAuthToken: function (authToken) {
-			localStorage.set("AuthToken", authToken);
+			if (deviceUtils.isPhone() && secureStorage) {
+				secureStorage.set(
+					function (key) { console.log('Set ' + key); token = $crypto.encrypt(token); },
+					function (error) { console.log('Error ' + error); },
+					'AuthToken', authToken);
+			} else {
+				localStorage.set("AuthToken", authToken);
+			}
 		},
 		getAuthTokenExpiry: function () {
 			return localStorage.get("AuthTokenExpiry");
