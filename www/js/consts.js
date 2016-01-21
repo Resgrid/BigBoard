@@ -1,12 +1,12 @@
-var _serviceUrlBase = 'http://resgridapi.local';
-//var _serviceUrlBase = 'https://api.resgrid.com';
+//var _serviceUrlBase = 'http://resgridapi.local';
+var _serviceUrlBase = 'https://api.resgrid.com';
 var _serviceUrl = _serviceUrlBase + '/api/v3';
 
 angular.module('bigBoard')
     .constant('SERVICEURL', _serviceUrl)
     .constant('SERVICEURLBASE', _serviceUrlBase)
     .constant('VERSION', '1.0.0')
-    .constant('RELEASEDATE', 'September 11th 2015')
+    .constant('RELEASEDATE', 'February 1st 2016')
     .constant('NAME', 'Resgrid BigBoard')
     .constant('MAPKEY', '');
 

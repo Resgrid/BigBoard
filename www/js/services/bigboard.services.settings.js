@@ -7,6 +7,7 @@
 	function settingsService($q, localStorageService, chromeStorageService, deviceUtils, $crypto) {
 	var localStorage = localStorageService;
 	var secureStorage;
+	var secureStorageAvail = false;
 
 	var userName;
 	var password;
@@ -29,7 +30,8 @@
 			if (deviceUtils.isPhone()) {
 				secureStorage = new cordova.plugins.SecureStorage(
 					function () {
-						console.log('Secure Storage Init Success')
+						console.log('Secure Storage Init Success');
+						secureStorageAvail = true;
 					},
 					function (error) {
 						console.log('Secure Storage Error ' + error);
@@ -55,7 +57,7 @@
 		},
 		areSettingsSet: function () {
 
-			if (deviceUtils.isPhone() && secureStorage) {
+			if (deviceUtils.isPhone() && secureStorageAvail) {
 				if (!userName || !password)
 					return false;
 			} else { // Fallback for non-cordova enabled systems
@@ -76,7 +78,7 @@
 			return localStorage.get("Username");
 		},
 		setUsername: function (name) {
-			if (deviceUtils.isPhone() && secureStorage) {
+			if (deviceUtils.isPhone() && secureStorageAvail) {
 				secureStorage.set(
 					function (key) { console.log('Set ' + key); userName = $crypto.encrypt(name); },
 					function (error) { console.log('Error ' + error); },
@@ -104,14 +106,14 @@
 			localStorage.set("DepartmentId", departmentId);
 		},
 		getPassword: function () {
-			if (deviceUtils.isPhone() && secureStorage) {
+			if (deviceUtils.isPhone() && secureStorageAvail) {
 				return $crypto.decrypt(password);
 			}
 
 			return localStorage.get("Password");
 		},
 		setPassword: function (pw) {
-			if (deviceUtils.isPhone() && secureStorage) {
+			if (deviceUtils.isPhone() && secureStorageAvail) {
 				secureStorage.set(
 					function (key) { console.log('Set ' + key); password = $crypto.encrypt(password); },
 					function (error) { console.log('Error ' + error); },
@@ -121,14 +123,14 @@
 			}
 		},
 		getAuthToken: function () {
-			if (deviceUtils.isPhone() && secureStorage) {
+			if (deviceUtils.isPhone() && secureStorageAvail) {
 				return $crypto.decrypt(token);
 			}
 
 			return localStorage.get("AuthToken");
 		},
 		setAuthToken: function (authToken) {
-			if (deviceUtils.isPhone() && secureStorage) {
+			if (deviceUtils.isPhone() && secureStorageAvail) {
 				secureStorage.set(
 					function (key) { console.log('Set ' + key); token = $crypto.encrypt(token); },
 					function (error) { console.log('Error ' + error); },
