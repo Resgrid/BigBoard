@@ -12,6 +12,19 @@
                         Resgrid BigBoard is a dashboard application that interacts with the Resgrid Service. Deigned for TV's, Tablets and computers the BigBoard allows you to configure your view to match your departments needs and display it to your personnel in a common area, on your desk or on the go.
                 </div>
             </div>
+            <div class="section section-break">
+                <a href=""
+                   ui-turn-on="termsOfUse"
+                   class="btn btn-default">Terms of Use</a>
+                <a href=""
+                   ui-turn-on="privacyPolicy"
+                   class="btn btn-default">Privacy Policy</a>
+            </div>
+
+            <div ui-content-for="modals">
+                <div ng-include="'templates/termsOfUse.html'"></div>
+                <div ng-include="'templates/privacyPolicy.html'"></div>
+            </div>
         </div>
     </div>
 </div>
