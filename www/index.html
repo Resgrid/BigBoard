@@ -11,6 +11,19 @@
         <link rel="stylesheet" type="text/css" href="css/libs/ngToast/ngToast.css">
 
         <title>Resgrid BigBoard</title>
+
+        <script>
+            var isDemo = window.location.search.substring(window.location.search.indexOf('demo=') + 5);
+            if (isDemo.indexOf('&') >= 0) {
+                isDemo = isDemo.substring(0, isDemo.indexOf('&'));
+            }
+
+            if (isDemo && isDemo.length > 0) {
+                window.ISDEMO = true;
+            } else {
+                window.ISDEMO = false;
+            }
+        </script>
     </head>
     <body ng-app="bigBoard">
         <toast></toast>
@@ -71,8 +84,6 @@
         <script type="text/javascript" src="js/libs/angular-animate/angular-animate.js"></script>
         <script type="text/javascript" src="js/libs/angular-sanitize/angular-sanitize.js"></script>
         <script type="text/javascript" src="js/libs/ngToast/ngToast.js"></script>
-        <script type='text/javascript' src="js/libs/cryptojs/aes.js"></script>
-        <script type='text/javascript' src="js/libs/angular-cryptography/mdo-angular-cryptography.js"></script>
 
         <!-- Core App -->
         <script type="text/javascript" src="js/app.js"></script>

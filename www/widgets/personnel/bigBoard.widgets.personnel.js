@@ -52,8 +52,11 @@
         loadData();
 
         function loadData() {
-            dataService.getPersonnelStatuses().then(function successCallback(response) {
-                $scope.personnel = response.data;
+            dataService.getPersonnelStatuses().then(
+                function successCallback(response) {
+                    if (response && response.data) {
+                        $scope.personnel = response.data;
+                    }
             }, function errorCallback(response) {
 
             });

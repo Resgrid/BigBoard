@@ -3,15 +3,9 @@
 
 	angular.module('bigBoard.services').factory('settingsService', settingsService);
 
-	settingsService.$inject = ['$q', 'localStorageService', 'chromeStorage', 'deviceUtils', '$crypto'];
-	function settingsService($q, localStorageService, chromeStorageService, deviceUtils, $crypto) {
+	settingsService.$inject = ['$q', 'localStorageService', 'chromeStorage', 'deviceUtils'];
+	function settingsService($q, localStorageService, chromeStorageService, deviceUtils) {
 	var localStorage = localStorageService;
-	var secureStorage;
-	var secureStorageAvail = false;
-
-	var userName;
-	var password;
-	var token;
 
 	var stringToBoolean = function (string) {
 		switch (string.toString().toLowerCase()) {
@@ -27,65 +21,26 @@
 
 	return {
 		init: function() {
-			if (deviceUtils.isPhone()) {
-				secureStorage = new cordova.plugins.SecureStorage(
-					function () {
-						console.log('Secure Storage Init Success');
-						secureStorageAvail = true;
-					},
-					function (error) {
-						console.log('Secure Storage Error ' + error);
-					},
-					'resgridresponder');
 
-				// Prime username and password
-				secureStorage.get(
-					function (value) { userName = $crypto.encrypt(value); },
-					function (error) { console.log('Error ' + error); },
-					'Username');
-
-				secureStorage.get(
-					function (value) { password = $crypto.encrypt(value); },
-					function (error) { console.log('Error ' + error); },
-					'Password');
-
-				secureStorage.get(
-					function (value) { token = $crypto.encrypt(value); },
-					function (error) { console.log('Error ' + error); },
-					'AuthToken');
-			}
 		},
 		areSettingsSet: function () {
-
-			if (deviceUtils.isPhone() && secureStorageAvail) {
-				if (!userName || !password)
-					return false;
-			} else { // Fallback for non-cordova enabled systems
+			if (window.ISDEMO === true) {
+				return true;
+			} else {
 				if (!localStorage.get("Username"))
 					return false;
 
 				if (!localStorage.get("Password"))
 					return false;
-			}
 
-			return true;
+				return true;
+			}
 		},
 		getUsername: function () {
-			if (deviceUtils.isPhone() && secureStorage) {
-				return $crypto.decrypt(userName);
-			}
-
 			return localStorage.get("Username");
 		},
-		setUsername: function (name) {
-			if (deviceUtils.isPhone() && secureStorageAvail) {
-				secureStorage.set(
-					function (key) { console.log('Set ' + key); userName = $crypto.encrypt(name); },
-					function (error) { console.log('Error ' + error); },
-					'Username', name);
-			} else {
-				localStorage.set("Username", name);
-			}
+		setUsername: function (userName) {
+			localStorage.set("Username", userName);
 		},
 		getEmailAddress: function () {
 			return localStorage.get("EmailAddress");
@@ -106,38 +61,20 @@
 			localStorage.set("DepartmentId", departmentId);
 		},
 		getPassword: function () {
-			if (deviceUtils.isPhone() && secureStorageAvail) {
-				return $crypto.decrypt(password);
-			}
-
 			return localStorage.get("Password");
 		},
-		setPassword: function (pw) {
-			if (deviceUtils.isPhone() && secureStorageAvail) {
-				secureStorage.set(
-					function (key) { console.log('Set ' + key); password = $crypto.encrypt(password); },
-					function (error) { console.log('Error ' + error); },
-					'Password', pw);
-			} else {
-				localStorage.set("Password", pw);
-			}
+		setPassword: function (password) {
+			localStorage.set("Password", password);
 		},
 		getAuthToken: function () {
-			if (deviceUtils.isPhone() && secureStorageAvail) {
-				return $crypto.decrypt(token);
+			if (window.ISDEMO === true) {
+				return CONSTS.DATA.DEMO_TOKEN;
+			} else {
+				return localStorage.get("AuthToken");
 			}
-
-			return localStorage.get("AuthToken");
 		},
 		setAuthToken: function (authToken) {
-			if (deviceUtils.isPhone() && secureStorageAvail) {
-				secureStorage.set(
-					function (key) { console.log('Set ' + key); token = $crypto.encrypt(token); },
-					function (error) { console.log('Error ' + error); },
-					'AuthToken', authToken);
-			} else {
-				localStorage.set("AuthToken", authToken);
-			}
+			localStorage.set("AuthToken", authToken);
 		},
 		getAuthTokenExpiry: function () {
 			return localStorage.get("AuthTokenExpiry");
@@ -166,7 +103,7 @@
 			if (geoLocation != null)
 				return stringToBoolean(geoLocation);
 			else
-				return false;
+				return true;
 		},
 		setEnableGeolocation: function (geoLocation) {
 			localStorage.set("EnableGeolocation", geoLocation);
@@ -177,7 +114,7 @@
 			if (https != null)
 				return stringToBoolean(https);
 			else
-				return false;
+				return true;
 		},
 		setEnableHttps: function (enableHttps) {
 			localStorage.set("EnableHttps", enableHttps);
@@ -188,7 +125,7 @@
 			if (push != null)
 				return stringToBoolean(push);
 			else
-				return false;
+				return true;
 		},
 		setEnablePushNotifications: function (enablePushNotifications) {
 			localStorage.set("EnablePushNotifications", enablePushNotifications);

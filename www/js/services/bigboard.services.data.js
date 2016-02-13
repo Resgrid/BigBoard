@@ -3,8 +3,8 @@
 
     angular.module('bigBoard.services').factory('dataService', dataService);
 
-    dataService.$inject = ['$q', '$http', 'SERVICEURL', 'settingsService'];
-    function dataService($q, $http, SERVICEURL, settingsService) {
+    dataService.$inject = ['$http', 'SERVICEURL'];
+    function dataService($http, SERVICEURL) {
         var getPersonnelStatusesUrl = SERVICEURL + '/BigBoard/GetPersonnelStatuses';
 
         return {

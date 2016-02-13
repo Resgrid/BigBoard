@@ -1,9 +1,11 @@
 <div id="content" ng-controller="PersonnelWidgetCtrl">
-        <div ng-repeat="(key, value) in personnel | groupBy: 'group'">
+        <div ng-repeat="(key, value) in personnel | groupBy: 'Group'">
             <h5>{{key}}</h5>
             <div class="columns">
                 <ul>
-                    <li ng-repeat="entry in value">{{entry.name}}</li>
+                    <li ng-repeat="entry in value">{{entry.Name}}
+
+                    </li>
                 </ul>
             </div>
     </div>

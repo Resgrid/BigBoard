@@ -46,5 +46,11 @@
       "id": "pro.fing.cordova.gapreload"
     }
   ],
-  "cordovaPlatforms": []
+  "cordovaPlatforms": [
+    "ios",
+    {
+      "platform": "android",
+      "locator": "browser"
+    }
+  ]
 }

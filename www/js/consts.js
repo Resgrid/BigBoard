@@ -6,7 +6,7 @@ angular.module('bigBoard')
     .constant('SERVICEURL', _serviceUrl)
     .constant('SERVICEURLBASE', _serviceUrlBase)
     .constant('VERSION', '1.0.0')
-    .constant('RELEASEDATE', 'February 1st 2016')
+    .constant('RELEASEDATE', 'March 1st 2016')
     .constant('NAME', 'Resgrid BigBoard')
     .constant('MAPKEY', '');
 
