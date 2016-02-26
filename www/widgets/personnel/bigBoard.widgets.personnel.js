@@ -3,51 +3,34 @@
 
     angular.module('bigBoard.controllers').controller('PersonnelWidgetCtrl', personnelWidgetCtrl);
 
-    personnelWidgetCtrl.$inject = ['$scope', 'dataService'];
-    function personnelWidgetCtrl($scope, dataService) {
+    personnelWidgetCtrl.$inject = ['$scope', 'dataService', '$rootScope', 'settingsService'];
+    function personnelWidgetCtrl($scope, dataService, $rootScope, settingsService) {
+
+        $rootScope.$on(CONSTS.EVENTS.PERSONNEL_SETTINGS_UPDATED, function (event, data) {
+            $scope.widgetSettings = settingsService.getPersonnelWidgetSettings();
+            loadData();
+        });
+
         $scope.remove = function(widget) {
             $scope.dashboard.widgets.splice($scope.dashboard.widgets.indexOf(widget), 1);
         };
 
+        $scope.widgetSettings = settingsService.getPersonnelWidgetSettings();
+
         $scope.openSettings = function(widget) {
-            /*
-            $modal.open({
-                scope: $scope,
-                templateUrl: 'demo/dashboard/widget_settings.html',
-                controller: 'WidgetSettingsCtrl',
-                resolve: {
-                    widget: function() {
-                        return widget;
-                    }
-                }
-            });
-            */
+            $rootScope.Ui.turnOn('personnelSettings');
+        };
+
+        $scope.resize = function(event, $element, widget) {
+            var test = event;
         };
         $scope.personnel = [];
-        /*
-        $scope.personnel = [
-            {
-                name: "Test User 1",
-                group: "Station 1"
-            },
-            {
-                name: "Test User 2",
-                group: "Station 1"
-            },
-            {
-                name: "Test User 3",
-                group: "Station 1"
-            },
-            {
-                name: "Test User 4",
-                group: "Station 2"
-            },
-            {
-                name: "Test User 5",
-                group: "Station 2"
-            }
-        ];
-        */
+
+        $scope.saveSettings = function() {
+            settingsService.setPersonnelWidgetSettings($scope.widgetSettings);
+            $rootScope.$broadcast(CONSTS.EVENTS.PERSONNEL_SETTINGS_UPDATED);
+            $rootScope.Ui.turnOff('personnelSettings');
+        };
 
         loadData();
 
@@ -57,9 +40,9 @@
                     if (response && response.data) {
                         $scope.personnel = response.data;
                     }
-            }, function errorCallback(response) {
+                }, function errorCallback(response) {
 
-            });
+                });
         }
     }
 

@@ -8,10 +8,14 @@ angular.module('bigBoard', ['ui.router',
                             'LocalStorageModule',
                             'ngCordova',
                             'ngToast',
-                            'chromeStorage'])
+                            'chromeStorage',
+                            'angularMoment',
+                            'uiGmapgoogle-maps'
+])
     .config(configure)
     .config(configureInterceptors)
     .config(configureToast)
+    //.config(configureGmapGoogleMapApi)
     .run(function(settingsService, deviceUtils) {
 
         settingsService.init();
@@ -68,3 +72,14 @@ angular.module('bigBoard.utils', []);
         $httpProvider.interceptors.push('authHeader');
     }
 // END Configure Interceptors
+
+// START Configure GmapGoogleMapApi
+configureGmapGoogleMapApi.$inject = ['uiGmapGoogleMapApiProvider'];
+function configureGmapGoogleMapApi(uiGmapGoogleMapApiProvider) {
+    uiGmapGoogleMapApiProvider.configure({
+        //    key: 'your api key',
+        v: '3.20', //defaults to latest 3.X anyhow
+        libraries: 'weather,geometry,visualization'
+    });
+}
+// END Configure GmapGoogleMapApi

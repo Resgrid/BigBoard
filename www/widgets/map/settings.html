@@ -1,0 +1,69 @@
+<div class="modal" ui-if='mapSettings' ui-state='mapSettings'>
+    <div class="modal-backdrop in"></div>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" ui-turn-off="mapSettings">&times;</button>
+                <h4 class="modal-title">Map Widget Settings</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-6">
+                        <fieldset>
+                            <legend>Visible Columns</legend>
+                            <div class="form-group">
+                                <label>Group</label>
+                                <ui-switch ng-model='widgetSettings.showGroup'></ui-switch>
+                            </div>
+                            <div class="form-group">
+                                <label>Staffing</label>
+                                <ui-switch ng-model='widgetSettings.showStaffing'></ui-switch>
+                            </div>
+                            <div class="form-group">
+                                <label>Status</label>
+                                <ui-switch ng-model='widgetSettings.showStatus'></ui-switch>
+                            </div>
+                            <div class="form-group">
+                                <label>Roles</label>
+                                <ui-switch ng-model='widgetSettings.showRoles'></ui-switch>
+                            </div>
+                            <div class="form-group">
+                                <label>Timestamp</label>
+                                <ui-switch ng-model='widgetSettings.showTimestamp'></ui-switch>
+                            </div>
+                            <div class="form-group">
+                                <label>ETA</label>
+                                <ui-switch ng-model='widgetSettings.showEta'></ui-switch>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <div class="col-xs-6">
+                        <fieldset>
+                            <legend>Personnel Options</legend>
+                            <div class="form-group">
+                                <label>Sort Responding To Top</label>
+                                <ui-switch ng-model='widgetSettings.sortRespondingToTop'></ui-switch>
+                            </div>
+                            <div class="form-group">
+                                <label>Hide Unavailable</label>
+                                <ui-switch ng-model='widgetSettings.hideUnavailable'></ui-switch>
+                            </div>
+                            <div class="form-group">
+                                <label>Hide Not Responding</label>
+                                <ui-switch ng-model='widgetSettings.hideNotResponding'></ui-switch>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button ui-turn-off="mapSettings" class="btn btn-default">Close</button>
+                <button class="btn btn-primary" ng-click="saveSettings()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>

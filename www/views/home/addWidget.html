@@ -1,0 +1,38 @@
+<div class="modal" ui-if='addWidgetSettings' ui-state='addWidgetSettings'>
+    <div class="modal-backdrop in"></div>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" ui-turn-off="addWidgetSettings">&times;</button>
+                <h4 class="modal-title">Add Widget</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-3" style="text-align:center; padding: 4px;">
+                        <button class="btn btn-primary" ng-click="addWidget(1)">Add Personnel Widget</button>
+                    </div>
+                    <div class="col-xs-3" style="text-align:center; padding: 4px;">
+                        <button class="btn btn-primary" ng-click="addWidget(2)">Add Map Widget</button>
+                    </div>
+                    <div class="col-xs-3" style="text-align:center; padding: 4px;">
+                        <button class="btn btn-primary" ng-click="addWidget(3)">Add Personnel Widget</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-3" style="text-align:center; padding: 4px;">
+                        <button class="btn btn-primary" ng-click="addWidget(4)">Add Weather Widget</button>
+                    </div>
+                    <div class="col-xs-3" style="text-align:center; padding: 4px;">
+                        <button class="btn btn-primary" ng-click="addWidget(5)">Add Units Widget</button>
+                    </div>
+                    <div class="col-xs-3" style="text-align:center; padding: 4px;">
+                        <button class="btn btn-primary" ng-click="addWidget(6)">Add Calls Widget</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button ui-turn-off="addWidgetSettings" class="btn btn-default">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

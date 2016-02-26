@@ -1,5 +1,5 @@
-//var _serviceUrlBase = 'http://resgridapi.local';
-var _serviceUrlBase = 'https://api.resgrid.com';
+var _serviceUrlBase = 'http://resgridapi.local';
+//var _serviceUrlBase = 'https://api.resgrid.com';
 var _serviceUrl = _serviceUrlBase + '/api/v3';
 
 angular.module('bigBoard')
@@ -15,7 +15,10 @@ var CONSTS = {
         COREDATASYNCED: 'coreDataSynced',
         SETTINGS_SAVED: 'settingsSaved',
         MESSAGE_RECIPIENT_ADDED: 'messageRecipientAdded',
-        REGISTRATION_OPERATION_FINISHED: 'registrationOperationFinished'
+        REGISTRATION_OPERATION_FINISHED: 'registrationOperationFinished',
+        PERSONNEL_SETTINGS_UPDATED: 'personnelWidgetSettingsUpdated',
+        MAP_SETTINGS_UPDATED: 'mapWidgetSettingsUpdated',
+        MAP_RESIZED: 'personnelWidgetResized'
     },
     DATA: {
         LOCALPERSONNEL: [],

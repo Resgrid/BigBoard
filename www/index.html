@@ -51,7 +51,7 @@
                 </div>
                 <div class="btn-group pull-right" ui-yield-to="navbarAction">
                     <div ui-toggle="uiSidebarRight" class="btn">
-                        <i class="fa fa-comment"></i> Chat
+                        <i class="fa fa-comment"></i> Options
                     </div>
                 </div>
             </div>
@@ -65,13 +65,17 @@
                     <div id="mainContent" ui-view></div>
                 </div>
             </div>
+
         </div>
 
         <div ui-yield-to="modals"></div>
 
         <script type="text/javascript" src="cordova.js"></script>
 
+        <script type="text/javascript" src='js/libs/lodash/lodash.min.js'></script>
         <script type="text/javascript" src="js/libs/angular/angular.js"></script>
+        <script type="text/javascript" src='js/libs/angular-simple-logger/angular-simple-logger.min.js'></script>
+        <script type="text/javascript" src='js/libs/angular-google-maps/angular-google-maps.min.js'></script>
         <script type="text/javascript" src="js/libs/angular-ui-router/angular-ui-router.js"></script>
         <script type="text/javascript" src="js/libs/angular-gridster/angular-gridster.js"></script>
         <script type="text/javascript" src="js/libs/javascript-detect-element-resize/detect-element-resize.js"></script>
@@ -84,6 +88,8 @@
         <script type="text/javascript" src="js/libs/angular-animate/angular-animate.js"></script>
         <script type="text/javascript" src="js/libs/angular-sanitize/angular-sanitize.js"></script>
         <script type="text/javascript" src="js/libs/ngToast/ngToast.js"></script>
+        <script type="text/javascript" src="js/libs/moment/moment-with-locales.min.js"></script>
+        <script type="text/javascript" src="js/libs/angular-moment/angular-moment.min.js"></script>
 
         <!-- Core App -->
         <script type="text/javascript" src="js/app.js"></script>
@@ -91,6 +97,7 @@
 
         <!-- Filters -->
         <script type="text/javascript" src="js/filters/bigboard.filters.object2array.js"></script>
+        <script type="text/javascript" src="js/filters/bigboard.filters.fromNow.js"></script>
 
         <!-- Directives -->
         <script type="text/javascript" src="js/directives/bigboard.directives.dyanmicController.js"></script>
@@ -119,6 +126,10 @@
 
         <!-- Widgets -->
         <script type="text/javascript" src="widgets/personnel/bigboard.widgets.personnel.js"></script>
+        <script type="text/javascript" src="widgets/personnel/bigboard.widgets.personnelSettings.js"></script>
         <script type="text/javascript" src="widgets/map/bigboard.widgets.map.js"></script>
+
+        <script src='https://maps.googleapis.com/maps/api/js'></script>
+        <script type="text/javascript" src="js/libs/markerWithLabel/markerwithlabel.js"></script>
     </body>
 </html>

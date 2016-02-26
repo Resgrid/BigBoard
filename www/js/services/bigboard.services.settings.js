@@ -216,6 +216,56 @@
 		setCustomRespondingText: function (customRespondingText) {
 			localStorage.set("CustomRespondingText", customRespondingText);
 		},
+
+		getPersonnelWidgetSettings: function () {
+			var text = localStorage.get("PersonnelWidgetSettings");
+
+			if (!text || text.length <= 0)
+				return {
+                    showGroup: true,
+                    showStaffing: true,
+                    showStatus: true,
+                    showRoles: true,
+                    showTimestamp: true,
+                    showEta: true,
+                    sortRespondingToTop: false,
+                    hideUnavailable: false,
+                    hideNotResponding: false
+                };
+			else
+				return JSON.parse(text);
+		},
+        setPersonnelWidgetSettings: function (widgetSettings) {
+			localStorage.set("PersonnelWidgetSettings", JSON.stringify(widgetSettings));
+		},
+        getMapWidgetSettings: function () {
+            var text = localStorage.get("MapWidgetSettings");
+
+            if (!text || text.length <= 0)
+                return {
+                    zoom: 11,
+                    centerLat: 0,
+                    centerLon: 0
+                };
+            else
+                return JSON.parse(text);
+        },
+        setMapWidgetSettings: function (widgetSettings) {
+            localStorage.set("MapWidgetSettings", JSON.stringify(widgetSettings));
+        },
+
+		getLayout: function () {
+			var text = localStorage.get("LayoutSettings");
+
+			if (!text || text.length <= 0)
+				return [];
+			else
+				return JSON.parse(text);
+		},
+		setLayout: function (layout) {
+			localStorage.set("LayoutSettings", JSON.stringify(layout));
+		},
+
 		prime: function() {
 			localStorage.get("Username");
 			localStorage.get("Password");

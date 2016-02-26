@@ -7,7 +7,9 @@
             ui-outer-click-if="Ui.active('dashboardMenu')" role="menu" ui-show="dashboardMenu"
             ui-turn-off="dashboardMenu">
 
-            <li><a ng-click="addWidget()"><i class="fa fa-plus"></i> Add Widget</a></li>
+            <li><a ng-click="openWidgetMenu()"><i class="fa fa-plus"></i> Add Widget</a></li>
+            <li><a ng-click="saveLayout()"><i class="fa fa-floppy-o"></i> Save Layout</a></li>
+            <li><a ng-click="loadLayout()"><i class="fa fa-folder-open"></i> Load Layout</a></li>
             <li><a ng-click="clear()"><i class="fa fa-trash"></i> Clear</a></li>
         </ul>
     </div>
@@ -26,7 +28,7 @@
                                 ui-outer-click-if="Ui.active('myDropdown' + widget.id)" role="menu" ui-show="myDropdown{{widget.id}}"
                                 ui-turn-off="myDropdown{{widget.id}}">
 
-                            <li><a ng-click="openSettings(widget)"><i class="fa fa-cog"></i> Edit</a></li>
+                            <li><a ng-click="openSettings(widget)"><i class="fa fa-cog"></i> Settings</a></li>
                             <li><a ng-click="remove(widget)"><i class="fa fa-trash"></i> Remove</a></li>
                         </ul>
                     </div>
@@ -38,4 +40,9 @@
             </div>
         </li>
     </ul>
+</div>
+
+<div ui-content-for="modals">
+    <div ng-include="'widgets/personnel/settings.html'" ng-controller="PersonnelSettingsCtrl"></div>
+    <div ng-include="'views/home/addWidget.html'"></div>
 </div>

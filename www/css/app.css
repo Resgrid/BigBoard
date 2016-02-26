@@ -49,16 +49,18 @@ form {
     color: #004756;
     background: #ffffff;
     padding: 10px;
+    overflow: hidden;
 }
 
 #content
 {
     font-size: .75em; /* 12/16 */
-    width: 71.875%; /* 650/960 */
+    /*width: 71.875%;*/ /* 650/960 */
     max-width: 960px;
     text-align: left;
     /*margin: 0px auto;*/ /*auto centers the container */
-    padding: 3.84615384615385%; /* 25/650 */
+    /*padding: 3.84615384615385%;*/ /* 25/650 */
+    padding: 1.56%;
 }
 /*CSS3 multiple columns.*/
 /* Get em size for colums: 184/16 */
@@ -92,4 +94,124 @@ form {
     position:relative;
     z-index:11;
     min-width:250px;
+}
+
+.panel-body {
+    padding: 0px !important;
+}
+
+#personnelFullTable {
+    float:left;
+    border:1px solid #dfdfdf;
+    border-collapse:collapse;
+    width:100%;
+    font-size:12px;
+}
+/* #Tablet (Portrait)
+================================================== */
+/* Note: Design for a width of 768px */
+@media all and (min-width: 768px) and (max-width: 959px) {
+    td.col_1{
+        display:none;
+        width:0;
+        height:0;
+        opacity:0;
+        visibility: collapse;
+    }
+}
+/* #Mobile (Landscape)
+================================================== */
+/* Note: Design for a width of 600px */
+@media all and (min-width: 600px) and (max-width: 767px) {
+    td.col_2{
+        display:none;
+        width:0;
+        height:0;
+        opacity:0;
+        visibility: collapse;
+    }
+}
+/* #Mobile (Landscape)
+================================================== */
+/* Note: Design for a width of 480px */
+@media all and (min-width: 480px) and (max-width: 599px) {
+    td.col_3{
+        display:none;
+        width:0;
+        height:0;
+        opacity:0;
+        visibility: collapse;
+    }
+}
+/*  #Mobile (Portrait)
+================================================== */
+/* Note: Design for a width of 320px */
+@media all and (max-width: 479px) {
+    td.col_4{
+        display:none;
+        width:0;
+        height:0;
+        opacity:0;
+        visibility: collapse;
+    }
+}
+
+.hidden {
+    display: none;
+}
+
+.call-priority-low {
+    color: green;
+}
+
+.call-priority-medium {
+    color: #DBDB2E;
+}
+
+.call-priority-high {
+    color: orange;
+}
+
+.call-priority-emergency {
+    color: red;
+}
+
+.call-state-active {
+    color: green;
+}
+
+.call-state-cancelled {
+    color: gray;
+}
+
+.call-state-closed {
+    color: black;
+}
+
+.label-onscene {
+    background-color: #406b99;
+}
+
+.label-enroute {
+    background-color: #b9b9b9;
+}
+
+.label-returning {
+    background-color: #8b362a;
+}
+
+.label-default {
+    background-color: #999999;
+}
+
+.labels {
+    color: red;
+    background-color: white;
+    font-family: "Lucida Grande", "Arial", sans-serif;
+    font-size: 10px;
+    font-weight: bold;
+    text-align: center;
+    width: 70px;
+    border: 2px solid black;
+    white-space: nowrap;
 }
