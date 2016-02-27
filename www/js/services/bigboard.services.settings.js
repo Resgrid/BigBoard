@@ -253,6 +253,51 @@
         setMapWidgetSettings: function (widgetSettings) {
             localStorage.set("MapWidgetSettings", JSON.stringify(widgetSettings));
         },
+        getWeatherWidgetSettings: function () {
+            var text = localStorage.get("WeatherWidgetSettings");
+
+            if (!text || text.length <= 0)
+                return {
+                    units: "us",
+                    centerLat: 0,
+                    centerLon: 0
+                };
+            else
+                return JSON.parse(text);
+        },
+        setWeatherWidgetSettings: function (widgetSettings) {
+            localStorage.set("WeatherWidgetSettings", JSON.stringify(widgetSettings));
+        },
+        getUnitWidgetSettings: function () {
+            var text = localStorage.get("UnitWidgetSettings");
+
+            if (!text || text.length <= 0)
+                return {
+                    units: "us",
+                    centerLat: 0,
+                    centerLon: 0
+                };
+            else
+                return JSON.parse(text);
+        },
+        setUnitWidgetSettings: function (widgetSettings) {
+            localStorage.set("UnitWidgetSettings", JSON.stringify(widgetSettings));
+        },
+        getCallWidgetSettings: function () {
+            var text = localStorage.get("CallWidgetSettings");
+
+            if (!text || text.length <= 0)
+                return {
+                    units: "us",
+                    centerLat: 0,
+                    centerLon: 0
+                };
+            else
+                return JSON.parse(text);
+        },
+        setCallWidgetSettings: function (widgetSettings) {
+            localStorage.set("CallWidgetSettings", JSON.stringify(widgetSettings));
+        },
 
 		getLayout: function () {
 			var text = localStorage.get("LayoutSettings");

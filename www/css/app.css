@@ -204,6 +204,14 @@ form {
     background-color: #999999;
 }
 
+.label-inverse {
+    background-color: #333;
+}
+
+.label-inverse:hover {
+    background-color: #1a1a1a;
+}
+
 .labels {
     color: red;
     background-color: white;

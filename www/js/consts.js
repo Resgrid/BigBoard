@@ -18,7 +18,10 @@ var CONSTS = {
         REGISTRATION_OPERATION_FINISHED: 'registrationOperationFinished',
         PERSONNEL_SETTINGS_UPDATED: 'personnelWidgetSettingsUpdated',
         MAP_SETTINGS_UPDATED: 'mapWidgetSettingsUpdated',
-        MAP_RESIZED: 'personnelWidgetResized'
+        MAP_RESIZED: 'personnelWidgetResized',
+        WEATHER_SETTINGS_UPDATED: 'weatherWidgetSettingsUpdated',
+        WEATHER_RESIZED: 'weatherWidgetResized',
+        UNIT_SETTINGS_UPDATED: 'unitWidgetSettingsUpdated'
     },
     DATA: {
         LOCALPERSONNEL: [],

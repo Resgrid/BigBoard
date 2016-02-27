@@ -33,7 +33,6 @@
         };
 
         loadData();
-
         function loadData() {
             dataService.getPersonnelStatuses().then(
                 function successCallback(response) {

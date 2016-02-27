@@ -6,7 +6,7 @@
     homeController.$inject = ['$scope', '$timeout', '$rootScope', 'settingsService'];
     function homeController($scope, $timeout, $rootScope, settingsService) {
         $scope.gridsterOptions = {
-            margins: [20, 20],
+            margins: [10, 10],
             columns: 8,
             draggable: {
                 handle: 'h3'
@@ -17,18 +17,13 @@
                 start: function(event, $element, widget) {}, // optional callback fired when resize is started,
                 resize: function(event, $element, widget) {}, // optional callback fired when item is resized,
                 stop: function(event, $element, widget) {
-                    //var elem = angular.element(document.querySelector('[ng-app]'));
-                    //var injector = elem.injector();
-                    //var controller = injector.get(widget.controller);
-                    //controller.resize(event, $element, widget);
-
-                    //angular.element($element).scope().resize(event, $element, widget);
-
-                    var ele = $element[0];
-                    $rootScope.$broadcast(CONSTS.MAP_RESIZED, {
-                        width: ele.clientWidth,
-                        height: ele.clientHeight
-                    })
+                    if (widget && widget.name === "Map") {
+                        var ele = $element[0];
+                        $rootScope.$broadcast(CONSTS.MAP_RESIZED, {
+                            width: ele.clientWidth,
+                            height: ele.clientHeight
+                        });
+                    }
 
                 } // optional callback fired when item is finished resizing
             }
@@ -44,17 +39,41 @@
                     name: "Personnel",
                     templateUrl: "widgets/personnel/personnel.html",
                     controller: "PersonnelWidgetCtrl",
-                    sizeX: 4,
-                    sizeY: 4
+                    sizeX: 5,
+                    sizeY: 5
                 });
             } else if (type === 2) {
-
+                $scope.dashboard.widgets.push({
+                    name: "Map",
+                    templateUrl: "widgets/map/map.html",
+                    controller: "MapWidgetCtrl",
+                    sizeX: 3,
+                    sizeY: 3
+                });
             } else if (type === 3) {
-
+                $scope.dashboard.widgets.push({
+                    name: "Weather",
+                    templateUrl: "widgets/weather/weather.html",
+                    controller: "WeatherWidgetCtrl",
+                    sizeX: 3,
+                    sizeY: 2
+                });
             } else if (type === 4) {
-
+                $scope.dashboard.widgets.push({
+                    name: "Units",
+                    templateUrl: "widgets/units/units.html",
+                    controller: "UnitsWidgetCtrl",
+                    sizeX: 3,
+                    sizeY: 4
+                });
             } else if (type === 5) {
-
+                $scope.dashboard.widgets.push({
+                    name: "Calls",
+                    templateUrl: "widgets/calls/calls.html",
+                    controller: "CallsWidgetCtrl",
+                    sizeX: 5,
+                    sizeY: 4
+                });
             } else if (type === 6) {
 
             }
@@ -68,6 +87,8 @@
             if (widget) {
                 if (widget.controller === "PersonnelWidgetCtrl") {
                     $rootScope.Ui.turnOn('personnelSettings');
+                } else if (widget.controller === "UnitsWidgetCtrl") {
+                    $rootScope.Ui.turnOn('unitSettings');
                 }
             }
         };

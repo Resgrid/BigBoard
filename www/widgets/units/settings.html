@@ -1,0 +1,42 @@
+<div class="modal" ui-if='unitSettings' ui-state='unitSettings'>
+    <div class="modal-backdrop in"></div>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" ui-turn-off="unitSettings">&times;</button>
+                <h4 class="modal-title">Personnel Widget Settings</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-6">
+                        <dynamic-element newHtml='dynamicHtml'></dynamic-element>
+                    </div>
+                    <div class="col-xs-6">
+                        <table class='table table-striped table-condensed'>
+                            <thead>
+                            <tr>
+                                <th></th>
+                                <th>Group</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="group in groups" animate-on-change my-anim>
+                                <td>
+                                    <input type="checkbox" checklist-model="widgetSettings.settingHiddenGroups" checklist-value="group.groupId">
+                                </td>
+                                <td style="font-size: 8pt;">
+                                    {{ group.name }}
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button ui-turn-off="unitSettings" class="btn btn-default">Close</button>
+                <button class="btn btn-primary" ng-click="saveSettings()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
