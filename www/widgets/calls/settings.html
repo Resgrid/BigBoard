@@ -1,0 +1,54 @@
+<div class="modal" ui-if='callSettings' ui-state='callSettings' ng-controller="CallSettingsCtrl">
+    <div class="modal-backdrop in"></div>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" ui-turn-off="callSettings">&times;</button>
+                <h4 class="modal-title">Call Widget Settings</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <fieldset>
+                            <legend>Visible Columns</legend>
+                        </fieldset>
+                    </div>
+                    <div class="col-xs-1">
+                        <div class="form-group">
+                            <label>Station</label>
+                            <ui-switch ng-model='widgetSettings.showStation'></ui-switch>
+                        </div>
+                    </div>
+                    <div class="col-xs-1">
+                        <div class="form-group">
+                            <label>Type</label>
+                            <ui-switch ng-model='widgetSettings.showType'></ui-switch>
+                        </div>
+                    </div>
+                    <div class="col-xs-1">
+                        <div class="form-group">
+                            <label>State</label>
+                            <ui-switch ng-model='widgetSettings.showState'></ui-switch>
+                        </div>
+                    </div>
+                    <div class="col-xs-1">
+                        <div class="form-group">
+                            <label>Timestamp</label>
+                            <ui-switch ng-model='widgetSettings.showTimestamp'></ui-switch>
+                        </div>
+                    </div>
+                    <div class="col-xs-1">
+                        <div class="form-group">
+                            <label>ETA</label>
+                            <ui-switch ng-model='widgetSettings.showEta'></ui-switch>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button ui-turn-off="callSettings" class="btn btn-default">Close</button>
+                <button class="btn btn-primary" ng-click="saveSettings()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>

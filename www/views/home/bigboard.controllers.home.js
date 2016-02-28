@@ -94,6 +94,8 @@
                     $rootScope.Ui.turnOn('personnelSettings');
                 } else if (widget.controller === "UnitsWidgetCtrl") {
                     $rootScope.Ui.turnOn('unitSettings');
+                } else if (widget.controller === "CallsWidgetCtrl") {
+                    $rootScope.Ui.turnOn('callSettings');
                 }
             }
         };

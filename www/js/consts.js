@@ -21,7 +21,8 @@ var CONSTS = {
         MAP_RESIZED: 'personnelWidgetResized',
         WEATHER_SETTINGS_UPDATED: 'weatherWidgetSettingsUpdated',
         WEATHER_RESIZED: 'weatherWidgetResized',
-        UNIT_SETTINGS_UPDATED: 'unitWidgetSettingsUpdated'
+        UNIT_SETTINGS_UPDATED: 'unitWidgetSettingsUpdated',
+        CALL_SETTINGS_UPDATED: 'callWidgetSettingsUpdated'
     },
     DATA: {
         LOCALPERSONNEL: [],
