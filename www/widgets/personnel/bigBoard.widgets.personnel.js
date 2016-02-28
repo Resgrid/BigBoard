@@ -15,16 +15,12 @@
             $scope.dashboard.widgets.splice($scope.dashboard.widgets.indexOf(widget), 1);
         };
 
+        $scope.personnel = [];
         $scope.widgetSettings = settingsService.getPersonnelWidgetSettings();
 
         $scope.openSettings = function(widget) {
             $rootScope.Ui.turnOn('personnelSettings');
         };
-
-        $scope.resize = function(event, $element, widget) {
-            var test = event;
-        };
-        $scope.personnel = [];
 
         $scope.saveSettings = function() {
             settingsService.setPersonnelWidgetSettings($scope.widgetSettings);

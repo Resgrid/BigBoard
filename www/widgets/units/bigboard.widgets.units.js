@@ -24,9 +24,9 @@
         };
 
         $scope.orderUnit = function (value) {
-            if (value && value.groupId) {
-                if ($scope.widgetSettings['settingGroupSort_' + value.groupId]) {
-                    var result = $scope.widgetSettings['settingGroupSort_' + value.groupId];
+            if (value && value.GroupId) {
+                if ($scope.widgetSettings['settingGroupSort_' + value.GroupId]) {
+                    var result = $scope.widgetSettings['settingGroupSort_' + value.GroupId];
                     return result;
                 }
             }

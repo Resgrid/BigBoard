@@ -273,9 +273,12 @@
 
             if (!text || text.length <= 0)
                 return {
-                    units: "us",
-                    centerLat: 0,
-                    centerLon: 0
+                    showStation: true,
+                    showType: true,
+                    showState: true,
+                    showTimestamp: true,
+                    showEta: true,
+                    settingHiddenGroups: ""
                 };
             else
                 return JSON.parse(text);

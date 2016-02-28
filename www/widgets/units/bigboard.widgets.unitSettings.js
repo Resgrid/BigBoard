@@ -6,6 +6,7 @@
     unitSettingsCtrl.$inject = ['$scope', '$rootScope', 'settingsService', 'dataService'];
     function unitSettingsCtrl($scope, $rootScope, settingsService, dataService) {
 
+        $scope.dynamicHtml = "";
         $scope.groups = [];
         $scope.widgetSettings = settingsService.getUnitWidgetSettings();
         $scope.saveSettings = function() {
@@ -18,12 +19,12 @@
         function loadData() {
             dataService.getGroups().then(
                 function successCallback(response) {
-                    if (response && response.data && response.data.groups) {
-                        $scope.groups = response.data.groups;
+                    if (response && response.data && response.data.Groups) {
+                        $scope.groups = response.data.Groups;
 
-                        for (var i = 0; i < response.data.groups.length; i++) {
-                            if (!$scope.widgetSettings['settingGroupSort_' + response.data.groups[i].Gid]) {
-                                var currentValue = $scope.widgetSettings['settingGroupSort_' + response.data.groups[i].Gid];
+                        for (var i = 0; i < $scope.groups.length; i++) {
+                            //if (!$scope.widgetSettings['settingGroupSort_' + $scope.groups[i].Gid]) {
+                                var currentValue = $scope.widgetSettings['settingGroupSort_' + $scope.groups[i].Gid];
 
                                 if (!currentValue || currentValue === 0)
                                     currentValue = 10;
@@ -31,14 +32,14 @@
                                 if (i === 0)
                                     addHtmlForGroupBlockTable();
 
-                                addHtmlGroupBlock(response.data.groups[i].Gid, response.data.groups[i].Nme, currentValue);
+                                addHtmlGroupBlock($scope.groups[i].Gid, $scope.groups[i].Nme, currentValue);
 
-                                if (i === (response.data.groups.length - 1))
+                                if (i === ($scope.groups.length - 1))
                                     addHtmlForGroupBlockTableEnd();
-                            }
+                            //}
 
-                            if (!$scope.widgetSettings['settingGroupSort_' + response.data.groups[i].Gid] || $scope.widgetSettings['settingGroupSort_' + response.data.groups[i].Gid] === 0)
-                                $scope.widgetSettings['settingGroupSort_' + response.data.groups[i].Gid] = 10;
+                            if (!$scope.widgetSettings['settingGroupSort_' + $scope.groups[i].Gid] || $scope.widgetSettings['settingGroupSort_' + $scope.groups[i].Gid] === 0)
+                                $scope.widgetSettings['settingGroupSort_' + $scope.groups[i].Gid] = 10;
                         }
                     }
                 }, function errorCallback(response) {

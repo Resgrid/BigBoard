@@ -10,7 +10,8 @@ angular.module('bigBoard', ['ui.router',
                             'ngToast',
                             'chromeStorage',
                             'angularMoment',
-                            'uiGmapgoogle-maps'
+                            'uiGmapgoogle-maps',
+                            'checklist-model'
 ])
     .config(configure)
     .config(configureInterceptors)

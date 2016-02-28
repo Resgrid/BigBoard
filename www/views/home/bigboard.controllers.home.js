@@ -3,8 +3,8 @@
 
     angular.module('bigBoard.controllers').controller('HomeController', homeController);
 
-    homeController.$inject = ['$scope', '$timeout', '$rootScope', 'settingsService'];
-    function homeController($scope, $timeout, $rootScope, settingsService) {
+    homeController.$inject = ['$scope', '$rootScope', 'settingsService'];
+    function homeController($scope, $rootScope, settingsService) {
         $scope.gridsterOptions = {
             margins: [10, 10],
             columns: 8,
@@ -36,6 +36,7 @@
         $scope.addWidget = function(type) {
             if (type === 1) {
                 $scope.dashboard.widgets.push({
+                    id: 1,
                     name: "Personnel",
                     templateUrl: "widgets/personnel/personnel.html",
                     controller: "PersonnelWidgetCtrl",
@@ -44,6 +45,7 @@
                 });
             } else if (type === 2) {
                 $scope.dashboard.widgets.push({
+                    id: 2,
                     name: "Map",
                     templateUrl: "widgets/map/map.html",
                     controller: "MapWidgetCtrl",
@@ -52,6 +54,7 @@
                 });
             } else if (type === 3) {
                 $scope.dashboard.widgets.push({
+                    id: 3,
                     name: "Weather",
                     templateUrl: "widgets/weather/weather.html",
                     controller: "WeatherWidgetCtrl",
@@ -60,6 +63,7 @@
                 });
             } else if (type === 4) {
                 $scope.dashboard.widgets.push({
+                    id: 4,
                     name: "Units",
                     templateUrl: "widgets/units/units.html",
                     controller: "UnitsWidgetCtrl",
@@ -68,6 +72,7 @@
                 });
             } else if (type === 5) {
                 $scope.dashboard.widgets.push({
+                    id: 5,
                     name: "Calls",
                     templateUrl: "widgets/calls/calls.html",
                     controller: "CallsWidgetCtrl",
