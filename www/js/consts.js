@@ -22,7 +22,10 @@ var CONSTS = {
         WEATHER_SETTINGS_UPDATED: 'weatherWidgetSettingsUpdated',
         WEATHER_RESIZED: 'weatherWidgetResized',
         UNIT_SETTINGS_UPDATED: 'unitWidgetSettingsUpdated',
-        CALL_SETTINGS_UPDATED: 'callWidgetSettingsUpdated'
+        CALL_SETTINGS_UPDATED: 'callWidgetSettingsUpdated',
+        CALLS_UPDATED: 'eventsCallsUpdated',
+        PERSONNEL_UPDATED: 'eventsPersonnelUpdated',
+        UNITS_UPDATED: 'eventsUnitsUpdated'
     },
     DATA: {
         LOCALPERSONNEL: [],
