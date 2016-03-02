@@ -11,6 +11,11 @@
             loadData();
         });
 
+        $rootScope.$on(CONSTS.EVENTS.UNITS_UPDATED, function (event, data) {
+            $scope.widgetSettings = settingsService.getUnitWidgetSettings();
+            loadData();
+        });
+
         $scope.widgetSettings = settingsService.getUnitWidgetSettings();
         $scope.units = [];
 

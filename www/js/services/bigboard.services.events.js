@@ -7,16 +7,17 @@
     function eventService($rootScope, SERVICEURLBASE, settingsService) {
         var myConId;
         var departmentId;
-
-        var eventHub = $.connection.eventingHub;
+        var eventHub;
 
         function init() {
+            $.connection.hub.url = SERVICEURLBASE + '/signalr';
+            eventHub = $.connection.eventingHub;
+
             registerClientMethods();
             startConnection();
         }
 
         function startConnection() {
-            $.connection.hub.url = SERVICEURLBASE + '/signalr';
             departmentId = settingsService.getDepartmentId();
 
             $.connection.hub.start().done(function () {
@@ -29,15 +30,15 @@
                 myConId = id;
             };
 
-            eventHub.client.callsUpdated = function (departmentId, id) {
+            eventHub.client.callsUpdated = function (id) {
                 $rootScope.$broadcast(CONSTS.EVENTS.CALLS_UPDATED);
             };
 
-            eventHub.client.personnelStatusUpdated = function (departmentId, id) {
+            eventHub.client.personnelStatusUpdated = function (id) {
                 $rootScope.$broadcast(CONSTS.EVENTS.PERSONNEL_UPDATED);
             };
 
-            eventHub.client.unitStatusUpdated = function (departmentId, id) {
+            eventHub.client.unitStatusUpdated = function (id) {
                 $rootScope.$broadcast(CONSTS.EVENTS.UNITS_UPDATED);
             };
         }

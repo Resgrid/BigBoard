@@ -12,6 +12,11 @@
         $scope.calls = [];
         $scope.widgetSettings = settingsService.getCallWidgetSettings();
 
+        $rootScope.$on(CONSTS.EVENTS.CALLS_UPDATED, function (event, data) {
+            $scope.widgetSettings = settingsService.getCallWidgetSettings();
+            loadData();
+        });
+
         loadData();
         function loadData() {
             dataService.getCalls().then(

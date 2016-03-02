@@ -33,6 +33,21 @@
             }, 500);
         });
 
+        $rootScope.$on(CONSTS.EVENTS.PERSONNEL_UPDATED, function (event, data) {
+            $scope.widgetSettings = settingsService.getPersonnelWidgetSettings();
+            loadData();
+        });
+
+        $rootScope.$on(CONSTS.EVENTS.CALLS_UPDATED, function (event, data) {
+            $scope.widgetSettings = settingsService.getPersonnelWidgetSettings();
+            loadData();
+        });
+
+        $rootScope.$on(CONSTS.EVENTS.UNITS_UPDATED, function (event, data) {
+            $scope.widgetSettings = settingsService.getPersonnelWidgetSettings();
+            loadData();
+        });
+
         loadData();
         function loadData() {
             dataService.getMap().then(

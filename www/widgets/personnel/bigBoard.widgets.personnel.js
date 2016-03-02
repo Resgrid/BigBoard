@@ -11,6 +11,11 @@
             loadData();
         });
 
+        $rootScope.$on(CONSTS.EVENTS.PERSONNEL_UPDATED, function (event, data) {
+            $scope.widgetSettings = settingsService.getPersonnelWidgetSettings();
+            loadData();
+        });
+
         $scope.remove = function(widget) {
             $scope.dashboard.widgets.splice($scope.dashboard.widgets.indexOf(widget), 1);
         };

@@ -17,12 +17,14 @@ angular.module('bigBoard', ['ui.router',
     .config(configureInterceptors)
     .config(configureToast)
     //.config(configureGmapGoogleMapApi)
-    .run(function(settingsService, deviceUtils) {
+    .run(function(settingsService, deviceUtils, eventService) {
 
         settingsService.init();
         if (deviceUtils.isChrome()) {
             settingsService.prime();
         }
+
+        eventService.init();
     });
 
 angular.module('bigBoard.controllers', []);

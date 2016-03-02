@@ -3,9 +3,10 @@
 
     angular.module('bigBoard.controllers').controller('WeatherWidgetCtrl', weatherWidgetCtrl);
 
-    weatherWidgetCtrl.$inject = ['$scope', 'dataService', '$rootScope', 'settingsService'];
-    function weatherWidgetCtrl($scope, dataService, $rootScope, settingsService) {
+    weatherWidgetCtrl.$inject = ['$scope', 'dataService', '$rootScope', 'settingsService', '$interval'];
+    function weatherWidgetCtrl($scope, dataService, $rootScope, settingsService, $interval) {
 
+        var refreshTimer = null;
         $scope.units = "us";
         $scope.centerLat = 0;
         $scope.centerLon = 0;
@@ -18,9 +19,11 @@
             loadData();
         });
 
-        var widget = document.getElementById('map').parentNode.parentNode.parentNode.parentNode.parentNode;
-        var height = widget.clientHeight - 70;
-        $scope.height = height + "px";
+        $scope.$on("$destroy", function handler() {
+            $interval.cancel(refreshTimer);
+        });
+
+        refreshTimer = $interval(loadData, 3600000);
 
         loadData();
         function loadData() {
