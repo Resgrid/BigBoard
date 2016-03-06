@@ -80,6 +80,7 @@ packages
 *.swp
 *.received.txt
 
+web/
 bower_components/
 www/bower_components/
 node_modules/
