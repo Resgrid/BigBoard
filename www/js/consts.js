@@ -1,5 +1,5 @@
-var _serviceUrlBase = 'http://resgridapi.local';
-//var _serviceUrlBase = 'https://api.resgrid.com';
+//var _serviceUrlBase = 'http://resgridapi.local';
+var _serviceUrlBase = 'https://api.resgrid.com';
 var _serviceUrl = _serviceUrlBase + '/api/v3';
 
 angular.module('bigBoard')

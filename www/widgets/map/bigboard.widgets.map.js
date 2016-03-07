@@ -62,11 +62,14 @@
                             //mapTypeId: google.maps.MapTypeId.ROADMAP
                         };
 
-                        var widget = document.getElementById('map').parentNode.parentNode.parentNode.parentNode.parentNode;
-                        var height = widget.clientHeight - 70;
-                        $scope.height = height + "px";
-                        $scope.width = "100%";
-
+                        // Can be null during widget add/remove operations
+                        var mapDom = document.getElementById('map');
+                        if (mapDom) {
+                            var widget = document.getElementById('map').parentNode.parentNode.parentNode.parentNode.parentNode;
+                            var height = widget.clientHeight - 70;
+                            $scope.height = height + "px";
+                            $scope.width = "100%";
+                        }
                         $scope.zoomLevel = $scope.mapData.ZoomLevel;
                         map = new google.maps.Map(document.getElementById('map'), mapOptions);
 
