@@ -40,8 +40,8 @@
                     name: "Personnel",
                     templateUrl: "widgets/personnel/personnel.html",
                     controller: "PersonnelWidgetCtrl",
-                    sizeX: 22,
-                    sizeY: 8
+                    sizeX: 30,
+                    sizeY: 14
                 });
             } else if (type === 2) {
                 $scope.dashboard.widgets.push({
@@ -49,8 +49,8 @@
                     name: "Map",
                     templateUrl: "widgets/map/map.html",
                     controller: "MapWidgetCtrl",
-                    sizeX: 10,
-                    sizeY: 10
+                    sizeX: 18,
+                    sizeY: 15
                 });
             } else if (type === 3) {
                 $scope.dashboard.widgets.push({
@@ -58,8 +58,8 @@
                     name: "Weather",
                     templateUrl: "widgets/weather/weather.html",
                     controller: "WeatherWidgetCtrl",
-                    sizeX: 10,
-                    sizeY: 5
+                    sizeX: 18,
+                    sizeY: 9
                 });
             } else if (type === 4) {
                 $scope.dashboard.widgets.push({
@@ -67,8 +67,8 @@
                     name: "Units",
                     templateUrl: "widgets/units/units.html",
                     controller: "UnitsWidgetCtrl",
-                    sizeX: 10,
-                    sizeY: 7
+                    sizeX: 14,
+                    sizeY: 10
                 });
             } else if (type === 5) {
                 $scope.dashboard.widgets.push({
@@ -76,12 +76,19 @@
                     name: "Calls",
                     templateUrl: "widgets/calls/calls.html",
                     controller: "CallsWidgetCtrl",
-                    sizeX: 12,
-                    sizeY: 7
+                    sizeX: 16,
+                    sizeY: 10
                 });
-            } else if (type === 6) {
-
             }
+        };
+
+        $scope.isWidgetActive = function(id) {
+            for (var i = 0; i < $scope.dashboard.widgets.length; i++) {
+                if ($scope.dashboard.widgets[i].id == id)
+                    return true;
+            }
+
+            return false;
         };
 
         $scope.openWidgetMenu = function() {
@@ -96,6 +103,8 @@
                     $rootScope.Ui.turnOn('unitSettings');
                 } else if (widget.controller === "CallsWidgetCtrl") {
                     $rootScope.Ui.turnOn('callSettings');
+                } else if (widget.controller === "WeatherWidgetCtrl") {
+                    $rootScope.Ui.turnOn('weatherSettings');
                 }
             }
         };
@@ -130,6 +139,10 @@
 
                 if (layout && layout.length > 0) {
                     $scope.dashboard.widgets = layout
+                } else {
+                    ngToast.warning({
+                        content: 'You have not added any widgets. Use the 3 dot menu in the upper right hand corner to add widgets, then use that menu to save the layout you created.'
+                    });
                 }
             } else {
                 ngToast.warning({
