@@ -27,24 +27,42 @@
 
         loadData();
         function loadData() {
-            dataService.getWeather().then(
-                function successCallback(response) {
-                    if (response && response.data) {
-                        var widget = document.getElementById('map').parentNode.parentNode.parentNode.parentNode.parentNode;
-                        var height = widget.clientHeight - 70;
-                        $scope.height = height + "px";
 
-                        $scope.units = response.data.WeatherUnit;
-                        $scope.centerLat = response.data.Latitude;
-                        $scope.centerLon = response.data.Longitude;
+            if ($scope.widgetSettings && $scope.widgetSettings.centerLat > 0 &&  $scope.widgetSettings.centerLon > 0) {
+                var iframe = document.getElementById('forecast_embed');
+                if (iframe) {
+                    iframe.src = "https://forecast.io/embed/#lat=" + scope.widgetSettings.centerLat + "&lon=" + scope.widgetSettings.centerLon + "&units=" + scope.widgetSettings.units + "&name="
+                }
 
-                        var iframe = document.getElementById('forecast_embed');
-                        //iframe.src = iframe.src;
-                        iframe.src = "https://forecast.io/embed/#lat=" + $scope.centerLat + "&lon=" + $scope.centerLon + "&units=" + $scope.units + "&name="
-                    }
-                }, function errorCallback(response) {
+                resize();
+            } else {
+                dataService.getWeather().then(
+                    function successCallback(response) {
+                        if (response && response.data) {
+                            resize();
 
-                });
+                            $scope.units = response.data.WeatherUnit;
+                            $scope.centerLat = response.data.Latitude;
+                            $scope.centerLon = response.data.Longitude;
+
+                            var iframe = document.getElementById('forecast_embed');
+                            if (iframe) {
+                                iframe.src = "https://forecast.io/embed/#lat=" + $scope.centerLat + "&lon=" + $scope.centerLon + "&units=" + $scope.units + "&name="
+                            }
+                        }
+                    }, function errorCallback(response) {
+
+                    });
+            }
+        }
+
+        function resize() {
+            var domWidget = document.getElementById('map');
+            if (domWidget) {
+                var widget = domWidget.parentNode.parentNode.parentNode.parentNode.parentNode;
+                var height = widget.clientHeight - 70;
+                $scope.height = height + "px";
+            }
         }
     }
 
