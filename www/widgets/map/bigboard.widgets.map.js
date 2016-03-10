@@ -16,7 +16,7 @@
         $scope.centerMapOnPins = 1;
         $scope.height = "250px";
         $scope.width = "100%";
-        $scope.widgetSettings = settingsService.getPersonnelWidgetSettings();
+        $scope.widgetSettings = settingsService.getMapWidgetSettings();
 
         $scope.openSettings = function(widget) {
             $rootScope.Ui.turnOn('mapSettings');
@@ -31,6 +31,11 @@
                 google.maps.event.trigger(map, "resize");
                 map.setZoom(map.getZoom());
             }, 500);
+        });
+
+        $rootScope.$on(CONSTS.EVENTS.MAP_SETTINGS_UPDATED, function (event, data) {
+            $scope.widgetSettings = settingsService.getMapWidgetSettings();
+            loadData();
         });
 
         $rootScope.$on(CONSTS.EVENTS.PERSONNEL_UPDATED, function (event, data) {
@@ -107,7 +112,7 @@
                                     $scope.markers.push(mapMarker);
                                 }
 
-                                if ($scope.centerMapOnPins) {
+                                if ($scope.widgetSettings.showAllMarkers && $scope.centerMapOnPins) {
                                     var latlngbounds = new google.maps.LatLngBounds();
                                     for (var y = 0; y < newMarkers.length; y++) {
                                         var latLng = new google.maps.LatLng(newMarkers[y].Latitude, newMarkers[y].Longitude);
@@ -118,6 +123,10 @@
                                     map.fitBounds(latlngbounds);
                                     var zoom = map.getZoom();
                                     map.setZoom(zoom > $scope.zoomLevel ? $scope.zoomLevel : zoom);
+                                } else if ($scope.widgetSettings.centerLat > 0 && $scope.widgetSettings.centerLon > 0) {
+                                    var mapCenter = new google.maps.LatLng($scope.widgetSettings.centerLat, $scope.widgetSettings.centerLon);
+                                    map.setCenter(mapCenter);
+                                    map.setZoom($scope.widgetSettings.zoom);
                                 }
                             }
                         }
