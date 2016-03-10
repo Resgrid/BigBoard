@@ -105,6 +105,8 @@
                     $rootScope.Ui.turnOn('callSettings');
                 } else if (widget.controller === "WeatherWidgetCtrl") {
                     $rootScope.Ui.turnOn('weatherSettings');
+                } else if (widget.controller === "MapWidgetCtrl") {
+                    $rootScope.Ui.turnOn('mapSettings');
                 }
             }
         };

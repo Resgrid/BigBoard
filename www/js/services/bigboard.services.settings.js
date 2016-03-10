@@ -243,9 +243,10 @@
 
             if (!text || text.length <= 0)
                 return {
-                    zoom: 11,
+                    zoom: "11",
                     centerLat: 0,
-                    centerLon: 0
+                    centerLon: 0,
+					showAllMarkers: true
                 };
             else
                 return JSON.parse(text);
@@ -291,9 +292,11 @@
 
             if (!text || text.length <= 0)
                 return {
-                    units: "us",
-                    centerLat: 0,
-                    centerLon: 0
+                    showId: true,
+                    showName: true,
+                    showTimestamp: true,
+					showUser: true,
+					showPriority: true
                 };
             else
                 return JSON.parse(text);

@@ -17,6 +17,11 @@
             loadData();
         });
 
+        $rootScope.$on(CONSTS.EVENTS.CALL_SETTINGS_UPDATED, function (event, data) {
+            $scope.widgetSettings = settingsService.getCallWidgetSettings();
+            loadData();
+        });
+
         loadData();
         function loadData() {
             dataService.getCalls().then(

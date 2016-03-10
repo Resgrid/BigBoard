@@ -8,7 +8,7 @@
 
         $scope.widgetSettings = settingsService.getCallWidgetSettings();
         $scope.saveSettings = function() {
-            settingsService.setMapWidgetSettings($scope.widgetSettings);
+            settingsService.setCallWidgetSettings($scope.widgetSettings);
             $rootScope.$broadcast(CONSTS.EVENTS.CALL_SETTINGS_UPDATED);
             $rootScope.Ui.turnOff('callSettings');
         };
