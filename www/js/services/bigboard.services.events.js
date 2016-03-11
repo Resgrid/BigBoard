@@ -14,7 +14,8 @@
         });
 
         function init() {
-            $.connection.hub.url = SERVICEURLBASE + '/signalr';
+            //$.connection.hub.url = SERVICEURLBASE + '/signalr';
+            $.connection.hub.url = 'http://api.resgrid.com/signalr';
             eventHub = $.connection.eventingHub;
 
             registerClientMethods();
