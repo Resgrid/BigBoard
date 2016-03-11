@@ -1,8 +1,8 @@
 
 // Application Environment
-//window.ENVIRONMENT = 'web.release';
+window.ENVIRONMENT = 'web.release';
 //window.ENVIRONMENT = 'web.testing';
-window.ENVIRONMENT = 'ios.release';
+//window.ENVIRONMENT = 'ios.release';
 //window.ENVIRONMENT = 'ios.testing';
 //window.ENVIRONMENT = 'android.release';
 //window.ENVIRONMENT = 'android.testing';

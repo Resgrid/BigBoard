@@ -25,7 +25,9 @@ var CONSTS = {
         CALL_SETTINGS_UPDATED: 'callWidgetSettingsUpdated',
         CALLS_UPDATED: 'eventsCallsUpdated',
         PERSONNEL_UPDATED: 'eventsPersonnelUpdated',
-        UNITS_UPDATED: 'eventsUnitsUpdated'
+        UNITS_UPDATED: 'eventsUnitsUpdated',
+        CONNECTED: 'connected',
+        DISCONNECTED: 'disconnected'
     },
     DATA: {
         LOCALPERSONNEL: [],
