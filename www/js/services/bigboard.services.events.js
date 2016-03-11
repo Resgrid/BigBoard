@@ -23,6 +23,15 @@
             $.connection.hub.start().done(function () {
                 eventHub.server.connect(departmentId);
             });
+
+            $.connection.hub.disconnected(function() {
+                setTimeout(function() {
+                    alert('reconnecting');
+                    $.connection.hub.start().done(function () {
+                        eventHub.server.connect(departmentId);
+                    });
+                }, 5000); // Restart connection after 5 seconds.
+            });
         }
 
         function registerClientMethods() {
