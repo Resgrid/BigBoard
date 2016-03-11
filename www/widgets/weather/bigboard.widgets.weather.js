@@ -31,7 +31,7 @@
             if ($scope.widgetSettings && $scope.widgetSettings.centerLat > 0 &&  $scope.widgetSettings.centerLon > 0) {
                 var iframe = document.getElementById('forecast_embed');
                 if (iframe) {
-                    iframe.src = "https://forecast.io/embed/#lat=" + scope.widgetSettings.centerLat + "&lon=" + scope.widgetSettings.centerLon + "&units=" + scope.widgetSettings.units + "&name="
+                    iframe.src = window.location.protocol + "//forecast.io/embed/#lat=" + scope.widgetSettings.centerLat + "&lon=" + scope.widgetSettings.centerLon + "&units=" + scope.widgetSettings.units + "&name="
                 }
 
                 resize();
@@ -47,7 +47,7 @@
 
                             var iframe = document.getElementById('forecast_embed');
                             if (iframe) {
-                                iframe.src = "https://forecast.io/embed/#lat=" + $scope.centerLat + "&lon=" + $scope.centerLon + "&units=" + $scope.units + "&name="
+                                iframe.src = window.location.protocol + "//forecast.io/embed/#lat=" + $scope.centerLat + "&lon=" + $scope.centerLon + "&units=" + $scope.units + "&name="
                             }
                         }
                     }, function errorCallback(response) {

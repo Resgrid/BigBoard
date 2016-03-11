@@ -9,6 +9,10 @@
         var departmentId;
         var eventHub;
 
+        $rootScope.$on(CONSTS.EVENTS.SETTINGS_SAVED, function (event, data) {
+            init();
+        });
+
         function init() {
             $.connection.hub.url = SERVICEURLBASE + '/signalr';
             eventHub = $.connection.eventingHub;
@@ -20,19 +24,30 @@
         function startConnection() {
             departmentId = settingsService.getDepartmentId();
 
-            $.connection.hub.start().done(function () {
-                eventHub.server.connect(departmentId);
-            });
+            if (departmentId && departmentId > 0) {
+                $.connection.hub.disconnected(function () {
+                    console.log('disconnected');
+                    setTimeout(function () {
+                        console.log('reconnecting');
+                        $.connection.hub.start().done(function () {
+                            console.log('connected');
+                            $rootScope.$broadcast(CONSTS.EVENTS.CONNECTED);
+                            eventHub.server.connect(departmentId);
+                        });
+                    }, 5000); // Restart connection after 5 seconds.
+                });
 
-            $.connection.hub.disconnected(function() {
-                setTimeout(function() {
-                    alert('reconnecting');
-                    $.connection.hub.start().done(function () {
-                        eventHub.server.connect(departmentId);
-                    });
-                }, 5000); // Restart connection after 5 seconds.
-            });
+                $.connection.hub.start().done(function () {
+                    console.log('connected');
+                    $rootScope.$broadcast(CONSTS.EVENTS.CONNECTED);
+                    eventHub.server.connect(departmentId);
+                });
+            }
         }
+
+        window.onbeforeunload = function () {
+            $.connection.hub.stop();
+        };
 
         function registerClientMethods() {
             eventHub.client.onConnected = function (id) {
