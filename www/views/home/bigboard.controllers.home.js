@@ -136,7 +136,9 @@
                 widgets: []
             };
 
-            if (settingsService.areSettingsSet()) {
+            if (window.DEMO) {
+                $scope.dashboard.widgets = JSON.parse("[{\"id\":1,\"name\":\"Personnel\",\"templateUrl\":\"widgets/personnel/personnel.html\",\"controller\":\"PersonnelWidgetCtrl\",\"sizeX\":30,\"sizeY\":14,\"$$hashKey\":\"object:46\",\"row\":0,\"col\":0},{\"id\":2,\"name\":\"Map\",\"templateUrl\":\"widgets/map/map.html\",\"controller\":\"MapWidgetCtrl\",\"sizeX\":18,\"sizeY\":15,\"$$hashKey\":\"object:58\",\"row\":0,\"col\":30},{\"id\":4,\"name\":\"Units\",\"templateUrl\":\"widgets/units/units.html\",\"controller\":\"UnitsWidgetCtrl\",\"sizeX\":14,\"sizeY\":10,\"$$hashKey\":\"object:174\",\"row\":14,\"col\":0},{\"id\":5,\"name\":\"Calls\",\"templateUrl\":\"widgets/calls/calls.html\",\"controller\":\"CallsWidgetCtrl\",\"sizeX\":16,\"sizeY\":10,\"$$hashKey\":\"object:233\",\"row\":14,\"col\":14},{\"id\":3,\"name\":\"Weather\",\"templateUrl\":\"widgets/weather/weather.html\",\"controller\":\"WeatherWidgetCtrl\",\"sizeX\":18,\"sizeY\":9,\"$$hashKey\":\"object:335\",\"row\":15,\"col\":30}]");
+            } else if (settingsService.areSettingsSet()) {
                 var layout = settingsService.getLayout();
 
                 if (layout && layout.length > 0) {
