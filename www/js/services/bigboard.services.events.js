@@ -16,6 +16,8 @@
         function init() {
             //$.connection.hub.url = SERVICEURLBASE + '/signalr';
             $.connection.hub.url = 'http://api.resgrid.com/signalr';
+            //$.connection.hub.url = 'http://resgridapi.local/signalr';
+
             eventHub = $.connection.eventingHub;
 
             registerClientMethods();
@@ -34,7 +36,7 @@
                             console.log('connected');
                             $rootScope.$broadcast(CONSTS.EVENTS.CONNECTED);
                             eventHub.server.connect(departmentId);
-                        });
+                        }).fail(function(){ console.log('Could not connect'); });
                     }, 5000); // Restart connection after 5 seconds.
                 });
 
@@ -42,7 +44,7 @@
                     console.log('connected');
                     $rootScope.$broadcast(CONSTS.EVENTS.CONNECTED);
                     eventHub.server.connect(departmentId);
-                });
+                }).fail(function(){ console.log('Could not connect'); });
             }
         }
 
