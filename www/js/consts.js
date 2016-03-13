@@ -32,7 +32,7 @@ var CONSTS = {
     DATA: {
         LOCALPERSONNEL: [],
         LOCALGROUPS: [],
-        DEMO_TOKEN: 'Z1VLalNNbVQvcUR5bzBaaEF0TFJrZzYxc3BEclRxR3czYk5WYmNYMVNJaz0='
+        DEMO_TOKEN: 'S2RoUU1jSFRFbU1oeHVmS0RCei9xUVk1STQxTnFObktTVmJ5V0NHMWxXTT0='
     },
     STATUS: {
         STANDINGBY: 0,
