@@ -3,8 +3,8 @@
 
     angular.module('bigBoard.controllers').controller('CallsWidgetCtrl', callsWidgetCtrl);
 
-    callsWidgetCtrl.$inject = ['$scope', 'dataService', '$rootScope', '$timeout', 'settingsService'];
-    function callsWidgetCtrl($scope, dataService, $rootScope, $timeout, settingsService) {
+    callsWidgetCtrl.$inject = ['$scope', 'dataService', '$rootScope', '$timeout', 'settingsService', 'analyticsService'];
+    function callsWidgetCtrl($scope, dataService, $rootScope, $timeout, settingsService, analyticsService) {
         $scope.remove = function(widget) {
             $scope.dashboard.widgets.splice($scope.dashboard.widgets.indexOf(widget), 1);
         };
@@ -24,6 +24,8 @@
 
         loadData();
         function loadData() {
+            analyticsService.trackFeature("Calls Widget - Load Data");
+            
             dataService.getCalls().then(
                 function successCallback(response) {
                     if (response && response.data) {

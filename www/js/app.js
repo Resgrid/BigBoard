@@ -17,14 +17,20 @@ angular.module('bigBoard', ['ui.router',
     .config(configureInterceptors)
     .config(configureToast)
     //.config(configureGmapGoogleMapApi)
-    .run(function(settingsService, deviceUtils, eventService) {
+    .run(function($rootScope, settingsService, deviceUtils, eventService, analyticsService) {
 
         settingsService.init();
         if (deviceUtils.isChrome()) {
             settingsService.prime();
         }
 
+        $rootScope.$on(CONSTS.EVENTS.SETTINGS_SAVED, function (event, message) {
+            console.log('SettingsSaved event triggered');
+            analyticsService.init();
+        });
+
         eventService.init();
+        analyticsService.init();
     });
 
 angular.module('bigBoard.controllers', []);
@@ -77,12 +83,12 @@ angular.module('bigBoard.utils', []);
 // END Configure Interceptors
 
 // START Configure GmapGoogleMapApi
-configureGmapGoogleMapApi.$inject = ['uiGmapGoogleMapApiProvider'];
-function configureGmapGoogleMapApi(uiGmapGoogleMapApiProvider) {
-    uiGmapGoogleMapApiProvider.configure({
-        //    key: 'your api key',
-        v: '3.20', //defaults to latest 3.X anyhow
-        libraries: 'weather,geometry,visualization'
-    });
-}
+    configureGmapGoogleMapApi.$inject = ['uiGmapGoogleMapApiProvider'];
+    function configureGmapGoogleMapApi(uiGmapGoogleMapApiProvider) {
+        uiGmapGoogleMapApiProvider.configure({
+            //    key: 'your api key',
+            v: '3.20', //defaults to latest 3.X anyhow
+            libraries: 'weather,geometry,visualization'
+        });
+    }
 // END Configure GmapGoogleMapApi

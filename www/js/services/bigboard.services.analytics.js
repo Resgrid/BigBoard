@@ -33,11 +33,10 @@
 			}
 		};
 
-
 		return {
 			init: initAnalytics,
 			trackFeature: track
 		};
-	};
+	}
 
 }());

@@ -3,8 +3,8 @@
 
     angular.module('bigBoard.controllers').controller('HomeController', homeController);
 
-    homeController.$inject = ['$scope', '$rootScope', 'settingsService', 'ngToast'];
-    function homeController($scope, $rootScope, settingsService, ngToast) {
+    homeController.$inject = ['$scope', '$rootScope', 'settingsService', 'ngToast', 'analyticsService'];
+    function homeController($scope, $rootScope, settingsService, ngToast, analyticsService) {
         $scope.gridsterOptions = {
             margins: [10, 10],
             columns: 48,
@@ -132,6 +132,8 @@
 
         init();
         function init() {
+            analyticsService.trackFeature("Home");
+
             $scope.dashboard = {
                 id: '1',
                 name: 'Home',

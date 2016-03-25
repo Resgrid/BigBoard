@@ -3,13 +3,15 @@
 
     angular.module('bigBoard.controllers').controller('SettingsController', settingsController);
 
-    settingsController.$inject = ['$rootScope', 'authService', 'settingsService', 'ngToast'];
-    function settingsController($rootScope, authService, settingsService, ngToast) {
+    settingsController.$inject = ['$rootScope', 'authService', 'settingsService', 'ngToast', 'analyticsService'];
+    function settingsController($rootScope, authService, settingsService, ngToast, analyticsService) {
         var vm = this;
 
         vm.username = '';
         vm.password = '';
         vm.saving = false;
+
+        analyticsService.trackFeature("Settings");
 
         (function activate() {
             vm.username = settingsService.getUsername();
