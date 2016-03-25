@@ -1,3 +1,7 @@
+.app-content {
+    overflow: scroll !important;
+}
+
 .controls {
     margin-bottom: 20px;
 }

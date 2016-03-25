@@ -3,8 +3,8 @@
 
     angular.module('bigBoard.controllers').controller('MapWidgetCtrl', mapWidgetCtrl);
 
-    mapWidgetCtrl.$inject = ['$scope', 'dataService', '$rootScope', '$timeout', 'settingsService'];
-    function mapWidgetCtrl($scope, dataService, $rootScope, $timeout, settingsService) {
+    mapWidgetCtrl.$inject = ['$scope', 'dataService', '$rootScope', '$timeout', 'settingsService', 'analyticsService'];
+    function mapWidgetCtrl($scope, dataService, $rootScope, $timeout, settingsService, analyticsService) {
         $scope.remove = function(widget) {
             $scope.dashboard.widgets.splice($scope.dashboard.widgets.indexOf(widget), 1);
         };
@@ -55,6 +55,8 @@
 
         loadData();
         function loadData() {
+            analyticsService.trackFeature("Map Widget - Load Data");
+            
             dataService.getMap().then(
                 function successCallback(response) {
                     if (response && response.data) {

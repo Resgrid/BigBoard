@@ -3,8 +3,8 @@
 
     angular.module('bigBoard.controllers').controller('PersonnelWidgetCtrl', personnelWidgetCtrl);
 
-    personnelWidgetCtrl.$inject = ['$scope', 'dataService', '$rootScope', 'settingsService', '$filter'];
-    function personnelWidgetCtrl($scope, dataService, $rootScope, settingsService, $filter) {
+    personnelWidgetCtrl.$inject = ['$scope', 'dataService', '$rootScope', 'settingsService', '$filter', 'analyticsService'];
+    function personnelWidgetCtrl($scope, dataService, $rootScope, settingsService, $filter, analyticsService) {
 
         $rootScope.$on(CONSTS.EVENTS.PERSONNEL_SETTINGS_UPDATED, function (event, data) {
             $scope.widgetSettings = settingsService.getPersonnelWidgetSettings();
@@ -58,6 +58,8 @@
 
         loadData();
         function loadData() {
+            analyticsService.trackFeature("Personnel Widget - Load Data");
+            
             dataService.getPersonnelStatuses().then(
                 function successCallback(response) {
                     if (response && response.data) {

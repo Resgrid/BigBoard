@@ -3,8 +3,8 @@
 
     angular.module('bigBoard.services').factory('eventService', eventService);
 
-    eventService.$inject = ['$rootScope', 'SERVICEURLBASE', 'settingsService'];
-    function eventService($rootScope, SERVICEURLBASE, settingsService) {
+    eventService.$inject = ['$rootScope', 'SERVICEURLBASE', 'settingsService', 'analyticsService'];
+    function eventService($rootScope, SERVICEURLBASE, settingsService, analyticsService) {
         var myConId;
         var departmentId;
         var eventHub;
@@ -29,21 +29,29 @@
             if (departmentId && departmentId > 0) {
                 $.connection.hub.disconnected(function () {
                     console.log('disconnected');
+                    analyticsService.trackFeature("Eventing - Disconnected");
+
                     setTimeout(function () {
                         console.log('reconnecting');
+                        analyticsService.trackFeature("Eventing - Reconnecting");
+
                         $.connection.hub.start().done(function () {
                             console.log('connected');
+                            analyticsService.trackFeature("Eventing - Reconnecting Successful");
+
                             $rootScope.$broadcast(CONSTS.EVENTS.CONNECTED);
                             eventHub.server.connect(departmentId);
-                        }).fail(function(){ console.log('Could not connect'); });
+                        }).fail(function(){ console.log('Could not connect'); analyticsService.trackFeature("Eventing - Reconnecting Failed"); });
                     }, 5000); // Restart connection after 5 seconds.
                 });
 
                 $.connection.hub.start().done(function () {
                     console.log('connected');
+                    analyticsService.trackFeature("Eventing - Connected");
+
                     $rootScope.$broadcast(CONSTS.EVENTS.CONNECTED);
                     eventHub.server.connect(departmentId);
-                }).fail(function(){ console.log('Could not connect'); });
+                }).fail(function(){ console.log('Could not connect'); analyticsService.trackFeature("Eventing - Connect Failed"); });
             }
         }
 

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://ajax.cloudflare.com https://ssl.google-analytics.com https://maps.google.com http://maps.google.com http://localhost:35729 http://microsoft.winjs.1.0 http://api.resgrid.com https://d37gvrvc0wt4s1.cloudfront.net https://maps.googleapis.com http://maps.gstatic.com https://maps.gstatic.com https://csi.gstatic.com https://cdn.mxpnl.com https://secure.gravatar.com http://maps.googleapis.com https://mts.googleapis.com https://mts1.googleapis.com https://mts0.googleapis.com https://fonts.gstatic.com http://forecast.io https://forecast.io http://resgridapi.local https://resgridapi.local https://api.resgrid.com wss://api.resgrid.com ws://api.resgrid.com http://bigboardapp.azurewebsites.net http://bigboard.resgrid.com https://bigboard.resgrid.com 'unsafe-inline' data: https://api.rollbar.com http://api.mixpanel.com ws://localhost:35729 ws://resgridapi.local gap: https://ssl.gstatic.com 'unsafe-eval'; style-src https://fonts.googleapis.com https://fonts.gstatic.com https://resgrid.com http://api.resgrid.com https://api.resgrid.com https://resgridapi.local 'self' 'unsafe-inline'; media-src *">
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://ajax.cloudflare.com https://ssl.google-analytics.com https://maps.google.com http://maps.google.com http://localhost:35729 http://microsoft.winjs.1.0 http://api.resgrid.com https://d37gvrvc0wt4s1.cloudfront.net https://maps.googleapis.com http://maps.gstatic.com https://maps.gstatic.com https://csi.gstatic.com https://cdn.mxpnl.com https://secure.gravatar.com http://maps.googleapis.com https://mts.googleapis.com https://mts1.googleapis.com https://mts0.googleapis.com https://fonts.gstatic.com http://forecast.io https://forecast.io http://resgridapi.local https://resgridapi.local https://api.resgrid.com wss://api.resgrid.com ws://api.resgrid.com http://bigboardapp.azurewebsites.net http://bigboard.resgrid.com https://bigboard.resgrid.com 'unsafe-inline' data: https://api.rollbar.com https://api.mixpanel.com http://api.mixpanel.com ws://localhost:35729 ws://resgridapi.local gap: https://ssl.gstatic.com 'unsafe-eval'; style-src https://fonts.googleapis.com https://fonts.gstatic.com https://resgrid.com http://api.resgrid.com https://api.resgrid.com https://resgridapi.local 'self' 'unsafe-inline'; media-src *">
         <meta name="format-detection" content="telephone=no">
         <meta name="msapplication-tap-highlight" content="no">
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
@@ -24,6 +24,12 @@
                 window.ISDEMO = false;
             }
         </script>
+
+        <!-- start Mixpanel -->
+        <script data-rgRemove-Chrome type="text/javascript">
+            (function(e,b){if(!b.__SV){var a,f,i,g;window.mixpanel=b;b._i=[];b.init=function(a,e,d){function f(b,h){var a=h.split(".");2==a.length&&(b=b[a[0]],h=a[1]);b[h]=function(){b.push([h].concat(Array.prototype.slice.call(arguments,0)))}}var c=b;"undefined"!==typeof d?c=b[d]=[]:d="mixpanel";c.people=c.people||[];c.toString=function(b){var a="mixpanel";"mixpanel"!==d&&(a+="."+d);b||(a+=" (stub)");return a};c.people.toString=function(){return c.toString(1)+".people (stub)"};i="disable time_event track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config people.set people.set_once people.increment people.append people.union people.track_charge people.clear_charges people.delete_user".split(" ");
+                for(g=0;g<i.length;g++)f(c,i[g]);b._i.push([a,e,d])};b.__SV=1.2;a=e.createElement("script");a.type="text/javascript";a.async=!0;a.src="undefined"!==typeof MIXPANEL_CUSTOM_LIB_URL?MIXPANEL_CUSTOM_LIB_URL:"file:"===e.location.protocol&&"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js".match(/^\/\//)?"https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js":"https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";f=e.getElementsByTagName("script")[0];f.parentNode.insertBefore(a,f)}})(document,window.mixpanel||[]);
+            mixpanel.init("8bf6987a2154739c6dabca743e688992", { api_host: "https://api.mixpanel.com" });</script><!-- end Mixpanel -->
     </head>
     <body ng-app="bigBoard">
         <toast></toast>

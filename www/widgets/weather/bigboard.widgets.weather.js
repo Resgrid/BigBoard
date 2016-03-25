@@ -3,8 +3,8 @@
 
     angular.module('bigBoard.controllers').controller('WeatherWidgetCtrl', weatherWidgetCtrl);
 
-    weatherWidgetCtrl.$inject = ['$scope', 'dataService', '$rootScope', 'settingsService', '$interval'];
-    function weatherWidgetCtrl($scope, dataService, $rootScope, settingsService, $interval) {
+    weatherWidgetCtrl.$inject = ['$scope', 'dataService', '$rootScope', 'settingsService', '$interval', 'analyticsService'];
+    function weatherWidgetCtrl($scope, dataService, $rootScope, settingsService, $interval, analyticsService) {
 
         var refreshTimer = null;
         $scope.units = "us";
@@ -27,6 +27,7 @@
 
         loadData();
         function loadData() {
+            analyticsService.trackFeature("Weather Widget - Load Data");
 
             if ($scope.widgetSettings && $scope.widgetSettings.centerLat > 0 &&  $scope.widgetSettings.centerLon > 0) {
                 var iframe = document.getElementById('forecast_embed');

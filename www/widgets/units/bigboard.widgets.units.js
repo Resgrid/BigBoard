@@ -3,8 +3,8 @@
 
     angular.module('bigBoard.controllers').controller('UnitWidgetCtrl', unitWidgetCtrl);
 
-    unitWidgetCtrl.$inject = ['$scope', 'dataService', '$rootScope', '$filter', 'settingsService'];
-    function unitWidgetCtrl($scope, dataService, $rootScope, $filter, settingsService) {
+    unitWidgetCtrl.$inject = ['$scope', 'dataService', '$rootScope', '$filter', 'settingsService', 'analyticsService'];
+    function unitWidgetCtrl($scope, dataService, $rootScope, $filter, settingsService, analyticsService) {
 
         $rootScope.$on(CONSTS.EVENTS.UNIT_SETTINGS_UPDATED, function (event, data) {
             $scope.widgetSettings = settingsService.getUnitWidgetSettings();
@@ -41,6 +41,8 @@
 
         loadData();
         function loadData() {
+            analyticsService.trackFeature("Units Widget - Load Data");
+            
             dataService.getUnitStatuses().then(
                 function successCallback(response) {
                     if (response && response.data) {
