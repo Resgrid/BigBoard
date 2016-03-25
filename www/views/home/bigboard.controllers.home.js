@@ -80,6 +80,8 @@
                     sizeY: 10
                 });
             }
+
+            settingsService.setLayout($scope.dashboard.widgets);
         };
 
         $scope.isWidgetActive = function(id) {
