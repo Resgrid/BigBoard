@@ -75,6 +75,10 @@
             eventHub.client.unitStatusUpdated = function (id) {
                 $rootScope.$broadcast(CONSTS.EVENTS.UNITS_UPDATED);
             };
+
+            eventHub.client.personnelStaffingUpdated = function (id) {
+                $rootScope.$broadcast(CONSTS.EVENTS.PERSONNEL_UPDATED);
+            };
         }
 
         return {
