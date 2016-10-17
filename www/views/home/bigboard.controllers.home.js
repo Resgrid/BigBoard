@@ -146,7 +146,7 @@
                 var layout = settingsService.getLayout();
 
                 if (layout && layout.length > 0) {
-                    $scope.dashboard.widgets = layout
+                    $scope.dashboard.widgets = layout;
                 } else {
                     ngToast.warning({
                         content: 'You have not added any widgets. Use the 3 dot menu in the upper right hand corner to add widgets, then use that menu to save the layout you created.'
