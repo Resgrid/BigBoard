@@ -1,59 +1,48 @@
 {
   "name": "bigboard",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "BigBoard to view information from the Resgrid system",
-  "main": "gulpfile.js",
+  "author": "Resgrid Team",
+  "homepage": "https://resgrid.com/",
+  "private": true,
+  "scripts": {
+    "build": "ionic-app-scripts build",
+    "watch": "ionic-app-scripts watch",
+    "serve:before": "watch",
+    "emulate:before": "build",
+    "deploy:before": "build",
+    "build:before": "build",
+    "run:before": "build"
+  },
   "dependencies": {
-    "gulp": "^3.9.0",
-    "cordova-lib": "^5.3.1",
-    "gulp-livereload": "^3.8.0",
-    "ecstatic": "^1.0.0",
-    "del": "^2.0.2",
-    "gulp-watch": "^4.3.5",
-    "gulp-shell": "^0.4.3",
-    "gulp-util": "^3.0.6",
-    "gulp-print": "^1.2.0"
+    "@angular/common": "^2.0.0",
+    "@angular/compiler": "^2.0.0",
+    "@angular/compiler-cli": "0.6.2",
+    "@angular/core": "^2.0.0",
+    "@angular/forms": "^2.0.0",
+    "@angular/http": "^2.0.0",
+    "@angular/platform-browser": "^2.0.0",
+    "@angular/platform-browser-dynamic": "^2.0.0",
+    "@angular/platform-server": "^2.0.0",
+    "@ionic/storage": "^1.0.3",
+    "ionic-angular": "^2.0.0-rc.1",
+    "ionic-native": "^2.2.3",
+    "ionicons": "^3.0.0",
+    "rxjs": "5.0.0-beta.12",
+    "zone.js": "^0.6.21",
+    "angular2-grid": "^0.10.0"
   },
   "devDependencies": {
-    "gulp-insert-lines": "0.0.4",
-    "run-sequence": "^1.1.5"
+    "@ionic/app-scripts": "^0.0.36",
+    "typescript": "^2.0.3"
   },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Resgrid/BigBoard.git"
-  },
-  "keywords": [
-    "resgrid",
-    "big",
-    "board",
-    "responder",
-    "fire",
-    "fighter",
-    "ems",
-    "sar",
-    "cert",
-    "dashboard"
-  ],
-  "author": "Resgrid, LLC.",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Resgrid/BigBoard/issues"
-  },
-  "homepage": "https://github.com/Resgrid/BigBoard#readme",
   "cordovaPlugins": [
-    {
-      "locator": "https://github.com/crypho/cordova-plugin-secure-storage.git",
-      "id": "pro.fing.cordova.gapreload"
-    }
+    "cordova-plugin-whitelist",
+    "cordova-plugin-console",
+    "cordova-plugin-device",
+    "cordova-plugin-statusbar",
+    "cordova-plugin-splashscreen",
+    "ionic-plugin-keyboard"
   ],
-  "cordovaPlatforms": [
-    "ios",
-    {
-      "platform": "android",
-      "locator": "browser"
-    }
-  ]
+  "cordovaPlatforms": []
 }
