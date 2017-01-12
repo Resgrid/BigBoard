@@ -1,0 +1,62 @@
+<ion-header>
+  <ion-navbar>
+    <button ion-button menuToggle [hidden]="!(settings.AuthToken)">
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Settings</ion-title>
+    <button ion-button (click)="saveSettings()" [hidden]="!(settings.AuthToken)" color="success">Advanced</button>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+    <ion-list>
+      <form #signupForm="ngForm" novalidate>
+        <ion-item>
+          <ion-label floating color="primary">Username</ion-label>
+          <ion-input [(ngModel)]="settings.Username" name="username" type="text" #username="ngModel" required>
+          </ion-input>
+        </ion-item>
+        <p [hidden]="username.valid || saving == false" color="danger" padding-left>
+          Username is required
+        </p>
+
+        <ion-item>
+          <ion-label floating color="primary">Password</ion-label>
+          <ion-input [(ngModel)]="settings.Password" name="password" type="password" #password="ngModel" required>
+          </ion-input>
+        </ion-item>
+        <p [hidden]="password.valid || saving == false" color="danger" padding-left>
+          Password is required
+        </p>
+
+        <ion-item>
+          <ion-label> Geolocation (GPS)</ion-label>
+          <ion-toggle [(ngModel)]="settings.EnableGeolocation" name="EnableGeolocation" #EnableGeolocation="ngModel"></ion-toggle>
+        </ion-item>
+
+        <ion-item>
+          <ion-label> Detailed Responses</ion-label>
+          <ion-toggle [(ngModel)]="settings.EnableDetailedResponses" name="EnableDetailedResponses" #EnableDetailedResponses="ngModel"></ion-toggle>
+        </ion-item>
+
+        <ion-item>
+          <ion-label> Receive Push Notifications</ion-label>
+          <ion-toggle [(ngModel)]="settings.EnablePushNotifications" name="EnablePushNotifications" #EnablePushNotifications="ngModel"></ion-toggle>
+        </ion-item>
+
+        <ion-item>
+          <ion-label> Sort Responding to Top</ion-label>
+          <ion-toggle [(ngModel)]="settings.SortRespondingTop" name="SortRespondingTop" #SortRespondingTop="ngModel"></ion-toggle>
+        </ion-item>
+
+         <ion-item>
+          <ion-label> Enable Custom Push Sounds</ion-label>
+          <ion-toggle [(ngModel)]="settings.EnableCustomSounds" name="EnableCustomSounds" #EnableCustomSounds="ngModel"></ion-toggle>
+        </ion-item>
+
+        <div padding>
+          <button ion-button (click)="onSignup(signupForm)" [disabled]="!(username.valid && password.valid) || saving || demoMode" type="submit" block color="primary">Save</button>
+        </div>
+      </form>
+    </ion-list>
+</ion-content>

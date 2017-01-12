@@ -2,47 +2,79 @@
   "name": "bigboard",
   "version": "2.0.0",
   "description": "BigBoard to view information from the Resgrid system",
-  "author": "Resgrid Team",
-  "homepage": "https://resgrid.com/",
+  "main": "index.html",
+  "author": "Resgrid Team <team@resgrid.com>",
+  "homepage": "http://resgrid.com/",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Resgrid/BigBoard.git"
+  },
+  "keywords": [
+    "resgrid",
+    "big",
+    "board",
+    "responder",
+    "fire",
+    "fighter",
+    "ems",
+    "sar",
+    "cert",
+    "dashboard"
+  ],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Resgrid/BigBoard/issues"
+  },
   "scripts": {
+    "clean": "ionic-app-scripts clean",
     "build": "ionic-app-scripts build",
-    "watch": "ionic-app-scripts watch",
-    "serve:before": "watch",
-    "emulate:before": "build",
-    "deploy:before": "build",
-    "build:before": "build",
-    "run:before": "build"
+    "ionic:build": "ionic-app-scripts build",
+    "ionic:serve": "ionic-app-scripts serve"
   },
   "dependencies": {
-    "@angular/common": "^2.0.0",
-    "@angular/compiler": "^2.0.0",
-    "@angular/compiler-cli": "0.6.2",
-    "@angular/core": "^2.0.0",
-    "@angular/forms": "^2.0.0",
-    "@angular/http": "^2.0.0",
-    "@angular/platform-browser": "^2.0.0",
-    "@angular/platform-browser-dynamic": "^2.0.0",
-    "@angular/platform-server": "^2.0.0",
-    "@ionic/storage": "^1.0.3",
-    "ionic-angular": "^2.0.0-rc.1",
-    "ionic-native": "^2.2.3",
-    "ionicons": "^3.0.0",
+    "@angular/common": "2.2.1",
+    "@angular/compiler": "2.2.1",
+    "@angular/compiler-cli": "2.2.1",
+    "@angular/core": "2.2.1",
+    "@angular/forms": "2.2.1",
+    "@angular/http": "2.2.1",
+    "@angular/platform-browser": "2.2.1",
+    "@angular/platform-browser-dynamic": "2.2.1",
+    "@angular/platform-server": "2.2.1",
+    "@ionic/storage": "1.1.7",
+    "angular2-grid": "^0.11.2",
+    "angular2-moment": "^1.1.0",
+    "ionic-angular": "2.0.0-rc.4",
+    "ionic-native": "2.2.11",
+    "ionicons": "3.0.0",
+    "localforage": "^1.4.3",
+    "ng-dynamic": "^1.1.0",
     "rxjs": "5.0.0-beta.12",
-    "zone.js": "^0.6.21",
-    "angular2-grid": "^0.10.0"
+    "zone.js": "0.6.26"
   },
   "devDependencies": {
-    "@ionic/app-scripts": "^0.0.36",
-    "typescript": "^2.0.3"
+    "@ionic/app-scripts": "^1.0.0",
+    "angular2-grid": "^0.11.2",
+    "cordova-lib": "^6.4.0",
+    "del": "^2.2.2",
+    "ecstatic": "^2.1.0",
+    "gulp": "^3.9.1",
+    "gulp-insert-lines": "0.0.4",
+    "gulp-livereload": "^3.8.1",
+    "gulp-print": "^2.0.1",
+    "gulp-shell": "^0.5.2",
+    "gulp-watch": "^4.3.11",
+    "run-sequence": "^1.2.2",
+    "typescript": "2.0.9"
   },
   "cordovaPlugins": [
+    "ionic-plugin-keyboard",
     "cordova-plugin-whitelist",
-    "cordova-plugin-console",
     "cordova-plugin-device",
+    "cordova-plugin-console",
     "cordova-plugin-statusbar",
-    "cordova-plugin-splashscreen",
-    "ionic-plugin-keyboard"
+    "cordova-plugin-splashscreen"
   ],
   "cordovaPlatforms": []
 }

@@ -1,0 +1,26 @@
+<ion-header>
+  <ion-navbar>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Resgrid BigBoard</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <div [ngGrid]="gridConfig">
+    <ion-card *ngFor="let box of boxes; let i = index" [(ngGridItem)]="box.config" (onItemChange)="updateItem(i, $event)" (onResize)="onResize(i, $event)" (onDrag)="onDrag(i, $event)" style="margin-top:4px;">
+      <ion-card-header class="handle">
+        <ion-item>
+          Widget {{box.id}} 
+          <button ion-button icon-only item-right clear>
+          <ion-icon name="more"></ion-icon>
+        </button>
+        </ion-item>
+      </ion-card-header>
+      <ion-card-content>
+        <calls-widget [hidden]="!box.type === 5"></calls-widget>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>
