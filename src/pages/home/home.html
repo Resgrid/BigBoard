@@ -3,12 +3,12 @@
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>Resgrid BigBoard</ion-title>
+    <ion-title>{{'homePage.title' | translate}}</ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content>
-  <div [ngGrid]="gridConfig">
+  <div [ngGrid]="gridConfig" [hidden]="!areSettingsSet">
     <ion-card *ngFor="let box of boxes; let i = index" [(ngGridItem)]="box.config" (onItemChange)="updateItem(i, $event)" (onResize)="onResize(i, $event)" (onDrag)="onDrag(i, $event)" style="margin-top:4px;">
       <ion-card-header class="handle">
         <ion-item>
@@ -19,8 +19,16 @@
         </ion-item>
       </ion-card-header>
       <ion-card-content>
-        <calls-widget [hidden]="!box.type === 5"></calls-widget>
+        <calls-widget *ngIf="!box.type === 5"></calls-widget>
       </ion-card-content>
     </ion-card>
   </div>
+
+    <cta-panel [hidden]="areSettingsSet"
+             (ctaClick)="onCtaClick()"
+             [topIcon]="'alert'"
+             [title]="'settingsNotSetPanel.title' | translate"
+             [details]="'ctaPanel1.details' | translate"
+             [extraDetails]="'ctaPanel1.extraDetails' | translate"
+             [btnLabel]="'ctaPanel1.buttonLabel' | translate"></cta-panel>
 </ion-content>

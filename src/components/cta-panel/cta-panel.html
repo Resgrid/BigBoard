@@ -1,0 +1,11 @@
+<ion-icon *ngIf="topIcon" [name]="topIcon" class="top-icon"></ion-icon>
+
+<h1 *ngIf="title">{{title}}</h1>
+
+<div *ngIf="details" class="details">{{details}}</div>
+<div *ngIf="extraDetails">
+  {{extraDetails}}
+  <ion-icon *ngIf="extraDetailsIcon" [name]="extraDetailsIcon" class="extra-details-icon"></ion-icon>
+</div>
+
+<button *ngIf="btnLabel" (click)="onCtaClick()" ion-button class="cta-button">{{btnLabel}}</button>

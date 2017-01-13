@@ -2,18 +2,18 @@ import { Component } from '@angular/core';
 import { NavController, MenuController } from 'ionic-angular';
 
 import { Widget } from '../../models/widget';
-import { WidgetProvider } from '../../widgets/widget-provider'
+import { WidgetProvider } from '../../widgets/widget-provider';
+import { SettingsProvider } from '../../providers/settings';
 
-import {NgGrid, NgGridItem, NgGridConfig, NgGridItemConfig, NgGridItemEvent} from 'angular2-grid';
+import { NgGrid, NgGridItem, NgGridConfig, NgGridItemConfig, NgGridItemEvent } from 'angular2-grid';
 
 @Component({
-  selector: 'page-home',
-  templateUrl: 'home.html'
+	selector: 'page-home',
+	templateUrl: 'home.html'
 })
 export class HomePage {
-	//public test: string = "<calls-widget></calls-widget>";
-	public test: string = "<span>Test Dyn</span>";
-  private boxes: Array<Widget> = [];
+	private areSettingsSet: boolean;
+	private boxes: Array<Widget> = [];
 	private rgb: string = '#efefef';
 	private curNum;
 	private gridConfig: NgGridConfig = <NgGridConfig>{
@@ -41,40 +41,45 @@ export class HomePage {
 	};
 	private itemPositions: Array<any> = [];
 
-  constructor(private menu: MenuController, public navCtrl: NavController, private widgetProvider: WidgetProvider) {
-    const dashconf = this._generateDefaultDashConfig();
+	constructor(private menu: MenuController, 
+				public navCtrl: NavController, 
+				private widgetProvider: WidgetProvider, 
+				private settingsProvider: SettingsProvider) {
+		this.areSettingsSet = false;
+
+		const dashconf = this._generateDefaultDashConfig();
 		for (var i = 0; i < dashconf.length; i++) {
 			const conf = dashconf[i];
 			conf.payload = 1 + i;
-			this.boxes[i] = { name:"test", type: 1, templateString:widgetProvider.getCallWidgetTemplate(), id: i + 1, config: conf };
+			this.boxes[i] = { name: "test", type: 1, templateString: widgetProvider.getCallWidgetTemplate(), id: i + 1, config: conf };
 		}
 		this.curNum = dashconf.length + 1;
-  }
-  
-  ionViewDidEnter() {
-    this.menu.swipeEnable(false);
-  }
+	}
 
-  addBox(): void {
+	ionViewDidEnter() {
+		this.menu.swipeEnable(false);
+	}
+
+	addBox(): void {
 		const conf: NgGridItemConfig = this._generateDefaultItemConfig();
 		conf.payload = this.curNum++;
-		this.boxes.push({ name:"test", type: 1, templateString:"", id: conf.payload, config: conf });
+		this.boxes.push({ name: "test", type: 1, templateString: "", id: conf.payload, config: conf });
 	}
-	
+
 	removeWidget(index: number): void {
 		if (this.boxes[index]) {
 			this.boxes.splice(index, 1);
 		}
 	}
-	
+
 	updateItem(index: number, event: NgGridItemEvent): void {
 		// Do something here
 	}
-	
+
 	onDrag(index: number, event: NgGridItemEvent): void {
 		// Do something here
 	}
-	
+
 	onResize(index: number, event: NgGridItemEvent): void {
 		// Do something here
 	}
