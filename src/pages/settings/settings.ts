@@ -51,7 +51,7 @@ export class SettingsPage {
           this.settingsProvider.save();
 
           loading.dismiss();
-
+          this.navCtrl.setRoot(HomePage);
         },
         error => {
           loading.dismiss();

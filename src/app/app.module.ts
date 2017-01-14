@@ -17,11 +17,14 @@ import { SettingsProvider } from '../providers/settings';
 import { UtilsProvider } from '../providers/utils';
 import { DataProvider } from '../providers/data';
 import { WidgetProvider } from '../widgets/widget-provider';
+import { ChannelProvider } from '../providers/channel';
+import { WidgetPubSub } from '../providers/widget-pubsub';
 
 import { AddPopover } from '../components/add-popover/add-popover';
 import { AppPopover } from '../components/app-popover/app-popover';
 
 import { CallsWidget } from '../widgets/calls/calls-widget';
+import { CallsModal } from '../widgets/calls/calls-modal';
 
 import { NgGridModule } from 'angular2-grid';
 import { MomentModule } from 'angular2-moment';
@@ -46,7 +49,8 @@ export function createTranslateLoader(http: Http) {
     CTAPanel,
     SplashPage,
     AppPopover,
-    AddPopover
+    AddPopover,
+    CallsModal
   ],
   imports: [
     IonicModule.forRoot(BigBoardApp),
@@ -66,9 +70,10 @@ export function createTranslateLoader(http: Http) {
     SettingsPage,
     SplashPage,
     AppPopover,
-    AddPopover
+    AddPopover,
+    CallsModal
   ],
   providers: [...HTTP_INTERCEPTOR_PROVIDER, {provide: ErrorHandler, useClass: IonicErrorHandler}, Consts, AuthProvider, 
-  SettingsProvider, UtilsProvider, WidgetProvider, DataProvider, TranslateService]
+  SettingsProvider, UtilsProvider, WidgetProvider, DataProvider, TranslateService, ChannelProvider, WidgetPubSub]
 })
 export class AppModule {}

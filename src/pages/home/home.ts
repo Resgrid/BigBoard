@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, MenuController, PopoverController } from 'ionic-angular';
+import { NavController, MenuController, PopoverController, AlertController, Popover, ModalController, Modal } from 'ionic-angular';
 
 import { Widget } from '../../models/widget';
 import { WidgetProvider } from '../../widgets/widget-provider';
@@ -8,6 +8,8 @@ import { SettingsPage } from '../settings/settings';
 
 import { AddPopover } from '../../components/add-popover/add-popover';
 import { AppPopover } from '../../components/app-popover/app-popover';
+
+import { CallsModal } from '../../widgets/calls/calls-modal';
 
 import { NgGrid, NgGridItem, NgGridConfig, NgGridItemConfig, NgGridItemEvent } from 'angular2-grid';
 
@@ -18,9 +20,12 @@ import { NgGrid, NgGridItem, NgGridConfig, NgGridItemConfig, NgGridItemEvent } f
 export class HomePage {
 	private areSettingsSet: boolean;
 	private boxes: Array<Widget> = [];
-	private rgb: string = '#efefef';
+	private addWidgetPopover: Popover;
+	private appOptionsPopover: Popover;
+	private widgetSettingsModal: Modal;
+
 	private curNum;
-	private gridConfig: NgGridConfig = <NgGridConfig>{
+	public gridConfig: NgGridConfig = <NgGridConfig>{
 		'margins': [5],
 		'draggable': true,
 		'resizable': true,
@@ -43,61 +48,81 @@ export class HomePage {
 		'zoom_on_drag': false,
 		'limit_to_screen': true
 	};
-	private itemPositions: Array<any> = [];
 
 	constructor(private menu: MenuController,
 		public navCtrl: NavController,
 		private widgetProvider: WidgetProvider,
 		private settingsProvider: SettingsProvider,
-		private popoverCtrl: PopoverController) {
+		private popoverCtrl: PopoverController,
+		private alertCtrl: AlertController,
+		private modalCtrl: ModalController) {
 		this.areSettingsSet = this.settingsProvider.areSettingsSet();
 
-/*
-		const dashconf = this._generateDefaultDashConfig();
-		for (var i = 0; i < dashconf.length; i++) {
-			const conf = dashconf[i];
-			conf.payload = 1 + i;
-			this.boxes[i] = { name: "test", type: 5, templateString: widgetProvider.getCallWidgetTemplate(), id: i + 1, config: conf };
+		if (this.areSettingsSet) {
+			this.settingsProvider.loadLayout().then((widgets) => {
+				if (widgets) {
+					this.boxes = widgets;
+				}
+			});
 		}
-		this.curNum = dashconf.length + 1;
-		*/
 	}
 
 	ionViewDidEnter() {
 		this.menu.swipeEnable(false);
 	}
 
-	onCtaClick() {
+	setSettingsClick() {
 		this.navCtrl.setRoot(SettingsPage);
 	}
 
 	presentAddPopover(ev) {
-		let popover = this.popoverCtrl.create(AddPopover,{
+		this.addWidgetPopover = this.popoverCtrl.create(AddPopover,{
 								addWidget: (type) => { this.addWidget(type); },
 								addedWidgets: this.getActiveWidgets()
 							});
 
-		popover.present({
+		this.addWidgetPopover.present({
 			ev: ev
 		});
 	}
 
 	presentAppPopover(ev) {
-		let popover = this.popoverCtrl.create(AppPopover,{
+		this.appOptionsPopover = this.popoverCtrl.create(AppPopover,{
 							saveLayout: () => { this.saveLayout(); },
 							loadLayout: () => { this.loadLayout(); },
 							clearLayout: () => { this.clearLayout(); }
 						});
 
-		popover.present({
+		this.appOptionsPopover.present({
 			ev: ev
 		});
 	}
 
-	addBox(): void {
-		const conf: NgGridItemConfig = this._generateDefaultItemConfig();
-		conf.payload = this.curNum++;
-		this.boxes.push({ name: "test", type: 1, templateString: "", id: conf.payload, config: conf });
+	public openWidgetSettings(box: Widget) {
+		if (box) {
+			if (box.type == 1) {
+				
+			} else if (box.type == 2) {
+				
+			} else if (box.type == 3) {
+				
+			} else if (box.type == 4) {
+				
+			} else if (box.type == 5) {
+				this.widgetSettingsModal = this.modalCtrl.create(CallsModal, {
+							removeWidget: (type) => { this.removeWidgetByType(type); },
+							closeModal: () => { this.closeWidgetSettingsModal(); }
+						});
+    			this.widgetSettingsModal.present();
+			}
+		}
+	}
+
+	private closeWidgetSettingsModal(): void {
+		if (this.widgetSettingsModal) {
+			this.widgetSettingsModal.dismiss();
+			this.widgetSettingsModal = null;
+		}
 	}
 
 	addWidget(type): void {
@@ -125,6 +150,7 @@ export class HomePage {
 		}
 
 		this.boxes.push({ name: name, type: widgetType, templateString: "", id: conf.payload, config: conf });
+		this.addWidgetPopover.dismiss();
 	}
 
 	removeWidget(index: number): void {
@@ -133,16 +159,15 @@ export class HomePage {
 		}
 	}
 
-	updateItem(index: number, event: NgGridItemEvent): void {
-		// Do something here
-	}
+	removeWidgetByType(type: number): void {
+		for (var _i = 0; _i < this.boxes.length; _i++) {
+			if (this.boxes[_i]) {
+				this.boxes.splice(_i, 1);
+				break;
+			}
+		}
 
-	onDrag(index: number, event: NgGridItemEvent): void {
-		// Do something here
-	}
-
-	onResize(index: number, event: NgGridItemEvent): void {
-		// Do something here
+		this.closeWidgetSettingsModal();
 	}
 
 	private getActiveWidgets(): string {
@@ -161,27 +186,30 @@ export class HomePage {
 
 
 	private saveLayout() {
-
+		this.settingsProvider.saveLayout(this.boxes).then(() => {
+			let alert = this.alertCtrl.create({
+				title: 'Layout',
+				subTitle: 'Your current layout has been saved.',
+				buttons: ['Dismiss']
+			});
+			alert.present();
+			this.appOptionsPopover.dismiss();
+		});
 	}
 
 	private loadLayout() {
-
+		this.settingsProvider.loadLayout().then((widgets) => {
+			this.boxes = widgets;
+			this.appOptionsPopover.dismiss();
+		});
 	}
 
 	private clearLayout() {
-
+		this.settingsProvider.clearLayout();
+		this.appOptionsPopover.dismiss();
 	}
 
 	private _generateDefaultItemConfig(): NgGridItemConfig {
 		return { 'dragHandle': '.handle', 'col': 1, 'row': 1, 'sizex': 1, 'sizey': 1 };
-	}
-
-	private _generateDefaultDashConfig(): NgGridItemConfig[] {
-		return [{ 'dragHandle': '.handle', 'col': 1, 'row': 1, 'sizex': 50, 'sizey': 40 },
-		{ 'dragHandle': '.handle', 'col': 1, 'row': 1, 'sizex': 1, 'sizey': 1 },
-		{ 'dragHandle': '.handle', 'col': 26, 'row': 1, 'sizex': 1, 'sizey': 1 },
-		{ 'dragHandle': '.handle', 'col': 51, 'row': 1, 'sizex': 75, 'sizey': 1 },
-		{ 'dragHandle': '.handle', 'col': 51, 'row': 26, 'sizex': 32, 'sizey': 40 },
-		{ 'dragHandle': '.handle', 'col': 83, 'row': 26, 'sizex': 1, 'sizey': 1 }];
 	}
 }

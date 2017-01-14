@@ -12,14 +12,11 @@
 </ion-header>
 <ion-content>
   <div [ngGrid]="gridConfig" [hidden]="!areSettingsSet">
-    <ion-card *ngFor="let box of boxes; let i = index" [(ngGridItem)]="box.config" (onItemChange)="updateItem(i, $event)" (onResize)="onResize(i, $event)"
-      (onDrag)="onDrag(i, $event)" style="margin-top:4px;">
+    <ion-card *ngFor="let box of boxes; let i = index" [(ngGridItem)]="box.config" style="margin-top:4px;">
       <ion-card-header class="handle">
         <ion-item>
-          Widget {{box.id}}
-          <button ion-button icon-only item-right clear color="dark">
-          <ion-icon name="more"></ion-icon>
-        </button>
+          {{box.name}}
+          <button ion-button icon-only item-right clear color="dark" (click)="openWidgetSettings(box)"><ion-icon name="cog"></ion-icon></button>
         </ion-item>
       </ion-card-header>
       <ion-card-content>

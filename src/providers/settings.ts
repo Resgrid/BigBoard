@@ -3,6 +3,7 @@ import localForage from "localforage";
 import 'rxjs/add/operator/map';
 
 import { Consts } from '../app/consts';
+import { Widget } from '../models/widget';
 import { Settings } from '../models/settings';
 
 @Injectable()
@@ -245,5 +246,17 @@ export class SettingsProvider {
 
    public save(): Promise<Settings> {
      return this.localStorage.setItem('settings', this.settings);
+   }
+
+   public saveLayout(widgets: Array<Widget>): Promise<Array<Widget>> {
+     return this.localStorage.setItem('widgets', widgets);
+   }
+
+   public loadLayout(): Promise<Array<Widget>> {
+      return this.localStorage.getItem("widgets");
+   }
+
+   public clearLayout(): void {
+      this.localStorage.removeItem("widgets");
    }
 }
