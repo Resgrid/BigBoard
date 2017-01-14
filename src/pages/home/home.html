@@ -29,3 +29,9 @@
   <cta-panel [hidden]="!(areSettingsSet && boxes.length <= 0)" (ctaClick)="presentAddPopover($event)" [topIcon]="'add'" [title]="'noWidgetsPanel.title' | translate"
     [details]="'noWidgetsPanel.details' | translate" [extraDetails]="'noWidgetsPanel.extraDetails' | translate" [btnLabel]="'noWidgetsPanel.buttonLabel' | translate"></cta-panel>
 </ion-content>
+<ion-footer>
+    <div class="bottom-bar" style="text-align: right;">
+      <span *ngIf="connected" success>Connected to Reesgrid</span>
+      <span *ngIf="!connected" danger>Disconnected from Reesgrid, was last connected {{connectionTimestamp | amTimeAgo}}</span>
+    </div>
+</ion-footer>

@@ -24,6 +24,9 @@ export class HomePage {
 	private appOptionsPopover: Popover;
 	private widgetSettingsModal: Modal;
 
+	public connected: boolean = false;
+	public connectionTimestamp: string = "";
+
 	private curNum;
 	public gridConfig: NgGridConfig = <NgGridConfig>{
 		'margins': [5],

@@ -86,3 +86,10 @@
 .strippedRows:nth-child(odd) {
   background: white; 
 }
+
+.bottom-bar
+{
+    position: fixed;
+    bottom: 2vh;
+    width: 100%;
+}
