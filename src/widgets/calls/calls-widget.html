@@ -1,23 +1,37 @@
-
-    <div class="table-responsive">
-        <table id="callsFullTable" class='table table-striped table-condensed'>
-            <thead>
-            <tr>
-                <th ng-show="widgetSettings.showId">Id</th>
-                <th ng-show="widgetSettings.showName">Call Name</th>
-                <th ng-show="widgetSettings.showTimestamp">Logged Timestamp</th>
-                <th ng-show="widgetSettings.showUser">Logging User</th>
-                <th ng-show="widgetSettings.showPriority">Priority</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let call of calls">
-                <td ng-show="widgetSettings.showId">{{call.Id}}</td>
-                <td ng-show="widgetSettings.showName">{{call.Name}}</td>
-                <td ng-show="widgetSettings.showTimestamp">{{call.Timestamp | amTimeAgo}}</td>
-                <td ng-show="widgetSettings.showUser">{{call.LoggingUser}}</td>
-                <td ng-show="widgetSettings.showPriority" class="{{call.PriorityCss}}">{{call.Priority}}</td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
+<ion-grid id="callsFullTable">
+  <ion-row>
+    <ion-col [hidden]="!showId">
+      <strong>Id</strong>
+    </ion-col>
+    <ion-col [hidden]="!showName">
+      <strong>Name</strong>
+    </ion-col>
+    <ion-col [hidden]="!showTimestamp">
+      <strong>Timestamp</strong>
+    </ion-col>
+    <ion-col [hidden]="!showUser">
+      <strong>Logged User</strong>
+    </ion-col>
+    <ion-col [hidden]="!showPriority">
+      <strong>Priority</strong>
+    </ion-col>
+  </ion-row>
+  
+  <ion-row class="active" *ngFor="let call of calls">
+    <ion-col [hidden]="!showId">
+      {{call.Id}}
+    </ion-col>
+    <ion-col [hidden]="!showName">
+      {{call.Name}}
+    </ion-col>
+    <ion-col [hidden]="!showTimestamp">
+      {{call.Timestamp | amTimeAgo}}
+    </ion-col>
+    <ion-col [hidden]="!showUser">
+      {{call.LoggingUser}}
+    </ion-col>
+    <ion-col [style.color]="call.PriorityCss" [hidden]="!showPriority">
+      {{call.Priority}}
+    </ion-col>
+  </ion-row>
+</ion-grid>

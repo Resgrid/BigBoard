@@ -11,6 +11,12 @@ import { DataProvider } from '../../providers/data';
 export class CallsWidget {
   public calls: CallResult[];
 
+  public showId: boolean = true;
+  public showName: boolean = true;
+  public showTimestamp: boolean = true;
+  public showUser: boolean = true;
+  public showPriority: boolean = true;
+
   constructor(private dataProvider: DataProvider) {
     this.fetch();
   }

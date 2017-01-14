@@ -8,6 +8,7 @@ import { BigBoardApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 import { AboutPage } from '../pages/about/about';
 import { SettingsPage } from '../pages/settings/settings';
+import { SplashPage } from '../pages/splash-page/splash-page';
 import { CTAPanel } from '../components/cta-panel/cta-panel';
 
 import { Consts } from './consts';
@@ -16,6 +17,9 @@ import { SettingsProvider } from '../providers/settings';
 import { UtilsProvider } from '../providers/utils';
 import { DataProvider } from '../providers/data';
 import { WidgetProvider } from '../widgets/widget-provider';
+
+import { AddPopover } from '../components/add-popover/add-popover';
+import { AppPopover } from '../components/app-popover/app-popover';
 
 import { CallsWidget } from '../widgets/calls/calls-widget';
 
@@ -28,8 +32,8 @@ export function appConfigValue() {
   return window['APP_CONFIG'];
 }
 
-export function translateFactory(http: Http) {
-  return new TranslateStaticLoader(http, '../config/i18n', '.json');
+export function createTranslateLoader(http: Http) {
+  return new TranslateStaticLoader(http, 'assets/i18n', '.json');
 }
 
 @NgModule({
@@ -39,7 +43,10 @@ export function translateFactory(http: Http) {
     AboutPage,
     SettingsPage,
     CallsWidget,
-    CTAPanel
+    CTAPanel,
+    SplashPage,
+    AppPopover,
+    AddPopover
   ],
   imports: [
     IonicModule.forRoot(BigBoardApp),
@@ -47,7 +54,7 @@ export function translateFactory(http: Http) {
     MomentModule,
     TranslateModule.forRoot({
       provide: TranslateLoader,
-      useFactory: translateFactory,
+      useFactory: (createTranslateLoader),
       deps: [Http]
     })
   ],
@@ -56,8 +63,12 @@ export function translateFactory(http: Http) {
     BigBoardApp,
     HomePage,
     AboutPage,
-    SettingsPage
+    SettingsPage,
+    SplashPage,
+    AppPopover,
+    AddPopover
   ],
-  providers: [...HTTP_INTERCEPTOR_PROVIDER, {provide: ErrorHandler, useClass: IonicErrorHandler}, Consts, AuthProvider, SettingsProvider, UtilsProvider, WidgetProvider, DataProvider]
+  providers: [...HTTP_INTERCEPTOR_PROVIDER, {provide: ErrorHandler, useClass: IonicErrorHandler}, Consts, AuthProvider, 
+  SettingsProvider, UtilsProvider, WidgetProvider, DataProvider, TranslateService]
 })
 export class AppModule {}

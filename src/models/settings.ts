@@ -6,6 +6,7 @@ export class Settings  {
     public FullName: string = "";
     public DepartmentId: number = 0;
     public AuthToken: string = "";
+    public Language: string = "";
     public AuthTokenExpiry: string = "";
     public EnableDetailedResponses: boolean = true;
     public EnablePushNotifications: boolean = false;

@@ -1,19 +1,18 @@
 import { Component, ViewChild } from '@angular/core';
 import { Nav, Platform } from 'ionic-angular';
-import { RequestOptions, Headers} from '@angular/http';
+import { RequestOptions, Headers } from '@angular/http';
 import { StatusBar, Splashscreen } from 'ionic-native';
 import { HttpInterceptorService } from 'ng2-http-interceptor';
 import { TranslateService } from "ng2-translate";
-import { Storage } from "@ionic/storage";
 
+import { SplashPage } from '../pages/splash-page/splash-page';
 import { HomePage } from '../pages/home/home';
 import { AboutPage } from '../pages/about/about';
 import { SettingsPage } from '../pages/settings/settings';
 
 import { SettingsProvider } from '../providers/settings';
 
-import {LANG_KEY, LANG_EN} from "./constants";
-import {TRANSLATIONS_EN} from "../config/i18n/en";
+import { LANG_EN } from "./consts";
 
 @Component({
   templateUrl: 'app.html'
@@ -21,15 +20,14 @@ import {TRANSLATIONS_EN} from "../config/i18n/en";
 export class BigBoardApp {
   @ViewChild(Nav) nav: Nav;
 
-  rootPage: any = HomePage;
+  rootPage: any = SplashPage;
 
-  pages: Array<{title: string, component: any}>;
+  pages: Array<{ title: string, component: any }>;
 
   constructor(public platform: Platform,
-              private httpInterceptor: HttpInterceptorService,
-              private settingsProvider: SettingsProvider,
-              private translate: TranslateService,
-              private storage: Storage) {
+    private httpInterceptor: HttpInterceptorService,
+    private settingsProvider: SettingsProvider,
+    private translate: TranslateService) {
     this.initializeApp();
     this.wireupInteceptors();
 
@@ -48,6 +46,11 @@ export class BigBoardApp {
       // Here you can do any higher level native things you might need.
       StatusBar.styleDefault();
       Splashscreen.hide();
+
+      this.settingsProvider.init().then(() => {
+        this.setupTranslations();
+        this.nav.setRoot(HomePage);
+      })
     });
   }
 
@@ -62,43 +65,44 @@ export class BigBoardApp {
    * and set language the user's preference (if there is one saved) or to English otherwise
    */
   setupTranslations() {
-    // Set translations for each supported language
-    this.translate.setTranslation(LANG_EN, TRANSLATIONS_EN);
-
-    // Set default translation
+    this.translate.addLangs([LANG_EN]);
     this.translate.setDefaultLang(LANG_EN);
 
     // Check browser/device storage if there is a setting for the preferred language
-    this.storage.get(LANG_KEY).then((savedLang: string) => {
-      if (savedLang) {
-        this.translate.use(savedLang);
-        //this.langActions.setLanguage(savedLang);
-      }
-      else { // Use English by default and save this preference to device/browser storage
-        this.translate.use(LANG_EN);
-        this.storage.set(LANG_KEY, LANG_EN);
-      }
-    });
+    if (this.settingsProvider.getLanguage()) {
+      this.translate.use(this.settingsProvider.getLanguage());
+    } else {
+      this.translate.use(LANG_EN);
+      this.settingsProvider.setLanguage(LANG_EN);
+    }
   }
 
+  /**
+   * Angular 1 style HTTP inteceptor for setting the auth
+   * header on every request if we have an auth token.
+   */
   private wireupInteceptors() {
     this.httpInterceptor.request().addInterceptor((data, method) => {
-      let authHeader = 'Basic ' + this.settingsProvider.settings.AuthToken;
-      let headersFound: boolean = false;
+      let authToken = this.settingsProvider.settings.AuthToken;
 
-      data.forEach(element => {
-        if (element instanceof RequestOptions) {
-          headersFound = true;
+      if (authToken) {
+        let authHeader = 'Basic ' + authToken;
+        let headersFound: boolean = false;
 
-          if (element.headers.has("Authorization"))
-            element.headers.delete("Authorization");
+        data.forEach(element => {
+          if (element instanceof RequestOptions) {
+            headersFound = true;
 
-          element.headers.append('Authorization', authHeader);
+            if (element.headers.has("Authorization"))
+              element.headers.delete("Authorization");
+
+            element.headers.append('Authorization', authHeader);
+          }
+        });
+
+        if (!headersFound) {
+          data[data.length] = new RequestOptions({ headers: new Headers({ 'Authorization': authHeader }) });
         }
-      });
-
-      if (!headersFound) {
-        data[data.length] = new RequestOptions({headers: new Headers({'Authorization': authHeader})});
       }
 
       return data;

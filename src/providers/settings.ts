@@ -234,6 +234,15 @@ export class SettingsProvider {
        this.isAuthenticated = authenticated;
    }
 
+   public getLanguage(): string {
+     return this.settings.Language;
+   }
+
+   public setLanguage(language: string): void {
+     this.settings.Language = language;
+     this.save();
+   }
+
    public save(): Promise<Settings> {
      return this.localStorage.setItem('settings', this.settings);
    }

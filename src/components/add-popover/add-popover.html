@@ -1,0 +1,22 @@
+<ion-list class="popover-page">
+  <ion-row>
+    <ion-col style="text-align:center;">
+      <h5>Add a widget to the board</h5>
+    </ion-col>
+  </ion-row>
+  <ion-item (click)="addCallsWidget()" [hidden]="isWidgetActive(5)">
+    <ion-label>Call Widget</ion-label>
+  </ion-item>
+  <ion-item (click)="addPersonnelWidget()" [hidden]="isWidgetActive(1)">
+    <ion-label>Personnel Widget</ion-label>
+  </ion-item>
+  <ion-item (click)="addUnitsWidget()" [hidden]="isWidgetActive(4)">
+    <ion-label>Units Widget</ion-label>
+  </ion-item>
+  <ion-item (click)="addMapWidget()" [hidden]="isWidgetActive(2)">
+    <ion-label>Map Widget</ion-label>
+  </ion-item>
+  <ion-item (click)="addWeatherWidget()" [hidden]="isWidgetActive(3)">
+    <ion-label>Weather Widget</ion-label>
+  </ion-item>
+</ion-list>

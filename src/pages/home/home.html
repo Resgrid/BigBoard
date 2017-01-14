@@ -3,32 +3,32 @@
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>{{'homePage.title' | translate}}</ion-title>
+    <ion-title>{{'appName' | translate}}</ion-title>
+    <ion-buttons end [hidden]="!(areSettingsSet)">
+      <button ion-button icon-only (click)="presentAddPopover($event)" color="success"><ion-icon name="add"></ion-icon></button>
+      <button ion-button icon-only item-right clear (click)="presentAppPopover($event)"><ion-icon name="more"></ion-icon></button>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
-
 <ion-content>
   <div [ngGrid]="gridConfig" [hidden]="!areSettingsSet">
-    <ion-card *ngFor="let box of boxes; let i = index" [(ngGridItem)]="box.config" (onItemChange)="updateItem(i, $event)" (onResize)="onResize(i, $event)" (onDrag)="onDrag(i, $event)" style="margin-top:4px;">
+    <ion-card *ngFor="let box of boxes; let i = index" [(ngGridItem)]="box.config" (onItemChange)="updateItem(i, $event)" (onResize)="onResize(i, $event)"
+      (onDrag)="onDrag(i, $event)" style="margin-top:4px;">
       <ion-card-header class="handle">
         <ion-item>
-          Widget {{box.id}} 
-          <button ion-button icon-only item-right clear>
+          Widget {{box.id}}
+          <button ion-button icon-only item-right clear color="dark">
           <ion-icon name="more"></ion-icon>
         </button>
         </ion-item>
       </ion-card-header>
       <ion-card-content>
-        <calls-widget *ngIf="!box.type === 5"></calls-widget>
+        <calls-widget *ngIf="box.type === 5"></calls-widget>
       </ion-card-content>
-    </ion-card>
+      </ion-card>
   </div>
-
-    <cta-panel [hidden]="areSettingsSet"
-             (ctaClick)="onCtaClick()"
-             [topIcon]="'alert'"
-             [title]="'settingsNotSetPanel.title' | translate"
-             [details]="'ctaPanel1.details' | translate"
-             [extraDetails]="'ctaPanel1.extraDetails' | translate"
-             [btnLabel]="'ctaPanel1.buttonLabel' | translate"></cta-panel>
+  <cta-panel [hidden]="areSettingsSet" (ctaClick)="setSettingsClick()" [topIcon]="'alert'" [title]="'settingsNotSetPanel.title' | translate"
+    [details]="'settingsNotSetPanel.details' | translate" [extraDetails]="'settingsNotSetPanel.extraDetails' | translate" [btnLabel]="'settingsNotSetPanel.buttonLabel' | translate"></cta-panel>
+  <cta-panel [hidden]="!areSettingsSet && boxes.length <= 0" (ctaClick)="presentAddPopover($event)" [topIcon]="'add'" [title]="'noWidgetsPanel.title' | translate"
+    [details]="'noWidgetsPanel.details' | translate" [extraDetails]="'noWidgetsPanel.extraDetails' | translate" [btnLabel]="'noWidgetsPanel.buttonLabel' | translate"></cta-panel>
 </ion-content>

@@ -1,9 +1,13 @@
 import { Component } from '@angular/core';
-import { NavController, MenuController } from 'ionic-angular';
+import { NavController, MenuController, PopoverController } from 'ionic-angular';
 
 import { Widget } from '../../models/widget';
 import { WidgetProvider } from '../../widgets/widget-provider';
 import { SettingsProvider } from '../../providers/settings';
+import { SettingsPage } from '../settings/settings';
+
+import { AddPopover } from '../../components/add-popover/add-popover';
+import { AppPopover } from '../../components/app-popover/app-popover';
 
 import { NgGrid, NgGridItem, NgGridConfig, NgGridItemConfig, NgGridItemEvent } from 'angular2-grid';
 
@@ -41,29 +45,86 @@ export class HomePage {
 	};
 	private itemPositions: Array<any> = [];
 
-	constructor(private menu: MenuController, 
-				public navCtrl: NavController, 
-				private widgetProvider: WidgetProvider, 
-				private settingsProvider: SettingsProvider) {
-		this.areSettingsSet = false;
+	constructor(private menu: MenuController,
+		public navCtrl: NavController,
+		private widgetProvider: WidgetProvider,
+		private settingsProvider: SettingsProvider,
+		private popoverCtrl: PopoverController) {
+		this.areSettingsSet = this.settingsProvider.areSettingsSet();
 
+/*
 		const dashconf = this._generateDefaultDashConfig();
 		for (var i = 0; i < dashconf.length; i++) {
 			const conf = dashconf[i];
 			conf.payload = 1 + i;
-			this.boxes[i] = { name: "test", type: 1, templateString: widgetProvider.getCallWidgetTemplate(), id: i + 1, config: conf };
+			this.boxes[i] = { name: "test", type: 5, templateString: widgetProvider.getCallWidgetTemplate(), id: i + 1, config: conf };
 		}
 		this.curNum = dashconf.length + 1;
+		*/
 	}
 
 	ionViewDidEnter() {
 		this.menu.swipeEnable(false);
 	}
 
+	onCtaClick() {
+		this.navCtrl.setRoot(SettingsPage);
+	}
+
+	presentAddPopover(ev) {
+		let popover = this.popoverCtrl.create(AddPopover,{
+								addWidget: (type) => { this.addWidget(type); },
+								addedWidgets: this.getActiveWidgets()
+							});
+
+		popover.present({
+			ev: ev
+		});
+	}
+
+	presentAppPopover(ev) {
+		let popover = this.popoverCtrl.create(AppPopover,{
+							saveLayout: () => { this.saveLayout(); },
+							loadLayout: () => { this.loadLayout(); },
+							clearLayout: () => { this.clearLayout(); }
+						});
+
+		popover.present({
+			ev: ev
+		});
+	}
+
 	addBox(): void {
 		const conf: NgGridItemConfig = this._generateDefaultItemConfig();
 		conf.payload = this.curNum++;
 		this.boxes.push({ name: "test", type: 1, templateString: "", id: conf.payload, config: conf });
+	}
+
+	addWidget(type): void {
+		const conf: NgGridItemConfig = this._generateDefaultItemConfig();
+		conf.payload = this.curNum++;
+
+		let name: string;
+		let widgetType: number;
+
+		if (type == 1) {
+			widgetType = 1;
+			name = "Personnel";
+		} else if (type == 2) {
+			widgetType = 2;
+			name = "Map";
+		} else if (type == 3) {
+			widgetType = 3;
+			name = "Weather";
+		} else if (type == 4) {
+			widgetType = 4;
+			name = "Units";
+		} else if (type == 5) {
+			widgetType = 5;
+			name = "Calls";
+		}
+
+		this.boxes.push({ name: name, type: widgetType, templateString: "", id: conf.payload, config: conf });
 	}
 
 	removeWidget(index: number): void {
@@ -82,6 +143,33 @@ export class HomePage {
 
 	onResize(index: number, event: NgGridItemEvent): void {
 		// Do something here
+	}
+
+	private getActiveWidgets(): string {
+		let activeWidgets: string;
+
+		this.boxes.forEach(box => {
+			if (activeWidgets) {
+				activeWidgets = activeWidgets + "," + box.type
+			} else {
+				activeWidgets = box.type.toString();
+			}
+		});
+
+		return activeWidgets;
+	}
+
+
+	private saveLayout() {
+
+	}
+
+	private loadLayout() {
+
+	}
+
+	private clearLayout() {
+
 	}
 
 	private _generateDefaultItemConfig(): NgGridItemConfig {
