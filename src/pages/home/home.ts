@@ -205,6 +205,7 @@ export class HomePage {
 	}
 
 	private clearLayout() {
+		this.boxes = [];
 		this.settingsProvider.clearLayout();
 		this.appOptionsPopover.dismiss();
 	}

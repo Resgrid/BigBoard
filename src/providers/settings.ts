@@ -5,6 +5,7 @@ import 'rxjs/add/operator/map';
 import { Consts } from '../app/consts';
 import { Widget } from '../models/widget';
 import { Settings } from '../models/settings';
+import { CallsWidgetSettings } from '../models/callsWidgetSettings';
 
 @Injectable()
 export class SettingsProvider {
@@ -258,5 +259,13 @@ export class SettingsProvider {
 
    public clearLayout(): void {
       this.localStorage.removeItem("widgets");
+   }
+
+   public saveCallWidgetSettings(callWidgetSettings: CallsWidgetSettings): Promise<CallsWidgetSettings> {
+     return this.localStorage.setItem('callWidgetSettings', callWidgetSettings);
+   }
+
+   public loadCallWidgetSettings(): Promise<CallsWidgetSettings> {
+      return this.localStorage.getItem("callWidgetSettings");
    }
 }

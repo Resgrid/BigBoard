@@ -10,7 +10,7 @@
     </ion-buttons>
   </ion-navbar>
 </ion-header>
-<ion-content>
+<ion-content style="background-color: darkgrey;">
   <div [ngGrid]="gridConfig" [hidden]="!areSettingsSet">
     <ion-card *ngFor="let box of boxes; let i = index" [(ngGridItem)]="box.config" style="margin-top:4px;">
       <ion-card-header class="handle">
@@ -26,6 +26,6 @@
   </div>
   <cta-panel [hidden]="areSettingsSet" (ctaClick)="setSettingsClick()" [topIcon]="'alert'" [title]="'settingsNotSetPanel.title' | translate"
     [details]="'settingsNotSetPanel.details' | translate" [extraDetails]="'settingsNotSetPanel.extraDetails' | translate" [btnLabel]="'settingsNotSetPanel.buttonLabel' | translate"></cta-panel>
-  <cta-panel [hidden]="!areSettingsSet && boxes.length <= 0" (ctaClick)="presentAddPopover($event)" [topIcon]="'add'" [title]="'noWidgetsPanel.title' | translate"
+  <cta-panel [hidden]="!(areSettingsSet && boxes.length <= 0)" (ctaClick)="presentAddPopover($event)" [topIcon]="'add'" [title]="'noWidgetsPanel.title' | translate"
     [details]="'noWidgetsPanel.details' | translate" [extraDetails]="'noWidgetsPanel.extraDetails' | translate" [btnLabel]="'noWidgetsPanel.buttonLabel' | translate"></cta-panel>
 </ion-content>

@@ -1,7 +1,8 @@
 import { Component, ViewChild, ElementRef, Input, OnInit } from '@angular/core';
 
 import { CallResult } from '../../models/callResult';
-
+import { CallsWidgetSettings } from '../../models/callsWidgetSettings';
+import { WidgetPubSub } from '../../providers/widget-pubsub';
 import { DataProvider } from '../../providers/data';
 
 @Component({
@@ -10,15 +11,21 @@ import { DataProvider } from '../../providers/data';
 })
 export class CallsWidget {
   public calls: CallResult[];
+  public settings: CallsWidgetSettings;
+  private settingsUpdatedSubscription: any;
 
-  public showId: boolean = true;
-  public showName: boolean = true;
-  public showTimestamp: boolean = true;
-  public showUser: boolean = true;
-  public showPriority: boolean = true;
-
-  constructor(private dataProvider: DataProvider) {
+  constructor(private dataProvider: DataProvider,
+              private widgetPubSub: WidgetPubSub) {
+    this.settings = new CallsWidgetSettings();
     this.fetch();
+  }
+
+  ngOnInit() {
+    this.settingsUpdatedSubscription = this.widgetPubSub.watch().subscribe(e => {
+      if (e.event === this.widgetPubSub.EVENTS.CALLS_SETTINGS) {
+        this.settings = e.data;
+      }
+    })
   }
 
   private fetch() {
