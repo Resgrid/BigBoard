@@ -5,6 +5,7 @@ import { Widget } from '../../models/widget';
 import { WidgetProvider } from '../../widgets/widget-provider';
 import { SettingsProvider } from '../../providers/settings';
 import { SettingsPage } from '../settings/settings';
+import { ChannelProvider, ChannelEvent } from "../../providers/channel";
 
 import { AddPopover } from '../../components/add-popover/add-popover';
 import { AppPopover } from '../../components/app-popover/app-popover';
@@ -23,6 +24,8 @@ export class HomePage {
 	private addWidgetPopover: Popover;
 	private appOptionsPopover: Popover;
 	private widgetSettingsModal: Modal;
+
+	private channel = "tasks";
 
 	public connected: boolean = false;
 	public connectionTimestamp: string = "";
@@ -58,7 +61,8 @@ export class HomePage {
 		private settingsProvider: SettingsProvider,
 		private popoverCtrl: PopoverController,
 		private alertCtrl: AlertController,
-		private modalCtrl: ModalController) {
+		private modalCtrl: ModalController,
+		private channelProvider: ChannelProvider) {
 		this.areSettingsSet = this.settingsProvider.areSettingsSet();
 
 		if (this.areSettingsSet) {
@@ -69,6 +73,19 @@ export class HomePage {
 			});
 		}
 	}
+
+	ngOnInit() {
+        this.channelProvider.sub(this.channel).subscribe(
+            (x: ChannelEvent) => {
+                switch (x.Name) {
+                    //case this.eventName: { this.appendStatusUpdate(x); }
+                }
+            },
+            (error: any) => {
+                console.warn("Attempt to join channel failed!", error);
+            }
+        )
+    }
 
 	ionViewDidEnter() {
 		this.menu.swipeEnable(false);

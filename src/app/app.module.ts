@@ -10,6 +10,7 @@ import { AboutPage } from '../pages/about/about';
 import { SettingsPage } from '../pages/settings/settings';
 import { SplashPage } from '../pages/splash-page/splash-page';
 import { CTAPanel } from '../components/cta-panel/cta-panel';
+import { ChannelProvider, ChannelConfig, SignalrWindow } from "../providers/channel";
 
 import { Consts } from './consts';
 import { AuthProvider } from '../providers/auth';
@@ -17,7 +18,6 @@ import { SettingsProvider } from '../providers/settings';
 import { UtilsProvider } from '../providers/utils';
 import { DataProvider } from '../providers/data';
 import { WidgetProvider } from '../widgets/widget-provider';
-import { ChannelProvider } from '../providers/channel';
 import { WidgetPubSub } from '../providers/widget-pubsub';
 
 import { AddPopover } from '../components/add-popover/add-popover';
@@ -38,6 +38,10 @@ export function appConfigValue() {
 export function createTranslateLoader(http: Http) {
   return new TranslateStaticLoader(http, 'assets/i18n', '.json');
 }
+
+let channelConfig = new ChannelConfig();
+channelConfig.url = "https://api.resgrid.com/signalr";
+channelConfig.hubName = "eventingHub";
 
 @NgModule({
   declarations: [
@@ -74,6 +78,7 @@ export function createTranslateLoader(http: Http) {
     CallsModal
   ],
   providers: [...HTTP_INTERCEPTOR_PROVIDER, {provide: ErrorHandler, useClass: IonicErrorHandler}, Consts, AuthProvider, 
-  SettingsProvider, UtilsProvider, WidgetProvider, DataProvider, TranslateService, ChannelProvider, WidgetPubSub]
+  SettingsProvider, UtilsProvider, WidgetProvider, DataProvider, TranslateService, ChannelProvider, WidgetPubSub, 
+  ChannelProvider, { provide: SignalrWindow, useValue: window }, { provide: 'channel.config', useValue: channelConfig }]
 })
 export class AppModule {}

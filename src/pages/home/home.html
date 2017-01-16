@@ -13,10 +13,10 @@
 <ion-content style="background-color: darkgrey;">
   <div [ngGrid]="gridConfig" [hidden]="!areSettingsSet">
     <ion-card *ngFor="let box of boxes; let i = index" [(ngGridItem)]="box.config" style="margin-top:4px;">
-      <ion-card-header class="handle">
+      <ion-card-header class="handle" style="background-color:#f3f3f3;">
         <ion-item>
           {{box.name}}
-          <button ion-button icon-only item-right clear color="dark" (click)="openWidgetSettings(box)"><ion-icon name="cog"></ion-icon></button>
+          <button ion-button icon-only item-right clear color="dark" (click)="openWidgetSettings(box)"><ion-icon name="settings"></ion-icon></button>
         </ion-item>
       </ion-card-header>
       <ion-card-content>
@@ -30,8 +30,10 @@
     [details]="'noWidgetsPanel.details' | translate" [extraDetails]="'noWidgetsPanel.extraDetails' | translate" [btnLabel]="'noWidgetsPanel.buttonLabel' | translate"></cta-panel>
 </ion-content>
 <ion-footer>
-    <div class="bottom-bar" style="text-align: right;">
-      <span *ngIf="connected" success>Connected to Reesgrid</span>
-      <span *ngIf="!connected" danger>Disconnected from Reesgrid, was last connected {{connectionTimestamp | amTimeAgo}}</span>
+  <ion-toolbar>
+    <div class="bottom-bar" style="text-align: right; padding-right:10px;">
+      <span *ngIf="connected" style="color:green;">Connected to Resgrid</span>
+      <span *ngIf="!connected" style="color:#f53d3d;">Disconnected from Resgrid, was last connected {{connectionTimestamp | amTimeAgo}}</span>
     </div>
+  </ion-toolbar>
 </ion-footer>
