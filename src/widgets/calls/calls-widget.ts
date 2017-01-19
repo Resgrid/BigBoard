@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, Input, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { CallResult } from '../../models/callResult';
 import { CallsWidgetSettings } from '../../models/callsWidgetSettings';
@@ -24,6 +24,8 @@ export class CallsWidget {
     this.settingsUpdatedSubscription = this.widgetPubSub.watch().subscribe(e => {
       if (e.event === this.widgetPubSub.EVENTS.CALLS_SETTINGS) {
         this.settings = e.data;
+      } else if (e.event === this.widgetPubSub.EVENTS.CALL_STATUS_UPDATED) {
+         this.fetch();
       }
     })
   }

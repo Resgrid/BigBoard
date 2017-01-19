@@ -1,16 +1,19 @@
 import { Component } from '@angular/core';
 import { NavController, MenuController, PopoverController, AlertController, Popover, ModalController, Modal } from 'ionic-angular';
 
+import { Consts } from '../../app/consts';
 import { Widget } from '../../models/widget';
 import { WidgetProvider } from '../../widgets/widget-provider';
 import { SettingsProvider } from '../../providers/settings';
 import { SettingsPage } from '../settings/settings';
-import { ChannelProvider, ChannelEvent } from "../../providers/channel";
+
+import { ChannelProvider } from '../../providers/channel';
 
 import { AddPopover } from '../../components/add-popover/add-popover';
 import { AppPopover } from '../../components/app-popover/app-popover';
 
 import { CallsModal } from '../../widgets/calls/calls-modal';
+import { PersonnelModal } from '../../widgets/personnel/personnel-modal';
 
 import { NgGrid, NgGridItem, NgGridConfig, NgGridItemConfig, NgGridItemEvent } from 'angular2-grid';
 
@@ -25,7 +28,7 @@ export class HomePage {
 	private appOptionsPopover: Popover;
 	private widgetSettingsModal: Modal;
 
-	private channel = "tasks";
+	private channel = "Connect";
 
 	public connected: boolean = false;
 	public connectionTimestamp: string = "";
@@ -57,6 +60,7 @@ export class HomePage {
 
 	constructor(private menu: MenuController,
 		public navCtrl: NavController,
+		private consts: Consts,
 		private widgetProvider: WidgetProvider,
 		private settingsProvider: SettingsProvider,
 		private popoverCtrl: PopoverController,
@@ -75,20 +79,15 @@ export class HomePage {
 	}
 
 	ngOnInit() {
-        this.channelProvider.sub(this.channel).subscribe(
-            (x: ChannelEvent) => {
-                switch (x.Name) {
-                    //case this.eventName: { this.appendStatusUpdate(x); }
-                }
-            },
-            (error: any) => {
-                console.warn("Attempt to join channel failed!", error);
-            }
-        )
-    }
+		//this.channelProvider.init();
+	}
 
 	ionViewDidEnter() {
 		this.menu.swipeEnable(false);
+
+		if (this.settingsProvider.areSettingsSet()) {
+			this.channelProvider.start();
+		}
 	}
 
 	setSettingsClick() {
@@ -96,10 +95,10 @@ export class HomePage {
 	}
 
 	presentAddPopover(ev) {
-		this.addWidgetPopover = this.popoverCtrl.create(AddPopover,{
-								addWidget: (type) => { this.addWidget(type); },
-								addedWidgets: this.getActiveWidgets()
-							});
+		this.addWidgetPopover = this.popoverCtrl.create(AddPopover, {
+			addWidget: (type) => { this.addWidget(type); },
+			addedWidgets: this.getActiveWidgets()
+		});
 
 		this.addWidgetPopover.present({
 			ev: ev
@@ -107,11 +106,11 @@ export class HomePage {
 	}
 
 	presentAppPopover(ev) {
-		this.appOptionsPopover = this.popoverCtrl.create(AppPopover,{
-							saveLayout: () => { this.saveLayout(); },
-							loadLayout: () => { this.loadLayout(); },
-							clearLayout: () => { this.clearLayout(); }
-						});
+		this.appOptionsPopover = this.popoverCtrl.create(AppPopover, {
+			saveLayout: () => { this.saveLayout(); },
+			loadLayout: () => { this.loadLayout(); },
+			clearLayout: () => { this.clearLayout(); }
+		});
 
 		this.appOptionsPopover.present({
 			ev: ev
@@ -120,20 +119,24 @@ export class HomePage {
 
 	public openWidgetSettings(box: Widget) {
 		if (box) {
-			if (box.type == 1) {
-				
-			} else if (box.type == 2) {
-				
-			} else if (box.type == 3) {
-				
-			} else if (box.type == 4) {
-				
-			} else if (box.type == 5) {
+			if (box.type == this.consts.WIDGET_TYPES.PERSONNEL) {
+				this.widgetSettingsModal = this.modalCtrl.create(PersonnelModal, {
+					removeWidget: (type) => { this.removeWidgetByType(type); },
+					closeModal: () => { this.closeWidgetSettingsModal(); }
+				});
+				this.widgetSettingsModal.present();
+			} else if (box.type == this.consts.WIDGET_TYPES.MAP) {
+
+			} else if (box.type == this.consts.WIDGET_TYPES.WEATHER) {
+
+			} else if (box.type == this.consts.WIDGET_TYPES.UNITS) {
+
+			} else if (box.type == this.consts.WIDGET_TYPES.CALLS) {
 				this.widgetSettingsModal = this.modalCtrl.create(CallsModal, {
-							removeWidget: (type) => { this.removeWidgetByType(type); },
-							closeModal: () => { this.closeWidgetSettingsModal(); }
-						});
-    			this.widgetSettingsModal.present();
+					removeWidget: (type) => { this.removeWidgetByType(type); },
+					closeModal: () => { this.closeWidgetSettingsModal(); }
+				});
+				this.widgetSettingsModal.present();
 			}
 		}
 	}

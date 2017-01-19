@@ -1,8 +1,11 @@
 // https://github.com/sstorie/experiments/blob/master/angular2-signalr/client/app/services/channel.service.ts
 
-import {Injectable, Inject} from "@angular/core";
-import {Subject} from "rxjs/Subject";
-import {Observable} from "rxjs/Observable";
+import { Injectable, Inject } from "@angular/core";
+import { Subject } from "rxjs/Subject";
+import { Observable } from "rxjs/Observable";
+
+import { SettingsProvider } from './settings';
+import { WidgetPubSub } from './widget-pubsub';
 
 /**
  * When SignalR runs it will add functions to the global $ variable 
@@ -82,6 +85,7 @@ export class ChannelProvider {
     //
     private hubConnection: any;
     private hubProxy: any;
+    private started: boolean = false;
 
     // An internal array to track what channel subscriptions exist 
     //
@@ -89,7 +93,9 @@ export class ChannelProvider {
 
     constructor(
         @Inject(SignalrWindow) private window: SignalrWindow,
-        @Inject("channel.config") private channelConfig: ChannelConfig
+        @Inject("channel.config") private channelConfig: ChannelConfig,
+        private settingsProvider: SettingsProvider,
+        private widgetPubSub: WidgetPubSub
     ) {
         if (this.window.$ === undefined || this.window.$.hubConnection === undefined) {
             throw new Error("The variable '$' or the .hubConnection() function are not defined...please check the SignalR scripts have been loaded properly");
@@ -138,25 +144,46 @@ export class ChannelProvider {
             this.errorSubject.next(error);
         });
 
-        this.hubProxy.on("onEvent", (channel: string, ev: ChannelEvent) => {
-            //console.log(`onEvent - ${channel} channel`, ev);
-
-            // This method acts like a broker for incoming messages. We 
-            //  check the interal array of subjects to see if one exists
-            //  for the channel this came in on, and then emit the event
-            //  on it. Otherwise we ignore the message.
-            //
-            let channelSub = this.subjects.find((x: ChannelSubject) => {
-                return x.channel === channel;
-            }) as ChannelSubject;
-
-            // If we found a subject then emit the event on it
-            //
-            if (channelSub !== undefined) {
-                return channelSub.subject.next(ev);
-            }
+        this.hubProxy.on('PersonnelStatusUpdated', (data: any) => {
+            this.widgetPubSub.emitPersonnelStatusUpdated(data);
+            //console.log('PersonnelStatusUpdated');
         });
 
+        this.hubProxy.on('PersonnelStaffingUpdated', (data: any) => {
+            this.widgetPubSub.emitPersonnelStaffingUpdated(data);
+            //console.log('PersonnelStaffingUpdated');
+        });
+
+        this.hubProxy.on('UnitStatusUpdated', (data: any) => {
+            this.widgetPubSub.emitUnitStatusUpdated(data);
+            //console.log('PersonnelStaffingUpdated');
+        });
+
+        this.hubProxy.on('CallsUpdated', (data: any) => {
+            this.widgetPubSub.emitCallUpdated(data);
+            //console.log('PersonnelStaffingUpdated');
+        });
+
+        /*
+                this.hubProxy.on("onEvent", (channel: string, ev: ChannelEvent) => {
+                    //console.log(`onEvent - ${channel} channel`, ev);
+        
+                    // This method acts like a broker for incoming messages. We 
+                    //  check the interal array of subjects to see if one exists
+                    //  for the channel this came in on, and then emit the event
+                    //  on it. Otherwise we ignore the message.
+                    //
+                    let channelSub = this.subjects.find((x: ChannelSubject) => {
+                        return x.channel === channel;
+                    }) as ChannelSubject;
+        
+                    // If we found a subject then emit the event on it
+                    //
+                    if (channelSub !== undefined) {
+                        return channelSub.subject.next(ev);
+                    }
+                });
+        */
     }
 
     /**
@@ -173,20 +200,33 @@ export class ChannelProvider {
         //  a client subscried to it the start sequence would be triggered
         //  again since it's a cold observable.
         //
-        this.hubConnection.start()
-            .done(() => {
-                this.startingSubject.next();
-            })
-            .fail((error: any) => {
-                this.startingSubject.error(error);
-            });
+        if (!this.started && this.settingsProvider.areSettingsSet()) {
+            this.hubConnection.start({ withCredentials: false })
+                .done(() => {
+                    this.started = true;
+
+                    this.sub("Connect", this.settingsProvider.getDepartmentId().toString()).subscribe(
+                        (x: ChannelEvent) => {
+                            console.log('connect callback fired');
+                        },
+                        (error: any) => {
+                            console.warn("Attempt to join channel failed!", error);
+                        }
+                    );
+
+                    this.startingSubject.next();
+                })
+                .fail((error: any) => {
+                    this.startingSubject.error(error);
+                });
+        }
     }
 
     /** 
      * Get an observable that will contain the data associated with a specific 
      * channel 
      * */
-    sub(channel: string): Observable<ChannelEvent> {
+    sub(channel: string, data?: string): Observable<ChannelEvent> {
 
         // Try to find an observable that we already created for the requested 
         //  channel
@@ -223,7 +263,7 @@ export class ChannelProvider {
         //  is ready
         //
         this.starting$.subscribe(() => {
-            this.hubProxy.invoke("Subscribe", channel)
+            this.hubProxy.invoke(channel, data)
                 .done(() => {
                     console.log(`Successfully subscribed to ${channel} channel`);
                 })

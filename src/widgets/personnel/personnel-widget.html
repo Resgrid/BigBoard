@@ -1,0 +1,49 @@
+<ion-grid id="personnelFullTable" [style.font-size]="settings.FontSize+'px'">
+  <ion-row>
+    <ion-col>
+      <strong>Name</strong>
+    </ion-col>
+    <ion-col [hidden]="!settings.ShowGroup">
+      <strong>Group</strong>
+    </ion-col>
+    <ion-col [hidden]="!settings.ShowStaffing">
+      <strong>Staffing</strong>
+    </ion-col>
+    <ion-col [hidden]="!settings.ShowStatus">
+      <strong>Status</strong>
+    </ion-col>
+    <ion-col [hidden]="!settings.ShowRoles">
+      <strong>Roles</strong>
+    </ion-col>
+    <ion-col [hidden]="!settings.ShowTimestamp">
+      <strong>Timestamp</strong>
+    </ion-col>
+    <ion-col [hidden]="!settings.ShowEta">
+      <strong>Eta</strong>
+    </ion-col>
+  </ion-row>
+  
+  <ion-row class="strippedRows" *ngFor="let status of statuses">
+    <ion-col>
+      {{status.Name}}
+    </ion-col>
+    <ion-col [hidden]="!settings.ShowGroup">
+      {{status.Group}}
+    </ion-col>
+    <ion-col [hidden]="!settings.ShowStaffing">
+      <span class="status-label" [ngClass]="status.StateCss">{{status.State}}</span>
+    </ion-col>
+    <ion-col [hidden]="!settings.ShowStatus">
+      <span class="status-label" [ngClass]="status.StatusCss">{{status.Status}}</span>
+    </ion-col>
+    <ion-col [hidden]="!settings.ShowRoles" [style.font-size]="(settings.FontSize - 2)+'px'">
+      {{status.Roles}}
+    </ion-col>
+    <ion-col [hidden]="!settings.ShowTimestamp">
+      {{status.UpdatedDate | amTimeAgo}}
+    </ion-col>
+    <ion-col [hidden]="!settings.ShowEta">
+      {{status.Eta}}
+    </ion-col>
+  </ion-row>
+</ion-grid>

@@ -6,6 +6,7 @@ import { Consts } from '../app/consts';
 import { Widget } from '../models/widget';
 import { Settings } from '../models/settings';
 import { CallsWidgetSettings } from '../models/callsWidgetSettings';
+import { PersonnelWidgetSettings } from '../models/personnelWidgetSettings';
 
 @Injectable()
 export class SettingsProvider {
@@ -267,5 +268,13 @@ export class SettingsProvider {
 
    public loadCallWidgetSettings(): Promise<CallsWidgetSettings> {
       return this.localStorage.getItem("callWidgetSettings");
+   }
+
+   public savePersonnelWidgetSettings(personnelWidgetSettings: PersonnelWidgetSettings): Promise<PersonnelWidgetSettings> {
+     return this.localStorage.setItem('personnelWidgetSettings', personnelWidgetSettings);
+   }
+
+   public loadPersonnelWidgetSettings(): Promise<PersonnelWidgetSettings> {
+      return this.localStorage.getItem("personnelWidgetSettings");
    }
 }

@@ -20,6 +20,7 @@
         </ion-item>
       </ion-card-header>
       <ion-card-content>
+        <personnel-widget *ngIf="box.type === 1"></personnel-widget>
         <calls-widget *ngIf="box.type === 5"></calls-widget>
       </ion-card-content>
       </ion-card>

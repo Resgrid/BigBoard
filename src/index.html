@@ -14,7 +14,7 @@
   <!-- cordova.js required for cordova apps -->
   <script src="cordova.js"></script>
 
-  <!-- un-comment this code to enable service worker -->
+  <!-- un-comment this code to enable service worker 
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js')
@@ -22,7 +22,7 @@
         .catch(err => console.log('Error', err));
     }
   </script>
-
+  -->
   <link href="build/main.css" rel="stylesheet">
 
   <script>
@@ -46,6 +46,7 @@
   <!-- Include SignalR (& jQuery since it requires it) -->
   <script src="assets/signalr/jquery.min.js"></script>
   <script src="assets/signalr/jquery.signalr.min.js"></script>
+  <script src="https://api.resgrid.com/signalr/hubs"></script>
 
   <!-- The polyfills js is generated during the build process -->
   <script src="build/polyfills.js"></script>

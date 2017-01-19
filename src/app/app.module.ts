@@ -25,6 +25,8 @@ import { AppPopover } from '../components/app-popover/app-popover';
 
 import { CallsWidget } from '../widgets/calls/calls-widget';
 import { CallsModal } from '../widgets/calls/calls-modal';
+import { PersonnelWidget } from '../widgets/personnel/personnel-widget';
+import { PersonnelModal } from '../widgets/personnel/personnel-modal';
 
 import { NgGridModule } from 'angular2-grid';
 import { MomentModule } from 'angular2-moment';
@@ -54,7 +56,9 @@ channelConfig.hubName = "eventingHub";
     SplashPage,
     AppPopover,
     AddPopover,
-    CallsModal
+    CallsModal,
+    PersonnelWidget,
+    PersonnelModal
   ],
   imports: [
     IonicModule.forRoot(BigBoardApp),
@@ -75,7 +79,9 @@ channelConfig.hubName = "eventingHub";
     SplashPage,
     AppPopover,
     AddPopover,
-    CallsModal
+    CallsModal,
+    PersonnelWidget,
+    PersonnelModal
   ],
   providers: [...HTTP_INTERCEPTOR_PROVIDER, {provide: ErrorHandler, useClass: IonicErrorHandler}, Consts, AuthProvider, 
   SettingsProvider, UtilsProvider, WidgetProvider, DataProvider, TranslateService, ChannelProvider, WidgetPubSub, 

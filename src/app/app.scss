@@ -43,8 +43,20 @@
     color: black;
 }
 
+.label-danger {
+    background-color: #ff3b30;
+}
+
+.label-success {
+    background-color: green;
+}
+
 .label-onscene {
     background-color: #406b99;
+}
+
+.label-info {
+    background-color: #34aadc;
 }
 
 .label-enroute {
@@ -60,11 +72,20 @@
 }
 
 .label-inverse {
-    background-color: #333;
+    background-color: #1a1a1a;
 }
 
-.label-inverse:hover {
-    background-color: #1a1a1a;
+.status-label {
+  display: inline;
+  padding: .2em .6em .3em;
+  font-size: 75%;
+  font-weight: bold;
+  line-height: 1;
+  color: #ffffff;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: .25em;
 }
 
 .labels {

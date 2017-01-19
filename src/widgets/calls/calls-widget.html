@@ -1,4 +1,4 @@
-<ion-grid id="callsFullTable" [style.fontsize]="settings.FontSize">
+<ion-grid id="callsFullTable" [style.font-size]="settings.FontSize+'px'">
   <ion-row>
     <ion-col [hidden]="!settings.ShowId">
       <strong>Id</strong>
@@ -10,7 +10,7 @@
       <strong>Timestamp</strong>
     </ion-col>
     <ion-col [hidden]="!settings.ShowUser">
-      <strong>Logged User</strong>
+      <strong>Logged By</strong>
     </ion-col>
     <ion-col [hidden]="!settings.ShowPriority">
       <strong>Priority</strong>

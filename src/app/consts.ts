@@ -47,6 +47,15 @@ export class Consts {
 		STATUS_UPDATED: 'statusUpdated'
 	}
 
+	public WIDGET_TYPES = {
+		PERSONNEL: 1,
+		MAP: 2,
+		WEATHER: 3,
+		UNITS: 4,
+		CALLS: 5,
+		LOG: 6
+	}
+
 	public STATUS = {
 		STANDINGBY: 0,
 		NOTRESPONDING: 1,

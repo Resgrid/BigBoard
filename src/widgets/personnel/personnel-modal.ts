@@ -2,17 +2,17 @@ import { Component } from '@angular/core';
 import { NavParams } from 'ionic-angular';
 
 import { Consts } from '../../app/consts';
-import { CallsWidgetSettings } from '../../models/callsWidgetSettings';
+import { PersonnelWidgetSettings } from '../../models/personnelWidgetSettings';
 import { WidgetPubSub } from '../../providers/widget-pubsub';
 
 import { SettingsProvider } from '../../providers/settings';
 
 @Component({
-  selector: 'calls-modal',
-  templateUrl: 'calls-modal.html' 
+  selector: 'personnel-modal',
+  templateUrl: 'personnel-modal.html' 
 })
-export class CallsModal {
-  public model: CallsWidgetSettings;
+export class PersonnelModal {
+  public model: PersonnelWidgetSettings;
   private removeWidget;
   private closeModal;
   
@@ -23,11 +23,11 @@ export class CallsModal {
     this.removeWidget = this.navParams.get('removeWidget')
     this.closeModal = this.navParams.get('closeModal')
 
-    this.model = new CallsWidgetSettings();
+    this.model = new PersonnelWidgetSettings();
   }
 
   ngOnInit() {
-    this.settingsProvider.loadCallWidgetSettings().then((settings) => {
+    this.settingsProvider.loadPersonnelWidgetSettings().then((settings) => {
       if (settings) {
         this.model = settings;
       }
@@ -35,14 +35,14 @@ export class CallsModal {
   }
 
   save() {
-    this.settingsProvider.saveCallWidgetSettings(this.model).then(() => {
-      this.widgetPubSub.emitCallWidgetSettingsUpdated(this.model);
+    this.settingsProvider.savePersonnelWidgetSettings(this.model).then(() => {
+      this.widgetPubSub.emitPersonnelWidgetSettingsUpdated(this.model);
       this.closeModal();
     });
   }
 
   remove() {
-    this.removeWidget(this.consts.WIDGET_TYPES.CALLS);
+    this.removeWidget(this.consts.WIDGET_TYPES.PERSONNEL);
   }
 
   close() {

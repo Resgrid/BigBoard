@@ -13,7 +13,11 @@ export class WidgetPubSub {
         PERSONNEL_SETTINGS: 'personnelWidgetSettingsUpdated',
         MAP_SETTINGS: 'mapWidgetSettingsUpdated',
         UNITS_SETTINGS: 'unitsWidgetSettingsUpdated',
-        WEATHER_SETTINGS: 'weatherWidgetSettingsUpdated'
+        WEATHER_SETTINGS: 'weatherWidgetSettingsUpdated',
+        PERSONNEL_STATUS_UPDATED: 'signalrPersonnelStatusUpdated',
+        PERSONNEL_STAFFING_UPDATED: 'signalPersonnelStatusUpdated',
+        UNIT_STATUS_UPDATED: 'signalrUnitStatusUpdated',
+        CALL_STATUS_UPDATED: 'signalrCallStatusUpdated'
     };
 
     constructor() {
@@ -58,6 +62,34 @@ export class WidgetPubSub {
         this._observer.next({
             event: this.EVENTS.WEATHER_SETTINGS,
             data: settings
+        })
+    }
+
+    emitPersonnelStatusUpdated(event) {
+        this._observer.next({
+            event: this.EVENTS.PERSONNEL_STATUS_UPDATED,
+            data: event
+        })
+    }
+
+    emitPersonnelStaffingUpdated(event) {
+        this._observer.next({
+            event: this.EVENTS.PERSONNEL_STAFFING_UPDATED,
+            data: event
+        })
+    }
+
+    emitUnitStatusUpdated(event) {
+        this._observer.next({
+            event: this.EVENTS.UNIT_STATUS_UPDATED,
+            data: event
+        })
+    }
+
+    emitCallUpdated(event) {
+        this._observer.next({
+            event: this.EVENTS.CALL_STATUS_UPDATED,
+            data: event
         })
     }
 }

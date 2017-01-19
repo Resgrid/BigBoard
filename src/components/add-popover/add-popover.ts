@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { NavParams } from 'ionic-angular';
 
+import { Consts } from '../../app/consts';
+
 @Component({
   selector: 'add-popover',
   templateUrl: 'add-popover.html' 
@@ -9,29 +11,29 @@ export class AddPopover {
   private addWidget;
   private addedWidgets: string;
 
-  constructor(private navParams: NavParams) {
+  constructor(private navParams: NavParams, private consts: Consts) {
     this.addWidget = this.navParams.get('addWidget')
     this.addedWidgets = this.navParams.get('addedWidgets')
   }
 
   addCallsWidget() {
-    this.addWidget(5);
+    this.addWidget(this.consts.WIDGET_TYPES.CALLS);
   }
 
   addPersonnelWidget() {
-    this.addWidget(1);
+    this.addWidget(this.consts.WIDGET_TYPES.PERSONNEL);
   }
 
   addUnitsWidget() {
-    this.addWidget(4);
+    this.addWidget(this.consts.WIDGET_TYPES.UNITS);
   }
 
   addMapWidget() {
-    this.addWidget(2);
+    this.addWidget(this.consts.WIDGET_TYPES.MAP);
   }
 
   addWeatherWidget() {
-    this.addWidget(3);
+    this.addWidget(this.consts.WIDGET_TYPES.WEATHER);
   }
 
   isWidgetActive(widgetId) {
