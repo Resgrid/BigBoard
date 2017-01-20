@@ -4,8 +4,6 @@ import { RequestOptions, Headers } from '@angular/http';
 import { StatusBar, Splashscreen } from 'ionic-native';
 import { HttpInterceptorService } from 'ng2-http-interceptor';
 import { TranslateService } from "ng2-translate";
-import { Observable } from "rxjs/Observable";
-import { ChannelProvider, ConnectionState } from "../providers/channel";
 
 import { SplashPage } from '../pages/splash-page/splash-page';
 import { HomePage } from '../pages/home/home';
@@ -26,18 +24,10 @@ export class BigBoardApp {
 
   pages: Array<{ title: string, component: any }>;
 
-  // An internal "copy" of the connection state stream used because
-  //  we want to map the values of the original stream. If we didn't 
-  //  need to do that then we could use the service's observable 
-  //  right in the template.
-  //   
-  connectionState$: Observable<string>;
-
   constructor(public platform: Platform,
     private httpInterceptor: HttpInterceptorService,
     private settingsProvider: SettingsProvider,
-    private translate: TranslateService,
-    private channelProvider: ChannelProvider) {
+    private translate: TranslateService) {
     this.initializeApp();
     this.wireupInteceptors();
 
@@ -46,19 +36,6 @@ export class BigBoardApp {
       { title: 'About', component: AboutPage },
       { title: 'Settings', component: SettingsPage }
     ];
-
-    this.connectionState$ = this.channelProvider.connectionState$
-      .map((state: ConnectionState) => { return ConnectionState[state]; });
-
-    this.channelProvider.error$.subscribe(
-      (error: any) => { console.warn(error); },
-      (error: any) => { console.error("errors$ error", error); }
-    );
-
-    this.channelProvider.starting$.subscribe(
-      () => { console.log("signalr service has been started"); },
-      () => { console.warn("signalr service failed to start!"); }
-    );
   }
 
   initializeApp() {
@@ -70,7 +47,6 @@ export class BigBoardApp {
 
       this.settingsProvider.init().then(() => {
         this.setupTranslations();
-        this.channelProvider.start();
 
         this.nav.setRoot(HomePage);
       })

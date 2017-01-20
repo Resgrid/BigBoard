@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { NavController, MenuController, PopoverController, AlertController, Popover, ModalController, Modal } from 'ionic-angular';
+import { Observable } from "rxjs/Observable";
 
 import { Consts } from '../../app/consts';
 import { Widget } from '../../models/widget';
@@ -7,7 +8,7 @@ import { WidgetProvider } from '../../widgets/widget-provider';
 import { SettingsProvider } from '../../providers/settings';
 import { SettingsPage } from '../settings/settings';
 
-import { ChannelProvider } from '../../providers/channel';
+import { ChannelProvider, ConnectionState } from '../../providers/channel';
 
 import { AddPopover } from '../../components/add-popover/add-popover';
 import { AppPopover } from '../../components/app-popover/app-popover';
@@ -28,10 +29,10 @@ export class HomePage {
 	private appOptionsPopover: Popover;
 	private widgetSettingsModal: Modal;
 
-	private channel = "Connect";
-
 	public connected: boolean = false;
-	public connectionTimestamp: string = "";
+	public status: string = "Connecting to Resgrid...";
+	public statusColor: string = "yellow";
+	public connectionTimestamp: Date = new Date();
 
 	private curNum;
 	public gridConfig: NgGridConfig = <NgGridConfig>{
@@ -79,7 +80,7 @@ export class HomePage {
 	}
 
 	ngOnInit() {
-		//this.channelProvider.init();
+		this.wireUpSignalRListeners();
 	}
 
 	ionViewDidEnter() {
@@ -235,5 +236,44 @@ export class HomePage {
 
 	private _generateDefaultItemConfig(): NgGridItemConfig {
 		return { 'dragHandle': '.handle', 'col': 1, 'row': 1, 'sizex': 1, 'sizey': 1 };
+	}
+
+	private wireUpSignalRListeners(): void {
+		this.channelProvider.connectionState$.map((state: ConnectionState) => { this.processConnectionUpdate(state); });
+
+		this.channelProvider.error$.subscribe(
+			(error: any) => { console.warn(error); },
+			(error: any) => { console.error("errors$ error", error); }
+		);
+
+		this.channelProvider.starting$.subscribe(
+			() => { console.log("signalr service has been started"); },
+			() => { console.warn("signalr service failed to start!"); }
+		);
+	}
+
+	private processConnectionUpdate(state: ConnectionState): void {
+		switch (state) {
+			case ConnectionState.Connecting:
+				this.connected = false;
+				this.status = "Connecting to Resgrid...";
+				this.statusColor = "yellow";
+				break;
+			case ConnectionState.Connected:
+				this.status = "Connected to Resgrid";
+				this.statusColor = "green";
+				this.connected = true;
+				break;
+			case ConnectionState.Reconnecting:
+				this.status = "Disconnected, attempting to reconnect to Resgrid...";
+				this.statusColor = "yellow";
+				this.connected = false;
+				break;
+			case ConnectionState.Disconnected:
+				this.connected = false;
+				this.status = "Disconnected, attempting to reconnect to Resgrid...";
+				this.statusColor = "red";
+				break;
+		}
 	}
 }

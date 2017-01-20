@@ -149,10 +149,10 @@ export class DataProvider {
     public getGroups(): Observable<GroupResult[]> {
         let url = this.consts.ResgridApiUrl + '/BigBoard/GetGroups';
 
-        return this.http.get(url, new RequestOptions({ headers: new Headers({ 'Accept': 'application/json' }) })).map(res => res.json()).map((items) => {
+        return this.http.get(url, new RequestOptions({ headers: new Headers({ 'Accept': 'application/json' }) })).map(res => res.json()).map((result) => {
             let groups: GroupResult[] = new Array<GroupResult>();
 
-            items.forEach(item => {
+            result.Groups.forEach(item => {
                 let group = new GroupResult();
                 group.Gid = item.Gid;
                 group.Typ = item.Typ;

@@ -7,6 +7,7 @@ import { Widget } from '../models/widget';
 import { Settings } from '../models/settings';
 import { CallsWidgetSettings } from '../models/callsWidgetSettings';
 import { PersonnelWidgetSettings } from '../models/personnelWidgetSettings';
+import { GroupSorting } from '../models/groupSorting';
 
 @Injectable()
 export class SettingsProvider {
@@ -248,6 +249,22 @@ export class SettingsProvider {
 
    public save(): Promise<Settings> {
      return this.localStorage.setItem('settings', this.settings);
+   }
+
+   public saveGroupSorting(weights: Array<GroupSorting>): Promise<Array<GroupSorting>> {
+     return this.localStorage.setItem('groupWeights', weights);
+   }
+
+   public loadGroupSorting(): Promise<Array<GroupSorting>> {
+      return this.localStorage.getItem("groupWeights");
+   }
+
+   public saveGroupHiding(groupHides: Array<number>): Promise<Array<number>> {
+     return this.localStorage.setItem('groupHides', groupHides);
+   }
+
+   public loadGroupHiding(): Promise<Array<number>> {
+      return this.localStorage.getItem("groupHides");
    }
 
    public saveLayout(widgets: Array<Widget>): Promise<Array<Widget>> {

@@ -8,6 +8,7 @@ export class PersonnelWidgetSettings  {
     public ShowTimestamp: boolean = true;
     public ShowEta: boolean = true;
     public SortRespondingToTop: boolean = true;
+    public RespondingText: string = "";
     public HideUnavailable: boolean = true;
     public HideNotResponding: boolean = true;
     public NotRespondingText: string = "";
