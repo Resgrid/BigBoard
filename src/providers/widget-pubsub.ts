@@ -17,7 +17,9 @@ export class WidgetPubSub {
         PERSONNEL_STATUS_UPDATED: 'signalrPersonnelStatusUpdated',
         PERSONNEL_STAFFING_UPDATED: 'signalPersonnelStatusUpdated',
         UNIT_STATUS_UPDATED: 'signalrUnitStatusUpdated',
-        CALL_STATUS_UPDATED: 'signalrCallStatusUpdated'
+        CALL_STATUS_UPDATED: 'signalrCallStatusUpdated',
+        PERSONNEL_GROUP_SORT_UPDATED: 'personnelGroupSortUpdated',
+        PERSONNEL_GROUP_HIDE_UPDATED: 'personnelGroupHidesUpdated'
     };
 
     constructor() {
@@ -89,6 +91,20 @@ export class WidgetPubSub {
     emitCallUpdated(event) {
         this._observer.next({
             event: this.EVENTS.CALL_STATUS_UPDATED,
+            data: event
+        })
+    }
+
+    emitPersonnelWidgetSortUpdated(event) {
+        this._observer.next({
+            event: this.EVENTS.PERSONNEL_GROUP_SORT_UPDATED,
+            data: event
+        })
+    }
+
+    emitPersonnelWidgetHideUpdated(event) {
+        this._observer.next({
+            event: this.EVENTS.PERSONNEL_GROUP_HIDE_UPDATED,
             data: event
         })
     }

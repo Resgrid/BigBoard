@@ -12,7 +12,7 @@ import { SettingsProvider } from '../../providers/settings';
 
 @Component({
   selector: 'personnel-modal',
-  templateUrl: 'personnel-modal.html' 
+  templateUrl: 'personnel-modal.html'
 })
 export class PersonnelModal {
   public model: PersonnelWidgetSettings;
@@ -22,12 +22,12 @@ export class PersonnelModal {
   private removeWidget;
   private closeModal;
   private groups: GroupResult[] = new Array<GroupResult>();
-  
+
   constructor(private navParams: NavParams,
-              private consts: Consts,
-              private dataProvider: DataProvider,
-              private settingsProvider: SettingsProvider,
-              private widgetPubSub: WidgetPubSub) {
+    private consts: Consts,
+    private dataProvider: DataProvider,
+    private settingsProvider: SettingsProvider,
+    private widgetPubSub: WidgetPubSub) {
     this.removeWidget = this.navParams.get('removeWidget')
     this.closeModal = this.navParams.get('closeModal')
 
@@ -59,7 +59,16 @@ export class PersonnelModal {
   save() {
     this.settingsProvider.savePersonnelWidgetSettings(this.model).then(() => {
       this.widgetPubSub.emitPersonnelWidgetSettingsUpdated(this.model);
-      this.closeModal();
+
+      this.settingsProvider.saveGroupSorting(this.groupSorts).then(() => {
+        this.widgetPubSub.emitPersonnelWidgetSortUpdated(this.groupSorts);
+
+        this.settingsProvider.saveGroupHiding(this.groupHides).then(() => {
+          this.widgetPubSub.emitPersonnelWidgetHideUpdated(this.groupHides);
+
+          this.closeModal();
+        });
+      });
     });
   }
 
@@ -83,23 +92,42 @@ export class PersonnelModal {
 
   public setSortWeightForGroup(groupId: number, event: any): void {
     let groupSort: GroupSorting;
-    
+
     for (let group of this.groupSorts) {
       if (group.GroupId == groupId) {
+        group.Weight = event.target.value;
         groupSort = group;
       }
     }
 
     if (!groupSort) {
       groupSort = new GroupSorting();
-    }
+      groupSort.GroupId = groupId;
+      groupSort.Weight = event.target.value;
 
-    groupSort.GroupId = groupId;
-    groupSort.Weight = event.target.value;
+      this.groupSorts.push(groupSort);
+    }
   }
 
-  public getIsHiddenForGroup(groupId: number) {
+  public getIsHiddenForGroup(groupId: number): boolean {
+    for (let group of this.groupHides) {
+      if (group == groupId) {
+        return true;
+      }
+    }
 
+    return false;
+  }
+
+  public setIsHiddenForGroup(groupId: number, event: any): void {
+    let isHidden: boolean = event.checked;
+    let index = this.groupHides.indexOf(groupId, 0);
+
+    if (isHidden && index <= -1) {
+      this.groupHides.push(groupId);
+    } else if (!isHidden && index > -1) {
+      this.groupHides.splice(index, 1);
+    }
   }
 
   private fetch() {

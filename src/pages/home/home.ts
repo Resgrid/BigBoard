@@ -4,7 +4,6 @@ import { Observable } from "rxjs/Observable";
 
 import { Consts } from '../../app/consts';
 import { Widget } from '../../models/widget';
-import { WidgetProvider } from '../../widgets/widget-provider';
 import { SettingsProvider } from '../../providers/settings';
 import { SettingsPage } from '../settings/settings';
 
@@ -31,7 +30,7 @@ export class HomePage {
 
 	public connected: boolean = false;
 	public status: string = "Connecting to Resgrid...";
-	public statusColor: string = "yellow";
+	public statusColor: string = "orange";
 	public connectionTimestamp: Date = new Date();
 
 	private curNum;
@@ -62,7 +61,6 @@ export class HomePage {
 	constructor(private menu: MenuController,
 		public navCtrl: NavController,
 		private consts: Consts,
-		private widgetProvider: WidgetProvider,
 		private settingsProvider: SettingsProvider,
 		private popoverCtrl: PopoverController,
 		private alertCtrl: AlertController,
@@ -257,7 +255,7 @@ export class HomePage {
 			case ConnectionState.Connecting:
 				this.connected = false;
 				this.status = "Connecting to Resgrid...";
-				this.statusColor = "yellow";
+				this.statusColor = "orange";
 				break;
 			case ConnectionState.Connected:
 				this.status = "Connected to Resgrid";
@@ -266,7 +264,7 @@ export class HomePage {
 				break;
 			case ConnectionState.Reconnecting:
 				this.status = "Disconnected, attempting to reconnect to Resgrid...";
-				this.statusColor = "yellow";
+				this.statusColor = "orange";
 				this.connected = false;
 				break;
 			case ConnectionState.Disconnected:

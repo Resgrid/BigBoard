@@ -17,7 +17,6 @@ import { AuthProvider } from '../providers/auth';
 import { SettingsProvider } from '../providers/settings';
 import { UtilsProvider } from '../providers/utils';
 import { DataProvider } from '../providers/data';
-import { WidgetProvider } from '../widgets/widget-provider';
 import { WidgetPubSub } from '../providers/widget-pubsub';
 
 import { AddPopover } from '../components/add-popover/add-popover';
@@ -28,6 +27,7 @@ import { CallsModal } from '../widgets/calls/calls-modal';
 import { PersonnelWidget } from '../widgets/personnel/personnel-widget';
 import { PersonnelModal } from '../widgets/personnel/personnel-modal';
 
+import { OrderBy } from "../pipes/orderBy"
 import { NgGridModule } from 'angular2-grid';
 import { MomentModule } from 'angular2-moment';
 
@@ -58,7 +58,8 @@ channelConfig.hubName = "eventingHub";
     AddPopover,
     CallsModal,
     PersonnelWidget,
-    PersonnelModal
+    PersonnelModal,
+    OrderBy
   ],
   imports: [
     IonicModule.forRoot(BigBoardApp),
@@ -84,7 +85,7 @@ channelConfig.hubName = "eventingHub";
     PersonnelModal
   ],
   providers: [...HTTP_INTERCEPTOR_PROVIDER, {provide: ErrorHandler, useClass: IonicErrorHandler}, Consts, AuthProvider, 
-  SettingsProvider, UtilsProvider, WidgetProvider, DataProvider, TranslateService, ChannelProvider, WidgetPubSub, 
-  ChannelProvider, { provide: SignalrWindow, useValue: window }, { provide: 'channel.config', useValue: channelConfig }]
+  SettingsProvider, UtilsProvider, DataProvider, TranslateService, ChannelProvider, WidgetPubSub, ChannelProvider, 
+  { provide: SignalrWindow, useValue: window }, { provide: 'channel.config', useValue: channelConfig }]
 })
 export class AppModule {}

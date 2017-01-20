@@ -23,7 +23,7 @@
     </ion-col>
   </ion-row>
   
-  <ion-row class="strippedRows" *ngFor="let status of statuses">
+  <ion-row class="strippedRows" *ngFor="let status of statuses | orderBy : ['weight']" [hidden]="isPersonOrGroupHidden(status)">
     <ion-col>
       {{status.Name}}
     </ion-col>

@@ -7,7 +7,7 @@ export class PersonnelStatusResult  {
     public UpdatedDate: string = "";
     public Group: string = "";
     public Roles: string = "";
-    public GroupId: string = "";
+    public GroupId: number = 0;
     public StateStyle: string = "";
     public StatusStyle: string = "";
     public Latitude: string = "";
@@ -15,4 +15,7 @@ export class PersonnelStatusResult  {
     public StatusValue: string = "";
     public Eta: string = "";
     public DestinationType: string = "";
+
+    // Local Data
+    public Weight: number = 10;
 }

@@ -128,6 +128,23 @@
       </ion-col>
     </ion-row>
     <ion-row>
+      <ion-col>
+        <h3 class="name">Hide Groups</h3>
+      </ion-col>
+    </ion-row>
+    <ion-row *ngFor="let group of groups">
+      <ion-col>
+        <ion-item>
+          <ion-checkbox color="primary" [checked]="getIsHiddenForGroup(group.Gid)" (ionChange)="setIsHiddenForGroup(group.Gid, $event)"></ion-checkbox>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-item>
+          {{group.Nme}}
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
       <ion-col width-70>
       </ion-col>
       <ion-col width-30 style="text-align: right;">
