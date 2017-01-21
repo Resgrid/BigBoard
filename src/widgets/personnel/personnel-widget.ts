@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 
 import { PersonnelStatusResult } from '../../models/personnelStatusResult';
 import { PersonnelWidgetSettings } from '../../models/personnelWidgetSettings';
@@ -18,7 +18,8 @@ export class PersonnelWidget {
   public groupHides: number[] = new Array<number>();
   private settingsUpdatedSubscription: any;
 
-  constructor(private dataProvider: DataProvider,
+  constructor(private ref: ChangeDetectorRef,
+    private dataProvider: DataProvider,
     private settingsProvider: SettingsProvider,
     private widgetPubSub: WidgetPubSub) {
     this.settings = new PersonnelWidgetSettings();
@@ -41,17 +42,17 @@ export class PersonnelWidget {
     this.settingsUpdatedSubscription = this.widgetPubSub.watch().subscribe(e => {
       if (e.event === this.widgetPubSub.EVENTS.PERSONNEL_SETTINGS) {
         this.settings = e.data;
-        this.fetch();
+        this.ref.detectChanges();
       } else if (e.event === this.widgetPubSub.EVENTS.PERSONNEL_STATUS_UPDATED) {
         this.fetch();
       } else if (e.event === this.widgetPubSub.EVENTS.PERSONNEL_STAFFING_UPDATED) {
         this.fetch();
       } else if (e.event === this.widgetPubSub.EVENTS.PERSONNEL_GROUP_SORT_UPDATED) {
         this.groupSorts = e.data;
-        this.fetch();
+        this.ref.detectChanges();
       } else if (e.event === this.widgetPubSub.EVENTS.PERSONNEL_GROUP_HIDE_UPDATED) {
         this.groupHides = e.data;
-        this.fetch();
+        this.ref.detectChanges();
       }
     });
   }
@@ -115,6 +116,10 @@ export class PersonnelWidget {
           }
 
           this.statuses = data;
+
+          this.statuses.sort(function (a, b) {
+            return (a.Weight - b.Weight);
+          });
         }
       });
   }

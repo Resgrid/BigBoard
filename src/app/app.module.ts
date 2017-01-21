@@ -27,7 +27,6 @@ import { CallsModal } from '../widgets/calls/calls-modal';
 import { PersonnelWidget } from '../widgets/personnel/personnel-widget';
 import { PersonnelModal } from '../widgets/personnel/personnel-modal';
 
-import { OrderBy } from "../pipes/orderBy"
 import { NgGridModule } from 'angular2-grid';
 import { MomentModule } from 'angular2-moment';
 
@@ -58,8 +57,7 @@ channelConfig.hubName = "eventingHub";
     AddPopover,
     CallsModal,
     PersonnelWidget,
-    PersonnelModal,
-    OrderBy
+    PersonnelModal
   ],
   imports: [
     IonicModule.forRoot(BigBoardApp),

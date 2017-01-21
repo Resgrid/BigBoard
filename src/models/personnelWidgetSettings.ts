@@ -7,10 +7,10 @@ export class PersonnelWidgetSettings  {
     public ShowRoles: boolean = true;
     public ShowTimestamp: boolean = true;
     public ShowEta: boolean = true;
-    public SortRespondingToTop: boolean = true;
+    public SortRespondingToTop: boolean = false;
     public RespondingText: string = "";
-    public HideUnavailable: boolean = true;
-    public HideNotResponding: boolean = true;
+    public HideUnavailable: boolean = false;
+    public HideNotResponding: boolean = false;
     public NotRespondingText: string = "";
     public UnavailableText: string = "";
     public FontSize: number = 12;
