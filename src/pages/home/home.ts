@@ -237,7 +237,11 @@ export class HomePage {
 	}
 
 	private wireUpSignalRListeners(): void {
-		this.channelProvider.connectionState$.map((state: ConnectionState) => { this.processConnectionUpdate(state); });
+		this.channelProvider.connectionState$.watch().subscribe((state: ConnectionState) => {
+			this.processConnectionUpdate(state);
+		});
+
+		//.map((state: ConnectionState) => { this.processConnectionUpdate(state); });
 
 		this.channelProvider.error$.subscribe(
 			(error: any) => { console.warn(error); },

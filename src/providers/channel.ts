@@ -3,6 +3,7 @@
 import { Injectable, Inject } from "@angular/core";
 import { Subject } from "rxjs/Subject";
 import { Observable } from "rxjs/Observable";
+import { Observer } from 'rxjs/Observer';
 
 import { SettingsProvider } from './settings';
 import { WidgetPubSub } from './widget-pubsub';
@@ -77,6 +78,7 @@ export class ChannelProvider {
 
     // These are used to feed the public observables 
     //
+    private connectionStateObserver: Observer<ConnectionState>;
     private connectionStateSubject = new Subject<ConnectionState>();
     private startingSubject = new Subject<any>();
     private errorSubject = new Subject<any>();
@@ -103,9 +105,14 @@ export class ChannelProvider {
 
         // Set up our observables
         //
-        this.connectionState$ = this.connectionStateSubject.asObservable();
-        this.error$ = this.errorSubject.asObservable();
-        this.starting$ = this.startingSubject.asObservable();
+        //this.connectionState$ = this.connectionStateSubject.asObservable().share();
+        this.connectionState$ = new Observable<ConnectionState>(observer => {
+            this.connectionStateObserver = observer;
+        }).share(); // share() allows multiple subscribers
+
+
+        this.error$ = this.errorSubject.asObservable().share();
+        this.starting$ = this.startingSubject.asObservable().share();
 
         this.hubConnection = this.window.$.hubConnection();
         this.hubConnection.url = channelConfig.url;

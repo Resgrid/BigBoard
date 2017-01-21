@@ -33,7 +33,7 @@
 <ion-footer>
   <ion-toolbar>
     <div class="bottom-bar" style="text-align: right; padding-right:10px;">
-      <span [style.color]="statusColor">{{status}}</span>
+      <span [hidden]="!areSettingsSet" [style.color]="statusColor">{{status}}</span>
     </div>
   </ion-toolbar>
 </ion-footer>
