@@ -13,6 +13,7 @@ import { AddPopover } from '../../components/add-popover/add-popover';
 import { AppPopover } from '../../components/app-popover/app-popover';
 
 import { CallsModal } from '../../widgets/calls/calls-modal';
+import { UnitsModal } from '../../widgets/units/units-modal';
 import { PersonnelModal } from '../../widgets/personnel/personnel-modal';
 
 import { NgGrid, NgGridItem, NgGridConfig, NgGridItemConfig, NgGridItemEvent } from 'angular2-grid';
@@ -129,7 +130,11 @@ export class HomePage {
 			} else if (box.type == this.consts.WIDGET_TYPES.WEATHER) {
 
 			} else if (box.type == this.consts.WIDGET_TYPES.UNITS) {
-
+				this.widgetSettingsModal = this.modalCtrl.create(UnitsModal, {
+					removeWidget: (type) => { this.removeWidgetByType(type); },
+					closeModal: () => { this.closeWidgetSettingsModal(); }
+				});
+				this.widgetSettingsModal.present();
 			} else if (box.type == this.consts.WIDGET_TYPES.CALLS) {
 				this.widgetSettingsModal = this.modalCtrl.create(CallsModal, {
 					removeWidget: (type) => { this.removeWidgetByType(type); },
@@ -237,7 +242,7 @@ export class HomePage {
 	}
 
 	private wireUpSignalRListeners(): void {
-		this.channelProvider.connectionState$.watch().subscribe((state: ConnectionState) => {
+		this.channelProvider.connectionState$.subscribe((state: ConnectionState) => {
 			this.processConnectionUpdate(state);
 		});
 

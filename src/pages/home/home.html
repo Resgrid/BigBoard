@@ -21,14 +21,15 @@
       </ion-card-header>
       <ion-card-content>
         <personnel-widget *ngIf="box.type === 1"></personnel-widget>
+        <units-widget *ngIf="box.type === 4"></units-widget>
         <calls-widget *ngIf="box.type === 5"></calls-widget>
       </ion-card-content>
-      </ion-card>
+    </ion-card>
   </div>
   <cta-panel [hidden]="areSettingsSet" (ctaClick)="setSettingsClick()" [topIcon]="'alert'" [title]="'settingsNotSetPanel.title' | translate"
     [details]="'settingsNotSetPanel.details' | translate" [extraDetails]="'settingsNotSetPanel.extraDetails' | translate" [btnLabel]="'settingsNotSetPanel.buttonLabel' | translate"></cta-panel>
-  <cta-panel [hidden]="!(areSettingsSet && boxes.length <= 0)" (ctaClick)="presentAddPopover($event)" [topIcon]="'add'" [title]="'noWidgetsPanel.title' | translate"
-    [details]="'noWidgetsPanel.details' | translate" [extraDetails]="'noWidgetsPanel.extraDetails' | translate" [btnLabel]="'noWidgetsPanel.buttonLabel' | translate"></cta-panel>
+    <cta-panel [hidden]="!(areSettingsSet && boxes.length <= 0)" (ctaClick)="presentAddPopover($event)" [topIcon]="'add'" [title]="'noWidgetsPanel.title' | translate"
+      [details]="'noWidgetsPanel.details' | translate" [extraDetails]="'noWidgetsPanel.extraDetails' | translate" [btnLabel]="'noWidgetsPanel.buttonLabel' | translate"></cta-panel>
 </ion-content>
 <ion-footer>
   <ion-toolbar>

@@ -7,6 +7,7 @@ import { Widget } from '../models/widget';
 import { Settings } from '../models/settings';
 import { CallsWidgetSettings } from '../models/callsWidgetSettings';
 import { PersonnelWidgetSettings } from '../models/personnelWidgetSettings';
+import { UnitsWidgetSettings } from '../models/unitsWidgetSettings';
 import { GroupSorting } from '../models/groupSorting';
 
 @Injectable()
@@ -293,5 +294,13 @@ export class SettingsProvider {
 
    public loadPersonnelWidgetSettings(): Promise<PersonnelWidgetSettings> {
       return this.localStorage.getItem("personnelWidgetSettings");
+   }
+
+   public saveUnitsWidgetSettings(unitsWidgetSettings: UnitsWidgetSettings): Promise<UnitsWidgetSettings> {
+     return this.localStorage.setItem('unitsWidgetSettings', unitsWidgetSettings);
+   }
+
+   public loadUnitsWidgetSettings(): Promise<UnitsWidgetSettings> {
+      return this.localStorage.getItem("unitsWidgetSettings");
    }
 }

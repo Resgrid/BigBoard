@@ -2,8 +2,9 @@
 
 import { Injectable, Inject } from "@angular/core";
 import { Subject } from "rxjs/Subject";
-import { Observable } from "rxjs/Observable";
+import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
+import 'rxjs/add/operator/map';
 
 import { SettingsProvider } from './settings';
 import { WidgetPubSub } from './widget-pubsub';
@@ -79,7 +80,7 @@ export class ChannelProvider {
     // These are used to feed the public observables 
     //
     private connectionStateObserver: Observer<ConnectionState>;
-    private connectionStateSubject = new Subject<ConnectionState>();
+    //private connectionStateSubject = new Subject<ConnectionState>();
     private startingSubject = new Subject<any>();
     private errorSubject = new Subject<any>();
 
@@ -111,8 +112,8 @@ export class ChannelProvider {
         }).share(); // share() allows multiple subscribers
 
 
-        this.error$ = this.errorSubject.asObservable().share();
-        this.starting$ = this.startingSubject.asObservable().share();
+        this.error$ = this.errorSubject.asObservable();
+        this.starting$ = this.startingSubject.asObservable();
 
         this.hubConnection = this.window.$.hubConnection();
         this.hubConnection.url = channelConfig.url;
@@ -140,17 +141,17 @@ export class ChannelProvider {
 
             // Push the new state on our subject
             //
-            this.connectionStateSubject.next(newState);
+            //this.connectionStateSubject.next(newState);
+            this.connectionStateObserver.next(newState);
         });
 
         // Define handlers for any errors
         //
         this.hubConnection.error((error: any) => {
-            // Push the error on our subject
-            //
             this.errorSubject.next(error);
         });
 
+        // SignalR Event Listeners
         this.hubProxy.on('PersonnelStatusUpdated', (data: any) => {
             this.widgetPubSub.emitPersonnelStatusUpdated(data);
             //console.log('PersonnelStatusUpdated');
@@ -171,26 +172,14 @@ export class ChannelProvider {
             //console.log('PersonnelStaffingUpdated');
         });
 
-        /*
-                this.hubProxy.on("onEvent", (channel: string, ev: ChannelEvent) => {
-                    //console.log(`onEvent - ${channel} channel`, ev);
-        
-                    // This method acts like a broker for incoming messages. We 
-                    //  check the interal array of subjects to see if one exists
-                    //  for the channel this came in on, and then emit the event
-                    //  on it. Otherwise we ignore the message.
-                    //
-                    let channelSub = this.subjects.find((x: ChannelSubject) => {
-                        return x.channel === channel;
-                    }) as ChannelSubject;
-        
-                    // If we found a subject then emit the event on it
-                    //
-                    if (channelSub !== undefined) {
-                        return channelSub.subject.next(ev);
-                    }
-                });
-        */
+        this.connectionState$.subscribe((state: ConnectionState) => {
+            if (state === ConnectionState.Disconnected) {
+                this.started = false;
+                setTimeout(() => {
+                    this.start();
+                }, 5000);
+            }
+        });
     }
 
     /**
