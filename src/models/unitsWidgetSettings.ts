@@ -1,3 +1,5 @@
+import { SortModel } from './sortModel';
+
 export class UnitsWidgetSettings  {
     public ShowStation: boolean = true;
     public ShowType: boolean = true;
@@ -5,4 +7,6 @@ export class UnitsWidgetSettings  {
     public ShowTimestamp: boolean = true;
     public ShowEta: boolean = false;
     public FontSize: number = 12;
+    public SortOrders: SortModel[];
+    public HideGroups: number[];
 }

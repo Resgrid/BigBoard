@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { NavController, MenuController, PopoverController, AlertController, Popover, ModalController, Modal } from 'ionic-angular';
 import { Observable } from "rxjs/Observable";
 
@@ -15,12 +15,15 @@ import { AppPopover } from '../../components/app-popover/app-popover';
 import { CallsModal } from '../../widgets/calls/calls-modal';
 import { UnitsModal } from '../../widgets/units/units-modal';
 import { PersonnelModal } from '../../widgets/personnel/personnel-modal';
+import { WeatherModal } from '../../widgets/weather/weather-modal';
+import { MapModal } from '../../widgets/map/map-modal';
 
 import { NgGrid, NgGridItem, NgGridConfig, NgGridItemConfig, NgGridItemEvent } from 'angular2-grid';
 
 @Component({
 	selector: 'page-home',
-	templateUrl: 'home.html'
+	templateUrl: 'home.html',
+	encapsulation: ViewEncapsulation.None
 })
 export class HomePage {
 	private areSettingsSet: boolean;
@@ -47,7 +50,7 @@ export class HomePage {
 		'min_rows': 1,
 		'col_width': 2,
 		'row_height': 2,
-		'cascade': 'up',
+		'cascade': 'left',
 		'min_width': 50,
 		'min_height': 50,
 		'fix_to_grid': false,
@@ -56,7 +59,7 @@ export class HomePage {
 		'maintain_ratio': false,
 		'prefer_new': false,
 		'zoom_on_drag': false,
-		'limit_to_screen': true
+		'limit_to_screen': false
 	};
 
 	constructor(private menu: MenuController,
@@ -126,9 +129,17 @@ export class HomePage {
 				});
 				this.widgetSettingsModal.present();
 			} else if (box.type == this.consts.WIDGET_TYPES.MAP) {
-
+				this.widgetSettingsModal = this.modalCtrl.create(MapModal, {
+					removeWidget: (type) => { this.removeWidgetByType(type); },
+					closeModal: () => { this.closeWidgetSettingsModal(); }
+				});
+				this.widgetSettingsModal.present();
 			} else if (box.type == this.consts.WIDGET_TYPES.WEATHER) {
-
+				this.widgetSettingsModal = this.modalCtrl.create(WeatherModal, {
+					removeWidget: (type) => { this.removeWidgetByType(type); },
+					closeModal: () => { this.closeWidgetSettingsModal(); }
+				});
+				this.widgetSettingsModal.present();
 			} else if (box.type == this.consts.WIDGET_TYPES.UNITS) {
 				this.widgetSettingsModal = this.modalCtrl.create(UnitsModal, {
 					removeWidget: (type) => { this.removeWidgetByType(type); },
@@ -159,20 +170,20 @@ export class HomePage {
 		let name: string;
 		let widgetType: number;
 
-		if (type == 1) {
-			widgetType = 1;
+		if (type == this.consts.WIDGET_TYPES.PERSONNEL) {
+			widgetType = this.consts.WIDGET_TYPES.PERSONNEL;
 			name = "Personnel";
-		} else if (type == 2) {
-			widgetType = 2;
+		} else if (type == this.consts.WIDGET_TYPES.MAP) {
+			widgetType = this.consts.WIDGET_TYPES.MAP;
 			name = "Map";
-		} else if (type == 3) {
-			widgetType = 3;
+		} else if (type == this.consts.WIDGET_TYPES.WEATHER) {
+			widgetType = this.consts.WIDGET_TYPES.WEATHER;
 			name = "Weather";
-		} else if (type == 4) {
-			widgetType = 4;
+		} else if (type == this.consts.WIDGET_TYPES.UNITS) {
+			widgetType = this.consts.WIDGET_TYPES.UNITS;
 			name = "Units";
-		} else if (type == 5) {
-			widgetType = 5;
+		} else if (type == this.consts.WIDGET_TYPES.CALLS) {
+			widgetType = this.consts.WIDGET_TYPES.CALLS;
 			name = "Calls";
 		}
 
@@ -188,7 +199,7 @@ export class HomePage {
 
 	removeWidgetByType(type: number): void {
 		for (var _i = 0; _i < this.boxes.length; _i++) {
-			if (this.boxes[_i]) {
+			if (this.boxes[_i].type == type) {
 				this.boxes.splice(_i, 1);
 				break;
 			}
@@ -238,7 +249,7 @@ export class HomePage {
 	}
 
 	private _generateDefaultItemConfig(): NgGridItemConfig {
-		return { 'dragHandle': '.handle', 'col': 1, 'row': 1, 'sizex': 1, 'sizey': 1 };
+		return { 'dragHandle': '.handle', /*'resizeHandle': '.resizeGripHandle',*/ 'col': 1, 'row': 1, 'sizex': 1, 'sizey': 1 };
 	}
 
 	private wireUpSignalRListeners(): void {

@@ -20,7 +20,10 @@
         </ion-item>
       </ion-card-header>
       <ion-card-content>
+        <!--<ion-icon id="resizeGripHandle" ios="ios-funnel" md="md-funnel" class="rotate-grip" ></ion-icon>-->
         <personnel-widget *ngIf="box.type === 1"></personnel-widget>
+        <map-widget *ngIf="box.type === 2"></map-widget>
+        <weather-widget *ngIf="box.type === 3"></weather-widget>
         <units-widget *ngIf="box.type === 4"></units-widget>
         <calls-widget *ngIf="box.type === 5"></calls-widget>
       </ion-card-content>

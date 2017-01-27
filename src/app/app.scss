@@ -118,3 +118,26 @@
 .card-header {
     padding: 0px;
 }
+
+@mixin rotate($deg: 90){
+    $sDeg: #{$deg}deg;
+
+    -webkit-transform: rotate($sDeg);
+    -moz-transform: rotate($sDeg);
+    -ms-transform: rotate($sDeg);
+    -o-transform: rotate($sDeg);
+    transform: rotate($sDeg);
+}
+
+.rotate-grip {
+    -webkit-transform: rotate(320deg);
+    -moz-transform: rotate(320deg);
+    -ms-transform: rotate(320deg);
+    -o-transform: rotate(320deg);
+    transform: rotate(320deg);
+    position:absolute;
+    bottom:0;
+    right:0;
+    padding: 0;
+    margin: 0;
+}

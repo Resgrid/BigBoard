@@ -1,0 +1,57 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      Weather Widget Settings
+    </ion-title>
+    <ion-buttons start>
+      <button ion-button color="danger" (click)="remove()">Remove Widget</button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <h4 class="name">Visible Columns</h4>
+      </ion-col>
+    </ion-row>
+    <ion-row wrap>
+      <ion-col>
+        <ion-item>
+          <ion-label>Units</ion-label>
+          <ion-select [(ngModel)]="model.Units">
+            <ion-option *ngFor="let unit of units" [value]="unit">{{unit}}</ion-option>
+          </ion-select>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-list-header>
+          Latitude
+        </ion-list-header>
+        <ion-item>
+           <ion-input type="number" [(ngModel)]="model.Latitude"></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-list-header>
+          Longitude
+        </ion-list-header>
+        <ion-item>
+           <ion-input type="number" [(ngModel)]="model.Longitude"></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col width-70>
+      </ion-col>
+      <ion-col width-30 style="text-align: right;">
+        <button ion-button color="light" (click)="close()" end>Close</button>
+        <button ion-button color="success" (click)="save()" end>Save</button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

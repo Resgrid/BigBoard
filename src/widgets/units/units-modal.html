@@ -18,14 +18,20 @@
     <ion-row wrap>
       <ion-col>
         <ion-item>
-          <ion-label>Id</ion-label>
-          <ion-toggle [(ngModel)]="model.ShowId"></ion-toggle>
+          <ion-label>Station</ion-label>
+          <ion-toggle [(ngModel)]="model.ShowStation"></ion-toggle>
         </ion-item>
       </ion-col>
       <ion-col>
         <ion-item>
-          <ion-label>Name</ion-label>
-          <ion-toggle [(ngModel)]="model.ShowName"></ion-toggle>
+          <ion-label>Type</ion-label>
+          <ion-toggle [(ngModel)]="model.ShowType"></ion-toggle>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-item>
+          <ion-label>State</ion-label>
+          <ion-toggle [(ngModel)]="model.ShowState"></ion-toggle>
         </ion-item>
       </ion-col>
       <ion-col>
@@ -34,18 +40,12 @@
           <ion-toggle [(ngModel)]="model.ShowTimestamp"></ion-toggle>
         </ion-item>
       </ion-col>
-      <ion-col>
+      <!--<ion-col>
         <ion-item>
-          <ion-label>Logged By</ion-label>
-          <ion-toggle [(ngModel)]="model.ShowUser"></ion-toggle>
+          <ion-label>Eta</ion-label>
+          <ion-toggle [(ngModel)]="model.ShowEta"></ion-toggle>
         </ion-item>
-      </ion-col>
-      <ion-col>
-        <ion-item>
-          <ion-label>Priority</ion-label>
-          <ion-toggle [(ngModel)]="model.ShowPriority"></ion-toggle>
-        </ion-item>
-      </ion-col>
+      </ion-col>-->
     </ion-row>
     <ion-row>
       <ion-col>
@@ -57,6 +57,40 @@
             <ion-label range-left class="small-text">a</ion-label>
             <ion-label range-right>A</ion-label>
           </ion-range>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <h3 class="name">Order Groups</h3>
+      </ion-col>
+    </ion-row>
+    <ion-row *ngFor="let group of groups">
+      <ion-col>
+        <ion-item>
+          <ion-input type="number" [value]="getSortWeightForGroup(group.Gid)" (change)="setSortWeightForGroup(group.Gid, $event)"></ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-item>
+          {{group.Nme}}
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <h3 class="name">Hide Groups</h3>
+      </ion-col>
+    </ion-row>
+    <ion-row *ngFor="let group of groups">
+      <ion-col>
+        <ion-item>
+          <ion-checkbox color="primary" [checked]="getIsHiddenForGroup(group.Gid)" (ionChange)="setIsHiddenForGroup(group.Gid, $event)"></ion-checkbox>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-item>
+          {{group.Nme}}
         </ion-item>
       </ion-col>
     </ion-row>

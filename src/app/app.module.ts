@@ -18,6 +18,7 @@ import { SettingsProvider } from '../providers/settings';
 import { UtilsProvider } from '../providers/utils';
 import { DataProvider } from '../providers/data';
 import { WidgetPubSub } from '../providers/widget-pubsub';
+import { SafePipe } from '../pipes/safe';
 
 import { AddPopover } from '../components/add-popover/add-popover';
 import { AppPopover } from '../components/app-popover/app-popover';
@@ -28,6 +29,10 @@ import { PersonnelWidget } from '../widgets/personnel/personnel-widget';
 import { PersonnelModal } from '../widgets/personnel/personnel-modal';
 import { UnitsWidget } from '../widgets/units/units-widget';
 import { UnitsModal } from '../widgets/units/units-modal';
+import { WeatherWidget } from '../widgets/weather/weather-widget';
+import { WeatherModal } from '../widgets/weather/weather-modal';
+import { MapWidget } from '../widgets/map/map-widget';
+import { MapModal } from '../widgets/map/map-modal';
 
 import { NgGridModule } from 'angular2-grid';
 import { MomentModule } from 'angular2-moment';
@@ -61,7 +66,12 @@ channelConfig.hubName = "eventingHub";
     PersonnelWidget,
     PersonnelModal,
     UnitsWidget,
-    UnitsModal
+    UnitsModal,
+    WeatherWidget,
+    WeatherModal,
+    SafePipe,
+    MapWidget,
+    MapModal
   ],
   imports: [
     IonicModule.forRoot(BigBoardApp),
@@ -86,7 +96,11 @@ channelConfig.hubName = "eventingHub";
     PersonnelWidget,
     PersonnelModal,
     UnitsWidget,
-    UnitsModal
+    UnitsModal,
+    WeatherWidget,
+    WeatherModal,
+    MapWidget,
+    MapModal
   ],
   providers: [...HTTP_INTERCEPTOR_PROVIDER, {provide: ErrorHandler, useClass: IonicErrorHandler}, Consts, AuthProvider, 
   SettingsProvider, UtilsProvider, DataProvider, TranslateService, ChannelProvider, WidgetPubSub, ChannelProvider, 
