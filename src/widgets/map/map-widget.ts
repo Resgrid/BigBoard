@@ -19,19 +19,20 @@ export class MapWidget {
     public settings: MapWidgetSettings;
     private settingsUpdatedSubscription: any;
     public map: any;
-    private mapInitialised: boolean = false;
     private apiKey: any;
 
     constructor(private dataProvider: DataProvider,
         private widgetPubSub: WidgetPubSub) {
         this.settings = new MapWidgetSettings();
         this.markers = new Array<any>();
+        this.initMap();
     }
 
     ngOnInit() {
         this.settingsUpdatedSubscription = this.widgetPubSub.watch().subscribe(e => {
             if (e.event === this.widgetPubSub.EVENTS.MAP_SETTINGS) {
                 this.settings = e.data;
+                this.fetch();
             } else if (e.event === this.widgetPubSub.EVENTS.PERSONNEL_STATUS_UPDATED) {
                 this.fetch();
             } else if (e.event === this.widgetPubSub.EVENTS.PERSONNEL_STAFFING_UPDATED) {
@@ -42,28 +43,24 @@ export class MapWidget {
                 this.fetch();
             }
         });
-
-        this.initMap();
         this.fetch();
     }
 
     private initMap() {
         if (typeof google == "undefined" || typeof google.maps == "undefined") {
-            //Load the SDK
-            window['mapInit'] = () => {
-                this.initMap();
-            }
-
             let script = document.createElement("script");
             script.id = "googleMaps";
-
             if (this.apiKey) {
-                script.src = 'http://maps.google.com/maps/api/js?key=' + this.apiKey + '&callback=mapInit';
+                script.src = 'https://maps.google.com/maps/api/js?key=' + this.apiKey;
             } else {
-                script.src = 'http://maps.google.com/maps/api/js?callback=mapInit';
+                script.src = 'https://maps.google.com/maps/api/js';
             }
+            //document.body.appendChild(script);
 
-            document.body.appendChild(script);
+            let marketWithLabelScript = document.createElement("script");
+            marketWithLabelScript.id = "marketWithLabelScript";
+            marketWithLabelScript.src = 'assets/markerWithLabel/markerwithlabel.js';
+            //document.body.appendChild(marketWithLabelScript);
         }
     }
 
@@ -102,7 +99,7 @@ export class MapWidget {
                             raiseOnDrag: false,
                             map: this.map,
                             title: marker.Title,
-                            icon: "/img/mapping/" + marker.ImagePath + ".png",
+                            icon: "/assets/mapping/" + marker.ImagePath + ".png",
                             labelContent: marker.Title,
                             labelAnchor: new google.maps.Point(35, 0),
                             labelClass: "labels",
@@ -153,14 +150,14 @@ export class MapWidget {
         if (this.settings && this.settings.Latitude && this.settings.Longitude) {
             if (this.settings.Latitude != 0 && this.settings.Longitude != 0) {
                 return new google.maps.LatLng(this.settings.Latitude, this.settings.Longitude);
-            } else {
-                return new google.maps.LatLng(data.CenterLat, data.CenterLon);
             }
         }
+
+        return new google.maps.LatLng(data.CenterLat, data.CenterLon);
     }
 
     private getMapZoomLevel(data: MapResult): any {
-        if (this.settings && this.settings.ZoomLevel >= 0) {
+        if (this.settings && this.settings.ZoomLevel > 0) {
             return this.settings.ZoomLevel;
         } else {
             return data.ZoomLevel;

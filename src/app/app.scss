@@ -1,6 +1,4 @@
 // http://ionicframework.com/docs/v2/theming/
-
-
 // App Global Sass
 // --------------------------------------------------
 // Put style rules here that you want to apply globally. These
@@ -14,65 +12,64 @@
 // To declare rules for a specific mode, create a child rule
 // for the .md, .ios, or .wp mode classes. The mode class is
 // automatically applied to the <body> element in the app.
-
 .call-priority-low {
-    color: green;
+  color: green;
 }
 
 .call-priority-medium {
-    color: #DBDB2E;
+  color: #DBDB2E;
 }
 
 .call-priority-high {
-    color: orange;
+  color: orange;
 }
 
 .call-priority-emergency {
-    color: red;
+  color: red;
 }
 
 .call-state-active {
-    color: green;
+  color: green;
 }
 
 .call-state-cancelled {
-    color: gray;
+  color: gray;
 }
 
 .call-state-closed {
-    color: black;
+  color: black;
 }
 
 .label-danger {
-    background-color: #ff3b30;
+  background-color: #ff3b30;
 }
 
 .label-success {
-    background-color: green;
+  background-color: green;
 }
 
 .label-onscene {
-    background-color: #406b99;
+  background-color: #406b99;
 }
 
 .label-info {
-    background-color: #34aadc;
+  background-color: #34aadc;
 }
 
 .label-enroute {
-    background-color: #b9b9b9;
+  background-color: #b9b9b9;
 }
 
 .label-returning {
-    background-color: #8b362a;
+  background-color: #8b362a;
 }
 
 .label-default {
-    background-color: #999999;
+  background-color: #999999;
 }
 
 .label-inverse {
-    background-color: #1a1a1a;
+  background-color: #1a1a1a;
 }
 
 .status-label {
@@ -89,15 +86,15 @@
 }
 
 .labels {
-    color: red;
-    background-color: white;
-    font-family: "Lucida Grande", "Arial", sans-serif;
-    font-size: 10px;
-    font-weight: bold;
-    text-align: center;
-    width: 70px;
-    border: 2px solid black;
-    white-space: nowrap;
+  color: red;
+  background-color: white;
+  font-family: "Lucida Grande", "Arial", sans-serif;
+  font-size: 10px;
+  font-weight: bold;
+  text-align: center;
+  width: 70px;
+  border: 2px solid black;
+  white-space: nowrap;
 }
 
 .strippedRows:nth-child(even) {
@@ -105,39 +102,46 @@
 }
 
 .strippedRows:nth-child(odd) {
-  background: white; 
+  background: white;
 }
 
-.bottom-bar
-{
-    position: fixed;
-    bottom: 2vh;
-    width: 100%;
+.bottom-bar {
+  position: fixed;
+  bottom: 2vh;
+  width: 100%;
 }
 
 .card-header {
-    padding: 0px;
+  padding: 0px;
 }
 
-@mixin rotate($deg: 90){
-    $sDeg: #{$deg}deg;
-
-    -webkit-transform: rotate($sDeg);
-    -moz-transform: rotate($sDeg);
-    -ms-transform: rotate($sDeg);
-    -o-transform: rotate($sDeg);
-    transform: rotate($sDeg);
+@mixin rotate($deg: 90) {
+  $sDeg: #{$deg}deg;
+  -webkit-transform: rotate($sDeg);
+  -moz-transform: rotate($sDeg);
+  -ms-transform: rotate($sDeg);
+  -o-transform: rotate($sDeg);
+  transform: rotate($sDeg);
 }
 
 .rotate-grip {
-    -webkit-transform: rotate(320deg);
-    -moz-transform: rotate(320deg);
-    -ms-transform: rotate(320deg);
-    -o-transform: rotate(320deg);
-    transform: rotate(320deg);
-    position:absolute;
-    bottom:0;
-    right:0;
-    padding: 0;
-    margin: 0;
+  -webkit-transform: rotate(320deg);
+  -moz-transform: rotate(320deg);
+  -ms-transform: rotate(320deg);
+  -o-transform: rotate(320deg);
+  transform: rotate(320deg);
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  padding: 0;
+  margin: 0;
+}
+
+#map {
+  width: 100%;
+  height: 100%;
+}
+
+#map img {
+    max-height: none !important;
 }

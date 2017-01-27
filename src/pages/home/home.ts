@@ -93,6 +93,21 @@ export class HomePage {
 		}
 	}
 
+	public updateItem(index: number, event: NgGridItemEvent): void {
+		let item = event;
+		// Do something here
+	}
+
+	public onDrag(index: number, event: NgGridItemEvent): void {
+		let item = event;
+		// Do something here
+	}
+
+	public onResize(index: number, event: NgGridItemEvent): void {
+		let item = event;
+		// Do something here
+	}
+
 	setSettingsClick() {
 		this.navCtrl.setRoot(SettingsPage);
 	}
