@@ -44,7 +44,7 @@
     "@angular/platform-server": "2.2.1",
     "@ionic/storage": "1.1.7",
     "@types/google-maps": "3.2.0",
-    "angular2-grid": "^0.11.2",
+    "angular2-grid": "^2.0.1",
     "angular2-in-memory-web-api": "0.0.21",
     "angular2-moment": "^1.1.0",
     "ionic-angular": "2.0.0-rc.4",
@@ -62,7 +62,6 @@
   },
   "devDependencies": {
     "@ionic/app-scripts": "^1.0.0",
-    "angular2-grid": "^0.11.2",
     "cordova-lib": "^6.4.0",
     "del": "^2.2.2",
     "ecstatic": "^2.1.0",

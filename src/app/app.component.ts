@@ -33,7 +33,7 @@ export class BigBoardApp {
 
     this.pages = [
       { title: 'Home', component: HomePage },
-      { title: 'About', component: AboutPage },
+     // { title: 'About', component: AboutPage },
       { title: 'Settings', component: SettingsPage }
     ];
   }

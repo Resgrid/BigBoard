@@ -153,23 +153,23 @@ export class ChannelProvider {
 
         // SignalR Event Listeners
         this.hubProxy.on('PersonnelStatusUpdated', (data: any) => {
+            console.log('PersonnelStatusUpdated');
             this.widgetPubSub.emitPersonnelStatusUpdated(data);
-            //console.log('PersonnelStatusUpdated');
         });
 
         this.hubProxy.on('PersonnelStaffingUpdated', (data: any) => {
+            console.log('PersonnelStaffingUpdated');
             this.widgetPubSub.emitPersonnelStaffingUpdated(data);
-            //console.log('PersonnelStaffingUpdated');
         });
 
         this.hubProxy.on('UnitStatusUpdated', (data: any) => {
+            console.log('UnitStatusUpdated');
             this.widgetPubSub.emitUnitStatusUpdated(data);
-            //console.log('PersonnelStaffingUpdated');
         });
 
         this.hubProxy.on('CallsUpdated', (data: any) => {
+            console.log('CallsUpdated');
             this.widgetPubSub.emitCallUpdated(data);
-            //console.log('PersonnelStaffingUpdated');
         });
 
         this.connectionState$.subscribe((state: ConnectionState) => {
@@ -188,6 +188,8 @@ export class ChannelProvider {
      * error.
      */
     start(): void {
+        console.log('SignalR Channel Start');
+
         // Now we only want the connection started once, so we have a special
         //  starting$ observable that clients can subscribe to know know if
         //  if the startup sequence is done.

@@ -4,6 +4,8 @@ import { WeatherWidgetSettings } from '../../models/weatherWidgetSettings';
 import { WidgetPubSub } from '../../providers/widget-pubsub';
 import { DataProvider } from '../../providers/data';
 
+import { Geolocation } from 'ionic-native';
+
 @Component({
   selector: 'weather-widget',
   templateUrl: 'weather-widget.html'
@@ -33,11 +35,17 @@ export class WeatherWidget {
     //var iframe = document.getElementById('forecast_embed');
     //if (iframe) {
 
-      if (this.settings.Latitude != 0 && this.settings.Longitude != 0) {
-        this.source = window.location.protocol + "//forecast.io/embed/#lat=" + this.settings.Latitude + "&lon=" + this.settings.Longitude + "&units=" + this.settings.Units + "&name="
-      } else {
-        this.source = window.location.protocol + "//forecast.io/embed/#lat=&lon=&units=" + this.settings.Units + "&name="
-      }
+    if (this.settings.Latitude != 0 && this.settings.Longitude != 0) {
+      this.source = window.location.protocol + "//forecast.io/embed/#lat=" + this.settings.Latitude + "&lon=" + this.settings.Longitude + "&units=" + this.settings.Units + "&name="
+    } else {
+      Geolocation.getCurrentPosition().then((position) => {
+
+        this.source = window.location.protocol + "//forecast.io/embed/#lat=" + position.coords.latitude + "&lon=" + position.coords.longitude + "&units=" + this.settings.Units + "&name="
+
+      }, (err) => {
+        console.log(err);
+      });
+    }
     //}
   }
 }

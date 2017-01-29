@@ -12,7 +12,7 @@
 </ion-header>
 <ion-content style="background-color: darkgrey;">
   <div [ngGrid]="gridConfig" [hidden]="!areSettingsSet">
-    <ion-card *ngFor="let box of boxes; let i = index" [(ngGridItem)]="box.config" style="margin-top:4px;">
+    <ion-card *ngFor="let box of boxes;" [id]="box.type" [(ngGridItem)]="box.config" style="margin-top:4px;" (onItemChange)="updateItem(box.type, $event)" (onResize)="onResize(box.type, $event)" (onDrag)="onDrag(box.type, $event)">
       <ion-card-header class="handle" style="background-color:#f3f3f3;">
         <ion-item>
           {{box.name}}

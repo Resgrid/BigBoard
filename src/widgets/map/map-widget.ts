@@ -20,6 +20,8 @@ export class MapWidget {
     private settingsUpdatedSubscription: any;
     public map: any;
     private apiKey: any;
+    public mapWidth: string = "100px";
+    public mapHeight: string = "100px";
 
     constructor(private dataProvider: DataProvider,
         private widgetPubSub: WidgetPubSub) {
@@ -43,6 +45,9 @@ export class MapWidget {
                 this.fetch();
             }
         });
+
+        this.setMapBounds();
+
         this.fetch();
     }
 
@@ -75,6 +80,8 @@ export class MapWidget {
                     center: mapCenter,
                     mapTypeId: this.getMapType()
                 };
+
+                this.setMapBounds();
 
                 this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
 
@@ -127,6 +134,12 @@ export class MapWidget {
                     }*/
                 }
             });
+    }
+
+    private setMapBounds() {
+        let parent = this.mapElement.nativeElement.parentElement.parentElement.parentElement;
+        this.mapWidth = parent.offsetWidth - 35 + "px";
+        this.mapHeight = parent.offsetHeight - 60 + "px";
     }
 
     private getMapType() {
