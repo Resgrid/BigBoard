@@ -188,7 +188,7 @@ export class ChannelProvider {
      * error.
      */
     start(): void {
-        console.log('SignalR Channel Start');
+        console.log('SignalR Channel Start()');
 
         // Now we only want the connection started once, so we have a special
         //  starting$ observable that clients can subscribe to know know if

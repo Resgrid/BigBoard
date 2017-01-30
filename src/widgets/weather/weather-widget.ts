@@ -36,11 +36,11 @@ export class WeatherWidget {
     //if (iframe) {
 
     if (this.settings.Latitude != 0 && this.settings.Longitude != 0) {
-      this.source = window.location.protocol + "//forecast.io/embed/#lat=" + this.settings.Latitude + "&lon=" + this.settings.Longitude + "&units=" + this.settings.Units + "&name="
+      this.source = "https://forecast.io/embed/#lat=" + this.settings.Latitude + "&lon=" + this.settings.Longitude + "&units=" + this.settings.Units + "&name="
     } else {
       Geolocation.getCurrentPosition().then((position) => {
 
-        this.source = window.location.protocol + "//forecast.io/embed/#lat=" + position.coords.latitude + "&lon=" + position.coords.longitude + "&units=" + this.settings.Units + "&name="
+        this.source = "https://forecast.io/embed/#lat=" + position.coords.latitude + "&lon=" + position.coords.longitude + "&units=" + this.settings.Units + "&name="
 
       }, (err) => {
         console.log(err);

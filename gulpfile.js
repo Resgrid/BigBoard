@@ -78,7 +78,16 @@ gulp.task("web:build", function (cb) {
  */
 gulp.task("clean:web", function () {
 	return del([
-		"web"
+		"www"
+	]);
+});
+
+/**
+ * Removes the web directory.
+ */
+gulp.task("web:build", function () {
+	return del([
+		"www"
 	]);
 });
 

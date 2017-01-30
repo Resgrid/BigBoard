@@ -32,7 +32,7 @@ export class BigBoardApp {
     this.wireupInteceptors();
 
     this.pages = [
-      { title: 'Home', component: HomePage },
+      { title: 'Dashboard', component: HomePage },
      // { title: 'About', component: AboutPage },
       { title: 'Settings', component: SettingsPage }
     ];
