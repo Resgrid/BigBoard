@@ -59,6 +59,17 @@ IF NOT DEFINED GULP_CMD (
 
 )
 
+IF NOT DEFINED IONIC_CMD (
+  :: Install gulp
+  echo Installing Gulp
+  call npm --registry "http://registry.npmjs.org/" install ionic -g --silent
+  IF !ERRORLEVEL! NEQ 0 goto error
+
+  :: Locally just running "ionic" would also work
+  SET IONIC_CMD="%appdata%\npm\ionic.cmd"
+
+)
+
 goto Deployment
 
 :: Utility Functions
@@ -125,7 +136,7 @@ IF EXIST "%DEPLOYMENT_SOURCE%\package.json" (
  IF EXIST "%DEPLOYMENT_SOURCE%\gulpfile.js" (
    pushd "%DEPLOYMENT_SOURCE%"
    echo Running Gulp.
-   call :ExecuteCmd !GULP_CMD! "ionic state restore"
+   call :ExecuteCmd !IONIC_CMD! "state restore"
    IF !ERRORLEVEL! NEQ 0 goto error
    popd
  )
@@ -134,7 +145,7 @@ IF EXIST "%DEPLOYMENT_SOURCE%\package.json" (
  IF EXIST "%DEPLOYMENT_SOURCE%\gulpfile.js" (
    pushd "%DEPLOYMENT_SOURCE%"
    echo Running Gulp.
-   call :ExecuteCmd !GULP_CMD! "ionic build browser"
+   call :ExecuteCmd !IONIC_CMD! "build browser"
    IF !ERRORLEVEL! NEQ 0 goto error
    popd
  )
