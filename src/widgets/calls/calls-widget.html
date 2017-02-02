@@ -1,0 +1,37 @@
+<ion-grid id="callsFullTable" [style.font-size]="settings.FontSize+'px'">
+  <ion-row>
+    <ion-col [hidden]="!settings.ShowId">
+      <strong>Id</strong>
+    </ion-col>
+    <ion-col [hidden]="!settings.ShowName">
+      <strong>Name</strong>
+    </ion-col>
+    <ion-col [hidden]="!settings.ShowTimestamp">
+      <strong>Timestamp</strong>
+    </ion-col>
+    <ion-col [hidden]="!settings.ShowUser">
+      <strong>Logged By</strong>
+    </ion-col>
+    <ion-col [hidden]="!settings.ShowPriority">
+      <strong>Priority</strong>
+    </ion-col>
+  </ion-row>
+  
+  <ion-row class="strippedRows" *ngFor="let call of calls">
+    <ion-col [hidden]="!settings.ShowId">
+      {{call.Id}}
+    </ion-col>
+    <ion-col [hidden]="!settings.ShowName">
+      {{call.Name}}
+    </ion-col>
+    <ion-col [hidden]="!settings.ShowTimestamp">
+      {{call.Timestamp | amTimeAgo}}
+    </ion-col>
+    <ion-col [hidden]="!settings.ShowUser">
+      {{call.LoggingUser}}
+    </ion-col>
+    <ion-col [ngClass]="call.PriorityCss" [hidden]="!settings.ShowPriority">
+      {{call.Priority}}
+    </ion-col>
+  </ion-row>
+</ion-grid>

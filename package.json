@@ -1,26 +1,11 @@
 {
   "name": "bigboard",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "BigBoard to view information from the Resgrid system",
-  "main": "gulpfile.js",
-  "dependencies": {
-    "gulp": "^3.9.0",
-    "cordova-lib": "^5.3.1",
-    "gulp-livereload": "^3.8.0",
-    "ecstatic": "^1.0.0",
-    "del": "^2.0.2",
-    "gulp-watch": "^4.3.5",
-    "gulp-shell": "^0.4.3",
-    "gulp-util": "^3.0.6",
-    "gulp-print": "^1.2.0"
-  },
-  "devDependencies": {
-    "gulp-insert-lines": "0.0.4",
-    "run-sequence": "^1.1.5"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "main": "index.html",
+  "author": "Resgrid Team <team@resgrid.com>",
+  "homepage": "http://resgrid.com/",
+  "private": true,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Resgrid/BigBoard.git"
@@ -37,22 +22,73 @@
     "cert",
     "dashboard"
   ],
-  "author": "Resgrid, LLC.",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Resgrid/BigBoard/issues"
   },
-  "homepage": "https://github.com/Resgrid/BigBoard#readme",
+  "scripts": {
+    "clean": "ionic-app-scripts clean",
+    "build": "ionic-app-scripts build",
+    "ionic:build": "ionic-app-scripts build",
+    "ionic:serve": "ionic-app-scripts serve"
+  },
+  "dependencies": {
+    "@angular/common": "2.2.1",
+    "@angular/compiler": "2.2.1",
+    "@angular/compiler-cli": "2.2.1",
+    "@angular/core": "2.2.1",
+    "@angular/forms": "2.2.1",
+    "@angular/http": "2.2.1",
+    "@angular/platform-browser": "2.2.1",
+    "@angular/platform-browser-dynamic": "2.2.1",
+    "@angular/platform-server": "2.2.1",
+    "@ionic/storage": "1.1.7",
+    "@types/google-maps": "3.2.0",
+    "angular2-grid": "^2.0.1",
+    "angular2-in-memory-web-api": "0.0.21",
+    "angular2-moment": "^1.1.0",
+    "ionic-angular": "2.0.0",
+    "ionic-native": "2.4.1",
+    "ionicons": "3.0.0",
+    "localforage": "^1.4.3",
+    "markerwithlabel": "^2.0.0",
+    "ng-dynamic": "^1.1.0",
+    "ng2-http-interceptor": "^0.4.2",
+    "ng2-translate": "^5.0.0",
+    "node-js-marker-clusterer": "^1.0.0",
+    "rxjs": "5.0.0-beta.12",
+    "signalr": "^2.2.1",
+    "zone.js": "0.6.26",
+    "sw-toolbox": "3.4.0"
+  },
+  "devDependencies": {
+    "@ionic/app-scripts": "^1.0.0",
+    "cordova-lib": "^6.4.0",
+    "del": "^2.2.2",
+    "ecstatic": "^2.1.0",
+    "gulp": "^3.9.1",
+    "gulp-insert-lines": "0.0.4",
+    "gulp-livereload": "^3.8.1",
+    "gulp-print": "^2.0.1",
+    "gulp-shell": "^0.5.2",
+    "gulp-watch": "^4.3.11",
+    "run-sequence": "^1.2.2",
+    "typescript": "2.0.9"
+  },
   "cordovaPlugins": [
-    {
-      "locator": "https://github.com/crypho/cordova-plugin-secure-storage.git",
-      "id": "pro.fing.cordova.gapreload"
-    }
+    "ionic-plugin-keyboard",
+    "cordova-plugin-whitelist",
+    "cordova-plugin-device",
+    "cordova-plugin-console",
+    "cordova-plugin-statusbar",
+    "cordova-plugin-splashscreen",
+    "cordova-plugin-geolocation",
+    "cordova-plugin-compat"
   ],
   "cordovaPlatforms": [
-    "ios",
     {
-      "platform": "android",
+      "platform": "browser",
+      "version": "",
       "locator": "browser"
     }
   ]
