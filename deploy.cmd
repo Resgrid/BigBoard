@@ -62,7 +62,7 @@ IF NOT DEFINED GULP_CMD (
 IF NOT DEFINED IONIC_CMD (
   :: Install gulp
   echo Installing Gulp
-  call npm --registry "http://registry.npmjs.org/" install ionic -g --silent
+  call npm --registry "http://registry.npmjs.org/" install ionic -g --silent --force
   IF !ERRORLEVEL! NEQ 0 goto error
 
   :: Locally just running "ionic" would also work
