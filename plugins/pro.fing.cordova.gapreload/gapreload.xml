@@ -1,7 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<gapreload>
-    <param name="SERVER_HOST" value="$SERVER_HOST" />
-    <param name="SERVER_PORT" value="$SERVER_PORT" />
-    <param name="LIVERELOAD_HOST" value="$LIVERELOAD_HOST" />
-    <param name="LIVERELOAD_PORT" value="$LIVERELOAD_PORT" />
-</gapreload>

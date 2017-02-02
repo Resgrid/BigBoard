@@ -59,6 +59,17 @@ IF NOT DEFINED GULP_CMD (
 
 )
 
+IF NOT DEFINED IONIC_CMD (
+  :: Install gulp
+  echo Installing Gulp
+  call npm --registry "http://registry.npmjs.org/" install ionic -g --silent --force
+  IF !ERRORLEVEL! NEQ 0 goto error
+
+  :: Locally just running "ionic" would also work
+  SET IONIC_CMD="%appdata%\npm\ionic.cmd"
+
+)
+
 goto Deployment
 
 :: Utility Functions
@@ -113,18 +124,37 @@ IF EXIST "%DEPLOYMENT_SOURCE%\package.json" (
 )
 
 :: Run Gulp to build website from mobile app
-IF EXIST "%DEPLOYMENT_SOURCE%\gulpfile.js" (
-  pushd "%DEPLOYMENT_SOURCE%"
-  echo Running Gulp.
-  call :ExecuteCmd !GULP_CMD! web:build
-  IF !ERRORLEVEL! NEQ 0 goto error
-  popd
-)
+:::: IF EXIST "%DEPLOYMENT_SOURCE%\gulpfile.js" (
+::::   pushd "%DEPLOYMENT_SOURCE%"
+::::   echo Running Gulp.
+::::   call :ExecuteCmd !GULP_CMD! web:build
+::::   IF !ERRORLEVEL! NEQ 0 goto error
+::::   popd
+:::: )
+
+:: Run Gulp to build website from mobile app
+ IF EXIST "%DEPLOYMENT_SOURCE%\gulpfile.js" (
+   pushd "%DEPLOYMENT_SOURCE%"
+   echo Running Gulp.
+   call :ExecuteCmd !IONIC_CMD! "state restore"
+   IF !ERRORLEVEL! NEQ 0 goto error
+   popd
+ )
+
+:: Run Gulp to build website from mobile app
+ IF EXIST "%DEPLOYMENT_SOURCE%\gulpfile.js" (
+   pushd "%DEPLOYMENT_SOURCE%"
+   echo Running Gulp.
+   call :ExecuteCmd !IONIC_CMD! "build browser"
+   IF !ERRORLEVEL! NEQ 0 goto error
+   popd
+ )
 
 :: KuduSync
 echo Handling Basic Web Site deployment.
 IF /I "%IN_PLACE_DEPLOYMENT%" NEQ "1" (
-  call :ExecuteCmd "%KUDU_SYNC_CMD%" -v 50 -f "%DEPLOYMENT_SOURCE%\web" -t "%DEPLOYMENT_TARGET%" -n "%NEXT_MANIFEST_PATH%" -p "%PREVIOUS_MANIFEST_PATH%" -i ".git;.hg;.deployment;deploy.cmd"
+  :: call :ExecuteCmd "%KUDU_SYNC_CMD%" -v 50 -f "%DEPLOYMENT_SOURCE%\web" -t "%DEPLOYMENT_TARGET%" -n "%NEXT_MANIFEST_PATH%" -p "%PREVIOUS_MANIFEST_PATH%" -i ".git;.hg;.deployment;deploy.cmd"
+  call :ExecuteCmd "%KUDU_SYNC_CMD%" -v 50 -f "%DEPLOYMENT_SOURCE%\platforms\browser\www" -t "%DEPLOYMENT_TARGET%" -n "%NEXT_MANIFEST_PATH%" -p "%PREVIOUS_MANIFEST_PATH%" -i ".git;.hg;.deployment;deploy.cmd"
   IF !ERRORLEVEL! NEQ 0 goto error
 )
 
