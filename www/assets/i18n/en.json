@@ -1,0 +1,38 @@
+{
+  "appName": "Resgrid BigBoard",
+  "home": "Home",
+  "settingsNotSetPanel": {
+    "title": "Settings Not Set",
+    "details": "It appears that this is your first time to the BigBoard app, or the first time here with this new version. You need to set your settings (login) before you can start adding widgets",
+    "extraDetails": "Click the button below to login",
+    "buttonLabel": "Set Your Settings"
+  },
+  "noWidgetsPanel": {
+    "title": "No Widgets Added",
+    "details": "Your settings are set but you have not added any widgets to your dashboard yet. Use the plus (+) button to add a widget, and you can then move the widget around by holding the widget header and resize buy hovering over the buttom and right edge of the widget.",
+    "extraDetails": "Click the button below to add a widget or click the plus (+) button in the header",
+    "buttonLabel": "Add A Widget"
+  },
+  "account": "Account",
+  "language": "Language",
+  "tutorial": "Tutorial",
+  "ok": "Ok",
+  "cancel": "Cancel",
+  "skip": "Skip",
+  "continue": "Continue",
+  "login": "Login",
+  "signup": "Signup",
+  "email": "Email",
+  "password": "Password",
+  "passwordConfirm": "Password confirmation",
+  "tutorialPage": {
+    "slide1": {
+      "title": "Welcome to Ionic2 Essentials",
+      "description": "This Ionic2 starter comes pre-bundled with all the goodies you'll need for production ready mobile app"
+    },
+    "slide2": {
+      "title": "Ready to Discover?",
+      "description": "You can explore some of the features directly in the app (like internationalization), while others are part of the development experience (like Redux and CodePush)"
+    }
+  }
+}
