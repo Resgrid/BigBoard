@@ -1,7 +1,7 @@
 Resgrid BigBoard App
 ===========================
 
-Resgrid BigBoard a AnguularJS/Cordova based dashboard application that displays data from the Resgrid system.
+Resgrid BigBoard an Ionic 2 progressive web application based dashboard that displays data from the Resgrid system.
 
 *********
 
@@ -16,15 +16,21 @@ Resgrid is a software as a service (SaaS) logistics, management and communicatio
 
 The following prerequisites are required.
 
-* Node.js (0.12.3)
-* Cordova (5.3.1)
+* Node.js (6.9.5)
+* NPM (>= 3.10.10)
+* Cordova (6.5.0)
+* Ionic (2.2.1)
 * Bower (1.5.2)
 * bower-installer (1.2.0)
 * Gulp (3.9.0)
 
 *In addition, if you want to run on a emulator or physical device, you'll need your environment setup for iOS or Android development.*
 
-To begin, clone the repository and install the node packages:
+To begin, install the required global components:
+
+	$ npm install -g typescript cordova gulp ionic
+
+Then clone the repository and install the node packages:
 
 	$ git clone https://github.com/Resgrid/BigBoard.git
     $ cd BigBoard
@@ -45,7 +51,7 @@ The solution is setup to with Live Reload for Cordova Serve, to use Live Reloadi
 
 *Open 1 command line window*
 
-	$ cordova serve	  # Starts the cordova file web server
+	$ ionic serve	  # Starts the cordova file web server
 
 *Open another command line window*
 
@@ -56,10 +62,9 @@ The solution is setup to with Live Reload for Cordova Serve, to use Live Reloadi
 
 
 ## Dependencies ##
-    - [AngularJS](https://github.com/angular/angular)
+    - [Ionic Framework](http://ionicframework.com/)
     - [Cordova](https://cordova.apache.org/)
-    - [Angular-Gridster](https://github.com/ManifestWebDesign/angular-gridster)
-    - [Mobile AngularUI](https://github.com/mcasimir/mobile-angular-ui)
+    - [Angular2-Grid](https://github.com/BTMorton/angular2-grid)
 
 ## Notes ##
 
