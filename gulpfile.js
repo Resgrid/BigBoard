@@ -9,10 +9,12 @@ var gulp = require('gulp'),
     shell = require('gulp-shell'),
     runSequence = require("run-sequence"),
     insertLines = require('gulp-insert-lines'),
+    fs = require("fs"),
     print = require('gulp-print');
 
 
 var watchGlob = 'www/**/*.{js,html,css}';
+var googleMapsHtml = "";
 
 // The default task downloads Cordova plugins, Bower libraries
 gulp.task("default", function (cb) {
@@ -70,7 +72,7 @@ gulp.task("plugins", ["git-check"], function(cb) {
 
 // Builds and copies the files need to run the app in the web
 gulp.task("web:build", function (cb) {
-	runSequence("clean:web", "web:copy", "web:addHeader", cb);
+	runSequence("clean:web", "web:copy", "web:replaceGoogleMaps", "web:addHeader", cb);
 });
 
 /**
@@ -80,6 +82,26 @@ gulp.task("clean:web", function () {
 	return del([
 		"platforms/browser/www"
 	]);
+});
+
+// Adds web specific items to the index.html's header
+gulp.task("web:replaceGoogleMaps", function (cb) {
+	gulp.src('platforms/browser/www/index.html')
+				.pipe(remove('[data-rgRemove-GoogleMaps]'))
+                .pipe(fs.readFile("../../data/googleMap.txt", "utf-8", function(err, _data) {
+                    this.googleMapsHtml = _data;
+                })).pipe(insertLines({
+                    'before': /<\/body>$/,
+                    'lineBefore': this.googleMapsHtml
+                }))
+				.pipe(gulp.dest('tmp'))
+				.on("end", function () {
+					del(["platforms/browser/www/index.html"])
+						.then(function (paths) {
+							gulp.src('tmp/index.html')
+							.pipe(gulp.dest('platforms/browser/www'));
+						});
+				});
 });
 
 // Adds web specific items to the index.html's header
