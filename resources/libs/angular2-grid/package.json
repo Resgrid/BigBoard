@@ -1,0 +1,143 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "angular2-grid",
+        "scope": null,
+        "escapedName": "angular2-grid",
+        "name": "angular2-grid",
+        "rawSpec": "",
+        "spec": "latest",
+        "type": "tag"
+      },
+      "G:\\Resgrid\\BigBoard"
+    ]
+  ],
+  "_from": "angular2-grid@latest",
+  "_id": "angular2-grid@2.0.1",
+  "_inCache": true,
+  "_location": "/angular2-grid",
+  "_nodeVersion": "6.7.0",
+  "_npmOperationalInternal": {
+    "host": "packages-12-west.internal.npmjs.com",
+    "tmp": "tmp/angular2-grid-2.0.1.tgz_1485393393512_0.6001732393633574"
+  },
+  "_npmUser": {
+    "name": "btmorton",
+    "email": "ben.morton91@gmail.com"
+  },
+  "_npmVersion": "3.10.3",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "angular2-grid",
+    "scope": null,
+    "escapedName": "angular2-grid",
+    "name": "angular2-grid",
+    "rawSpec": "",
+    "spec": "latest",
+    "type": "tag"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/angular2-grid/-/angular2-grid-2.0.1.tgz",
+  "_shasum": "adacd78de28815f3a714373b6ca0c3344880c0ad",
+  "_shrinkwrap": null,
+  "_spec": "angular2-grid",
+  "_where": "G:\\Resgrid\\BigBoard",
+  "author": {
+    "name": "Ben Morton",
+    "email": "ben.morton91@gmail.com",
+    "url": "http://bmorton.co.uk/"
+  },
+  "bugs": {
+    "url": "https://github.com/BTMorton/angular2-grid/issues"
+  },
+  "contributors": [
+    {
+      "name": "Martin Sikora",
+      "url": "https://github.com/martinsik"
+    },
+    {
+      "name": "Daniel Pastor de la Fuenta",
+      "url": "https://github.com/aebsubis"
+    },
+    {
+      "name": "Frederik Schubert",
+      "url": "https://github.com/frederikschubert"
+    },
+    {
+      "name": "Matthew de Nobrega",
+      "url": "https://github.com/matthewdenobrega"
+    },
+    {
+      "name": "Alex",
+      "url": "https://github.com/lifecoderua"
+    },
+    {
+      "name": "pocmanu",
+      "url": "https://github.com/pocmanu"
+    },
+    {
+      "name": "Chris Morabito",
+      "url": "https://github.com/morabitowoolpert"
+    },
+    {
+      "name": "Carlos Esteban Lopez Jaramillo",
+      "url": "https://github.com/Luchillo"
+    },
+    {
+      "name": "Niklas Berg",
+      "url": "https://github.com/nkholski"
+    },
+    {
+      "name": "Wouter",
+      "url": "https://github.com/wuhkuh"
+    },
+    {
+      "name": "Brian Ellis",
+      "url": "https://github.com/OnlyAGhost"
+    }
+  ],
+  "dependencies": {},
+  "description": "A grid-based drag/drop/resize directive plugin for Angular 2",
+  "devDependencies": {},
+  "directories": {},
+  "dist": {
+    "shasum": "adacd78de28815f3a714373b6ca0c3344880c0ad",
+    "tarball": "https://registry.npmjs.org/angular2-grid/-/angular2-grid-2.0.1.tgz"
+  },
+  "homepage": "https://github.com/BTMorton/angular2-grid",
+  "keywords": [
+    "angular",
+    "angular2",
+    "grid",
+    "web-components"
+  ],
+  "license": "MIT",
+  "main": "bundles/NgGrid.umd.min.js",
+  "maintainers": [
+    {
+      "name": "btmorton",
+      "email": "ben.morton91@gmail.com"
+    }
+  ],
+  "module": "main.js",
+  "name": "angular2-grid",
+  "optionalDependencies": {},
+  "peerDependencies": {
+    "@angular/core": "^2.4.4",
+    "reflect-metadata": "^0.1.8",
+    "rxjs": "^5.0.1",
+    "zone.js": "^0.7.2"
+  },
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BTMorton/angular2-grid.git"
+  },
+  "scripts": {},
+  "typings": "main.d.ts",
+  "version": "2.0.1"
+}
