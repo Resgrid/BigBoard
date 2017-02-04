@@ -1,11 +1,11 @@
 {
-  "name": "Ionic",
-  "short_name": "Ionic",
+  "name": "BigBoard",
+  "short_name": "BigBoard",
   "start_url": "index.html",
   "display": "standalone",
   "icons": [{
-    "src": "assets/imgs/logo.png",
-    "sizes": "512x512",
+    "src": "assets/icon/mstile-310x310.png",
+    "sizes": "310x310",
     "type": "image/png"
   }],
   "background_color": "#4e8ef7",

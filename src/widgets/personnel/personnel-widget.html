@@ -22,7 +22,6 @@
       <strong>Eta</strong>
     </ion-col>
   </ion-row>
-  
   <ion-row class="strippedRows" *ngFor="let status of statuses" [hidden]="isPersonOrGroupHidden(status)">
     <ion-col>
       {{status.Name}}
