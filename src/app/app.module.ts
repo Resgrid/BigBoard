@@ -37,6 +37,8 @@ import { MapModal } from '../widgets/map/map-modal';
 import { NgGridModule } from 'angular2-grid';
 import { MomentModule } from 'angular2-moment';
 
+import * as Raven from 'raven-js';
+
 export function appConfigValue() {
   // This variable is created in config/app.config.dev or config/app.config.prod
   // (depending on how you build the application, dev vs. prod)
@@ -50,6 +52,16 @@ export function createTranslateLoader(http: Http) {
 let channelConfig = new ChannelConfig();
 channelConfig.url = "https://api.resgrid.com/signalr";
 channelConfig.hubName = "eventingHub";
+
+Raven
+  .config('https://785f79e60e484c7baa50033af2d2869d@sentry.io/135552')
+  .install();
+
+export class RavenErrorHandler implements ErrorHandler {
+  handleError(err:any) : void {
+    Raven.captureException(err.originalError);
+  }
+}
 
 @NgModule({
   declarations: [
@@ -102,7 +114,7 @@ channelConfig.hubName = "eventingHub";
     MapWidget,
     MapModal
   ],
-  providers: [...HTTP_INTERCEPTOR_PROVIDER, {provide: ErrorHandler, useClass: IonicErrorHandler}, Consts, AuthProvider, 
+  providers: [...HTTP_INTERCEPTOR_PROVIDER, {provide: ErrorHandler, useClass: RavenErrorHandler /*useClass: IonicErrorHandler*/ }, Consts, AuthProvider, 
   SettingsProvider, UtilsProvider, DataProvider, TranslateService, ChannelProvider, WidgetPubSub, ChannelProvider, 
   { provide: SignalrWindow, useValue: window }, { provide: 'channel.config', useValue: channelConfig }]
 })
