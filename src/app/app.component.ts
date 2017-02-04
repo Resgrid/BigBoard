@@ -14,6 +14,8 @@ import { SettingsProvider } from '../providers/settings';
 
 import { LANG_EN } from "./consts";
 
+import * as Raven from 'raven-js';
+
 @Component({
   templateUrl: 'app.html'
 })
@@ -47,6 +49,14 @@ export class BigBoardApp {
 
       this.settingsProvider.init().then(() => {
         this.setupTranslations();
+
+        if (this.settingsProvider.areSettingsSet()) {
+          Raven.setUserContext({
+              id: this.settingsProvider.getUserId(),
+              username: this.settingsProvider.getUsername(),
+              email: this.settingsProvider.getEmail()
+          });
+        }
 
         this.nav.setRoot(HomePage);
       })
