@@ -14,7 +14,7 @@ export class WeatherWidget {
   public settings: WeatherWidgetSettings;
   public source: string = "";
   private settingsUpdatedSubscription: any;
-
+  private intervalId;
 
   constructor(private dataProvider: DataProvider,
     private widgetPubSub: WidgetPubSub) {
@@ -29,12 +29,17 @@ export class WeatherWidget {
         this.setWeather();
       }
     });
+
+    this.intervalId = setInterval(() => {
+      this.setWeather();
+    }, 3600000);
+  }
+
+  ngOnDestroy() {
+    clearInterval(this.intervalId);
   }
 
   setWeather() {
-    //var iframe = document.getElementById('forecast_embed');
-    //if (iframe) {
-
     if (this.settings.Latitude != 0 && this.settings.Longitude != 0) {
       this.source = "https://forecast.io/embed/#lat=" + this.settings.Latitude + "&lon=" + this.settings.Longitude + "&units=" + this.settings.Units + "&name="
     } else {

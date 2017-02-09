@@ -8,7 +8,7 @@ import { SettingsProvider } from '../../providers/settings';
 import { SettingsPage } from '../settings/settings';
 
 import { ChannelProvider, ConnectionState } from '../../providers/channel';
-
+import { WidgetPubSub } from '../../providers/widget-pubsub';
 import { AddPopover } from '../../components/add-popover/add-popover';
 import { AppPopover } from '../../components/app-popover/app-popover';
 
@@ -31,7 +31,10 @@ export class HomePage {
 	private addWidgetPopover: Popover;
 	private appOptionsPopover: Popover;
 	private widgetSettingsModal: Modal;
+	private version: string;
+	private pubSub: any;
 
+	public lastUpdated: Date = new Date();
 	public connected: boolean = false;
 	public status: string = "Connecting to Resgrid...";
 	public statusColor: string = "orange";
@@ -69,7 +72,8 @@ export class HomePage {
 		private popoverCtrl: PopoverController,
 		private alertCtrl: AlertController,
 		private modalCtrl: ModalController,
-		private channelProvider: ChannelProvider) {
+		private channelProvider: ChannelProvider,
+		private widgetPubSub: WidgetPubSub) {
 		this.areSettingsSet = this.settingsProvider.areSettingsSet();
 
 		if (this.areSettingsSet) {
@@ -83,6 +87,7 @@ export class HomePage {
 
 	ngOnInit() {
 		this.wireUpSignalRListeners();
+		this.version = this.consts.Version;
 	}
 
 	ionViewDidEnter() {
@@ -91,6 +96,18 @@ export class HomePage {
 		if (this.settingsProvider.areSettingsSet()) {
 			this.channelProvider.start();
 		}
+
+		this.pubSub = this.widgetPubSub.watch().subscribe(e => {
+            if (e.event === this.widgetPubSub.EVENTS.PERSONNEL_STATUS_UPDATED) {
+                this.lastUpdated = new Date();
+            } else if (e.event === this.widgetPubSub.EVENTS.PERSONNEL_STAFFING_UPDATED) {
+                this.lastUpdated = new Date();
+            } else if (e.event === this.widgetPubSub.EVENTS.CALLS_SETTINGS) {
+                this.lastUpdated = new Date();
+            } else if (e.event === this.widgetPubSub.EVENTS.UNIT_STATUS_UPDATED) {
+                this.lastUpdated = new Date();
+            }
+        });
 	}
 
 	updateItem(index: number, event: NgGridItemEvent): void {

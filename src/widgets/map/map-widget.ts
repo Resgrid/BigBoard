@@ -98,6 +98,9 @@ export class MapWidget {
                 if (data.MapMakerInfos && data.MapMakerInfos.length > 0) {
                     for (var t = 0; t < data.MapMakerInfos.length; t++) {
                         let marker = data.MapMakerInfos[t];
+
+
+
                         var latLng = new google.maps.LatLng(marker.Latitude, marker.Longitude);
 
                         var mapMarker = new MarkerWithLabel({
@@ -113,7 +116,8 @@ export class MapWidget {
                             labelStyle: { opacity: 0.60 }
                         });
 
-                        this.markers.push(mapMarker);
+                        if (this.markerTypeEnabled(marker))
+                            this.markers.push(mapMarker);
                     }
 
                     if (this.settings.ShowAllMarkers) {
@@ -140,6 +144,31 @@ export class MapWidget {
         let parent = this.mapElement.nativeElement.parentElement.parentElement.parentElement;
         this.mapWidth = parent.offsetWidth - 35 + "px";
         this.mapHeight = parent.offsetHeight - 60 + "px";
+    }
+
+    private markerTypeEnabled(marker: any): boolean {
+        switch (marker.ImagePath) {
+            case "Call":
+                if (this.settings.ShowCalls)
+                    return true;
+            case "Station":
+                if (this.settings.ShowStations)
+                    return true;
+            case "Person_RespondingCall":
+                if (this.settings.ShowPersonnel)
+                    return true;
+            case "Person_RespondingStation":
+                if (this.settings.ShowPersonnel)
+                    return true;
+            case "Person_OnScene":
+                if (this.settings.ShowPersonnel)
+                    return true;
+            case "Engine_Responding":
+                if (this.settings.ShowUnits)
+                    return true;
+        }
+
+        return false;
     }
 
     private getMapType() {

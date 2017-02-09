@@ -20,7 +20,7 @@
           <button ion-button icon-only item-right clear color="dark" (click)="openWidgetSettings(box)"><ion-icon name="settings"></ion-icon></button>
         </ion-item>
       </ion-card-header>
-      <ion-card-content scroll="true">
+      <ion-card-content>
         <!--<ion-icon id="resizeGripHandle" ios="ios-funnel" md="md-funnel" class="rotate-grip" ></ion-icon>-->
         <personnel-widget *ngIf="box.type === 1"></personnel-widget>
         <map-widget *ngIf="box.type === 2"></map-widget>
@@ -37,8 +37,12 @@
 </ion-content>
 <ion-footer>
   <ion-toolbar>
-    <div class="bottom-bar" style="text-align: right; padding-right:10px;">
-      <span [hidden]="!areSettingsSet" [style.color]="statusColor">{{status}}</span>
+    <div class="bottom-bar">
+      <span style="text-align: left; float:left;">v{{version}} © 2017 Resgrid, LLC</span>
+      <div style="text-align: right; padding-right:10px; float:right;">
+        <span [hidden]="!areSettingsSet" [style.color]="statusColor" style="text-align: right; margin-top:-18px;float: right;">{{status}}</span>
+        <span style="text-align: right; float: right;">Last Update: {{lastUpdated}}</span>
+      </div>
     </div>
   </ion-toolbar>
 </ion-footer>

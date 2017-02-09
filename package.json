@@ -63,7 +63,7 @@
     "zone.js": "0.6.26"
   },
   "devDependencies": {
-    "@ionic/app-scripts": "^1.0.0",
+    "@ionic/app-scripts": "^1.0.1",
     "cordova-lib": "^6.4.0",
     "del": "^2.2.2",
     "ecstatic": "^2.1.0",
