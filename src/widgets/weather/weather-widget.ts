@@ -5,6 +5,7 @@ import { WidgetPubSub } from '../../providers/widget-pubsub';
 import { DataProvider } from '../../providers/data';
 
 import { Geolocation } from 'ionic-native';
+import { SettingsProvider } from '../../providers/settings'
 
 @Component({
   selector: 'weather-widget',
@@ -17,12 +18,20 @@ export class WeatherWidget {
   private intervalId;
 
   constructor(private dataProvider: DataProvider,
-    private widgetPubSub: WidgetPubSub) {
+    private widgetPubSub: WidgetPubSub,
+    private settingsProvider: SettingsProvider) {
     this.settings = new WeatherWidgetSettings();
-    this.setWeather();
   }
 
   ngOnInit() {
+     this.settingsProvider.loadWeatherWidgetSettings().then((settings) => {
+      if (settings) {
+        this.settings = settings;
+      }
+
+      this.setWeather();
+    });
+
     this.settingsUpdatedSubscription = this.widgetPubSub.watch().subscribe(e => {
       if (e.event === this.widgetPubSub.EVENTS.WEATHER_SETTINGS) {
         this.settings = e.data;
