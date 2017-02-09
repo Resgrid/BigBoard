@@ -5,6 +5,8 @@ import { MapWidgetSettings } from '../../models/mapWidgetSettings';
 import { WidgetPubSub } from '../../providers/widget-pubsub';
 import { DataProvider } from '../../providers/data';
 
+import { SettingsProvider } from '../../providers/settings';
+
 declare var google;
 declare var MarkerWithLabel;
 
@@ -24,13 +26,21 @@ export class MapWidget {
     public mapHeight: string = "100px";
 
     constructor(private dataProvider: DataProvider,
-        private widgetPubSub: WidgetPubSub) {
+        private widgetPubSub: WidgetPubSub,
+        private settingsProvider: SettingsProvider) {
         this.settings = new MapWidgetSettings();
         this.markers = new Array<any>();
-        this.initMap();
     }
 
     ngOnInit() {
+        this.settingsProvider.loadMapWidgetSettings().then((settings) => {
+            if (settings) {
+                this.settings = settings;
+            }
+
+            this.fetch();
+        });
+
         this.settingsUpdatedSubscription = this.widgetPubSub.watch().subscribe(e => {
             if (e.event === this.widgetPubSub.EVENTS.MAP_SETTINGS) {
                 this.settings = e.data;

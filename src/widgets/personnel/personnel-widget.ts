@@ -23,10 +23,17 @@ export class PersonnelWidget {
     private settingsProvider: SettingsProvider,
     private widgetPubSub: WidgetPubSub) {
     this.settings = new PersonnelWidgetSettings();
-    this.fetch();
   }
 
   ngOnInit() {
+    this.settingsProvider.loadPersonnelWidgetSettings().then((settings) => {
+      if (settings) {
+        this.settings = settings;
+      }
+
+      this.fetch();
+    });
+
     this.settingsProvider.loadGroupSorting().then((groupSorts) => {
       if (groupSorts) {
         this.groupSorts = groupSorts;

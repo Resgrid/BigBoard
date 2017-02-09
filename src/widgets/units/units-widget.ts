@@ -5,6 +5,8 @@ import { UnitsWidgetSettings } from '../../models/unitsWidgetSettings';
 import { WidgetPubSub } from '../../providers/widget-pubsub';
 import { DataProvider } from '../../providers/data';
 
+import { SettingsProvider } from '../../providers/settings'
+
 @Component({
   selector: 'units-widget',
   templateUrl: 'units-widget.html'
@@ -15,12 +17,20 @@ export class UnitsWidget {
   private settingsUpdatedSubscription: any;
 
   constructor(private dataProvider: DataProvider,
-              private widgetPubSub: WidgetPubSub) {
+              private widgetPubSub: WidgetPubSub,
+              private settingsProvider: SettingsProvider) {
     this.settings = new UnitsWidgetSettings();
-    this.fetch();
   }
 
   ngOnInit() {
+    this.settingsProvider.loadUnitsWidgetSettings().then((settings) => {
+      if (settings) {
+        this.settings = settings;
+      }
+
+      this.fetch();
+    });
+
     this.settingsUpdatedSubscription = this.widgetPubSub.watch().subscribe(e => {
       if (e.event === this.widgetPubSub.EVENTS.CALLS_SETTINGS) {
         this.settings = e.data;
