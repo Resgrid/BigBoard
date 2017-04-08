@@ -19,4 +19,5 @@ export class Settings  {
     public EnableCustomSounds: boolean = false;
     public CustomRespondingText: string = "";
     public EnableGeolocation: boolean = true;
+    public EnableSounds: boolean = false;
 }

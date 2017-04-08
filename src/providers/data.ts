@@ -13,6 +13,7 @@ import { WeatherResult } from '../models/weatherResult';
 import { UnitStatusResult } from '../models/unitStatusResult';
 import { CallResult } from '../models/callResult';
 import { GroupResult } from '../models/groupResult';
+import { DepartmentLinkResult } from '../models/departmentLinkResult';
 
 @Injectable()
 export class DataProvider {
@@ -163,6 +164,29 @@ export class DataProvider {
             });
 
             return groups;
+        });
+    }
+
+    public getLinkedDepartments(): Observable<DepartmentLinkResult[]> {
+        let url = this.consts.ResgridApiUrl + '/Links/GetActiveDepartmentLinks';
+
+        return this.http.get(url, new RequestOptions({ headers: new Headers({ 'Accept': 'application/json' }) })).map(res => res.json()).map((result) => {
+            let links: DepartmentLinkResult[] = new Array<DepartmentLinkResult>();
+
+            result.forEach(item => {
+                let link = new DepartmentLinkResult();
+                link.LinkId = item.LinkId;
+                link.DepartmentName = item.DepartmentName;
+                link.Color = item.Color;
+                link.ShareCalls = item.ShareCalls;
+                link.ShareOrders = item.ShareOrders;
+                link.SharePersonnel = item.SharePersonnel;
+                link.ShareUnits = item.ShareUnits;
+
+                links.push(link);
+            });
+
+            return links;
         });
     }
 }
