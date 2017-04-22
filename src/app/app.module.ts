@@ -1,3 +1,4 @@
+import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, ErrorHandler } from '@angular/core';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { HTTP_INTERCEPTOR_PROVIDER } from 'ng2-http-interceptor';
@@ -33,6 +34,7 @@ import { WeatherWidget } from '../widgets/weather/weather-widget';
 import { WeatherModal } from '../widgets/weather/weather-modal';
 import { MapWidget } from '../widgets/map/map-widget';
 import { MapModal } from '../widgets/map/map-modal';
+import { LinksWidget } from '../widgets/links/links-widget';
 
 import { NgGridModule } from 'angular2-grid';
 import { MomentModule } from 'angular2-moment';
@@ -83,12 +85,14 @@ export class RavenErrorHandler implements ErrorHandler {
     WeatherModal,
     SafePipe,
     MapWidget,
-    MapModal
+    MapModal,
+    LinksWidget
   ],
   imports: [
     IonicModule.forRoot(BigBoardApp),
     NgGridModule,
     MomentModule,
+    BrowserModule,
     TranslateModule.forRoot({
       provide: TranslateLoader,
       useFactory: (createTranslateLoader),
@@ -112,7 +116,8 @@ export class RavenErrorHandler implements ErrorHandler {
     WeatherWidget,
     WeatherModal,
     MapWidget,
-    MapModal
+    MapModal,
+    LinksWidget
   ],
   providers: [...HTTP_INTERCEPTOR_PROVIDER, {provide: ErrorHandler, useClass: RavenErrorHandler /*useClass: IonicErrorHandler*/ }, Consts, AuthProvider, 
   SettingsProvider, UtilsProvider, DataProvider, TranslateService, ChannelProvider, WidgetPubSub, ChannelProvider, 

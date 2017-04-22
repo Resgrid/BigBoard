@@ -115,7 +115,7 @@ export class ChannelProvider {
         this.error$ = this.errorSubject.asObservable();
         this.starting$ = this.startingSubject.asObservable();
 
-        this.hubConnection = this.window.$.hubConnection(channelConfig.url);  
+        this.hubConnection = this.window.$.hubConnection(channelConfig.url);
 
         //this.hubConnection = this.window.$.hubConnection();
         //this.hubConnection.url = channelConfig.url;
@@ -176,7 +176,7 @@ export class ChannelProvider {
 
         this.hubProxy.on('onConnected', (data: any) => {
             console.log(`onConnected with ${data}`);
-            this.widgetPubSub.emitCallUpdated(data);
+            this.widgetPubSub.emitSignalRConnected(data);
         });
 
         this.connectionState$.subscribe((state: ConnectionState) => {
@@ -217,22 +217,30 @@ export class ChannelProvider {
                     }).fail((error: any) => {
                         console.log(`Error subscribed to Connect channel with ${this.settingsProvider.getDepartmentId().toString()}, ERROR: ${error}`);
                     });
-/*
-                    this.sub("Connect", this.settingsProvider.getDepartmentId().toString()).subscribe(
-                        (x: ChannelEvent) => {
-                            console.log('connect callback fired');
-                        },
-                        (error: any) => {
-                            console.warn("Attempt to join channel failed!", error);
-                        }
-                    );
-*/
+                    /*
+                                        this.sub("Connect", this.settingsProvider.getDepartmentId().toString()).subscribe(
+                                            (x: ChannelEvent) => {
+                                                console.log('connect callback fired');
+                                            },
+                                            (error: any) => {
+                                                console.warn("Attempt to join channel failed!", error);
+                                            }
+                                        );
+                    */
                     this.startingSubject.next();
                 })
                 .fail((error: any) => {
                     this.startingSubject.error(error);
                 });
         }
+    }
+
+    subscribeToDepartment(linkId: number): void {
+        this.hubProxy.invoke("SubscribeToDepartmentLink", linkId).done(() => {
+            console.log(`Successfully subscribed to department link with ${linkId}`);
+        }).fail((error: any) => {
+            console.log(`Error subscribed to department link with ${linkId}, ERROR: ${error}`);
+        });
     }
 
     /** 

@@ -8,6 +8,7 @@ import { SettingsProvider } from '../../providers/settings';
 import { SettingsPage } from '../settings/settings';
 
 import { ChannelProvider, ConnectionState } from '../../providers/channel';
+import { DataProvider } from '../../providers/data';
 import { WidgetPubSub } from '../../providers/widget-pubsub';
 import { AddPopover } from '../../components/add-popover/add-popover';
 import { AppPopover } from '../../components/app-popover/app-popover';
@@ -73,7 +74,8 @@ export class HomePage {
 		private alertCtrl: AlertController,
 		private modalCtrl: ModalController,
 		private channelProvider: ChannelProvider,
-		private widgetPubSub: WidgetPubSub) {
+		private widgetPubSub: WidgetPubSub,
+		private dataProvider: DataProvider) {
 		this.areSettingsSet = this.settingsProvider.areSettingsSet();
 
 		if (this.areSettingsSet) {
@@ -93,10 +95,6 @@ export class HomePage {
 	ionViewDidEnter() {
 		this.menu.swipeEnable(false);
 
-		if (this.settingsProvider.areSettingsSet()) {
-			this.channelProvider.start();
-		}
-
 		this.pubSub = this.widgetPubSub.watch().subscribe(e => {
             if (e.event === this.widgetPubSub.EVENTS.PERSONNEL_STATUS_UPDATED) {
                 this.lastUpdated = new Date();
@@ -106,8 +104,21 @@ export class HomePage {
                 this.lastUpdated = new Date();
             } else if (e.event === this.widgetPubSub.EVENTS.UNIT_STATUS_UPDATED) {
                 this.lastUpdated = new Date();
+            } else if (e.event === this.widgetPubSub.EVENTS.SIGNALR_CONNECTED) {
+                this.lastUpdated = new Date();
+
+				this.dataProvider.getLinkedDepartments().subscribe(
+					data => {
+						data.forEach(element => {
+							this.channelProvider.subscribeToDepartment(element.LinkId);
+						});
+					});
             }
         });
+
+		if (this.settingsProvider.areSettingsSet()) {
+			this.channelProvider.start();
+		}
 	}
 
 	updateItem(index: number, event: NgGridItemEvent): void {
@@ -217,6 +228,9 @@ export class HomePage {
 		} else if (type == this.consts.WIDGET_TYPES.CALLS) {
 			widgetType = this.consts.WIDGET_TYPES.CALLS;
 			name = "Calls";
+		} else if (type == this.consts.WIDGET_TYPES.LINKS) {
+			widgetType = this.consts.WIDGET_TYPES.LINKS;
+			name = "Links";
 		}
 
 		this.boxes.push({ name: name, type: widgetType, templateString: "", id: conf.payload, config: conf });
