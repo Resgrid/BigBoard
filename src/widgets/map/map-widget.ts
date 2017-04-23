@@ -147,7 +147,54 @@ export class MapWidget {
                         map.setZoom($scope.widgetSettings.zoom);
                     }*/
                 }
+
+                if (this.settings.ShowLinkedCalls) {
+                    this.dataProvider.getAllLinkedCallMarkers().subscribe(data => {
+                        for (var t = 0; t < data.length; t++) {
+                            let marker = data[t];
+
+                            var latLng = new google.maps.LatLng(marker.Latitude, marker.Longitude);
+
+                            var mapMarker = new google.maps.Marker({
+                                position: latLng,
+                                map: this.map,
+                                draggable: false,
+                                title: marker.Title,
+                                icon: this.pinSymbol(marker.Color)
+                            });
+
+                            /*
+                                                        var mapMarker = new MarkerWithLabel({
+                                                            position: latLng,
+                                                            draggable: false,
+                                                            raiseOnDrag: false,
+                                                            map: this.map,
+                                                            title: marker.Title,
+                                                            icon: "/assets/mapping/" + marker.ImagePath + ".png",
+                                                            labelContent: marker.Title,
+                                                            labelAnchor: new google.maps.Point(35, 0),
+                                                            labelClass: "labels",
+                                                            labelStyle: { color: marker.Color, opacity: 0.60 }
+                                                        });
+                            */
+                            if (this.markerTypeEnabled(marker))
+                                this.markers.push(mapMarker);
+                        }
+                    });
+                }
             });
+    }
+
+    private pinSymbol(color: string): any {
+        return {
+            path: 'M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z',
+            fillColor: color,
+            fillOpacity: 1,
+            strokeColor: '#000',
+            strokeWeight: 1,
+            scale: 1,
+            labelOrigin: new google.maps.Point(0, -29)
+        };
     }
 
     private setMapBounds() {

@@ -60,7 +60,7 @@ export class DataProvider {
             let mapResult: MapResult = new MapResult();
             mapResult.MapMakerInfos = new Array<MapMakerInfo>();
 
-            mapResult.CenterLat = item.CenterLat; 
+            mapResult.CenterLat = item.CenterLat;
             mapResult.CenterLon = item.CenterLon;
             mapResult.ZoomLevel = item.ZoomLevel;
 
@@ -187,6 +187,54 @@ export class DataProvider {
             });
 
             return links;
+        });
+    }
+
+    public getLinkCalls(linkId: number, color: string): Observable<CallResult[]> {
+        let url = this.consts.ResgridApiUrl + '/Links/GetActiveCallsForLink&linkId=' + linkId;
+
+        return this.http.get(url, new RequestOptions({ headers: new Headers({ 'Accept': 'application/json' }) })).map(res => res.json()).map((items) => {
+            let statuses: CallResult[] = new Array<CallResult>();
+
+            items.forEach(item => {
+                let status = new CallResult();
+                status.Name = item.Name;
+                status.State = item.State;
+                status.StateCss = item.StateCss;
+                status.Id = item.Id;
+                status.Priority = item.Priority;
+                status.PriorityCss = item.PriorityCss;
+                status.Timestamp = item.Timestamp;
+                status.LoggingUser = item.LoggingUser;
+                status.Color = color;
+
+                statuses.push(status);
+            });
+
+            return statuses;
+        });
+    }
+
+    public getAllLinkedCallMarkers(): Observable<MapMakerInfo[]> {
+        let url = this.consts.ResgridApiUrl + '/Links/GetAllLinkedCallMapMarkers';
+
+        return this.http.get(url, new RequestOptions({ headers: new Headers({ 'Accept': 'application/json' }) })).map(res => res.json()).map((items) => {
+            let infos: MapMakerInfo[] = new Array<MapMakerInfo>();
+
+            items.forEach(makerInfo => {
+                let marker = new MapMakerInfo();
+                marker.Longitude = makerInfo.Longitude;
+                marker.Latitude = makerInfo.Latitude;
+                marker.Title = makerInfo.Title;
+                marker.zIndex = makerInfo.zIndex;
+                marker.ImagePath = makerInfo.ImagePath;
+                marker.InfoWindowContent = makerInfo.InfoWindowContent;
+                marker.Color = makerInfo.Color;
+
+                infos.push(marker);
+            });
+
+            return infos;
         });
     }
 }

@@ -5,6 +5,7 @@ export class MapWidgetSettings  {
     public Latitude: number = 0;
     public Longitude : number = 0;
     public ShowCalls: boolean = true;
+    public ShowLinkedCalls: boolean = true;
     public ShowStations: boolean = true;
     public ShowPersonnel: boolean = true;
     public ShowUnits: boolean = true;
