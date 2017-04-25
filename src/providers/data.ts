@@ -139,6 +139,7 @@ export class DataProvider {
                 status.PriorityCss = item.PriorityCss;
                 status.Timestamp = item.Timestamp;
                 status.LoggingUser = item.LoggingUser;
+                status.Color = "#000";
 
                 statuses.push(status);
             });

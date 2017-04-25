@@ -47,16 +47,18 @@ export class CallsWidget {
   }
 
   private fetch() {
-    this.dataProvider.getCalls().subscribe(
-      data => {
-        this.calls = data;
+      this.dataProvider.getCalls().subscribe(
+        data => {
+          this.calls = data;
 
-        this.links.forEach(link => {
-          this.dataProvider.getLinkCalls(link.LinkId, link.Color).subscribe(
-            data => {
-              this.calls = this.calls.concat(data);
+          if (this.settings.ShowLinkedCalls) {
+            this.links.forEach(link => {
+              this.dataProvider.getLinkCalls(link.LinkId, link.Color).subscribe(
+                data => {
+                  this.calls = this.calls.concat(data);
+                });
             });
-        });
+          }
       });
   }
 }

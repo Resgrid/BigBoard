@@ -18,16 +18,16 @@
   </ion-row>
   
   <ion-row class="strippedRows" *ngFor="let call of calls">
-    <ion-col [hidden]="!settings.ShowId">
+    <ion-col [hidden]="!settings.ShowId" [style.color]="call.Color">
       {{call.Id}}
     </ion-col>
-    <ion-col [hidden]="!settings.ShowName">
+    <ion-col [hidden]="!settings.ShowName" [style.color]="call.Color">
       {{call.Name}}
     </ion-col>
-    <ion-col [hidden]="!settings.ShowTimestamp">
+    <ion-col [hidden]="!settings.ShowTimestamp" [style.color]="call.Color">
       {{call.Timestamp | amTimeAgo}}
     </ion-col>
-    <ion-col [hidden]="!settings.ShowUser">
+    <ion-col [hidden]="!settings.ShowUser" [style.color]="call.Color">
       {{call.LoggingUser}}
     </ion-col>
     <ion-col [ngClass]="call.PriorityCss" [hidden]="!settings.ShowPriority">
