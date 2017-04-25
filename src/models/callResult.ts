@@ -7,4 +7,6 @@ export class CallResult  {
     public State: string = "";
     public StateCss: string = "";
     public Timestamp: string = "";
+    public Color: string = "";
+    public Address: string = "";
 }

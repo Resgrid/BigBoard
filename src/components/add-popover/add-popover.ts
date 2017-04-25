@@ -36,6 +36,10 @@ export class AddPopover {
     this.addWidget(this.consts.WIDGET_TYPES.WEATHER);
   }
 
+  addLinksWidget() {
+    this.addWidget(this.consts.WIDGET_TYPES.LINKS);
+  }
+
   isWidgetActive(widgetId) {
     if (this.addedWidgets) {
       return this.addedWidgets.includes(widgetId);

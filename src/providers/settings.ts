@@ -23,7 +23,7 @@ export class SettingsProvider {
     this.localStorage = localForage.createInstance({
       driver: localForage.LOCALSTORAGE,
       name: 'BigBoard',
-      version: '1.0',
+      version: 2.0,
       storeName: 'RGBigBoardSettings',
       description: 'Resgrid BigBoard Settings Store'
     });

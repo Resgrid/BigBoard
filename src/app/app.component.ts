@@ -4,6 +4,7 @@ import { RequestOptions, Headers } from '@angular/http';
 import { StatusBar, Splashscreen } from 'ionic-native';
 import { HttpInterceptorService } from 'ng2-http-interceptor';
 import { TranslateService } from "ng2-translate";
+import { BrowserModule } from '@angular/platform-browser';
 
 import { SplashPage } from '../pages/splash-page/splash-page';
 import { HomePage } from '../pages/home/home';

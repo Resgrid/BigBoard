@@ -28,6 +28,11 @@
           Password is required
         </p>
 
+        <ion-item>
+          <ion-label>Enable Sounds</ion-label>
+          <ion-toggle [(ngModel)]="settings.EnableSounds"></ion-toggle>
+        </ion-item>
+
         <div padding>
           <button ion-button (click)="onSignup(signupForm)" [disabled]="!(username.valid && password.valid) || saving || demoMode" type="submit" block color="primary">Save</button>
         </div>

@@ -53,7 +53,8 @@ export class Consts {
 		WEATHER: 3,
 		UNITS: 4,
 		CALLS: 5,
-		LOG: 6
+		LOG: 6,
+		LINKS: 7
 	}
 
 	public STATUS = {

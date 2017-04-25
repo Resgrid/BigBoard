@@ -13,6 +13,7 @@ import { WeatherResult } from '../models/weatherResult';
 import { UnitStatusResult } from '../models/unitStatusResult';
 import { CallResult } from '../models/callResult';
 import { GroupResult } from '../models/groupResult';
+import { DepartmentLinkResult } from '../models/departmentLinkResult';
 
 @Injectable()
 export class DataProvider {
@@ -59,7 +60,7 @@ export class DataProvider {
             let mapResult: MapResult = new MapResult();
             mapResult.MapMakerInfos = new Array<MapMakerInfo>();
 
-            mapResult.CenterLat = item.CenterLat; 
+            mapResult.CenterLat = item.CenterLat;
             mapResult.CenterLon = item.CenterLon;
             mapResult.ZoomLevel = item.ZoomLevel;
 
@@ -138,6 +139,8 @@ export class DataProvider {
                 status.PriorityCss = item.PriorityCss;
                 status.Timestamp = item.Timestamp;
                 status.LoggingUser = item.LoggingUser;
+                status.Color = "#000";
+                status.Address = item.Address;
 
                 statuses.push(status);
             });
@@ -163,6 +166,78 @@ export class DataProvider {
             });
 
             return groups;
+        });
+    }
+
+    public getLinkedDepartments(): Observable<DepartmentLinkResult[]> {
+        let url = this.consts.ResgridApiUrl + '/Links/GetActiveDepartmentLinks';
+
+        return this.http.get(url, new RequestOptions({ headers: new Headers({ 'Accept': 'application/json' }) })).map(res => res.json()).map((result) => {
+            let links: DepartmentLinkResult[] = new Array<DepartmentLinkResult>();
+
+            result.forEach(item => {
+                let link = new DepartmentLinkResult();
+                link.LinkId = item.LinkId;
+                link.DepartmentName = item.DepartmentName;
+                link.Color = item.Color;
+                link.ShareCalls = item.ShareCalls;
+                link.ShareOrders = item.ShareOrders;
+                link.SharePersonnel = item.SharePersonnel;
+                link.ShareUnits = item.ShareUnits;
+
+                links.push(link);
+            });
+
+            return links;
+        });
+    }
+
+    public getLinkCalls(linkId: number, color: string): Observable<CallResult[]> {
+        let url = this.consts.ResgridApiUrl + '/Links/GetActiveCallsForLink?linkId=' + linkId;
+
+        return this.http.get(url, new RequestOptions({ headers: new Headers({ 'Accept': 'application/json' }) })).map(res => res.json()).map((items) => {
+            let statuses: CallResult[] = new Array<CallResult>();
+
+            items.forEach(item => {
+                let status = new CallResult();
+                status.Name = item.Nme;
+                status.State = item.State;
+                status.StateCss = item.StateCss;
+                status.Id = item.Num;
+                status.Priority = item.Priority;
+                status.PriorityCss = item.PriorityCss;
+                status.Timestamp = item.Timestamp;
+                status.LoggingUser = item.Lon;
+                status.Color = color;
+                status.Address = item.Add;
+
+                statuses.push(status);
+            });
+
+            return statuses;
+        });
+    }
+
+    public getAllLinkedCallMarkers(): Observable<MapMakerInfo[]> {
+        let url = this.consts.ResgridApiUrl + '/Links/GetAllLinkedCallMapMarkers';
+
+        return this.http.get(url, new RequestOptions({ headers: new Headers({ 'Accept': 'application/json' }) })).map(res => res.json()).map((items) => {
+            let infos: MapMakerInfo[] = new Array<MapMakerInfo>();
+
+            items.forEach(makerInfo => {
+                let marker = new MapMakerInfo();
+                marker.Longitude = makerInfo.Longitude;
+                marker.Latitude = makerInfo.Latitude;
+                marker.Title = makerInfo.Title;
+                marker.zIndex = makerInfo.zIndex;
+                marker.ImagePath = makerInfo.ImagePath;
+                marker.InfoWindowContent = makerInfo.InfoWindowContent;
+                marker.Color = makerInfo.Color;
+
+                infos.push(marker);
+            });
+
+            return infos;
         });
     }
 }

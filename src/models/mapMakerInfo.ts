@@ -5,4 +5,5 @@ export class MapMakerInfo  {
     public zIndex: string = "";
     public ImagePath: string = "";
     public InfoWindowContent: string = "";
+    public Color: string = "";
 }

@@ -115,8 +115,10 @@ export class ChannelProvider {
         this.error$ = this.errorSubject.asObservable();
         this.starting$ = this.startingSubject.asObservable();
 
-        this.hubConnection = this.window.$.hubConnection();
-        this.hubConnection.url = channelConfig.url;
+        this.hubConnection = this.window.$.hubConnection(channelConfig.url);
+
+        //this.hubConnection = this.window.$.hubConnection();
+        //this.hubConnection.url = channelConfig.url;
         this.hubProxy = this.hubConnection.createHubProxy(channelConfig.hubName);
 
         // Define handlers for the connection state events
@@ -152,24 +154,29 @@ export class ChannelProvider {
         });
 
         // SignalR Event Listeners
-        this.hubProxy.on('PersonnelStatusUpdated', (data: any) => {
+        this.hubProxy.on('personnelStatusUpdated', (data: any) => {
             console.log('PersonnelStatusUpdated');
             this.widgetPubSub.emitPersonnelStatusUpdated(data);
         });
 
-        this.hubProxy.on('PersonnelStaffingUpdated', (data: any) => {
+        this.hubProxy.on('personnelStaffingUpdated', (data: any) => {
             console.log('PersonnelStaffingUpdated');
             this.widgetPubSub.emitPersonnelStaffingUpdated(data);
         });
 
-        this.hubProxy.on('UnitStatusUpdated', (data: any) => {
+        this.hubProxy.on('unitStatusUpdated', (data: any) => {
             console.log('UnitStatusUpdated');
             this.widgetPubSub.emitUnitStatusUpdated(data);
         });
 
-        this.hubProxy.on('CallsUpdated', (data: any) => {
+        this.hubProxy.on('callsUpdated', (data: any) => {
             console.log('CallsUpdated');
             this.widgetPubSub.emitCallUpdated(data);
+        });
+
+        this.hubProxy.on('onConnected', (data: any) => {
+            console.log(`onConnected with ${data}`);
+            this.widgetPubSub.emitSignalRConnected(data);
         });
 
         this.connectionState$.subscribe((state: ConnectionState) => {
@@ -203,21 +210,37 @@ export class ChannelProvider {
                 .done(() => {
                     this.started = true;
 
-                    this.sub("Connect", this.settingsProvider.getDepartmentId().toString()).subscribe(
-                        (x: ChannelEvent) => {
-                            console.log('connect callback fired');
-                        },
-                        (error: any) => {
-                            console.warn("Attempt to join channel failed!", error);
-                        }
-                    );
+                    //this.hubProxy.server.connect(this.settingsProvider.getDepartmentId().toString());
 
+                    this.hubProxy.invoke("connect", this.settingsProvider.getDepartmentId().toString()).done(() => {
+                        console.log(`Successfully subscribed to Connect channel with ${this.settingsProvider.getDepartmentId().toString()}`);
+                    }).fail((error: any) => {
+                        console.log(`Error subscribed to Connect channel with ${this.settingsProvider.getDepartmentId().toString()}, ERROR: ${error}`);
+                    });
+                    /*
+                                        this.sub("Connect", this.settingsProvider.getDepartmentId().toString()).subscribe(
+                                            (x: ChannelEvent) => {
+                                                console.log('connect callback fired');
+                                            },
+                                            (error: any) => {
+                                                console.warn("Attempt to join channel failed!", error);
+                                            }
+                                        );
+                    */
                     this.startingSubject.next();
                 })
                 .fail((error: any) => {
                     this.startingSubject.error(error);
                 });
         }
+    }
+
+    subscribeToDepartment(linkId: number): void {
+        this.hubProxy.invoke("SubscribeToDepartmentLink", linkId).done(() => {
+            console.log(`Successfully subscribed to department link with ${linkId}`);
+        }).fail((error: any) => {
+            console.log(`Error subscribed to department link with ${linkId}, ERROR: ${error}`);
+        });
     }
 
     /** 
@@ -263,7 +286,7 @@ export class ChannelProvider {
         this.starting$.subscribe(() => {
             this.hubProxy.invoke(channel, data)
                 .done(() => {
-                    console.log(`Successfully subscribed to ${channel} channel`);
+                    console.log(`Successfully subscribed to ${channel} channel with ${data}`);
                 })
                 .fail((error: any) => {
                     channelSub.subject.error(error);
