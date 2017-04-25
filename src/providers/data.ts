@@ -140,6 +140,7 @@ export class DataProvider {
                 status.Timestamp = item.Timestamp;
                 status.LoggingUser = item.LoggingUser;
                 status.Color = "#000";
+                status.Address = item.Address;
 
                 statuses.push(status);
             });
@@ -192,22 +193,23 @@ export class DataProvider {
     }
 
     public getLinkCalls(linkId: number, color: string): Observable<CallResult[]> {
-        let url = this.consts.ResgridApiUrl + '/Links/GetActiveCallsForLink&linkId=' + linkId;
+        let url = this.consts.ResgridApiUrl + '/Links/GetActiveCallsForLink?linkId=' + linkId;
 
         return this.http.get(url, new RequestOptions({ headers: new Headers({ 'Accept': 'application/json' }) })).map(res => res.json()).map((items) => {
             let statuses: CallResult[] = new Array<CallResult>();
 
             items.forEach(item => {
                 let status = new CallResult();
-                status.Name = item.Name;
+                status.Name = item.Nme;
                 status.State = item.State;
                 status.StateCss = item.StateCss;
-                status.Id = item.Id;
+                status.Id = item.Num;
                 status.Priority = item.Priority;
                 status.PriorityCss = item.PriorityCss;
                 status.Timestamp = item.Timestamp;
-                status.LoggingUser = item.LoggingUser;
+                status.LoggingUser = item.Lon;
                 status.Color = color;
+                status.Address = item.Add;
 
                 statuses.push(status);
             });

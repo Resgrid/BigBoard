@@ -6,6 +6,9 @@
     <ion-col [hidden]="!settings.ShowName">
       <strong>Name</strong>
     </ion-col>
+    <ion-col [hidden]="!settings.ShowAddress">
+      <strong>Address</strong>
+    </ion-col>
     <ion-col [hidden]="!settings.ShowTimestamp">
       <strong>Timestamp</strong>
     </ion-col>
@@ -23,6 +26,9 @@
     </ion-col>
     <ion-col [hidden]="!settings.ShowName" [style.color]="call.Color">
       {{call.Name}}
+    </ion-col>
+    <ion-col [hidden]="!settings.ShowAddress" [style.color]="call.Color">
+      {{call.Address}}
     </ion-col>
     <ion-col [hidden]="!settings.ShowTimestamp" [style.color]="call.Color">
       {{call.Timestamp | amTimeAgo}}
