@@ -218,6 +218,32 @@ export class DataProvider {
         });
     }
 
+    public getAllLinkedCalls(): Observable<CallResult[]> {
+        let url = this.consts.ResgridApiUrl + '/Links/GetAllActiveCallsForLinks';
+
+        return this.http.get(url, new RequestOptions({ headers: new Headers({ 'Accept': 'application/json' }) })).map(res => res.json()).map((items) => {
+            let statuses: CallResult[] = new Array<CallResult>();
+
+            items.forEach(item => {
+                let status = new CallResult();
+                status.Name = item.Nme;
+                status.State = item.State;
+                status.StateCss = item.StateCss;
+                status.Id = item.Num;
+                status.Priority = item.Priority;
+                status.PriorityCss = item.PriorityCss;
+                status.Timestamp = item.Timestamp;
+                status.LoggingUser = item.Lon;
+                status.Color = item.Color;
+                status.Address = item.Add;
+
+                statuses.push(status);
+            });
+
+            return statuses;
+        });
+    }
+
     public getAllLinkedCallMarkers(): Observable<MapMakerInfo[]> {
         let url = this.consts.ResgridApiUrl + '/Links/GetAllLinkedCallMapMarkers';
 

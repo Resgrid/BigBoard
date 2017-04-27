@@ -1,0 +1,49 @@
+<ion-header>
+  <ion-navbar>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>{{'appName' | translate}}</ion-title>
+    <ion-buttons end [hidden]="!(areSettingsSet)">
+      <button ion-button icon-only (click)="presentAddPopover($event)" color="success"><ion-icon name="add"></ion-icon></button>
+      <button ion-button icon-only item-right clear (click)="presentAppPopover($event)"><ion-icon name="more"></ion-icon></button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+<ion-content style="background-color: darkgrey;">
+  <div [ngGrid]="gridConfig" [hidden]="!areSettingsSet">
+    <ion-card *ngFor="let box of boxes;" [id]="box.type" [(ngGridItem)]="box.config" style="margin-top:4px;" (onItemChange)="updateItem(box.type, $event)"
+      (onResize)="onResize(box.type, $event)" (onDrag)="onDrag(box.type, $event)">
+      <ion-card-header class="handle" style="background-color:#f3f3f3;">
+        <ion-item>
+          {{box.name}}
+          <button ion-button icon-only item-right clear color="dark" (click)="openWidgetSettings(box)"><ion-icon name="settings"></ion-icon></button>
+        </ion-item>
+      </ion-card-header>
+      <ion-card-content>
+        <!--<ion-icon id="resizeGripHandle" ios="ios-funnel" md="md-funnel" class="rotate-grip" ></ion-icon>-->
+        <personnel-widget *ngIf="box.type === 1"></personnel-widget>
+        <map-widget *ngIf="box.type === 2"></map-widget>
+        <weather-widget *ngIf="box.type === 3"></weather-widget>
+        <units-widget *ngIf="box.type === 4"></units-widget>
+        <calls-widget *ngIf="box.type === 5"></calls-widget>
+        <links-widget *ngIf="box.type === 7"></links-widget>
+      </ion-card-content>
+      </ion-card>
+  </div>
+  <cta-panel [hidden]="areSettingsSet" (ctaClick)="setSettingsClick()" [topIcon]="'alert'" [title]="'settingsNotSetPanel.title' | translate"
+    [details]="'settingsNotSetPanel.details' | translate" [extraDetails]="'settingsNotSetPanel.extraDetails' | translate" [btnLabel]="'settingsNotSetPanel.buttonLabel' | translate"></cta-panel>
+    <cta-panel [hidden]="!(areSettingsSet && boxes.length <= 0)" (ctaClick)="presentAddPopover($event)" [topIcon]="'add'" [title]="'noWidgetsPanel.title' | translate"
+      [details]="'noWidgetsPanel.details' | translate" [extraDetails]="'noWidgetsPanel.extraDetails' | translate" [btnLabel]="'noWidgetsPanel.buttonLabel' | translate"></cta-panel>
+</ion-content>
+<ion-footer>
+  <ion-toolbar>
+    <div class="bottom-bar">
+      <span style="text-align: left; float:left;">v{{version}} © 2017 Resgrid, LLC</span>
+      <div style="text-align: right; padding-right:10px; float:right;">
+        <span [hidden]="!areSettingsSet" [style.color]="statusColor" style="text-align: right; margin-top:-18px;float: right;">{{status}}</span>
+        <span style="text-align: right; float: right;">Last Update: {{lastUpdated}}</span>
+      </div>
+    </div>
+  </ion-toolbar>
+</ion-footer>
