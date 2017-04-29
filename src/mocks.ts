@@ -2,6 +2,7 @@
 // IONIC:
 import { EventEmitter}      from '@angular/core';
 import { FormBuilder }      from '@angular/forms';
+import { Interceptable, RequestInterceptor, ResponseInterceptor }    from 'ng-http-interceptor';
 
 export class AlertMock {
 
@@ -26,6 +27,23 @@ export class ToastMock {
     rtn['present'] = (() => true);
     return rtn;
   }
+}
+
+export class HttpInterceptorServiceMock {
+  public request(url?: string | RegExp): Interceptable<RequestInterceptor> {
+    return null;
+  }
+  public response(url?: string | RegExp): Interceptable<ResponseInterceptor> {
+    return null
+  }
+}
+
+export class LoadingControllerMock {
+
+}
+
+export class AlertControllerMock {
+  
 }
 
 export class ConfigMock {

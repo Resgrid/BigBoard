@@ -1,5 +1,3 @@
-import './polyfills.ts';
- 
 import 'zone.js/dist/long-stack-trace-zone';
 import 'zone.js/dist/proxy.js';
 import 'zone.js/dist/sync-test';
@@ -7,11 +5,11 @@ import 'zone.js/dist/jasmine-patch';
 import 'zone.js/dist/async-test';
 import 'zone.js/dist/fake-async-test';
  
-import { HTTP_INTERCEPTOR_PROVIDER } from 'ng2-http-interceptor';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { getTestBed, TestBed } from '@angular/core/testing';
 import { BrowserDynamicTestingModule, platformBrowserDynamicTesting } from '@angular/platform-browser-dynamic/testing';
 import { App, Config, Form, IonicModule, Keyboard, DomController, MenuController, NavController, Platform } from 'ionic-angular';
+import { Consts } from './app/consts';
 import { ConfigMock, PlatformMock } from './mocks';
  
 // Unfortunately there's no typing for the `__karma__` variable. Just declare it as any.
@@ -38,6 +36,7 @@ context.keys().map(context);
 // Finally, start Karma to run the tests.
 __karma__.start();
 
+
 export class TestUtils {
 
   public static beforeEachCompiler(components: Array<any>): Promise<{fixture: any, instance: any}> {
@@ -56,11 +55,9 @@ export class TestUtils {
       declarations: [
         ...components,
       ],
-      providers: [
-        ...HTTP_INTERCEPTOR_PROVIDER,
-        App, Form, Keyboard, DomController, MenuController, NavController,
-        {provide: Platform, useClass: PlatformMock},
-        {provide: Config, useClass: ConfigMock},
+      providers: [App, Form, Keyboard, DomController, MenuController, NavController,
+        {provide: Platform, useClass: PlatformMock}, {provide: Config, useClass: ConfigMock},
+        Consts
       ],
       imports: [
         FormsModule,

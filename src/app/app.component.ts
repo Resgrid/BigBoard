@@ -2,7 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { Nav, Platform } from 'ionic-angular';
 import { RequestOptions, Headers } from '@angular/http';
 import { StatusBar, Splashscreen } from 'ionic-native';
-import { HttpInterceptorService } from 'ng2-http-interceptor';
+import { HttpInterceptorService } from 'ng-http-interceptor';
 import { TranslateService } from "ng2-translate";
 import { BrowserModule } from '@angular/platform-browser';
 

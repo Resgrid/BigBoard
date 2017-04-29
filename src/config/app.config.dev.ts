@@ -10,8 +10,15 @@ import {AppConfig} from './app.config-interface';
  * Please change the value below with the value for your local backend
  * @type {{apiEndpoint: string}}
  */
-export let APP_CONFIG: AppConfig = {
-  apiEndpoint: 'http://localhost:8124',
+export let APP_DEV_CONFIG: AppConfig = {
+  BaseApiUrl:       "https://api.resgrid.com",
+  ResgridApiUrl:    "https://api.resgrid.com/api/v3",
+  ChannelUrl:       "https://api.resgrid.com/signalr",
+  ChannelHubName:   "eventingHub",
+  What3WordsKey:    "HIDDEN",
+  IsDemo:           false,
+  DemoToken:        "S2RoUU1jSFRFbU1oeHVmS0RCei9xUVk1STQxTnFObktTVmJ5V0NHMWxXTT0=",
+  Version:          "2.0.0"
 };
 
 /**
@@ -19,4 +26,4 @@ export let APP_CONFIG: AppConfig = {
  * to read it in the configuration for the AppModule (app.module.ts)
  * @type {AppConfig}
  */
-window['APP_CONFIG'] = APP_CONFIG;
+window['APP_CONFIG'] = APP_DEV_CONFIG;

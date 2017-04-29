@@ -1,16 +1,18 @@
-import {OpaqueToken} from '@angular/core';
+import { InjectionToken } from '@angular/core';
 
 /**
- * Use an Angular2 OpaqueToken to avoid conflicts in case you import modules that define a token with the same name ('app.config')
- * @type {OpaqueToken}
+ * Use an Angular2 InjectionToken to avoid conflicts in case you import modules that define a token with the same name ('app.config')
+ * @type {InjectionToken}
  */
-export let APP_CONFIG_TOKEN = new OpaqueToken('app.config');
+export let APP_CONFIG_TOKEN = new InjectionToken('app.config');
 
-/**
- * Every application that communicates with a backend service will need an endpoint
- * where to send the API request. This endpoint is different in development and production mode,
- * that's why it makes sense to keep it in an environment-aware config file (instead of constants.ts for example)
- */
 export interface AppConfig {
-  apiEndpoint:      string;
+  BaseApiUrl:       string;
+  ResgridApiUrl:    string;
+  ChannelUrl:       string;
+  ChannelHubName:   string;
+  What3WordsKey:    string;
+  IsDemo:           boolean;
+  DemoToken:        string;
+  Version:          string;
 }

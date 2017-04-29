@@ -1,7 +1,9 @@
+import { Injectable, Inject } from '@angular/core';
 import { Component } from '@angular/core';
 import { NavController, LoadingController, AlertController } from 'ionic-angular';
 
 import { Consts } from '../../app/consts';
+import { APP_CONFIG_TOKEN, AppConfig } from "../../config/app.config-interface";
 import { Settings } from '../../models/settings';
 import { SettingsProvider } from '../../providers/settings';
 import { AuthProvider } from '../../providers/auth';
@@ -21,9 +23,10 @@ export class SettingsPage {
     private settingsProvider: SettingsProvider,
     private authProvider: AuthProvider,
     public loadingCtrl: LoadingController,
-    private alertCtrl: AlertController) {
+    private alertCtrl: AlertController,
+    @Inject(APP_CONFIG_TOKEN) private appConfig: AppConfig) {
     this.settings = settingsProvider.settings;
-    this.demoMode = consts.IsDemo;
+    this.demoMode = appConfig.IsDemo;
   }
 
   onSignup(form) {

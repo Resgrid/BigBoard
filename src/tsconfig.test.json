@@ -1,6 +1,7 @@
 {
   "extends": "../tsconfig.ng-cli.json",
   "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
     "outDir": "../out-tsc/spec",
     "module": "commonjs",
     "target": "es5",
