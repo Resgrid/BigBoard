@@ -1,6 +1,5 @@
 {
   "name": "Resgrid BigBoard",
-  "app_id": 29930912,
-  "v2": true,
-  "typescript": true
+  "app_id": "29930912",
+  "type": "ionic-angular"
 }

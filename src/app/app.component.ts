@@ -2,7 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { Nav, Platform } from 'ionic-angular';
 import { RequestOptions, Headers } from '@angular/http';
 import { StatusBar, Splashscreen } from 'ionic-native';
-import { HttpInterceptorService } from 'ng2-http-interceptor';
+import { HttpInterceptorService } from 'ng-http-interceptor';
 import { TranslateService } from "ng2-translate";
 import { BrowserModule } from '@angular/platform-browser';
 
@@ -67,7 +67,16 @@ export class BigBoardApp {
   openPage(page) {
     // Reset the content nav to have just this page
     // we wouldn't want the back button to show in this scenario
-    this.nav.setRoot(page.component);
+    this.nav.setRoot(page.component).then(
+      response => {
+        console.log('Response ' + response);
+      },
+      error => {
+        console.log('Error: ' + error);
+      }
+    ).catch(exception => {
+      console.log('Exception ' + exception);
+    });
   }
 
   /**

@@ -1,10 +1,11 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, ErrorHandler } from '@angular/core';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
-import { HTTP_INTERCEPTOR_PROVIDER } from 'ng2-http-interceptor';
-import {TranslateModule, TranslateService, TranslateStaticLoader, TranslateLoader} from "ng2-translate";
+import { HttpInterceptorModule } from 'ng-http-interceptor';
+import { TranslateModule, TranslateService, TranslateStaticLoader, TranslateLoader } from "ng2-translate";
 import { Http } from '@angular/http';
 import { BigBoardApp } from './app.component';
+import { APP_CONFIG_TOKEN } from "../config/app.config-interface";
 
 import { HomePage } from '../pages/home/home';
 import { AboutPage } from '../pages/about/about';
@@ -51,10 +52,6 @@ export function createTranslateLoader(http: Http) {
   return new TranslateStaticLoader(http, 'assets/i18n', '.json');
 }
 
-let channelConfig = new ChannelConfig();
-channelConfig.url = "https://api.resgrid.com/signalr";
-channelConfig.hubName = "eventingHub";
-
 Raven
   .config('https://785f79e60e484c7baa50033af2d2869d@sentry.io/135552')
   .install();
@@ -93,6 +90,7 @@ export class RavenErrorHandler implements ErrorHandler {
     NgGridModule,
     MomentModule,
     BrowserModule,
+    HttpInterceptorModule,
     TranslateModule.forRoot({
       provide: TranslateLoader,
       useFactory: (createTranslateLoader),
@@ -119,8 +117,9 @@ export class RavenErrorHandler implements ErrorHandler {
     MapModal,
     LinksWidget
   ],
-  providers: [...HTTP_INTERCEPTOR_PROVIDER, {provide: ErrorHandler, useClass: RavenErrorHandler /*useClass: IonicErrorHandler*/ }, Consts, AuthProvider, 
+  providers: [{ provide: APP_CONFIG_TOKEN, useFactory: appConfigValue },
+  {provide: ErrorHandler, useClass: RavenErrorHandler }, Consts, AuthProvider, 
   SettingsProvider, UtilsProvider, DataProvider, TranslateService, ChannelProvider, WidgetPubSub, ChannelProvider, 
-  { provide: SignalrWindow, useValue: window }, { provide: 'channel.config', useValue: channelConfig }]
+  { provide: SignalrWindow, useValue: window }]
 })
 export class AppModule {}

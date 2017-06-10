@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import localForage from "localforage";
 import 'rxjs/add/operator/map';
 
+import { APP_CONFIG_TOKEN, AppConfig } from "../config/app.config-interface";
 import { Consts } from '../app/consts';
 import { Widget } from '../models/widget';
 import { Settings } from '../models/settings';
@@ -19,7 +20,7 @@ export class SettingsProvider {
   public settings: Settings;
   private localStorage: LocalForage;
 
-  constructor(private consts: Consts) {
+  constructor(private consts: Consts, @Inject(APP_CONFIG_TOKEN) private appConfig: AppConfig) {
     this.localStorage = localForage.createInstance({
       driver: localForage.LOCALSTORAGE,
       name: 'BigBoard',
@@ -52,7 +53,7 @@ export class SettingsProvider {
   }
 
   public areSettingsSet(): boolean {
-    if (this.consts.IsDemo === true) {
+    if (this.appConfig.IsDemo === true) {
       return true;
     } else {
       if (!this.settings.Username)

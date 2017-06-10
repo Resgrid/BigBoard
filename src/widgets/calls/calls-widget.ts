@@ -53,28 +53,26 @@ export class CallsWidget {
       data => {
         this.calls = data;
 
-         if (this.linkedCalls != undefined)
-              this.calls = this.calls.concat(this.linkedCalls);
+        if (this.linkedCalls != undefined)
+          this.calls = this.calls.concat(this.linkedCalls);
       });
 
-      this.fetchLinkedCalls();
+    this.fetchLinkedCalls();
   }
 
   private fetchLinkedCalls() {
-    if (this.links != undefined && this.settings.ShowLinkedCalls) {
-      this.links.forEach(link => {
-        this.dataProvider.getLinkCalls(link.LinkId, link.Color).subscribe(
-          data => {
-            this.linkedCalls = data;
+    if (this.settings.ShowLinkedCalls) {
+      this.dataProvider.getAllLinkedCalls().subscribe(
+        data => {
+          this.linkedCalls = data;
 
-            if (this.linkedCalls != undefined) {
+          if (this.linkedCalls != undefined) {
             if (this.calls != undefined)
               this.calls = this.calls.concat(this.linkedCalls);
             else
               this.calls = this.linkedCalls;
-            }
-          });
-      });
+          }
+        });
     }
   }
 }

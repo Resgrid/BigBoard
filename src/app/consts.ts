@@ -21,21 +21,9 @@ export const HAS_SEEN_TUTORIAL_KEY = 'hasSeenTutorial';
 
 @Injectable()
 export class Consts {
-    // Project Constants
-    //public BaseApiUrl: string = "http://resgridapi.local";
-    public BaseApiUrl: string = "https://api.resgrid.com";
-    public ResgridApiUrl: string = this.BaseApiUrl + "/api/v3";
-    public Version: string = "2.0.0";
-    public IsDemo: boolean = false;
-    public DemoToken: string = 'S2RoUU1jSFRFbU1oeHVmS0RCei9xUVk1STQxTnFObktTVmJ5V0NHMWxXTT0=';
-    // Events
-    public Events_UserLoggedIn: string = "user:login";
-    public Events_SystemReady: string = "system:ready";
-
-    // API Keys
-    public What3WordsKey: string = "HIDDEN";
-
 	public EVENTS = {
+		LOGGED_IN: 'userLoggedIn',
+		SYSTEM_READY: 'systemReady',
 		COREDATASYNCED: 'coreDataSynced',
 		LOCAL_DATA_SET: 'localDataSet',
 		SETTINGS_SAVED: 'settingsSaved',

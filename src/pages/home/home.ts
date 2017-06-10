@@ -1,7 +1,9 @@
+import { Injectable, Inject } from '@angular/core';
 import { Component, ViewEncapsulation } from '@angular/core';
 import { NavController, MenuController, PopoverController, AlertController, Popover, ModalController, Modal } from 'ionic-angular';
 import { Observable } from "rxjs/Observable";
 
+import { APP_CONFIG_TOKEN, AppConfig } from "../../config/app.config-interface";
 import { Consts } from '../../app/consts';
 import { Widget } from '../../models/widget';
 import { SettingsProvider } from '../../providers/settings';
@@ -75,7 +77,8 @@ export class HomePage {
 		private modalCtrl: ModalController,
 		private channelProvider: ChannelProvider,
 		private widgetPubSub: WidgetPubSub,
-		private dataProvider: DataProvider) {
+		private dataProvider: DataProvider,
+		@Inject(APP_CONFIG_TOKEN) private appConfig: AppConfig) {
 		this.areSettingsSet = this.settingsProvider.areSettingsSet();
 
 		if (this.areSettingsSet) {
@@ -89,7 +92,7 @@ export class HomePage {
 
 	ngOnInit() {
 		this.wireUpSignalRListeners();
-		this.version = this.consts.Version;
+		this.version = this.appConfig.Version;
 	}
 
 	ionViewDidEnter() {

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import { Http, RequestOptions, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
 import {Observable} from "rxjs/Observable";
@@ -6,6 +6,7 @@ import {Observable} from "rxjs/Observable";
 import { Consts } from '../app/consts';
 import { UtilsProvider } from './utils';
 
+import { APP_CONFIG_TOKEN, AppConfig } from "../config/app.config-interface";
 import { PersonnelStatusResult } from '../models/personnelStatusResult';
 import { MapResult } from '../models/mapResult';
 import { MapMakerInfo } from '../models/mapMakerInfo';
@@ -13,16 +14,16 @@ import { WeatherResult } from '../models/weatherResult';
 import { UnitStatusResult } from '../models/unitStatusResult';
 import { CallResult } from '../models/callResult';
 import { GroupResult } from '../models/groupResult';
-import { DepartmentLinkResult } from '../models/departmentLinkResult';
+import { DepartmentLinkResult } from '../models/departmentLinkResult'; 
 
 @Injectable()
 export class DataProvider {
-    constructor(public http: Http, private consts: Consts, private utils: UtilsProvider) {
+    constructor(public http: Http, private consts: Consts, private utils: UtilsProvider, @Inject(APP_CONFIG_TOKEN) private appConfig: AppConfig) {
 
     }
 
     public getPersonnelStatuses(): Observable<PersonnelStatusResult[]> {
-        let url = this.consts.ResgridApiUrl + '/BigBoard/GetPersonnelStatuses';
+        let url = this.appConfig.ResgridApiUrl + '/BigBoard/GetPersonnelStatuses';
 
         return this.http.get(url, new RequestOptions({ headers: new Headers({ 'Accept': 'application/json' }) })).map(res => res.json()).map((items) => {
             let statuses: PersonnelStatusResult[] = new Array<PersonnelStatusResult>();
@@ -54,7 +55,7 @@ export class DataProvider {
     }
 
     public getMap(): Observable<MapResult> {
-        let url = this.consts.ResgridApiUrl + '/BigBoard/GetMap';
+        let url = this.appConfig.ResgridApiUrl + '/BigBoard/GetMap';
 
         return this.http.get(url, new RequestOptions({ headers: new Headers({ 'Accept': 'application/json' }) })).map(res => res.json()).map((item) => {
             let mapResult: MapResult = new MapResult();
@@ -82,7 +83,7 @@ export class DataProvider {
     }
 
     public getWeather(): Observable<WeatherResult> {
-        let url = this.consts.ResgridApiUrl + '/BigBoard/GetWeather';
+        let url = this.appConfig.ResgridApiUrl + '/BigBoard/GetWeather';
 
         return this.http.get(url, new RequestOptions({ headers: new Headers({ 'Accept': 'application/json' }) })).map(res => res.json()).map((item) => {
             let weatherResult: WeatherResult = new WeatherResult();
@@ -96,7 +97,7 @@ export class DataProvider {
     }
 
     public getUnitStatuses(): Observable<UnitStatusResult[]> {
-        let url = this.consts.ResgridApiUrl + '/BigBoard/GetUnitStatuses';
+        let url = this.appConfig.ResgridApiUrl + '/BigBoard/GetUnitStatuses';
 
         return this.http.get(url, new RequestOptions({ headers: new Headers({ 'Accept': 'application/json' }) })).map(res => res.json()).map((items) => {
             let statuses: UnitStatusResult[] = new Array<UnitStatusResult>();
@@ -124,7 +125,7 @@ export class DataProvider {
     }
 
     public getCalls(): Observable<CallResult[]> {
-        let url = this.consts.ResgridApiUrl + '/BigBoard/GetCalls';
+        let url = this.appConfig.ResgridApiUrl + '/BigBoard/GetCalls';
 
         return this.http.get(url, new RequestOptions({ headers: new Headers({ 'Accept': 'application/json' }) })).map(res => res.json()).map((items) => {
             let statuses: CallResult[] = new Array<CallResult>();
@@ -150,7 +151,7 @@ export class DataProvider {
     }
 
     public getGroups(): Observable<GroupResult[]> {
-        let url = this.consts.ResgridApiUrl + '/BigBoard/GetGroups';
+        let url = this.appConfig.ResgridApiUrl + '/BigBoard/GetGroups';
 
         return this.http.get(url, new RequestOptions({ headers: new Headers({ 'Accept': 'application/json' }) })).map(res => res.json()).map((result) => {
             let groups: GroupResult[] = new Array<GroupResult>();
@@ -170,7 +171,7 @@ export class DataProvider {
     }
 
     public getLinkedDepartments(): Observable<DepartmentLinkResult[]> {
-        let url = this.consts.ResgridApiUrl + '/Links/GetActiveDepartmentLinks';
+        let url = this.appConfig.ResgridApiUrl + '/Links/GetActiveDepartmentLinks';
 
         return this.http.get(url, new RequestOptions({ headers: new Headers({ 'Accept': 'application/json' }) })).map(res => res.json()).map((result) => {
             let links: DepartmentLinkResult[] = new Array<DepartmentLinkResult>();
@@ -193,7 +194,7 @@ export class DataProvider {
     }
 
     public getLinkCalls(linkId: number, color: string): Observable<CallResult[]> {
-        let url = this.consts.ResgridApiUrl + '/Links/GetActiveCallsForLink?linkId=' + linkId;
+        let url = this.appConfig.ResgridApiUrl + '/Links/GetActiveCallsForLink?linkId=' + linkId;
 
         return this.http.get(url, new RequestOptions({ headers: new Headers({ 'Accept': 'application/json' }) })).map(res => res.json()).map((items) => {
             let statuses: CallResult[] = new Array<CallResult>();
@@ -218,8 +219,34 @@ export class DataProvider {
         });
     }
 
+    public getAllLinkedCalls(): Observable<CallResult[]> {
+        let url = this.appConfig.ResgridApiUrl + '/Links/GetAllActiveCallsForLinks';
+
+        return this.http.get(url, new RequestOptions({ headers: new Headers({ 'Accept': 'application/json' }) })).map(res => res.json()).map((items) => {
+            let statuses: CallResult[] = new Array<CallResult>();
+
+            items.forEach(item => {
+                let status = new CallResult();
+                status.Name = item.Nme;
+                status.State = item.State;
+                status.StateCss = item.StateCss;
+                status.Id = item.Num;
+                status.Priority = item.Priority;
+                status.PriorityCss = item.PriorityCss;
+                status.Timestamp = item.Timestamp;
+                status.LoggingUser = item.Lon;
+                status.Color = item.Color;
+                status.Address = item.Add;
+
+                statuses.push(status);
+            });
+
+            return statuses;
+        });
+    }
+
     public getAllLinkedCallMarkers(): Observable<MapMakerInfo[]> {
-        let url = this.consts.ResgridApiUrl + '/Links/GetAllLinkedCallMapMarkers';
+        let url = this.appConfig.ResgridApiUrl + '/Links/GetAllLinkedCallMapMarkers';
 
         return this.http.get(url, new RequestOptions({ headers: new Headers({ 'Accept': 'application/json' }) })).map(res => res.json()).map((items) => {
             let infos: MapMakerInfo[] = new Array<MapMakerInfo>();

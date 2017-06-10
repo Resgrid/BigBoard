@@ -5,9 +5,11 @@ import { Subject } from "rxjs/Subject";
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/share';
 
 import { SettingsProvider } from './settings';
 import { WidgetPubSub } from './widget-pubsub';
+import { APP_CONFIG_TOKEN, AppConfig } from "../config/app.config-interface";
 
 /**
  * When SignalR runs it will add functions to the global $ variable 
@@ -96,7 +98,7 @@ export class ChannelProvider {
 
     constructor(
         @Inject(SignalrWindow) private window: SignalrWindow,
-        @Inject("channel.config") private channelConfig: ChannelConfig,
+        @Inject(APP_CONFIG_TOKEN) private appConfig: AppConfig,
         private settingsProvider: SettingsProvider,
         private widgetPubSub: WidgetPubSub
     ) {
@@ -115,11 +117,11 @@ export class ChannelProvider {
         this.error$ = this.errorSubject.asObservable();
         this.starting$ = this.startingSubject.asObservable();
 
-        this.hubConnection = this.window.$.hubConnection(channelConfig.url);
+        this.hubConnection = this.window.$.hubConnection(this.appConfig.ChannelUrl);
 
         //this.hubConnection = this.window.$.hubConnection();
         //this.hubConnection.url = channelConfig.url;
-        this.hubProxy = this.hubConnection.createHubProxy(channelConfig.hubName);
+        this.hubProxy = this.hubConnection.createHubProxy(this.appConfig.ChannelHubName);
 
         // Define handlers for the connection state events
         //
