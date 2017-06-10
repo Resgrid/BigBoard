@@ -9,24 +9,17 @@
 
 <ion-content padding>
     <ion-list>
-      <form #signupForm="ngForm" novalidate>
         <ion-item>
           <ion-label floating color="primary">Username</ion-label>
-          <ion-input [(ngModel)]="settings.Username" name="username" type="text" #username="ngModel" required>
+          <ion-input [(ngModel)]="settings.Username" type="text">
           </ion-input>
         </ion-item>
-        <p [hidden]="username.valid || saving == false" color="danger" padding-left>
-          Username is required
-        </p>
 
         <ion-item>
           <ion-label floating color="primary">Password</ion-label>
-          <ion-input [(ngModel)]="settings.Password" name="password" type="password" #password="ngModel" required>
+          <ion-input [(ngModel)]="settings.Password" type="password">
           </ion-input>
         </ion-item>
-        <p [hidden]="password.valid || saving == false" color="danger" padding-left>
-          Password is required
-        </p>
 
         <ion-item>
           <ion-label>Enable Sounds</ion-label>
@@ -34,8 +27,7 @@
         </ion-item>
 
         <div padding>
-          <button ion-button (click)="onSignup(signupForm)" [disabled]="!(username.valid && password.valid) || saving || demoMode" type="submit" block color="primary">Save</button>
+          <button ion-button (click)="onSignup()" [disabled]="!(settings.Password && settings.Username) || saving || demoMode" block color="primary">Save</button>
         </div>
-      </form>
     </ion-list>
 </ion-content>
