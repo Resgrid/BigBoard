@@ -1,5 +1,6 @@
 {
   "name": "Resgrid BigBoard",
   "app_id": "29930912",
-  "type": "ionic-angular"
+  "type": "ionic-angular",
+  "watchPatterns": []
 }
