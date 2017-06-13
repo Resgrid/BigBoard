@@ -8,7 +8,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { SplashPage } from '../pages/splash-page/splash-page';
 import { HomePage } from '../pages/home/home';
-import { AboutPage } from '../pages/about/about';
+//import { AboutPage } from '../pages/about/about';
 import { SettingsPage } from '../pages/settings/settings';
 
 import { SettingsProvider } from '../providers/settings';
