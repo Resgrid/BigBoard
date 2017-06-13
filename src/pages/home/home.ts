@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@angular/core';
 import { Component, ViewEncapsulation } from '@angular/core';
 import { NavController, MenuController, PopoverController, AlertController, Popover, ModalController, Modal } from 'ionic-angular';
-import { Observable } from "rxjs/Observable";
+//import { Observable } from "rxjs/Observable";
 
 import { APP_CONFIG_TOKEN, AppConfig } from "../../config/app.config-interface";
 import { Consts } from '../../app/consts';
@@ -125,17 +125,17 @@ export class HomePage {
 	}
 
 	updateItem(index: number, event: NgGridItemEvent): void {
-		let item = event;
+		//let item = event;
 		// Do something here
 	}
 
 	onDrag(index: number, event: NgGridItemEvent): void {
-		let item = event;
+		//let item = event;
 		// Do something here
 	}
 
 	onResize(index: number, event: NgGridItemEvent): void {
-		let item = event;
+		//let item = event;
 		// Do something here
 	}
 

@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, ErrorHandler } from '@angular/core';
-import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
+import { IonicApp, IonicModule } from 'ionic-angular';
 import { HttpInterceptorModule } from 'ng-http-interceptor';
 import { TranslateModule, TranslateService, TranslateStaticLoader, TranslateLoader } from "ng2-translate";
 import { Http } from '@angular/http';
