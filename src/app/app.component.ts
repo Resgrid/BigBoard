@@ -23,7 +23,8 @@ import * as Raven from 'raven-js';
 export class BigBoardApp {
   @ViewChild(Nav) nav: Nav;
 
-  rootPage: any = SplashPage;
+  //rootPage: any = SplashPage;
+  rootPage: any = HomePage;
 
   pages: Array<{ title: string, component: any }>;
 
@@ -59,7 +60,7 @@ export class BigBoardApp {
         }
         
         Splashscreen.hide();
-        this.nav.setRoot(HomePage);
+        //this.nav.setRoot(HomePage);
       })
     });
   }
