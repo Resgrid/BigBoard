@@ -36,7 +36,7 @@ export class BigBoardApp {
 
     this.pages = [
       { title: 'Dashboard', component: HomePage },
-     // { title: 'About', component: AboutPage },
+      // { title: 'About', component: AboutPage },
       { title: 'Settings', component: SettingsPage }
     ];
   }
@@ -46,19 +46,19 @@ export class BigBoardApp {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
       StatusBar.styleDefault();
-      Splashscreen.hide();
 
       this.settingsProvider.init().then(() => {
         this.setupTranslations();
 
         if (this.settingsProvider.areSettingsSet()) {
           Raven.setUserContext({
-              id: this.settingsProvider.getUserId(),
-              username: this.settingsProvider.getUsername(),
-              email: this.settingsProvider.getEmail()
+            id: this.settingsProvider.getUserId(),
+            username: this.settingsProvider.getUsername(),
+            email: this.settingsProvider.getEmail()
           });
         }
-
+        
+        Splashscreen.hide();
         this.nav.setRoot(HomePage);
       })
     });
