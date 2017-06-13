@@ -58,9 +58,18 @@ export class BigBoardApp {
             email: this.settingsProvider.getEmail()
           });
         }
-        
+
         Splashscreen.hide();
-        //this.nav.setRoot(HomePage);
+        this.nav.setRoot(HomePage).then(
+          response => {
+            console.log('Response ' + response);
+          },
+          error => {
+            console.log('Error: ' + error);
+          }
+        ).catch(exception => {
+          console.log('Exception ' + exception);
+        });
       })
     });
   }
