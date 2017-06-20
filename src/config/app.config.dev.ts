@@ -18,7 +18,7 @@ export let APP_DEV_CONFIG: AppConfig = {
   What3WordsKey:    "HIDDEN",
   IsDemo:           false,
   DemoToken:        "S2RoUU1jSFRFbU1oeHVmS0RCei9xUVk1STQxTnFObktTVmJ5V0NHMWxXTT0=",
-  Version:          "2.1.0"
+  Version:          "2.2.0"
 };
 
 /**

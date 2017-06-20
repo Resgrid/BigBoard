@@ -19,7 +19,8 @@
   "exclude": [
     "node_modules",
     "src/test.ts",
-    "**/*.spec.ts"
+    "**/*.spec.ts",
+    "**/*.mock.ts"
   ],
   "compileOnSave": false,
   "atom": {

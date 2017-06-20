@@ -52,7 +52,7 @@
     "@ionic/storage": "2.0.1",
     "@types/google-maps": "3.2.0",
     "@types/localforage": "0.0.34",
-    "angular2-grid": "^2.0.2",
+    "angular2-grid": "2.0.2",
     "angular2-in-memory-web-api": "0.0.21",
     "angular2-moment": "^1.1.0",
     "ionic-angular": "3.3.0",

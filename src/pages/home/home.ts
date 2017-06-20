@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@angular/core';
 import { Component, ViewEncapsulation } from '@angular/core';
-import { NavController, MenuController, PopoverController, AlertController, Popover, ModalController, Modal } from 'ionic-angular';
+import { NavController, MenuController, PopoverController, AlertController, Popover, ModalController, Modal, ToastController } from 'ionic-angular';
 //import { Observable } from "rxjs/Observable";
 
 import { APP_CONFIG_TOKEN, AppConfig } from "../../config/app.config-interface";
@@ -78,6 +78,7 @@ export class HomePage {
 		private channelProvider: ChannelProvider,
 		private widgetPubSub: WidgetPubSub,
 		private dataProvider: DataProvider,
+		private toastCtrl: ToastController,
 		@Inject(APP_CONFIG_TOKEN) private appConfig: AppConfig) {
 		this.areSettingsSet = this.settingsProvider.areSettingsSet();
 
@@ -99,16 +100,16 @@ export class HomePage {
 		this.menu.swipeEnable(false);
 
 		this.pubSub = this.widgetPubSub.watch().subscribe(e => {
-            if (e.event === this.widgetPubSub.EVENTS.PERSONNEL_STATUS_UPDATED) {
-                this.lastUpdated = new Date();
-            } else if (e.event === this.widgetPubSub.EVENTS.PERSONNEL_STAFFING_UPDATED) {
-                this.lastUpdated = new Date();
-            } else if (e.event === this.widgetPubSub.EVENTS.CALLS_SETTINGS) {
-                this.lastUpdated = new Date();
-            } else if (e.event === this.widgetPubSub.EVENTS.UNIT_STATUS_UPDATED) {
-                this.lastUpdated = new Date();
-            } else if (e.event === this.widgetPubSub.EVENTS.SIGNALR_CONNECTED) {
-                this.lastUpdated = new Date();
+			if (e.event === this.widgetPubSub.EVENTS.PERSONNEL_STATUS_UPDATED) {
+				this.lastUpdated = new Date();
+			} else if (e.event === this.widgetPubSub.EVENTS.PERSONNEL_STAFFING_UPDATED) {
+				this.lastUpdated = new Date();
+			} else if (e.event === this.widgetPubSub.EVENTS.CALLS_SETTINGS) {
+				this.lastUpdated = new Date();
+			} else if (e.event === this.widgetPubSub.EVENTS.UNIT_STATUS_UPDATED) {
+				this.lastUpdated = new Date();
+			} else if (e.event === this.widgetPubSub.EVENTS.SIGNALR_CONNECTED) {
+				this.lastUpdated = new Date();
 
 				this.dataProvider.getLinkedDepartments().subscribe(
 					data => {
@@ -116,8 +117,8 @@ export class HomePage {
 							this.channelProvider.subscribeToDepartment(element.LinkId);
 						});
 					});
-            }
-        });
+			}
+		});
 
 		if (this.settingsProvider.areSettingsSet()) {
 			this.channelProvider.start();
@@ -273,22 +274,48 @@ export class HomePage {
 
 
 	private saveLayout() {
-		this.settingsProvider.saveLayout(this.boxes).then(() => {
-			let alert = this.alertCtrl.create({
-				title: 'Layout',
-				subTitle: 'Your current layout has been saved.',
-				buttons: ['Dismiss']
+		if (this.boxes && this.boxes.length > 0) {
+			this.settingsProvider.saveLayout(this.boxes).then(() => {
+				let alert = this.alertCtrl.create({
+					title: 'Layout',
+					subTitle: 'Your current layout has been saved.',
+					buttons: ['Dismiss']
+				});
+				alert.present();
+				this.appOptionsPopover.dismiss();
 			});
-			alert.present();
-			this.appOptionsPopover.dismiss();
-		});
+		} else {
+			let toast = this.toastCtrl.create({
+				message: 'ERROR: Cannot save an empty (blank) layout.',
+				duration: 3000,
+				position: 'top'
+			});
+			toast.present();
+		}
 	}
 
 	private loadLayout() {
 		this.settingsProvider.loadLayout().then((widgets) => {
-			this.boxes = widgets;
-			this.appOptionsPopover.dismiss();
+			if (widgets && widgets.length > 0) {
+				this.boxes = widgets;
+
+				let toast = this.toastCtrl.create({
+					message: 'Successfully loaded saved layout.',
+					duration: 3000,
+					position: 'top'
+				});
+				toast.present();
+			} else {
+				let toast = this.toastCtrl.create({
+					message: 'There is not a currently saved layout. Please setup a layout then save one to be able to load.',
+					duration: 3000,
+					position: 'top'
+				});
+				toast.present();
+			}
 		});
+
+		this.appOptionsPopover.dismiss();
 	}
 
 	private clearLayout() {
