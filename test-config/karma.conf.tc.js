@@ -44,18 +44,20 @@ module.exports = function(config) {
       terminal: true
     },
 
-    coverageIstanbulReporter: {
-      reports: [ 'html', 'lcovonly' ],
-      fixWebpackSourcePaths: true
+    coverageReporter: {
+      dir: 'coverage',
+      reporters: [
+        { type: 'html', subdir: 'html' }
+      ]
     },
     
-    reporters: config.coverage ? ['kjhtml', 'dots', 'coverage-istanbul', 'teamcity'] : ['kjhtml', 'dots', 'teamcity'],
+    reporters: ['coverage', 'teamcity'],
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: true,
-    browsers: ['Chrome'],
-    singleRun: false
+    browsers: ['PhantomJS'],
+    singleRun: true
   };
 
   config.set(_config);
