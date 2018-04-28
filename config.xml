@@ -15,7 +15,7 @@
         <preference name="SplashScreen" value="assets/images/splash.jpg" />
         <preference name="SplashScreenDelay" value="1500" />
         <preference name="SplashScreenBackgroundColor" value="#131313" />
-        <preference name="ShowSplashScreen" value="true" />
+        <preference name="ShowSplashScreen" value="false" />
         <preference name="SplashScreenWidth" value="600" />
         <preference name="SplashScreenHeight" value="300" />
     </platform>

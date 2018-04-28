@@ -5,6 +5,8 @@ Resgrid BigBoard an Ionic 2 progressive web application based dashboard that dis
 
 *********
 
+[![Build status](https://ci.appveyor.com/api/projects/status/i9d14jjv0sut8dgw?svg=true)](https://ci.appveyor.com/project/ShawnJackson/bigboard)
+
 About Resgrid
 -------------
 Resgrid is a software as a service (SaaS) logistics, management and communications platform for first responders, volunteer fire departments, career fire, EMS, Search and Rescue (SAR), public safety, HAZMAT, CERT, disaster response, etc.
