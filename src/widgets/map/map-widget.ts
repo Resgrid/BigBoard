@@ -133,8 +133,8 @@ export class MapWidget {
                     if (this.settings.ShowAllMarkers) {
                         var latlngbounds = new google.maps.LatLngBounds();
                         for (var y = 0; y < data.MapMakerInfos.length; y++) {
-                            var latLng = new google.maps.LatLng(data.MapMakerInfos[y].Latitude, data.MapMakerInfos[y].Longitude);
-                            latlngbounds.extend(latLng);
+                            let latLng2 = new google.maps.LatLng(data.MapMakerInfos[y].Latitude, data.MapMakerInfos[y].Longitude);
+                            latlngbounds.extend(latLng2);
                         }
 
                         this.map.setCenter(latlngbounds.getCenter());
