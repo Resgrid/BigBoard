@@ -4,6 +4,7 @@
   "type": "ionic-angular",
   "watchPatterns": [],
   "integrations": {
-    "gulp": {}
+    "gulp": {},
+    "cordova": {}
   }
 }
