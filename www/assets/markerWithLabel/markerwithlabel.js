@@ -306,7 +306,10 @@ MarkerLabel_.prototype.onAdd = function () {
  */
 MarkerLabel_.prototype.onRemove = function () {
   var i;
-  this.labelDiv_.parentNode.removeChild(this.labelDiv_);
+
+  if (this.labelDiv_ && this.labelDiv_.parentNode) {
+    this.labelDiv_.parentNode.removeChild(this.labelDiv_);
+  }
 
   // Remove event listeners:
   for (i = 0; i < this.listeners_.length; i++) {

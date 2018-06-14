@@ -29,14 +29,14 @@ import { NgGrid, NgGridItem, NgGridConfig, NgGridItemConfig, NgGridItemEvent } f
 	encapsulation: ViewEncapsulation.None
 })
 export class HomePage {
-	private areSettingsSet: boolean;
-	private boxes: Array<Widget> = [];
 	private addWidgetPopover: Popover;
 	private appOptionsPopover: Popover;
 	private widgetSettingsModal: Modal;
-	private version: string;
 	private pubSub: any;
 
+	public boxes: Array<Widget> = [];
+	public version: string;
+	public areSettingsSet: boolean;
 	public lastUpdated: Date = new Date();
 	public connected: boolean = false;
 	public status: string = "Connecting to Resgrid...";

@@ -1,9 +1,9 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, ErrorHandler } from '@angular/core';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
-import { HttpInterceptorModule } from 'ng-http-interceptor';
-import { TranslateModule, TranslateService, TranslateStaticLoader, TranslateLoader } from "ng2-translate";
-import { Http } from '@angular/http';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { BigBoardApp } from './app.component';
 import { APP_CONFIG_TOKEN } from "../config/app.config-interface";
 
@@ -13,6 +13,7 @@ import { SettingsPage } from '../pages/settings/settings';
 import { SplashPage } from '../pages/splash-page/splash-page';
 import { CTAPanel } from '../components/cta-panel/cta-panel';
 import { ChannelProvider, ChannelConfig, SignalrWindow } from "../providers/channel";
+import { HttpInterceptorModule } from '../interceptors/http.interceptor.module';
 
 import { Consts } from './consts';
 import { AuthProvider } from '../providers/auth';
@@ -48,8 +49,8 @@ export function appConfigValue() {
   return window['APP_CONFIG'];
 }
 
-export function createTranslateLoader(http: Http) {
-  return new TranslateStaticLoader(http, 'assets/i18n', '.json');
+export function createTranslateLoader(http: HttpClient) {
+  return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
 }
 
 Raven
@@ -90,11 +91,14 @@ export class RavenErrorHandler implements ErrorHandler {
     NgGridModule,
     MomentModule,
     BrowserModule,
+    HttpClientModule,
     HttpInterceptorModule,
     TranslateModule.forRoot({
-      provide: TranslateLoader,
-      useFactory: (createTranslateLoader),
-      deps: [Http]
+      loader: {
+        provide: TranslateLoader,
+        useFactory: createTranslateLoader,
+        deps: [HttpClient]
+      }
     })
   ],
   bootstrap: [IonicApp],
@@ -119,7 +123,7 @@ export class RavenErrorHandler implements ErrorHandler {
   ],
   providers: [{ provide: APP_CONFIG_TOKEN, useFactory: appConfigValue },
   {provide: ErrorHandler, useClass: /*IonicErrorHandler*/ RavenErrorHandler }, Consts, AuthProvider, 
-  SettingsProvider, UtilsProvider, DataProvider, TranslateService, ChannelProvider, WidgetPubSub, ChannelProvider, 
+  SettingsProvider, UtilsProvider, DataProvider, ChannelProvider, WidgetPubSub, ChannelProvider, 
   { provide: SignalrWindow, useValue: window }]
 })
 export class AppModule {}
