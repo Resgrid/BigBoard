@@ -8,7 +8,6 @@ import { BigBoardApp } from './app.component';
 import { APP_CONFIG_TOKEN } from "../config/app.config-interface";
 
 import { HomePage } from '../pages/home/home';
-import { AboutPage } from '../pages/about/about';
 import { SettingsPage } from '../pages/settings/settings';
 import { SplashPage } from '../pages/splash-page/splash-page';
 import { CTAPanel } from '../components/cta-panel/cta-panel';
@@ -43,6 +42,10 @@ import { MomentModule } from 'angular2-moment';
 
 import * as Raven from 'raven-js';
 
+import 'rxjs/Observable';
+import 'rxjs/add/operator/catch';
+import 'rxjs/add/observable/throw';
+
 export function appConfigValue() {
   // This variable is created in config/app.config.dev or config/app.config.prod
   // (depending on how you build the application, dev vs. prod)
@@ -67,7 +70,6 @@ export class RavenErrorHandler implements ErrorHandler {
   declarations: [
     BigBoardApp,
     HomePage,
-    AboutPage,
     SettingsPage,
     CallsWidget,
     CTAPanel,
@@ -105,7 +107,6 @@ export class RavenErrorHandler implements ErrorHandler {
   entryComponents: [
     BigBoardApp,
     HomePage,
-    AboutPage,
     SettingsPage,
     SplashPage,
     AppPopover,
