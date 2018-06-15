@@ -1,18 +1,18 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, ErrorHandler } from '@angular/core';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
-import { HttpInterceptorModule } from 'ng-http-interceptor';
-import { TranslateModule, TranslateService, TranslateStaticLoader, TranslateLoader } from "ng2-translate";
-import { Http } from '@angular/http';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { BigBoardApp } from './app.component';
 import { APP_CONFIG_TOKEN } from "../config/app.config-interface";
 
 import { HomePage } from '../pages/home/home';
-import { AboutPage } from '../pages/about/about';
 import { SettingsPage } from '../pages/settings/settings';
 import { SplashPage } from '../pages/splash-page/splash-page';
 import { CTAPanel } from '../components/cta-panel/cta-panel';
 import { ChannelProvider, ChannelConfig, SignalrWindow } from "../providers/channel";
+import { HttpInterceptorModule } from '../interceptors/http.interceptor.module';
 
 import { Consts } from './consts';
 import { AuthProvider } from '../providers/auth';
@@ -42,14 +42,18 @@ import { MomentModule } from 'angular2-moment';
 
 import * as Raven from 'raven-js';
 
+import 'rxjs/Observable';
+import 'rxjs/add/operator/catch';
+import 'rxjs/add/observable/throw';
+
 export function appConfigValue() {
   // This variable is created in config/app.config.dev or config/app.config.prod
   // (depending on how you build the application, dev vs. prod)
   return window['APP_CONFIG'];
 }
 
-export function createTranslateLoader(http: Http) {
-  return new TranslateStaticLoader(http, 'assets/i18n', '.json');
+export function createTranslateLoader(http: HttpClient) {
+  return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
 }
 
 Raven
@@ -66,7 +70,6 @@ export class RavenErrorHandler implements ErrorHandler {
   declarations: [
     BigBoardApp,
     HomePage,
-    AboutPage,
     SettingsPage,
     CallsWidget,
     CTAPanel,
@@ -90,18 +93,20 @@ export class RavenErrorHandler implements ErrorHandler {
     NgGridModule,
     MomentModule,
     BrowserModule,
+    HttpClientModule,
     HttpInterceptorModule,
     TranslateModule.forRoot({
-      provide: TranslateLoader,
-      useFactory: (createTranslateLoader),
-      deps: [Http]
+      loader: {
+        provide: TranslateLoader,
+        useFactory: createTranslateLoader,
+        deps: [HttpClient]
+      }
     })
   ],
   bootstrap: [IonicApp],
   entryComponents: [
     BigBoardApp,
     HomePage,
-    AboutPage,
     SettingsPage,
     SplashPage,
     AppPopover,
@@ -119,7 +124,7 @@ export class RavenErrorHandler implements ErrorHandler {
   ],
   providers: [{ provide: APP_CONFIG_TOKEN, useFactory: appConfigValue },
   {provide: ErrorHandler, useClass: /*IonicErrorHandler*/ RavenErrorHandler }, Consts, AuthProvider, 
-  SettingsProvider, UtilsProvider, DataProvider, TranslateService, ChannelProvider, WidgetPubSub, ChannelProvider, 
+  SettingsProvider, UtilsProvider, DataProvider, ChannelProvider, WidgetPubSub, ChannelProvider, 
   { provide: SignalrWindow, useValue: window }]
 })
 export class AppModule {}
