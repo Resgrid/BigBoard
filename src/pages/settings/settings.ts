@@ -52,6 +52,9 @@ export class SettingsPage {
         this.settingsProvider.settings.AuthTokenExpiry = data.Txd;
         this.settingsProvider.save();
 
+        window.localStorage.setItem('userId', this.settingsProvider.settings.UserId);
+        window.localStorage.setItem('authToken', this.settingsProvider.settings.AuthToken);
+
         loading.dismiss();
         this.navCtrl.setRoot(HomePage);
       },

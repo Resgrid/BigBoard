@@ -1,6 +1,6 @@
 {
   "name": "bigboard",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "BigBoard to view information from the Resgrid system",
   "main": "index.html",
   "author": "Resgrid Team <team@resgrid.com>",
