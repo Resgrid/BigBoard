@@ -18,7 +18,8 @@ export let APP_MOCK_CONFIG: AppConfig = {
   What3WordsKey:    "HIDDEN",
   IsDemo:           false,
   DemoToken:        "S2RoUU1jSFRFbU1oeHVmS0RCei9xUVk1STQxTnFObktTVmJ5V0NHMWxXTT0=",
-  Version:          "2.4.0"
+  Version:          "2.4.0",
+  GoogleMapKey:     "GOOGLEAPIHIDDEN"
 };
 
 /**

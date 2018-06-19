@@ -1,8 +1,9 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild, Inject } from '@angular/core';
 
 import { MapResult } from '../../models/mapResult';
 import { MapWidgetSettings } from '../../models/mapWidgetSettings';
 import { WidgetPubSub } from '../../providers/widget-pubsub';
+import { APP_CONFIG_TOKEN, AppConfig } from "../config/app.config-interface";
 import { DataProvider } from '../../providers/data';
 
 import { SettingsProvider } from '../../providers/settings';
@@ -27,6 +28,7 @@ export class MapWidget {
 
     constructor(private dataProvider: DataProvider,
         private widgetPubSub: WidgetPubSub,
+        @Inject(APP_CONFIG_TOKEN) private appConfig: AppConfig,
         private settingsProvider: SettingsProvider) {
         this.settings = new MapWidgetSettings();
         this.markers = new Array<any>();
@@ -65,7 +67,9 @@ export class MapWidget {
         if (typeof google == "undefined" || typeof google.maps == "undefined") {
             let script = document.createElement("script");
             script.id = "googleMaps";
-            if (this.apiKey) {
+            this.apiKey = this.appConfig.GoogleMapKey;
+
+            if (this.apiKey && this.apiKey !== '' && this.apiKey !== 'GOOGLEAPIHIDDEN') {
                 script.src = 'https://maps.google.com/maps/api/js?key=' + this.apiKey;
             } else {
                 script.src = 'https://maps.google.com/maps/api/js';

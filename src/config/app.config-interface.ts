@@ -15,4 +15,5 @@ export interface AppConfig {
   IsDemo:           boolean;
   DemoToken:        string;
   Version:          string;
+  GoogleMapKey:     string;
 }
