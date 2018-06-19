@@ -3,7 +3,7 @@ import { Component, ElementRef, ViewChild, Inject } from '@angular/core';
 import { MapResult } from '../../models/mapResult';
 import { MapWidgetSettings } from '../../models/mapWidgetSettings';
 import { WidgetPubSub } from '../../providers/widget-pubsub';
-import { APP_CONFIG_TOKEN, AppConfig } from "../config/app.config-interface";
+import { APP_CONFIG_TOKEN, AppConfig } from "../../config/app.config-interface";
 import { DataProvider } from '../../providers/data';
 
 import { SettingsProvider } from '../../providers/settings';
