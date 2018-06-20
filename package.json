@@ -1,6 +1,6 @@
 {
   "name": "bigboard",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "BigBoard to view information from the Resgrid system",
   "main": "index.html",
   "author": "Resgrid Team <team@resgrid.com>",
@@ -102,6 +102,7 @@
     "karma-webpack": "^2.0.13",
     "null-loader": "^0.1.1",
     "protractor": "^5.1.1",
+    "replace-in-file": "^3.4.0",
     "ts-loader": "^3.5.0",
     "ts-node": "^5.0.0",
     "typescript": "~2.4.2"
