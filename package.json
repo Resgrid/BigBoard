@@ -1,6 +1,6 @@
 {
   "name": "bigboard",
-  "version": "2.5.0",
+  "version": "2.5.5",
   "description": "BigBoard to view information from the Resgrid system",
   "main": "index.html",
   "author": "Resgrid Team <team@resgrid.com>",
@@ -70,7 +70,7 @@
     "@ngx-translate/core": "8.0.0",
     "@ngx-translate/http-loader": "2.0.0",
     "node-js-marker-clusterer": "^1.0.0",
-    "raven-js": "^3.10.0",
+    "raven-js": "^3.26.3",
     "rxjs": "5.5.2",
     "sw-toolbox": "3.6.0",
     "zone.js": "0.8.18",
