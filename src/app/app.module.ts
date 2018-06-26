@@ -20,6 +20,7 @@ import { SettingsProvider } from '../providers/settings';
 import { UtilsProvider } from '../providers/utils';
 import { DataProvider } from '../providers/data';
 import { WidgetPubSub } from '../providers/widget-pubsub';
+import { AlertProvider } from '../providers/alert';
 import { SafePipe } from '../pipes/safe';
 
 import { AddPopover } from '../components/add-popover/add-popover';
@@ -45,6 +46,7 @@ import * as Raven from 'raven-js';
 import 'rxjs/Observable';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/throw';
+import 'rxjs/add/operator/do';
 
 export function appConfigValue() {
   // This variable is created in config/app.config.dev or config/app.config.prod
@@ -124,7 +126,7 @@ export class RavenErrorHandler implements ErrorHandler {
   ],
   providers: [{ provide: APP_CONFIG_TOKEN, useFactory: appConfigValue },
   {provide: ErrorHandler, useClass: /*IonicErrorHandler*/ RavenErrorHandler }, Consts, AuthProvider, 
-  SettingsProvider, UtilsProvider, DataProvider, ChannelProvider, WidgetPubSub, ChannelProvider, 
+  SettingsProvider, UtilsProvider, DataProvider, ChannelProvider, WidgetPubSub, ChannelProvider, AlertProvider, 
   { provide: SignalrWindow, useValue: window }]
 })
 export class AppModule {}

@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.resgrid.bigboard" version="2.5.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.resgrid.bigboard" version="2.5.5" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>BigBoard</name>
     <description>Dashboard for first responders using the Resgrid system</description>
     <author email="team@resgrid.com" href="https://resgrid.com/">Resgrid Team</author>
