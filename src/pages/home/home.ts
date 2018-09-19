@@ -136,8 +136,12 @@ export class HomePage {
 	}
 
 	onResize(index: number, event: NgGridItemEvent): void {
-		//let item = event;
+		let item = event;
 		// Do something here
+
+		if (index == 2) {
+			this.widgetPubSub.emitMapSizeUpdated(event);
+		}
 	}
 
 	setSettingsClick() {
