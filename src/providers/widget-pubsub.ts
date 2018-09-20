@@ -21,7 +21,8 @@ export class WidgetPubSub {
         CALL_STATUS_UPDATED: 'signalrCallStatusUpdated',
         PERSONNEL_GROUP_SORT_UPDATED: 'personnelGroupSortUpdated',
         PERSONNEL_GROUP_HIDE_UPDATED: 'personnelGroupHidesUpdated',
-        SIGNALR_CONNECTED: 'signalConnected'
+        SIGNALR_CONNECTED: 'signalConnected',
+        MAP_WIDGET_RESIZED: 'mapWidgetResized'
     };
 
     constructor() {
@@ -114,6 +115,13 @@ export class WidgetPubSub {
     emitSignalRConnected(event) {
         this._observer.next({
             event: this.EVENTS.SIGNALR_CONNECTED,
+            data: event
+        })
+    }
+
+    emitMapSizeUpdated(event) {
+        this._observer.next({
+            event: this.EVENTS.MAP_WIDGET_RESIZED,
             data: event
         })
     }

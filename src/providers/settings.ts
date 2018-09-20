@@ -337,4 +337,12 @@ export class SettingsProvider {
   public loadMapWidgetSettings(): Promise<MapWidgetSettings> {
     return this.localStorage.getItem("mapWidgetSettings");
   }
+
+  public setMapResult(mapResult): Promise<any> {
+    return this.localStorage.setItem('rgbboardmapResult', mapResult);
+  }
+
+  public getMapResult(): Promise<any> {
+    return this.localStorage.getItem('rgbboardmapResult');
+  }
 }

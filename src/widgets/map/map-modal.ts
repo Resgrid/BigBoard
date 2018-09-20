@@ -24,7 +24,7 @@ export class MapModal {
     this.removeWidget = this.navParams.get('removeWidget')
     this.closeModal = this.navParams.get('closeModal')
 
-    this.types = new Array<string>("Roadmap", "Satellite", "Hybrid", "Terrain")
+    this.types = new Array<string>("Roadmap"/*, "Satellite", "Hybrid", "Terrain"*/)
     this.model = new MapWidgetSettings();
   }
 

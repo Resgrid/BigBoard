@@ -19,6 +19,7 @@ import { AuthProvider } from '../providers/auth';
 import { SettingsProvider } from '../providers/settings';
 import { UtilsProvider } from '../providers/utils';
 import { DataProvider } from '../providers/data';
+import { MapProvider } from '../providers/map';
 import { WidgetPubSub } from '../providers/widget-pubsub';
 import { AlertProvider } from '../providers/alert';
 import { SafePipe } from '../pipes/safe';
@@ -125,7 +126,7 @@ export class RavenErrorHandler implements ErrorHandler {
     LinksWidget
   ],
   providers: [{ provide: APP_CONFIG_TOKEN, useFactory: appConfigValue },
-  {provide: ErrorHandler, useClass: /*IonicErrorHandler*/ RavenErrorHandler }, Consts, AuthProvider, 
+  {provide: ErrorHandler, useClass: /*IonicErrorHandler*/ RavenErrorHandler }, Consts, AuthProvider, MapProvider, 
   SettingsProvider, UtilsProvider, DataProvider, ChannelProvider, WidgetPubSub, ChannelProvider, AlertProvider, 
   { provide: SignalrWindow, useValue: window }]
 })
