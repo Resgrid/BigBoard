@@ -130,9 +130,10 @@ export class MapWidget {
 
                 // clear map markers
                 if (this.markers && this.markers.length >= 0) {
-                    // remove current markers.
                     for (var i = 0; i < this.markers.length; i++) {
-                        //this.markers[i].setMap(null);
+                        if (this.markers[i]) {
+                            this.map.removeLayer(this.markers[i]);
+                        }
                     }
 
                     this.markers = new Array<any>();
