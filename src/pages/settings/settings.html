@@ -26,6 +26,13 @@
           <ion-toggle [(ngModel)]="settings.EnableSounds"></ion-toggle>
         </ion-item>
 
+        <ion-item [hidden]="!(settings.AuthToken)">
+          <ion-label>Station</ion-label>
+          <ion-select>
+            <ion-option *ngFor="let group of groups" [value]="group.Gid" [selected]="(group.Gid == settings.SelectedGroup)" (click)="setGroup(group)">{{ group.Nme }}</ion-option>
+          </ion-select>
+        </ion-item>
+
         <div padding>
           <button ion-button (click)="onSignup()" [disabled]="!(settings.Password && settings.Username) || saving || demoMode" block color="primary">Save</button>
         </div>

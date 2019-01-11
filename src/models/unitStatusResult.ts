@@ -11,4 +11,6 @@ export class UnitStatusResult  {
     public Longitude: string = "";
     public GroupName: string = "";
     public GroupId: string = "";
+    public Eta: string = "";
+
 }

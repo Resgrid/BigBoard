@@ -20,4 +20,5 @@ export class Settings  {
     public CustomRespondingText: string = "";
     public EnableGeolocation: boolean = true;
     public EnableSounds: boolean = false;
+    public SelectedGroup: string = "";
 }
