@@ -31,6 +31,13 @@ export class SettingsPage {
     @Inject(APP_CONFIG_TOKEN) private appConfig: AppConfig) {
     this.settings = settingsProvider.settings;
     this.demoMode = appConfig.IsDemo;
+
+    this.groups.push({
+      Gid: "0",
+      Typ: "-1",
+      Nme: "None",
+      Add: ""
+    });
   }
 
   public ionViewDidEnter() {
@@ -38,17 +45,12 @@ export class SettingsPage {
     this.dataProvider.getGroups().subscribe(
       data => {
         data.forEach(group => {
-          if (group && group.Typ === '2') {
+          if (group && group.Typ == '2') {
             this.groups.push(group);
           }
         });
       });
     }
-  }
-
-  public setGroup(group) {
-    this.settingsProvider.settings.SelectedGroup = group.Gid;
-    this.settingsProvider.save();
   }
 
   public onSignup(form) {

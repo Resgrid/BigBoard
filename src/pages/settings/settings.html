@@ -28,8 +28,8 @@
 
         <ion-item [hidden]="!(settings.AuthToken)">
           <ion-label>Station</ion-label>
-          <ion-select>
-            <ion-option *ngFor="let group of groups" [value]="group.Gid" [selected]="(group.Gid == settings.SelectedGroup)" (click)="setGroup(group)">{{ group.Nme }}</ion-option>
+          <ion-select [(ngModel)]="settings.SelectedGroup">
+            <ion-option *ngFor="let group of groups" [value]="group.Gid">{{ group.Nme }}</ion-option>
           </ion-select>
         </ion-item>
 
