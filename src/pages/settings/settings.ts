@@ -42,14 +42,16 @@ export class SettingsPage {
 
   public ionViewDidEnter() {
     if (this.settings.AuthToken) {
-    this.dataProvider.getGroups().subscribe(
-      data => {
-        data.forEach(group => {
-          if (group && group.Typ == '2') {
-            this.groups.push(group);
+      this.dataProvider.getGroups().subscribe(
+        data => {
+          if (data) {
+            data.forEach(group => {
+              if (group && group.Typ == '2') {
+                this.groups.push(group);
+              }
+            });
           }
         });
-      });
     }
   }
 

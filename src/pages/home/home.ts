@@ -113,9 +113,11 @@ export class HomePage {
 
 				this.dataProvider.getLinkedDepartments().subscribe(
 					data => {
-						data.forEach(element => {
-							this.channelProvider.subscribeToDepartment(element.LinkId);
-						});
+						if (data) {
+							data.forEach(element => {
+								this.channelProvider.subscribeToDepartment(element.LinkId);
+							});
+						}
 					});
 			}
 		});
@@ -265,13 +267,15 @@ export class HomePage {
 	private getActiveWidgets(): string {
 		let activeWidgets: string;
 
-		this.boxes.forEach(box => {
-			if (activeWidgets) {
-				activeWidgets = activeWidgets + "," + box.type
-			} else {
-				activeWidgets = box.type.toString();
-			}
-		});
+		if (this.boxes) {
+			this.boxes.forEach(box => {
+				if (activeWidgets) {
+					activeWidgets = activeWidgets + "," + box.type
+				} else {
+					activeWidgets = box.type.toString();
+				}
+			});
+		}
 
 		return activeWidgets;
 	}
