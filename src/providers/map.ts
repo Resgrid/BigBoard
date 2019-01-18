@@ -24,24 +24,27 @@ export class MapProvider {
             let mapResult: MapResult = new MapResult();
             mapResult.MapMakerInfos = new Array<MapMakerInfo>();
 
-            mapResult.CenterLat = item.CenterLat;
-            mapResult.CenterLon = item.CenterLon;
-            mapResult.ZoomLevel = item.ZoomLevel;
+            if (item) {
+                mapResult.CenterLat = item.CenterLat;
+                mapResult.CenterLon = item.CenterLon;
+                mapResult.ZoomLevel = item.ZoomLevel;
 
+                if (item.MapMakerInfos) {
+                    item.MapMakerInfos.forEach(makerInfo => {
+                        let marker = new MapMakerInfo();
+                        marker.Longitude = makerInfo.Longitude;
+                        marker.Latitude = makerInfo.Latitude;
+                        marker.Title = makerInfo.Title;
+                        marker.zIndex = makerInfo.zIndex;
+                        marker.ImagePath = makerInfo.ImagePath;
+                        marker.InfoWindowContent = makerInfo.InfoWindowContent;
 
-            item.MapMakerInfos.forEach(makerInfo => {
-                let marker = new MapMakerInfo();
-                marker.Longitude = makerInfo.Longitude;
-                marker.Latitude = makerInfo.Latitude;
-                marker.Title = makerInfo.Title;
-                marker.zIndex = makerInfo.zIndex;
-                marker.ImagePath = makerInfo.ImagePath;
-                marker.InfoWindowContent = makerInfo.InfoWindowContent;
+                        mapResult.MapMakerInfos.push(marker);
+                    });
+                }
 
-                mapResult.MapMakerInfos.push(marker);
-            });
-
-            this.settingsProvider.setMapResult(mapResult);
+                this.settingsProvider.setMapResult(mapResult);
+            }
 
             return mapResult;
         });

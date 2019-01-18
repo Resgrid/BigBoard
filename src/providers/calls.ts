@@ -34,16 +34,17 @@ export class CallsProvider {
 		return this.http.get(url, { params: params }).map((item) => {
 			let status: CallDataResult = <CallDataResult>item;
 
-			status.Activity.forEach(activity => {
-				if (activity.Type === "User") {
-					//activity.StatusText = this.typesProvider.statusToTextConverter(activity.StatusId);
-					//activity.StatusColor = this.typesProvider.statusToColorConverter(activity.StatusId);
-				} else {
-					//activity.StatusText = this.typesProvider.unitStatusToTextConverter(activity.StatusId);
-					//activity.StatusColor = this.typesProvider.unitStatusToColorConverter(activity.StatusId);
-				}
-			});
-
+			if (status && status.Activity) {
+				status.Activity.forEach(activity => {
+					if (activity.Type === "User") {
+						//activity.StatusText = this.typesProvider.statusToTextConverter(activity.StatusId);
+						//activity.StatusColor = this.typesProvider.statusToColorConverter(activity.StatusId);
+					} else {
+						//activity.StatusText = this.typesProvider.unitStatusToTextConverter(activity.StatusId);
+						//activity.StatusColor = this.typesProvider.unitStatusToColorConverter(activity.StatusId);
+					}
+				});
+			}
 
 			return status;
 		});
@@ -61,10 +62,12 @@ export class CallsProvider {
 			.map((items) => {
 				let files: CallFileResult[] = new Array<CallFileResult>();
 
-				items.forEach(item => {
-					let file = <CallFileResult>item;
-					files.push(file);
-				});
+				if (items) {
+					items.forEach(item => {
+						let file = <CallFileResult>item;
+						files.push(file);
+					});
+				}
 
 				return files;
 			});
