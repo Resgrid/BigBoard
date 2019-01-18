@@ -32,7 +32,7 @@ export class UnitsWidget {
     });
 
     this.settingsUpdatedSubscription = this.widgetPubSub.watch().subscribe(e => {
-      if (e.event === this.widgetPubSub.EVENTS.CALLS_SETTINGS) {
+      if (e.event === this.widgetPubSub.EVENTS.UNITS_SETTINGS) {
         this.settings = e.data;
       } else if (e.event === this.widgetPubSub.EVENTS.UNIT_STATUS_UPDATED) {
          this.fetch();

@@ -48,6 +48,7 @@ import 'rxjs/Observable';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/throw';
 import 'rxjs/add/operator/do';
+import { CallsProvider } from '../providers/calls';
 
 export function appConfigValue() {
   // This variable is created in config/app.config.dev or config/app.config.prod
@@ -65,7 +66,11 @@ Raven
 
 export class RavenErrorHandler implements ErrorHandler {
   handleError(err:any) : void {
-    Raven.captureException(err.originalError);
+    try {
+      Raven.captureException(err.originalError);
+    } catch (ex) {
+      console.log(ex);
+    }
   }
 }
 
@@ -125,9 +130,9 @@ export class RavenErrorHandler implements ErrorHandler {
     MapModal,
     LinksWidget
   ],
-  providers: [{ provide: APP_CONFIG_TOKEN, useFactory: appConfigValue },
+  providers: [{ provide: APP_CONFIG_TOKEN, useFactory: appConfigValue }, { provide: SignalrWindow, useValue: window },  
   {provide: ErrorHandler, useClass: /*IonicErrorHandler*/ RavenErrorHandler }, Consts, AuthProvider, MapProvider, 
   SettingsProvider, UtilsProvider, DataProvider, ChannelProvider, WidgetPubSub, ChannelProvider, AlertProvider, 
-  { provide: SignalrWindow, useValue: window }]
+  CallsProvider]
 })
 export class AppModule {}

@@ -8,6 +8,8 @@ import { Settings } from '../../models/settings';
 import { SettingsProvider } from '../../providers/settings';
 import { AuthProvider } from '../../providers/auth';
 import { HomePage } from '../home/home';
+import { DataProvider } from '../../providers/data';
+import { GroupResult } from '../../models/groupResult';
 
 @Component({
   selector: 'page-settings',
@@ -17,6 +19,7 @@ export class SettingsPage {
   public settings: Settings;
   public saving: boolean = false;
   public demoMode: boolean = false;
+  public groups: GroupResult[] = new Array<GroupResult>();
 
   constructor(public navCtrl: NavController,
     private consts: Consts,
@@ -24,12 +27,33 @@ export class SettingsPage {
     private authProvider: AuthProvider,
     public loadingCtrl: LoadingController,
     private alertCtrl: AlertController,
+    private dataProvider: DataProvider,
     @Inject(APP_CONFIG_TOKEN) private appConfig: AppConfig) {
     this.settings = settingsProvider.settings;
     this.demoMode = appConfig.IsDemo;
+
+    this.groups.push({
+      Gid: "0",
+      Typ: "-1",
+      Nme: "None",
+      Add: ""
+    });
   }
 
-  onSignup(form) {
+  public ionViewDidEnter() {
+    if (this.settings.AuthToken) {
+    this.dataProvider.getGroups().subscribe(
+      data => {
+        data.forEach(group => {
+          if (group && group.Typ == '2') {
+            this.groups.push(group);
+          }
+        });
+      });
+    }
+  }
+
+  public onSignup(form) {
     this.saving = true;
 
     let loading = this.loadingCtrl.create({
@@ -54,6 +78,8 @@ export class SettingsPage {
 
         window.localStorage.setItem('userId', this.settingsProvider.settings.UserId);
         window.localStorage.setItem('authToken', this.settingsProvider.settings.AuthToken);
+
+        this.settings = this.settingsProvider.settings;
 
         loading.dismiss();
         this.navCtrl.setRoot(HomePage);

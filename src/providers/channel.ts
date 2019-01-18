@@ -208,32 +208,47 @@ export class ChannelProvider {
         //  again since it's a cold observable.
         //
         if (!this.started && this.settingsProvider.areSettingsSet()) {
-            this.hubConnection.start({ withCredentials: false })
-                .done(() => {
-                    this.started = true;
+            try {
+                this.hubConnection.start({ withCredentials: false })
+                    .done(() => {
+                        try {
+                            this.started = true;
 
-                    //this.hubProxy.server.connect(this.settingsProvider.getDepartmentId().toString());
+                            //this.hubProxy.server.connect(this.settingsProvider.getDepartmentId().toString());
 
-                    this.hubProxy.invoke("connect", this.settingsProvider.getDepartmentId().toString()).done(() => {
-                        console.log(`Successfully subscribed to Connect channel with ${this.settingsProvider.getDepartmentId().toString()}`);
-                    }).fail((error: any) => {
-                        console.log(`Error subscribed to Connect channel with ${this.settingsProvider.getDepartmentId().toString()}, ERROR: ${error}`);
+                            this.hubProxy.invoke("connect", this.settingsProvider.getDepartmentId().toString()).done(() => {
+                                console.log(`Successfully subscribed to Connect channel with ${this.settingsProvider.getDepartmentId().toString()}`);
+                            }).fail((error: any) => {
+                                console.log(`Error subscribed to Connect channel with ${this.settingsProvider.getDepartmentId().toString()}, ERROR: ${error}`);
+                            });
+                            /*
+                                                this.sub("Connect", this.settingsProvider.getDepartmentId().toString()).subscribe(
+                                                    (x: ChannelEvent) => {
+                                                        console.log('connect callback fired');
+                                                    },
+                                                    (error: any) => {
+                                                        console.warn("Attempt to join channel failed!", error);
+                                                    }
+                                                );
+                            */
+                            this.startingSubject.next();
+                        } catch (ex) {
+                            console.log(ex);
+                            this.started = false;
+                        }
+                    })
+                    .fail((error: any) => {
+                        try {
+                            if (this.startingSubject) {
+                                this.startingSubject.error(error);
+                            }
+                        } catch (ex) {
+                            console.log(ex);
+                        }
                     });
-                    /*
-                                        this.sub("Connect", this.settingsProvider.getDepartmentId().toString()).subscribe(
-                                            (x: ChannelEvent) => {
-                                                console.log('connect callback fired');
-                                            },
-                                            (error: any) => {
-                                                console.warn("Attempt to join channel failed!", error);
-                                            }
-                                        );
-                    */
-                    this.startingSubject.next();
-                })
-                .fail((error: any) => {
-                    this.startingSubject.error(error);
-                });
+            } catch (ex) {
+                console.log(ex);
+            }
         }
     }
 

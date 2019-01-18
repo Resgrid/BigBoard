@@ -20,7 +20,9 @@ import { LinkedCallResult } from '../models/linkedCallResult';
 
 @Injectable()
 export class DataProvider {
-    constructor(private http: HttpClient, private consts: Consts, private utils: UtilsProvider, @Inject(APP_CONFIG_TOKEN) private appConfig: AppConfig) {
+    constructor(private http: HttpClient, private consts: Consts, 
+                private utils: UtilsProvider, 
+                @Inject(APP_CONFIG_TOKEN) private appConfig: AppConfig) {
 
     }
 
@@ -108,9 +110,18 @@ export class DataProvider {
                 let status = new UnitStatusResult();
                 status.Name = item.Name;
                 status.State = item.State;
-                status.StateCss = item.StateCss;
+
+                if (item.StateCss.indexOf('#') > -1) {
+                    //status.StateCss = 'label-default';
+                    status.StateCss = '';
+                    status.StateStyle = item.StateStyle;
+                    
+                } else {
+                    status.StateCss = item.StateCss;
+                    status.StateStyle = '#000000';
+                }
+
                 status.GroupId = item.GroupId;
-                status.StateStyle = item.StateStyle;
                 status.Latitude = item.Latitude;
                 status.Longitude = item.Longitude;
                 status.Timestamp = item.Timestamp;
@@ -118,6 +129,7 @@ export class DataProvider {
                 status.DestinationId = item.DestinationId;
                 status.Note = item.Note;
                 status.GroupName = item.GroupName;
+                status.Eta = item.Eta;
 
                 statuses.push(status);
             });

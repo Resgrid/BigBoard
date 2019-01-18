@@ -29,10 +29,10 @@
     <ion-col [hidden]="!settings.ShowType">
       {{unit.Type}}
     </ion-col>
-    <ion-col [ngClass]="unit.StateCss" [hidden]="!settings.ShowState">
-      {{unit.State }}
+    <ion-col [ngClass]="unit.StateCss" [style.color]="unit.StateStyle" [hidden]="!settings.ShowState">
+      {{unit.State}}
     </ion-col>
-    <ion-col [hidden]="!settings.ShowTimestamp">
+    <ion-col [hidden]="!settings.ShowTimestamp">  
       {{unit.Timestamp | amTimeAgo}}
     </ion-col>
     <ion-col [hidden]="!settings.ShowEta">
