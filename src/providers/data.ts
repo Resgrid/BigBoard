@@ -17,6 +17,7 @@ import { GroupResult } from '../models/groupResult';
 import { DepartmentLinkResult } from '../models/departmentLinkResult';
 import { GroupsModel } from '../models/groupsModel';
 import { LinkedCallResult } from '../models/linkedCallResult';
+import { NotesResult } from '../models/notesResult';
 
 @Injectable()
 export class DataProvider {
@@ -299,5 +300,18 @@ export class DataProvider {
 
             return infos;
         });
+    }
+
+    public getNoteCategories(): Observable<Array<string>> {
+        return this.http.get<Array<string>>('/Notes/GetNoteCategories');
+    }
+
+    public getNotes(category, includeNotes): Observable<Array<NotesResult>> {
+
+        if (!category) {
+            category = 'None';
+        }
+
+        return this.http.get<Array<NotesResult>>('/Notes/GetAllUnexpiredNotesByCategory?category=' + category + '&includeUnCategorized=' + includeNotes);
     }
 }

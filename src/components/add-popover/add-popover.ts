@@ -40,6 +40,10 @@ export class AddPopover {
     this.addWidget(this.consts.WIDGET_TYPES.LINKS);
   }
 
+  addNotesWidget() {
+    this.addWidget(this.consts.WIDGET_TYPES.NOTES);
+  }
+
   isWidgetActive(widgetId) {
     if (this.addedWidgets) {
       return this.addedWidgets.includes(widgetId);

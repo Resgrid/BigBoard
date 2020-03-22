@@ -49,6 +49,8 @@ import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/throw';
 import 'rxjs/add/operator/do';
 import { CallsProvider } from '../providers/calls';
+import { NotesWidget } from '../widgets/notes/notes-widget';
+import { NotesModal } from '../widgets/notes/notes-modal';
 
 export function appConfigValue() {
   // This variable is created in config/app.config.dev or config/app.config.prod
@@ -94,7 +96,9 @@ export class RavenErrorHandler implements ErrorHandler {
     SafePipe,
     MapWidget,
     MapModal,
-    LinksWidget
+    LinksWidget,
+    NotesWidget,
+    NotesModal
   ],
   imports: [
     IonicModule.forRoot(BigBoardApp),
@@ -128,7 +132,9 @@ export class RavenErrorHandler implements ErrorHandler {
     WeatherModal,
     MapWidget,
     MapModal,
-    LinksWidget
+    LinksWidget,
+    NotesWidget,
+    NotesModal
   ],
   providers: [{ provide: APP_CONFIG_TOKEN, useFactory: appConfigValue }, { provide: SignalrWindow, useValue: window },  
   {provide: ErrorHandler, useClass: /*IonicErrorHandler*/ RavenErrorHandler }, Consts, AuthProvider, MapProvider, 
