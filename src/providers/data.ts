@@ -303,7 +303,7 @@ export class DataProvider {
     }
 
     public getNoteCategories(): Observable<Array<string>> {
-        return this.http.get<Array<string>>('/Notes/GetNoteCategories');
+        return this.http.get<Array<string>>(this.appConfig.ResgridApiUrl + '/Notes/GetNoteCategories');
     }
 
     public getNotes(category, includeNotes): Observable<Array<NotesResult>> {
@@ -312,6 +312,6 @@ export class DataProvider {
             category = 'None';
         }
 
-        return this.http.get<Array<NotesResult>>('/Notes/GetAllUnexpiredNotesByCategory?category=' + category + '&includeUnCategorized=' + includeNotes);
+        return this.http.get<Array<NotesResult>>(this.appConfig.ResgridApiUrl + '/Notes/GetAllUnexpiredNotesByCategory?category=' + category + '&includeUnCategorized=' + includeNotes);
     }
 }
