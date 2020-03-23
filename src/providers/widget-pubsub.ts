@@ -15,6 +15,7 @@ export class WidgetPubSub {
         MAP_SETTINGS: 'mapWidgetSettingsUpdated',
         UNITS_SETTINGS: 'unitsWidgetSettingsUpdated',
         WEATHER_SETTINGS: 'weatherWidgetSettingsUpdated',
+        NOTES_SETTINGS: 'notesWidgetSettingsUpdated',
         PERSONNEL_STATUS_UPDATED: 'signalrPersonnelStatusUpdated',
         PERSONNEL_STAFFING_UPDATED: 'signalPersonnelStatusUpdated',
         UNIT_STATUS_UPDATED: 'signalrUnitStatusUpdated',
@@ -66,6 +67,13 @@ export class WidgetPubSub {
     emitWeatherWidgetSettingsUpdated(settings) {
         this._observer.next({
             event: this.EVENTS.WEATHER_SETTINGS,
+            data: settings
+        })
+    }
+
+    emitNotesWidgetSettingsUpdated(settings) {
+        this._observer.next({
+            event: this.EVENTS.NOTES_SETTINGS,
             data: settings
         })
     }

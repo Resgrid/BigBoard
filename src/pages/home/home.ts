@@ -22,6 +22,7 @@ import { WeatherModal } from '../../widgets/weather/weather-modal';
 import { MapModal } from '../../widgets/map/map-modal';
 
 import { NgGrid, NgGridItem, NgGridConfig, NgGridItemConfig, NgGridItemEvent } from 'angular2-grid';
+import { NotesModal } from '../../widgets/notes/notes-modal';
 
 @Component({
 	selector: 'page-home',
@@ -42,6 +43,7 @@ export class HomePage {
 	public status: string = "Connecting to Resgrid...";
 	public statusColor: string = "orange";
 	public connectionTimestamp: Date = new Date();
+	public currentYear: string;
 
 	private curNum;
 	public gridConfig: NgGridConfig = <NgGridConfig>{
@@ -89,6 +91,9 @@ export class HomePage {
 				}
 			});
 		}
+
+		var dt = new Date();
+		this.currentYear = dt.getFullYear().toString();
 	}
 
 	ngOnInit() {
@@ -205,6 +210,12 @@ export class HomePage {
 					closeModal: () => { this.closeWidgetSettingsModal(); }
 				});
 				this.widgetSettingsModal.present();
+			} else if (box.type == this.consts.WIDGET_TYPES.NOTES) {
+				this.widgetSettingsModal = this.modalCtrl.create(NotesModal, {
+					removeWidget: (type) => { this.removeWidgetByType(type); },
+					closeModal: () => { this.closeWidgetSettingsModal(); }
+				});
+				this.widgetSettingsModal.present();
 			}
 		}
 	}
@@ -241,6 +252,9 @@ export class HomePage {
 		} else if (type == this.consts.WIDGET_TYPES.LINKS) {
 			widgetType = this.consts.WIDGET_TYPES.LINKS;
 			name = "Links";
+		} else if (type == this.consts.WIDGET_TYPES.NOTES) {
+			widgetType = this.consts.WIDGET_TYPES.NOTES;
+			name = "Notes";
 		}
 
 		this.boxes.push({ name: name, type: widgetType, templateString: "", id: conf.payload, config: conf });

@@ -12,6 +12,7 @@ import { UnitsWidgetSettings } from '../models/unitsWidgetSettings';
 import { GroupSorting } from '../models/groupSorting';
 import { WeatherWidgetSettings } from '../models/weatherWidgetSettings';
 import { MapWidgetSettings } from '../models/mapWidgetSettings';
+import { NotesWidgetSettings } from '../models/notesWidgetSettings';
 
 @Injectable()
 export class SettingsProvider {
@@ -328,6 +329,14 @@ export class SettingsProvider {
 
   public loadWeatherWidgetSettings(): Promise<WeatherWidgetSettings> {
     return this.localStorage.getItem("weatherWidgetSettings");
+  }
+
+  public saveNotesWidgetSettings(notesWidgetSettings: NotesWidgetSettings): Promise<NotesWidgetSettings> {
+    return this.localStorage.setItem('notesWidgetSettings', notesWidgetSettings);
+  }
+
+  public loadNotesWidgetSettings(): Promise<NotesWidgetSettings> {
+    return this.localStorage.getItem("notesWidgetSettings");
   }
 
   public saveMapWidgetSettings(mapWidgetSettings: MapWidgetSettings): Promise<MapWidgetSettings> {
