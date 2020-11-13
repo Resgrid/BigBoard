@@ -11,9 +11,9 @@ import {AppConfig} from './app.config-interface';
  * @type {{apiEndpoint: string}}
  */
 export let APP_MOCK_CONFIG: AppConfig = {
-  BaseApiUrl:       "https://api.resgrid.com",
-  ResgridApiUrl:    "https://api.resgrid.com/api/v3",
-  ChannelUrl:       "https://api.resgrid.com/signalr",
+  BaseApiUrl:       "https://qaapi.resgrid.com",
+  ResgridApiUrl:    "https://qaapi.resgrid.com/api/v3",
+  ChannelUrl:       "https://events.resgrid.com/",
   ChannelHubName:   "eventingHub",
   What3WordsKey:    "HIDDEN",
   IsDemo:           false,
