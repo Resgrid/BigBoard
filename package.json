@@ -87,7 +87,7 @@
   },
   "devDependencies": {
     "@ionic/app-scripts": "3.1.9",
-    "@types/jasmine": "^2.8.16",
+    "@types/jasmine": "2.8.6",
     "angular2-template-loader": "^0.6.2",
     "cordova-set-version": "https://github.com/Resgrid/cordova-set-version/releases/download/v4.0.3/cordova-set-version-4.0.3.tgz",
     "html-loader": "^0.5.1",
