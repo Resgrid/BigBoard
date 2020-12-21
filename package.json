@@ -110,7 +110,7 @@
     "karma-webpack": "^2.0.13",
     "null-loader": "^0.1.1",
     "protractor": "^5.1.1",
-    "replace-in-file": "^3.4.0",
+    "replace-in-file": "^3.4.4",
     "ts-loader": "^3.5.0",
     "ts-node": "^5.0.0",
     "typescript": "=2.8.4"
