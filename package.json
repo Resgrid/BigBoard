@@ -88,7 +88,7 @@
   "devDependencies": {
     "@ionic/app-scripts": "3.2.3",
     "@types/jasmine": "^2.8.16",
-    "@types/node": "^8.0.45",
+    "@types/node": "=8.0.45",
     "angular2-template-loader": "^0.6.2",
     "cordova-set-version": "https://github.com/Resgrid/cordova-set-version/releases/download/v4.0.3/cordova-set-version-4.0.3.tgz",
     "html-loader": "^0.5.1",
@@ -109,11 +109,10 @@
     "karma-webpack": "^2.0.13",
     "null-loader": "^0.1.1",
     "protractor": "^5.1.1",
-    "replace-in-file": "^3.4.4",
     "ts-loader": "^3.5.0",
     "ts-node": "^5.0.0",
-    "typings": "^2.1.1",
-    "typescript": "=2.8.4"
+    "typescript": "=2.8.4",
+    "replace-in-file": "^3.4.4"
   },
   "cordovaPlugins": [
     "ionic-plugin-keyboard",
