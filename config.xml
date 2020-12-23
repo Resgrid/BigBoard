@@ -91,5 +91,5 @@
     <plugin name="cordova-plugin-device" spec="1.1.4" />
     <plugin name="cordova-plugin-splashscreen" spec="~4.0.1" />
     <icon src="resources\android\icon\drawable-xhdpi-icon.png" />
-    <engine name="browser" spec="~5.0.4" />
+    <engine name="browser" spec="^5.0.4" />
 </widget>

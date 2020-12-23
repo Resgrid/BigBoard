@@ -13,7 +13,7 @@ import {AppConfig} from './app.config-interface';
 export let APP_PROD_CONFIG: AppConfig = {
   BaseApiUrl:       "https://api.resgrid.com",
   ResgridApiUrl:    "https://api.resgrid.com/api/v3",
-  ChannelUrl:       "https://api.resgrid.com/signalr",
+  ChannelUrl:       "https://events.resgrid.com/",
   ChannelHubName:   "eventingHub",
   What3WordsKey:    "HIDDEN",
   IsDemo:           false,

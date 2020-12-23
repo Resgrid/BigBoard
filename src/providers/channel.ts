@@ -6,7 +6,7 @@ import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/share';
-
+import * as signalR from "@aspnet/signalr";
 import { SettingsProvider } from './settings';
 import { WidgetPubSub } from './widget-pubsub';
 import { APP_CONFIG_TOKEN, AppConfig } from "../config/app.config-interface";
@@ -65,19 +65,19 @@ export class ChannelProvider {
      * connection is ready or not. On a successful connection this
      * stream will emit a value.
      */
-    starting$: Observable<any>;
+    public starting$: Observable<any>;
 
     /**
      * connectionState$ provides the current state of the underlying
      * connection as an observable stream.
      */
-    connectionState$: Observable<ConnectionState>;
+    public connectionState$: Observable<ConnectionState>;
 
     /**
      * error$ provides a stream of any error messages that occur on the 
      * SignalR connection
      */
-    error$: Observable<string>;
+    public error$: Observable<string>;
 
     // These are used to feed the public observables 
     //
@@ -88,8 +88,7 @@ export class ChannelProvider {
 
     // These are used to track the internal SignalR state 
     //
-    private hubConnection: any;
-    private hubProxy: any;
+    private hubConnection: signalR.HubConnection
     private started: boolean = false;
 
     // An internal array to track what channel subscriptions exist 
@@ -102,10 +101,6 @@ export class ChannelProvider {
         private settingsProvider: SettingsProvider,
         private widgetPubSub: WidgetPubSub
     ) {
-        if (this.window.$ === undefined || this.window.$.hubConnection === undefined) {
-            throw new Error("The variable '$' or the .hubConnection() function are not defined...please check the SignalR scripts have been loaded properly");
-        }
-
         // Set up our observables
         //
         //this.connectionState$ = this.connectionStateSubject.asObservable().share();
@@ -117,78 +112,7 @@ export class ChannelProvider {
         this.error$ = this.errorSubject.asObservable();
         this.starting$ = this.startingSubject.asObservable();
 
-        this.hubConnection = this.window.$.hubConnection(this.appConfig.ChannelUrl);
-
-        //this.hubConnection = this.window.$.hubConnection();
-        //this.hubConnection.url = channelConfig.url;
-        this.hubProxy = this.hubConnection.createHubProxy(this.appConfig.ChannelHubName);
-
-        // Define handlers for the connection state events
-        //
-        this.hubConnection.stateChanged((state: any) => {
-            let newState = ConnectionState.Connecting;
-
-            switch (state.newState) {
-                case this.window.$.signalR.connectionState.connecting:
-                    newState = ConnectionState.Connecting;
-                    break;
-                case this.window.$.signalR.connectionState.connected:
-                    newState = ConnectionState.Connected;
-                    break;
-                case this.window.$.signalR.connectionState.reconnecting:
-                    newState = ConnectionState.Reconnecting;
-                    break;
-                case this.window.$.signalR.connectionState.disconnected:
-                    newState = ConnectionState.Disconnected;
-                    break;
-            }
-
-            // Push the new state on our subject
-            //
-            //this.connectionStateSubject.next(newState);
-            this.connectionStateObserver.next(newState);
-        });
-
-        // Define handlers for any errors
-        //
-        this.hubConnection.error((error: any) => {
-            this.errorSubject.next(error);
-        });
-
-        // SignalR Event Listeners
-        this.hubProxy.on('personnelStatusUpdated', (data: any) => {
-            console.log('PersonnelStatusUpdated');
-            this.widgetPubSub.emitPersonnelStatusUpdated(data);
-        });
-
-        this.hubProxy.on('personnelStaffingUpdated', (data: any) => {
-            console.log('PersonnelStaffingUpdated');
-            this.widgetPubSub.emitPersonnelStaffingUpdated(data);
-        });
-
-        this.hubProxy.on('unitStatusUpdated', (data: any) => {
-            console.log('UnitStatusUpdated');
-            this.widgetPubSub.emitUnitStatusUpdated(data);
-        });
-
-        this.hubProxy.on('callsUpdated', (data: any) => {
-            console.log('CallsUpdated');
-            this.widgetPubSub.emitCallUpdated(data);
-        });
-
-        this.hubProxy.on('onConnected', (data: any) => {
-            console.log(`onConnected with ${data}`);
-            this.widgetPubSub.emitSignalRConnected(data);
-        });
-
-        this.connectionState$.subscribe((state: ConnectionState) => {
-            if (state === ConnectionState.Disconnected) {
-                this.started = false;
-                setTimeout(() => {
-                    this.start();
-                }, 5000);
-            }
-        });
+        //this.connectionStateObserver.next(ConnectionState.Connecting);
     }
 
     /**
@@ -209,43 +133,57 @@ export class ChannelProvider {
         //
         if (!this.started && this.settingsProvider.areSettingsSet()) {
             try {
-                this.hubConnection.start({ withCredentials: false })
-                    .done(() => {
-                        try {
-                            this.started = true;
+                this.connectionStateObserver.next(ConnectionState.Connecting);
 
-                            //this.hubProxy.server.connect(this.settingsProvider.getDepartmentId().toString());
+                this.hubConnection = new signalR.HubConnectionBuilder()
+                    .withUrl(this.appConfig.ChannelUrl + this.appConfig.ChannelHubName)
+                    .build();
 
-                            this.hubProxy.invoke("connect", this.settingsProvider.getDepartmentId().toString()).done(() => {
-                                console.log(`Successfully subscribed to Connect channel with ${this.settingsProvider.getDepartmentId().toString()}`);
-                            }).fail((error: any) => {
-                                console.log(`Error subscribed to Connect channel with ${this.settingsProvider.getDepartmentId().toString()}, ERROR: ${error}`);
-                            });
-                            /*
-                                                this.sub("Connect", this.settingsProvider.getDepartmentId().toString()).subscribe(
-                                                    (x: ChannelEvent) => {
-                                                        console.log('connect callback fired');
-                                                    },
-                                                    (error: any) => {
-                                                        console.warn("Attempt to join channel failed!", error);
-                                                    }
-                                                );
-                            */
-                            this.startingSubject.next();
-                        } catch (ex) {
-                            console.log(ex);
-                            this.started = false;
-                        }
+                this.hubConnection
+                    .start()
+                    .then(() => {
+                        console.log('Connection started');
+                        this.connectionStateObserver.next(ConnectionState.Connected);
+
+                        this.hubConnection.invoke("connect", this.settingsProvider.getDepartmentId()).then(() => {
+                            console.log(`Successfully subscribed to Connect channel with ${this.settingsProvider.getDepartmentId().toString()}`);
+                        }).catch((error: any) => {
+                            console.log(`Error subscribed to Connect channel with ${this.settingsProvider.getDepartmentId().toString()}, ERROR: ${error}`);
+                        });
+
+                        this.started = true;
                     })
-                    .fail((error: any) => {
-                        try {
-                            if (this.startingSubject) {
-                                this.startingSubject.error(error);
-                            }
-                        } catch (ex) {
-                            console.log(ex);
-                        }
+                    .catch(err => {
+                        console.log('Error while starting connection: ' + err);
+                        this.connectionStateObserver.next(ConnectionState.Disconnected);
+                        this.errorSubject.next(err);
                     });
+
+                // SignalR Event Listeners
+                this.hubConnection.on('personnelStatusUpdated', (data: any) => {
+                    console.log('PersonnelStatusUpdated');
+                    this.widgetPubSub.emitPersonnelStatusUpdated(data);
+                });
+
+                this.hubConnection.on('personnelStaffingUpdated', (data: any) => {
+                    console.log('PersonnelStaffingUpdated');
+                    this.widgetPubSub.emitPersonnelStaffingUpdated(data);
+                });
+
+                this.hubConnection.on('unitStatusUpdated', (data: any) => {
+                    console.log('UnitStatusUpdated');
+                    this.widgetPubSub.emitUnitStatusUpdated(data);
+                });
+
+                this.hubConnection.on('callsUpdated', (data: any) => {
+                    console.log('CallsUpdated');
+                    this.widgetPubSub.emitCallUpdated(data);
+                });
+
+                this.hubConnection.on('onConnected', (data: any) => {
+                    console.log(`onConnected with ${data}`);
+                    this.widgetPubSub.emitSignalRConnected(data);
+                });
             } catch (ex) {
                 console.log(ex);
             }
@@ -253,11 +191,9 @@ export class ChannelProvider {
     }
 
     subscribeToDepartment(linkId: number): void {
-        this.hubProxy.invoke("SubscribeToDepartmentLink", linkId).done(() => {
-            console.log(`Successfully subscribed to department link with ${linkId}`);
-        }).fail((error: any) => {
-            console.log(`Error subscribed to department link with ${linkId}, ERROR: ${error}`);
-        });
+        this.hubConnection.invoke("SubscribeToDepartmentLink", linkId)
+            .then(() => console.log(`Successfully subscribed to department link with ${linkId}`))
+            .catch(err => console.log(`Error subscribed to department link with ${linkId}, ERROR: ${err}`))
     }
 
     /** 
@@ -301,13 +237,9 @@ export class ChannelProvider {
         //  is ready
         //
         this.starting$.subscribe(() => {
-            this.hubProxy.invoke(channel, data)
-                .done(() => {
-                    console.log(`Successfully subscribed to ${channel} channel with ${data}`);
-                })
-                .fail((error: any) => {
-                    channelSub.subject.error(error);
-                });
+            this.hubConnection.invoke(channel, data)
+                .then(() => console.log(`Successfully subscribed to ${channel} channel with ${data}`))
+                .catch(err => channelSub.subject.error(err))
         },
             (error: any) => {
                 channelSub.subject.error(error);
@@ -330,7 +262,7 @@ export class ChannelProvider {
      * actually emit the message, but here we're not concerned about that.
      */
     publish(ev: ChannelEvent): void {
-        this.hubProxy.invoke("Publish", ev);
+        this.hubConnection.invoke("Publish", ev);
     }
 
 }
