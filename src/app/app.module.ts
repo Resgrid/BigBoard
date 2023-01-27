@@ -1,144 +1,93 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, ErrorHandler } from '@angular/core';
-import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { NgModule } from '@angular/core';
+import { BrowserModule, HammerModule } from '@angular/platform-browser';
+import { RouteReuseStrategy } from '@angular/router';
+import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
+import { Drivers, Storage } from '@ionic/storage';
+import { AppComponent } from './app.component';
+import { AppRoutingModule } from './app-routing.module';
+import { CommonModule } from '@angular/common';
+import { environment } from 'src/environments/environment';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { EffectsModule } from '@ngrx/effects';
+import { StoreRouterConnectingModule } from '@ngrx/router-store';
+import { StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { BigBoardApp } from './app.component';
-import { APP_CONFIG_TOKEN } from "../config/app.config-interface";
+import { NgxResgridLibModule } from '@resgrid/ngx-resgridlib';
+import { CacheProvider } from './providers/cache';
+import { reducers, metaReducers } from './reducers';
+import { IonicStorageModule } from '@ionic/storage-angular';
+import { SettingsModule } from './features/settings/settings.module';
+import { HomeModule } from './features/home/home.module';
+import { WidgetsModule } from './features/widgets/widgets.module';
+import { SafePipe } from './pipes/safe';
+import { PipesModule } from './pipes/pipes.module';
 
-import { HomePage } from '../pages/home/home';
-import { SettingsPage } from '../pages/settings/settings';
-import { SplashPage } from '../pages/splash-page/splash-page';
-import { CTAPanel } from '../components/cta-panel/cta-panel';
-import { ChannelProvider, ChannelConfig, SignalrWindow } from "../providers/channel";
-import { HttpInterceptorModule } from '../interceptors/http.interceptor.module';
-
-import { Consts } from './consts';
-import { AuthProvider } from '../providers/auth';
-import { SettingsProvider } from '../providers/settings';
-import { UtilsProvider } from '../providers/utils';
-import { DataProvider } from '../providers/data';
-import { MapProvider } from '../providers/map';
-import { WidgetPubSub } from '../providers/widget-pubsub';
-import { AlertProvider } from '../providers/alert';
-import { SafePipe } from '../pipes/safe';
-
-import { AddPopover } from '../components/add-popover/add-popover';
-import { AppPopover } from '../components/app-popover/app-popover';
-
-import { CallsWidget } from '../widgets/calls/calls-widget';
-import { CallsModal } from '../widgets/calls/calls-modal';
-import { PersonnelWidget } from '../widgets/personnel/personnel-widget';
-import { PersonnelModal } from '../widgets/personnel/personnel-modal';
-import { UnitsWidget } from '../widgets/units/units-widget';
-import { UnitsModal } from '../widgets/units/units-modal';
-import { WeatherWidget } from '../widgets/weather/weather-widget';
-import { WeatherModal } from '../widgets/weather/weather-modal';
-import { MapWidget } from '../widgets/map/map-widget';
-import { MapModal } from '../widgets/map/map-modal';
-import { LinksWidget } from '../widgets/links/links-widget';
-
-import { NgGridModule } from 'angular2-grid';
-import { MomentModule } from 'angular2-moment';
-
-import * as Raven from 'raven-js';
-
-import 'rxjs/Observable';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/observable/throw';
-import 'rxjs/add/operator/do';
-import { CallsProvider } from '../providers/calls';
-import { NotesWidget } from '../widgets/notes/notes-widget';
-import { NotesModal } from '../widgets/notes/notes-modal';
-
-export function appConfigValue() {
-  // This variable is created in config/app.config.dev or config/app.config.prod
-  // (depending on how you build the application, dev vs. prod)
-  return window['APP_CONFIG'];
+export function createTranslateLoader(http: HttpClient): any {
+  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
 
-export function createTranslateLoader(http: HttpClient) {
-  return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
-}
+let getBaseUrl = (): string => {
+  const storedValue = localStorage.getItem(`RgUnitApp.serverAddress`);
 
-Raven
-  .config('https://785f79e60e484c7baa50033af2d2869d@sentry.io/135552')
-  .install();
-
-export class RavenErrorHandler implements ErrorHandler {
-  handleError(err:any) : void {
-    try {
-      Raven.captureException(err.originalError);
-    } catch (ex) {
-      console.log(ex);
-    }
+  if (storedValue) {
+    return JSON.parse(storedValue).trim();
   }
-}
+  return environment.baseApiUrl;
+};
 
 @NgModule({
-  declarations: [
-    BigBoardApp,
-    HomePage,
-    SettingsPage,
-    CallsWidget,
-    CTAPanel,
-    SplashPage,
-    AppPopover,
-    AddPopover,
-    CallsModal,
-    PersonnelWidget,
-    PersonnelModal,
-    UnitsWidget,
-    UnitsModal,
-    WeatherWidget,
-    WeatherModal,
-    SafePipe,
-    MapWidget,
-    MapModal,
-    LinksWidget,
-    NotesWidget,
-    NotesModal
-  ],
-  imports: [
-    IonicModule.forRoot(BigBoardApp),
-    NgGridModule,
-    MomentModule,
-    BrowserModule,
-    HttpClientModule,
-    HttpInterceptorModule,
-    TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: createTranslateLoader,
-        deps: [HttpClient]
-      }
-    })
-  ],
-  bootstrap: [IonicApp],
-  entryComponents: [
-    BigBoardApp,
-    HomePage,
-    SettingsPage,
-    SplashPage,
-    AppPopover,
-    AddPopover,
-    CallsModal,
-    PersonnelWidget,
-    PersonnelModal,
-    UnitsWidget,
-    UnitsModal,
-    WeatherWidget,
-    WeatherModal,
-    MapWidget,
-    MapModal,
-    LinksWidget,
-    NotesWidget,
-    NotesModal
-  ],
-  providers: [{ provide: APP_CONFIG_TOKEN, useFactory: appConfigValue }, { provide: SignalrWindow, useValue: window },  
-  {provide: ErrorHandler, useClass: /*IonicErrorHandler*/ RavenErrorHandler }, Consts, AuthProvider, MapProvider, 
-  SettingsProvider, UtilsProvider, DataProvider, ChannelProvider, WidgetPubSub, ChannelProvider, AlertProvider, 
-  CallsProvider]
+    declarations: [AppComponent],
+    imports: [
+        BrowserModule,
+        CommonModule,
+        HttpClientModule,
+        IonicStorageModule.forRoot(),
+        NgxResgridLibModule.forRoot({
+            baseApiUrl: getBaseUrl,
+            apiVersion: 'v4',
+            clientId: 'RgBigBoardApp',
+            googleApiKey: environment.googleMapsKey,
+            channelUrl: environment.channelUrl,
+            channelHubName: environment.channelHubName,
+            realtimeGeolocationHubName: environment.realtimeGeolocationHubName,
+            logLevel: environment.logLevel,
+            isMobileApp: true,
+            cacheProvider: new CacheProvider()
+        }),
+        StoreModule.forRoot(reducers, { metaReducers }),
+        EffectsModule.forRoot([]),
+        StoreRouterConnectingModule.forRoot(),
+        StoreDevtoolsModule.instrument({
+            maxAge: 10,
+            name: 'Resgrid BigBoard',
+            logOnly: environment.production,
+        }),
+        IonicStorageModule.forRoot({
+            name: '__RGBigB',
+            driverOrder: [Drivers.IndexedDB, Drivers.LocalStorage],
+        }),
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: createTranslateLoader,
+                deps: [HttpClient],
+            },
+        }),
+        IonicModule.forRoot({
+            mode: 'md'
+        }),
+        AppRoutingModule,
+        HammerModule,
+        SettingsModule,
+        HomeModule,
+        WidgetsModule,
+        PipesModule
+    ],
+    providers: [
+        { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
+    ],
+    bootstrap: [AppComponent]
 })
 export class AppModule {}

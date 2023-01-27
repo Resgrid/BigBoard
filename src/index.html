@@ -1,82 +1,26 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en">
 
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8" />
   <title>Resgrid BigBoard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="format-detection" content="telephone=no">
-  <meta name="msapplication-tap-highlight" content="no">
 
-  <meta http-equiv="Content-Security-Policy" content="default-src *  data: blob: filesystem: about: ws: wss: 'unsafe-inline' 'unsafe-eval'; script-src * data: blob: 'unsafe-inline' 'unsafe-eval'; connect-src * data: blob: 'unsafe-inline'; img-src * data: blob: 'unsafe-inline'; frame-src * data: blob: ; style-src * data: blob: 'unsafe-inline'; font-src * data: blob: 'unsafe-inline';">
+  <base href="/" />
 
-  <link rel="apple-touch-icon" sizes="57x57" href="assets/icon/apple-touch-icon-57x57.png">
-  <link rel="apple-touch-icon" sizes="60x60" href="assets/icon/apple-touch-icon-60x60.png">
-  <link rel="apple-touch-icon" sizes="72x72" href="assets/icon/apple-touch-icon-72x72.png">
-  <link rel="apple-touch-icon" sizes="76x76" href="assets/icon/apple-touch-icon-76x76.png">
-  <link rel="apple-touch-icon" sizes="114x114" href="assets/icon/apple-touch-icon-114x114.png">
-  <link rel="apple-touch-icon" sizes="120x120" href="assets/icon/apple-touch-icon-120x120.png">
-  <link rel="apple-touch-icon" sizes="144x144" href="assets/icon/apple-touch-icon-144x144.png">
-  <link rel="apple-touch-icon" sizes="152x152" href="assets/icon/apple-touch-icon-152x152.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="assets/icon/apple-touch-icon-180x180.png">
-  <link rel="icon" type="image/png" href="assets/icon/favicon-32x32.png" sizes="32x32">
-  <link rel="icon" type="image/png" href="assets/icon/android-chrome-192x192.png" sizes="192x192">
-  <link rel="icon" type="image/png" href="assets/icon/favicon-96x96.png" sizes="96x96">
-  <link rel="icon" type="image/png" href="assets/icon/favicon-16x16.png" sizes="16x16">
-  <link rel="mask-icon" href="assets/icon/safari-pinned-tab.svg" color="#5bbad5">
-  <meta name="msapplication-TileColor" content="#da532c">
-  <meta name="msapplication-TileImage" content="assets/icon/mstile-144x144.png">
-  <meta name="theme-color" content="#ffffff">
+  <meta name="color-scheme" content="light dark" />
+  <meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="format-detection" content="telephone=no" />
+  <meta name="msapplication-tap-highlight" content="no" />
 
-  <link rel="icon" type="image/x-icon" href="assets/icon/favicon.ico">
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#4e8ef7">
+  <link rel="icon" type="image/png" href="assets/icon/favicon.png" />
 
-  <!-- cordova.js required for cordova apps -->
-  <script src="cordova.js"></script>
-
-  <!-- un-comment this code to enable service worker 
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js')
-        .then(() => console.log('service worker installed'))
-        .catch(err => console.error('Error', err));
-    }
-  </script>
-  -->
-  <link href="build/main.css" rel="stylesheet">
-
-  <script>
-    var isDemo = window.location.search.substring(window.location.search.indexOf('demo=') + 5);
-    if (isDemo.indexOf('&') >= 0) {
-      isDemo = isDemo.substring(0, isDemo.indexOf('&'));
-    }
-
-    if (isDemo && isDemo.length > 0) {
-      window.ISDEMO = true;
-    } else {
-      window.ISDEMO = false;
-    }
-
-  </script>
-
-  <script src="https://unpkg.com/lodash"></script>
-  <script src="https://unpkg.com/typemoq"></script>
-  <link href="assets/mapping/leaflet.css" rel="stylesheet">
-  <link href="assets/mapping/leaflet-beautify-marker-icon.css" rel="stylesheet">
+  <!-- add to homescreen for ios -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
 </head>
 
 <body>
-
-  <!-- Ionic's root component and where the app will load -->
-  <ion-app></ion-app>
-
-  <!-- The polyfills js is generated during the build process -->
-  <script src="build/polyfills.js"></script>
-  <script src="build/vendor.js"></script>
-
-  <!-- The bundle js is generated during the build process -->
-  <script src="build/main.js"></script>
-  <script async defer src="assets/mapping/leaflet-beautify-marker-icon.js" ></script>
+  <app-root></app-root>
 </body>
+
 </html>

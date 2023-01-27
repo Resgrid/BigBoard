@@ -1,0 +1,49 @@
+<ion-grid id="personnelFullTable" [style.font-size]="(widgetsState$ | async)?.personnelWidgetSettings?.FontSize+'px'">
+    <ion-row>
+      <ion-col>
+        <strong>Name</strong>
+      </ion-col>
+      <ion-col [hidden]="!(widgetsState$ | async)?.personnelWidgetSettings?.ShowGroup">
+        <strong>Group</strong>
+      </ion-col>
+      <ion-col [hidden]="!(widgetsState$ | async)?.personnelWidgetSettings?.ShowStaffing">
+        <strong>Staffing</strong>
+      </ion-col>
+      <ion-col [hidden]="!(widgetsState$ | async)?.personnelWidgetSettings?.ShowStatus">
+        <strong>Status</strong>
+      </ion-col>
+      <ion-col [hidden]="!(widgetsState$ | async)?.personnelWidgetSettings?.ShowRoles">
+        <strong>Roles</strong>
+      </ion-col>
+      <ion-col [hidden]="!(widgetsState$ | async)?.personnelWidgetSettings?.ShowTimestamp">
+        <strong>Timestamp</strong>
+      </ion-col>
+      <ion-col [hidden]="!(widgetsState$ | async)?.personnelWidgetSettings?.ShowEta">
+        <strong>Eta</strong>
+      </ion-col>
+    </ion-row>
+    <ion-row class="strippedRows" *ngFor="let status of (widgetsState$ | async)?.personnel" [hidden]="isPersonOrGroupHidden(status)">
+      <ion-col>
+        {{status.FirstName}} {{status.LastName}}
+      </ion-col>
+      <ion-col [hidden]="!(widgetsState$ | async)?.personnelWidgetSettings?.ShowGroup">
+        {{status.GroupName}}
+      </ion-col>
+      <ion-col [hidden]="!(widgetsState$ | async)?.personnelWidgetSettings?.ShowStaffing">
+        <span class="status-label" [style.color]="status.StaffingColor">{{status.Staffing}}</span>
+      </ion-col>
+      <ion-col [hidden]="!(widgetsState$ | async)?.personnelWidgetSettings?.ShowStatus">
+        <span class="status-label" [style.color]="status.StatusColor">{{status.Status}}</span>
+      </ion-col>
+      <ion-col [hidden]="!(widgetsState$ | async)?.personnelWidgetSettings?.ShowRoles" [style.font-size]="((widgetsState$ | async)?.personnelWidgetSettings?.FontSize - 2)+'px'">
+        {{status.Roles}}
+      </ion-col>
+      <ion-col [hidden]="!(widgetsState$ | async)?.personnelWidgetSettings?.ShowTimestamp">
+        {{getTimeago(status.StatusTimestamp)}}
+      </ion-col>
+      <ion-col [hidden]="!(widgetsState$ | async)?.personnelWidgetSettings?.ShowEta">
+        {{status.Eta}}
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  

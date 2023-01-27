@@ -1,0 +1,26 @@
+<ion-tabs>
+  <ion-header [translucent]="true">
+    <ion-toolbar>
+      <ion-title>
+        {{'appName' | translate}}
+      </ion-title>
+      <ion-buttons slot="start">
+        <ion-menu-button></ion-menu-button>
+      </ion-buttons>
+      <app-voice-header slot="end"></app-voice-header>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-tab-bar slot="bottom">
+    <ion-tab-button tab="dashboard" [hidden]="!(settingsState$ | async)?.loggedIn">
+      <ion-icon name="grid-outline"></ion-icon>
+      <ion-label>{{'tabsPage.mapTab' | translate}}</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="settings">
+      <ion-icon name="cog-outline"></ion-icon>
+      <ion-label>{{'tabsPage.settingsTab' | translate}}</ion-label>
+    </ion-tab-button>
+  </ion-tab-bar>
+
+</ion-tabs>

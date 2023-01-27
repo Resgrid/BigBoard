@@ -1,3 +1,17 @@
-export const environment: any = {
+export const environment = {
   production: true,
+  baseApiUrl: 'https://api.resgrid.com',
+  resgridApiUrl: '/api/v4',
+  channelUrl: 'https://events.resgrid.com/',
+  channelHubName: 'eventingHub',
+  realtimeGeolocationHubName: 'geolocationHub',
+  logLevel: 0,
+  what3WordsKey: 'W3WKEY',
+  isDemo: false,
+  demoToken: 'DEMOTOKEN',
+  version: '99.99.99',
+  osmMapKey: 'OSMKEY',
+  mapTilerKey: 'MTKEY',
+  googleMapsKey: 'GOOGLEMAPKEY',
+  loggingKey: 'LOGGINGKEY',
 };
