@@ -48,7 +48,22 @@ export const selectAvailableChannelsState = createSelector(
 
 export const selectWidgetsState = createFeatureSelector<WidgetsState>('widgetsModule');
 
-export const selectWeatherWidgetState = createSelector(
+export const selectWeatherWidgetSettingsState = createSelector(
   selectWidgetsState,
   widgetsReducers.getWeatherWidgetSettings
+);
+
+export const selectPersonnelWidgetSettingsState = createSelector(
+  selectWidgetsState,
+  widgetsReducers.getPersonnelWidgetSettings
+);
+
+export const selectCallsWidgetSettingsState = createSelector(
+  selectWidgetsState,
+  widgetsReducers.getCallsWidgetSettings
+);
+
+export const selectUnitsWidgetSettingsState = createSelector(
+  selectWidgetsState,
+  widgetsReducers.getUnitsWidgetSettings
 );

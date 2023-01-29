@@ -34,16 +34,37 @@ import { HomeProvider } from '../providers/home';
 import { VoiceState } from '../../voice/store/voice.store';
 import * as VoiceActions from '../../voice/actions/voice.actions';
 import { selectHomeState } from 'src/app/store';
+import { ModalProvider } from 'src/app/providers/modal';
 
 @Injectable()
 export class HomeEffects {
-  private _modalRef: HTMLIonModalElement | null;
+  startSignalR$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(homeAction.HomeActionTypes.START_SIGNALR),
+        tap((action) => {
+          this.homeProvider.startSignalR();
+        })
+      ),
+    { dispatch: false }
+  );
+
+  stopSignalR$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(homeAction.HomeActionTypes.STOP_SIGNALR),
+        tap((action) => {
+          this.homeProvider.stopSignalR();
+        })
+      ),
+    { dispatch: false }
+  );
 
   closeModal$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(homeAction.HomeActionTypes.CLOSE_MODAL),
-        switchMap((action) => this.closeModal())
+        switchMap((action) => this.modalProvider.closeModal(null))
       ),
     { dispatch: false }
   );
@@ -51,43 +72,8 @@ export class HomeEffects {
   constructor(
     private actions$: Actions,
     private store: Store<HomeState>,
-    private modalController: ModalController,
-    private alertProvider: AlertProvider,
-    private loadingProvider: LoadingProvider,
-    private storageProvider: StorageProvider,
-    private mapProvider: MappingService,
-    private router: Router,
     private homeProvider: HomeProvider,
-    private voiceStore: Store<VoiceState>,
-    private unitStatusService: UnitStatusService,
-    private unitLocationService: UnitLocationService,
-    private menuCtrl: MenuController,
-    private unitRolesService: UnitRolesService
+    private modalProvider: ModalProvider
   ) {}
 
-  runModal = async (component, cssClass, properties) => {
-    await this.closeModal();
-    await this.menuCtrl.close();
-
-    if (!cssClass) {
-      cssClass = 'modal-container';
-    }
-
-    this._modalRef = await this.modalController.create({
-      component: component,
-      cssClass: cssClass,
-      componentProps: {
-        info: properties,
-      },
-    });
-
-    return from(this._modalRef.present());
-  };
-
-  closeModal = async () => {
-    //if (this._modalRef) {
-    await this.modalController.dismiss();
-    this._modalRef = null;
-    //}
-  };
 }

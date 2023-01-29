@@ -101,6 +101,7 @@
   },
   "tabsPage": {
     "mapTab": "Dashboard",
+    "configureTab": "Configure",
     "pttTab": "PTT",
     "callsTab": "Calls",
     "settingsTab": "Settings"

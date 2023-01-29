@@ -1,0 +1,37 @@
+<ion-grid id="callsFullTable" [style.font-size]="getFontSize((widgetsState$ | async)?.callsWidgetSettings)+'px'">
+    <ion-row>
+      <ion-col [hidden]="!(widgetsState$ | async)?.callsWidgetSettings?.ShowId">
+        <ion-text color="tertiary"><strong>Id</strong></ion-text>
+      </ion-col>
+      <ion-col [hidden]="!(widgetsState$ | async)?.callsWidgetSettings?.ShowName">
+        <ion-text color="tertiary"><strong>Name</strong></ion-text>
+      </ion-col>
+      <ion-col [hidden]="!(widgetsState$ | async)?.callsWidgetSettings?.ShowAddress">
+        <ion-text color="tertiary"><strong>Address</strong></ion-text>
+      </ion-col>
+      <ion-col [hidden]="!(widgetsState$ | async)?.callsWidgetSettings?.ShowTimestamp">
+        <ion-text color="tertiary"><strong>Timestamp</strong></ion-text>
+      </ion-col>
+      <ion-col [hidden]="!(widgetsState$ | async)?.callsWidgetSettings?.ShowPriority">
+        <ion-text color="tertiary"><strong>Priority</strong></ion-text>
+      </ion-col>
+    </ion-row>
+    
+    <ion-row class="strippedRows" *ngFor="let call of (widgetsState$ | async)?.calls">
+      <ion-col [hidden]="!(widgetsState$ | async)?.callsWidgetSettings?.ShowId">
+        <ion-text color="medium">{{call.Number}}</ion-text>
+      </ion-col>
+      <ion-col [hidden]="!(widgetsState$ | async)?.callsWidgetSettings?.ShowName">
+        <ion-text color="medium">{{call.Name}}</ion-text>
+      </ion-col>
+      <ion-col [hidden]="!(widgetsState$ | async)?.callsWidgetSettings?.ShowAddress">
+        <ion-text color="medium">{{call.Address}}</ion-text>
+      </ion-col>
+      <ion-col [hidden]="!(widgetsState$ | async)?.callsWidgetSettings?.ShowTimestamp">
+        <ion-text color="medium">{{getTimeago(call.LoggedOn)}}</ion-text>
+      </ion-col>
+      <ion-col [hidden]="!(widgetsState$ | async)?.callsWidgetSettings?.ShowPriority">
+        <ion-text color="medium">{{call.Priority}}</ion-text>
+      </ion-col>
+    </ion-row>
+  </ion-grid>

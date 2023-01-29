@@ -22,7 +22,9 @@ import { HomeState } from "../store/home.store";
 import { SettingsState } from "../../settings/store/settings.store";
 import { selectIsLoggedInState, selectSettingsState } from "src/app/store";
 import * as HomeActions from "../actions/home.actions";
+import * as WidgetsActions from "../../widgets/actions/widgets.actions";
 import { StorageProvider } from "src/app/providers/storage";
+import { WidgetsState } from "../../widgets/store/widgets.store";
 
 @Injectable({
   providedIn: "root",
@@ -32,16 +34,9 @@ export class HomeProvider {
 
   constructor(
     public http: HttpClient,
-    private unitsProvider: UnitsService,
-    private callsProvider: CallsService,
-    private callPrioritiesProvider: CallPrioritiesService,
-    private statusesService: StatusesService,
-    private unitRolesService: UnitRolesService,
-    private callTypesProvider: CallTypesService,
-    private homeStore: Store<HomeState>,
+    private widgetsStore: Store<WidgetsState>,
     private settingsStore: Store<SettingsState>,
-    private storageProvider: StorageProvider,
-    private groupsProvider: GroupsService,
+    private homeStore: Store<HomeState>,
     private signalRProvider: SignalRService,
     private events: EventsService,
     private consts: Consts
@@ -58,39 +53,9 @@ export class HomeProvider {
     }, 1000);
   }
 
-  public getAppData(): Observable<AppPayload> {
-    const getUnits = this.unitsProvider.getAllUnits();
-    const getCalls = this.callsProvider.getActiveCalls();
-    const getCallPriorities = this.callPrioritiesProvider.getAllCallPriorites();
-    const getunitStatuses = this.statusesService.getAllUnitStatuses();
-    const getUnitRolesAssignments = this.unitRolesService.getAllUnitRolesAndAssignmentsForDepartment();
-    const getCallTypes = this.callTypesProvider.getAllCallTypes();
-    const getGroups = this.groupsProvider.getallGroups();
-
-    return forkJoin({
-      units: getUnits,
-      calls: getCalls,
-      priorities: getCallPriorities,
-      unitStatuses: getunitStatuses,
-      roleAssignments: getUnitRolesAssignments,
-      callTypes: getCallTypes,
-      groups: getGroups,
-    }).pipe(
-      map((results) => {
-        return {
-          Units: results.units.Data,
-          Calls: results.calls.Data,
-          CallPriorties: results.priorities.Data,
-          UnitStatuses: results.unitStatuses.Data,
-          UnitRoleAssignments: results.roleAssignments.Data,
-          CallTypes: results.callTypes.Data,
-          Groups: results.groups.Data
-        };
-      })
-    );
-  }
-
   public startSignalR() {
+    this.homeStore.dispatch(new HomeActions.UpdateSignalrState(1));
+
     this.settingsStore
       .select(selectSettingsState)
       .pipe(take(1))
@@ -100,9 +65,15 @@ export class HomeProvider {
             (state: ConnectionState) => {
               if (state === ConnectionState.Disconnected) {
                 if (settings && settings.user) {
+                  this.homeStore.dispatch(new HomeActions.UpdateSignalrState(0));
                   this.signalRProvider.restart(settings.user.departmentId);
+                  this.homeStore.dispatch(new HomeActions.UpdateSignalrState(1));
                 }
-              }
+              } else if (state === ConnectionState.Connected) {
+                if (settings && settings.user) {
+                  this.homeStore.dispatch(new HomeActions.UpdateSignalrState(2));
+                }
+              } 
             }
           );
 
@@ -113,6 +84,7 @@ export class HomeProvider {
   }
 
   public stopSignalR() {
+    this.homeStore.dispatch(new HomeActions.UpdateSignalrState(0));
     this.signalRProvider.stop();
   }
 
@@ -120,13 +92,13 @@ export class HomeProvider {
     this.events.subscribe(
       this.consts.SIGNALR_EVENTS.PERSONNEL_STATUS_UPDATED,
       (data: any) => {
-        //this.homeStore.dispatch(new HomeActions.RefreshMapData());
+        this.widgetsStore.dispatch(new WidgetsActions.GetPersonnelStatuses());
       }
     );
     this.events.subscribe(
       this.consts.SIGNALR_EVENTS.PERSONNEL_STAFFING_UPDATED,
       (data: any) => {
-        //this.homeStore.dispatch(new HomeActions.RefreshMapData());
+        this.widgetsStore.dispatch(new WidgetsActions.GetPersonnelStatuses());
       }
     );
     this.events.subscribe(

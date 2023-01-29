@@ -7,7 +7,10 @@
       <ion-buttons slot="start">
         <ion-menu-button></ion-menu-button>
       </ion-buttons>
-      <app-voice-header slot="end"></app-voice-header>
+      <div slot="end" [hidden]="!(settingsState$ | async)?.loggedIn">
+        <div [style.color]="(homeState$ | async)?.statusColor" style="text-align: right; font-size: 12px; margin-top:-18px;float: right;">{{(homeState$ | async)?.status}}</div>
+        <div style="text-align: right; font-size: 12px; float: right;">Last Update: {{getDate((homeState$ | async)?.lastUpdated)}}</div>
+      </div>
     </ion-toolbar>
   </ion-header>
 
@@ -15,6 +18,11 @@
     <ion-tab-button tab="dashboard" [hidden]="!(settingsState$ | async)?.loggedIn">
       <ion-icon name="grid-outline"></ion-icon>
       <ion-label>{{'tabsPage.mapTab' | translate}}</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="configure" [hidden]="!(settingsState$ | async)?.loggedIn">
+      <ion-icon name="hammer-outline"></ion-icon>
+      <ion-label>{{'tabsPage.configureTab' | translate}}</ion-label>
     </ion-tab-button>
 
     <ion-tab-button tab="settings">

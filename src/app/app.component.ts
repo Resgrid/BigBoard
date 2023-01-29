@@ -6,8 +6,8 @@ import { StorageProvider } from './providers/storage';
 import * as SettingsActions from './features/settings/actions/settings.actions';
 import { Observable } from 'rxjs';
 import { HomeState } from './features/home/store/home.store';
-import { selectHomeState, selectPerferDarkModeState } from './store';
-import { CallResultData, UnitResultData } from '@resgrid/ngx-resgridlib';
+import { selectHomeState, selectPerferDarkModeState, selectSettingsState } from './store';
+import { CallResultData, UnitResultData, UtilsService } from '@resgrid/ngx-resgridlib';
 import * as HomeActions from './features/home/actions/home.actions';
 import { take } from 'rxjs/operators';
 import { App as CapacitorApp } from '@capacitor/app';
@@ -27,6 +27,7 @@ export class AppComponent {
   public noUnitSelected: UnitResultData;
   public homeState$: Observable<HomeState | null>;
   public perferDarkMode$: Observable<boolean | null>;
+  public settingsState$: Observable<SettingsState | null>;
 
   constructor(
     private platform: Platform,
@@ -36,10 +37,13 @@ export class AppComponent {
     private homeStore: Store<HomeState>,
     private modalController: ModalController,
     private translateService: TranslateService,
-    private sleepProvider: SleepProvider
+    private sleepProvider: SleepProvider,
+    private settingsStore: Store<SettingsState>, 
+    private utilsProvider: UtilsService
   ) {
     this.homeState$ = this.homeStore.select(selectHomeState);
     this.perferDarkMode$ = this.store.select(selectPerferDarkModeState);
+    this.settingsState$ = this.store.select(selectSettingsState);
 
     this.noCallSelected = new CallResultData();
     this.noCallSelected.Name = 'No Call Selected';
@@ -84,6 +88,17 @@ export class AppComponent {
     });
   }
 
+  public getDate(date) {
+		return this.utilsProvider.getDate(date);
+	}
+
+  public async menuOpened() {
+		let modal = await this.modalController.getTop();
+
+		if (modal) {
+			this.modalController.dismiss();
+		}
+	}
 
   // Add or remove the "dark" class based on if the media query matches
   private toggleDarkTheme(shouldAdd: boolean) {

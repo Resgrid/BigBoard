@@ -65,6 +65,7 @@
     "@resgrid/ngx-resgridlib": "^1.3.20",
     "@sentry/angular": "^7.31.1",
     "@sentry/tracing": "^7.31.1",
+    "animate.css": "^4.1.1",
     "howler": "^2.2.3",
     "ionicons": "^6.0.3",
     "lodash": "^4.17.21",
@@ -73,6 +74,7 @@
     "openvidu-browser": "^2.20.0",
     "rxjs": "~7.5.0",
     "subsink": "^1.0.2",
+    "swiper": "^8.4.6",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"
   },

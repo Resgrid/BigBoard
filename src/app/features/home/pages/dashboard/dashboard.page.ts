@@ -19,6 +19,8 @@ import {
 import { coerceNumberProperty } from '@angular/cdk/coercion';
 import { debounceTime, filter, fromEvent, merge, Subscription } from 'rxjs';
 import { Widget } from 'src/app/models/widget';
+import { HomeProvider } from '../../providers/home';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-home-dashboard',
@@ -98,22 +100,29 @@ export class DashboardPage {
   constructor(
     private ngZone: NgZone,
     public elementRef: ElementRef,
-    @Inject(DOCUMENT) public document: Document
+    @Inject(DOCUMENT) public document: Document,
+    private homeProvider: HomeProvider
   ) {}
 
   ionViewDidEnter() {
     this.resizeSubscription = merge(
       fromEvent(window, 'resize'),
       fromEvent(window, 'orientationchange')
-    ).pipe(
+    )
+      .pipe(
         debounceTime(50),
         filter(() => this.autoResize)
-      ).subscribe(() => {
+      )
+      .subscribe(() => {
         this.grid.resize();
       });
+
+    this.homeProvider.startSignalR();
   }
 
-  ionViewWillLeave() {}
+  ionViewWillLeave() {
+    this.homeProvider.stopSignalR();
+  }
 
   onDragStarted(event: KtdDragStart) {
     this.isDragging = true;
@@ -217,39 +226,60 @@ export class DashboardPage {
   /** Removes the item from the layout */
   public removeItem(id: string) {
     // Important: Don't mutate the array. Let Angular know that the layout has changed creating a new reference.
-    this.widgets = this.ktdArrayRemoveItem(this.widgets, (item) => item.id === id);
-  }
-
-  generateLayout() {
-    const layout: KtdGridLayout = [];
-    for (let i = 0; i < this.cols; i++) {
-      const y = Math.ceil(Math.random() * 4) + 1;
-      layout.push({
-        x: Math.round(Math.random() * Math.floor(this.cols / 2 - 1)) * 2,
-        y: Math.floor(i / 6) * y,
-        w: 2,
-        h: y,
-        id: i.toString(),
-      });
-    }
-    this.layout = ktdGridCompact(layout, this.compactType, this.cols);
-    console.log('generateLayout', this.layout);
+    this.widgets = this.ktdArrayRemoveItem(
+      this.widgets,
+      (item) => item.id === id
+    );
   }
 
   public addWidget(type: number) {
-    const item = {
-      x: 0,
-      y: 0,
-      w: 2,
-      h: 2,
-      id: this.widgets.length.toString(),
-      type: type,
-      name: 'Widget',
-    };
-    this.widgets = [...this.widgets, item];
+    switch (type) {
+      case 1: // Personnel
+        const personnelWdiget = {
+          x: 0,
+          y: 0,
+          w: 6,
+          h: 4,
+          id: this.widgets.length.toString(),
+          type: type,
+          name: 'Personnel',
+        };
+        this.widgets = [...this.widgets, personnelWdiget];
+        break;
+      case 4: // Units
+        const unitsWidget = {
+          x: 0,
+          y: 0,
+          w: 5,
+          h: 3,
+          id: this.widgets.length.toString(),
+          type: type,
+          name: 'Units',
+        };
+        this.widgets = [...this.widgets, unitsWidget];
+        break;
+      case 5: // Calls
+        const callsWidget = {
+          x: 0,
+          y: 0,
+          w: 6,
+          h: 4,
+          id: this.widgets.length.toString(),
+          type: type,
+          name: 'Calls',
+        };
+        this.widgets = [...this.widgets, callsWidget];
+        break;
+    }
   }
 
   public isWidgetActive(type: number): boolean {
+    const widget = _.find(this.widgets, { type: type });
+
+    if (widget) {
+      return true;
+    }
+
     return false;
   }
 

@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, take } from 'rxjs';
 import { WeatherWidgetSettings } from 'src/app/models/weatherWidgetSettings';
-import { selectWeatherWidgetState, selectWidgetsState } from 'src/app/store';
+import { selectWeatherWidgetSettingsState, selectWidgetsState } from 'src/app/store';
 import { SubSink } from 'subsink';
 import { WidgetsState } from '../../store/widgets.store';
 import { Geolocation } from '@capacitor/geolocation';
@@ -21,7 +21,7 @@ export class WeatherWidgetComponent implements OnInit, OnDestroy {
 
   constructor(private store: Store<WidgetsState>) {
     this.widgetsState$ = this.store.select(selectWidgetsState);
-    this.widgetSettingsState$ = this.store.select(selectWeatherWidgetState);
+    this.widgetSettingsState$ = this.store.select(selectWeatherWidgetSettingsState);
   }
   
   ngOnInit(): void {

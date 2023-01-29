@@ -15,7 +15,7 @@ const serverErrorsRegex = new RegExp(
   'mi'
 );
 
-if (environment.loggingKey !== 'LOGGINGKEY') {
+if (environment.loggingKey && environment.loggingKey !== 'LOGGINGKEY') {
   Sentry.init({
     dsn: environment.loggingKey,
     release: environment.version,
