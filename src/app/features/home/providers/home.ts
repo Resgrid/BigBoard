@@ -93,24 +93,26 @@ export class HomeProvider {
       this.consts.SIGNALR_EVENTS.PERSONNEL_STATUS_UPDATED,
       (data: any) => {
         this.widgetsStore.dispatch(new WidgetsActions.GetPersonnelStatuses());
+        this.widgetsStore.dispatch(new WidgetsActions.GetMapData());
       }
     );
     this.events.subscribe(
       this.consts.SIGNALR_EVENTS.PERSONNEL_STAFFING_UPDATED,
       (data: any) => {
         this.widgetsStore.dispatch(new WidgetsActions.GetPersonnelStatuses());
+        this.widgetsStore.dispatch(new WidgetsActions.GetMapData());
       }
     );
     this.events.subscribe(
       this.consts.SIGNALR_EVENTS.UNIT_STATUS_UPDATED,
       (data: any) => {
-        //this.homeStore.dispatch(new HomeActions.RefreshMapData());
+        this.widgetsStore.dispatch(new WidgetsActions.GetMapData());
       }
     );
     this.events.subscribe(
       this.consts.SIGNALR_EVENTS.CALLS_UPDATED,
       (data: any) => {
-        //this.homeStore.dispatch(new HomeActions.RefreshMapData());
+        this.widgetsStore.dispatch(new WidgetsActions.GetMapData());
       }
     );
   }

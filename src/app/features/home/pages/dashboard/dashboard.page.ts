@@ -17,10 +17,22 @@ import {
   ktdGridCompact,
 } from '@katoid/angular-grid-layout';
 import { coerceNumberProperty } from '@angular/cdk/coercion';
-import { debounceTime, filter, fromEvent, merge, Subscription } from 'rxjs';
+import {
+  debounceTime,
+  filter,
+  fromEvent,
+  merge,
+  Observable,
+  Subscription,
+  take,
+} from 'rxjs';
 import { Widget } from 'src/app/models/widget';
 import { HomeProvider } from '../../providers/home';
 import * as _ from 'lodash';
+import { HomeState } from '../../store/home.store';
+import { Store } from '@ngrx/store';
+import { selectHomeWidgetsState } from 'src/app/store';
+import * as HomeActions from "../../actions/home.actions"; 
 
 @Component({
   selector: 'app-home-dashboard',
@@ -30,29 +42,14 @@ import * as _ from 'lodash';
 export class DashboardPage {
   @ViewChild(KtdGridComponent, { static: true }) grid: KtdGridComponent;
   trackById = ktdTrackById;
-
   cols = 12;
   rowHeight = 50;
   rowHeightFit = false;
   gridHeight: null | number = null;
   compactType: 'vertical' | 'horizontal' | null = 'vertical';
 
-  public widgets: Widget[] = [];
+  public widgetsState$: Observable<Widget[]>;
 
-  layout: KtdGridLayout = [
-    { id: '0', x: 5, y: 0, w: 2, h: 3 },
-    { id: '1', x: 2, y: 2, w: 1, h: 2 },
-    { id: '2', x: 3, y: 7, w: 1, h: 2 },
-    { id: '3', x: 2, y: 0, w: 3, h: 2 },
-    { id: '4', x: 5, y: 3, w: 2, h: 3 },
-    { id: '5', x: 0, y: 4, w: 1, h: 3 },
-    { id: '6', x: 9, y: 0, w: 2, h: 4 },
-    { id: '7', x: 9, y: 4, w: 2, h: 2 },
-    { id: '8', x: 3, y: 2, w: 2, h: 5 },
-    { id: '9', x: 7, y: 0, w: 1, h: 3 },
-    { id: '10', x: 2, y: 4, w: 1, h: 4 },
-    { id: '11', x: 0, y: 0, w: 2, h: 4 },
-  ];
   transitions: { name: string; value: string }[] = [
     {
       name: 'ease',
@@ -101,8 +98,11 @@ export class DashboardPage {
     private ngZone: NgZone,
     public elementRef: ElementRef,
     @Inject(DOCUMENT) public document: Document,
-    private homeProvider: HomeProvider
-  ) {}
+    private homeProvider: HomeProvider,
+    private store: Store<HomeState>
+  ) {
+    this.widgetsState$ = this.store.select(selectHomeWidgetsState);
+  }
 
   ionViewDidEnter() {
     this.resizeSubscription = merge(
@@ -142,75 +142,7 @@ export class DashboardPage {
 
   onLayoutUpdated(layout: KtdGridLayout) {
     console.log('on layout updated', layout);
-    this.layout = layout;
-  }
-
-  onCompactTypeChange(change: any) {
-    console.log('onCompactTypeChange', change);
-    this.compactType = change.value;
-  }
-
-  onTransitionChange(change: any) {
-    console.log('onTransitionChange', change);
-    this.currentTransition = change.value;
-  }
-
-  onAutoScrollChange(checked: boolean) {
-    this.autoScroll = checked;
-  }
-
-  onDisableDragChange(checked: boolean) {
-    this.disableDrag = checked;
-  }
-
-  onDisableResizeChange(checked: boolean) {
-    this.disableResize = checked;
-  }
-
-  onDisableRemoveChange(checked: boolean) {
-    this.disableRemove = checked;
-  }
-
-  onAutoResizeChange(checked: boolean) {
-    this.autoResize = checked;
-  }
-
-  onPreventCollisionChange(checked: boolean) {
-    this.preventCollision = checked;
-  }
-
-  onColsChange(event: Event) {
-    this.cols = coerceNumberProperty((event.target as HTMLInputElement).value);
-  }
-
-  onRowHeightChange(event: Event) {
-    this.rowHeight = coerceNumberProperty(
-      (event.target as HTMLInputElement).value
-    );
-  }
-
-  onRowHeightFitChange(change: any) {
-    this.rowHeightFit = change.checked;
-  }
-
-  onGridHeightChange(event: Event) {
-    this.gridHeight = coerceNumberProperty(
-      (event.target as HTMLInputElement).value
-    );
-  }
-
-  onDragStartThresholdChange(event: Event) {
-    this.dragStartThreshold = coerceNumberProperty(
-      (event.target as HTMLInputElement).value
-    );
-  }
-
-  onPlaceholderChange(change: any) {
-    this.currentPlaceholder = change.value;
-  }
-
-  onGapChange(event: Event) {
-    this.gap = coerceNumberProperty((event.target as HTMLInputElement).value);
+    this.store.dispatch(new HomeActions.WidgetLayoutUpdated(layout));
   }
 
   /**
@@ -226,59 +158,85 @@ export class DashboardPage {
   /** Removes the item from the layout */
   public removeItem(id: string) {
     // Important: Don't mutate the array. Let Angular know that the layout has changed creating a new reference.
-    this.widgets = this.ktdArrayRemoveItem(
-      this.widgets,
-      (item) => item.id === id
-    );
+    //this.widgets = this.ktdArrayRemoveItem(
+    //  this.widgets,
+    //  (item) => item.id === id
+    //);
   }
 
   public addWidget(type: number) {
-    switch (type) {
-      case 1: // Personnel
-        const personnelWdiget = {
-          x: 0,
-          y: 0,
-          w: 6,
-          h: 4,
-          id: this.widgets.length.toString(),
-          type: type,
-          name: 'Personnel',
-        };
-        this.widgets = [...this.widgets, personnelWdiget];
-        break;
-      case 4: // Units
-        const unitsWidget = {
-          x: 0,
-          y: 0,
-          w: 5,
-          h: 3,
-          id: this.widgets.length.toString(),
-          type: type,
-          name: 'Units',
-        };
-        this.widgets = [...this.widgets, unitsWidget];
-        break;
-      case 5: // Calls
-        const callsWidget = {
-          x: 0,
-          y: 0,
-          w: 6,
-          h: 4,
-          id: this.widgets.length.toString(),
-          type: type,
-          name: 'Calls',
-        };
-        this.widgets = [...this.widgets, callsWidget];
-        break;
-    }
+    this.widgetsState$.pipe(take(1)).subscribe((widgets) => {
+      switch (type) {
+        case 1: // Personnel
+          const personnelWdiget = {
+            x: 0,
+            y: 0,
+            w: 6,
+            h: 4,
+            id: widgets.length.toString(),
+            type: type,
+            name: 'Personnel',
+          };
+          this.store.dispatch(new HomeActions.AddWidget(personnelWdiget));
+          break;
+        case 2: // Personnel
+          const mapWdiget = {
+            x: 0,
+            y: 0,
+            w: 4,
+            h: 4,
+            id: widgets.length.toString(),
+            type: type,
+            name: 'Map',
+          };
+          this.store.dispatch(new HomeActions.AddWidget(mapWdiget));
+          break;
+        case 4: // Units
+          const unitsWidget = {
+            x: 0,
+            y: 0,
+            w: 5,
+            h: 3,
+            id: widgets.length.toString(),
+            type: type,
+            name: 'Units',
+          };
+          this.store.dispatch(new HomeActions.AddWidget(unitsWidget));
+          break;
+        case 5: // Calls
+          const callsWidget = {
+            x: 0,
+            y: 0,
+            w: 6,
+            h: 4,
+            id: widgets.length.toString(),
+            type: type,
+            name: 'Calls',
+          };
+          this.store.dispatch(new HomeActions.AddWidget(callsWidget));
+          break;
+        case 8: // Notes
+          const notesWidget = {
+            x: 0,
+            y: 0,
+            w: 4,
+            h: 2,
+            id: widgets.length.toString(),
+            type: type,
+            name: 'Notes',
+          };
+          this.store.dispatch(new HomeActions.AddWidget(notesWidget));
+          break;
+      }
+    });
   }
 
   public isWidgetActive(type: number): boolean {
-    const widget = _.find(this.widgets, { type: type });
+    //const widget = _.find(this.widgets, { type: type });
 
-    if (widget) {
-      return true;
-    }
+    //if (widget) {
+    //  return true;
+    //}
 
     return false;
   }

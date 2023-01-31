@@ -1,0 +1,19 @@
+<ion-grid id="notesContent">
+    <ion-row>
+        <ion-col>
+            <ion-text color="tertiary"><strong>Title</strong></ion-text>
+        </ion-col>
+        <ion-col>
+            <ion-text color="tertiary"><strong>Note</strong></ion-text>
+        </ion-col>
+    </ion-row>
+
+    <ion-row class="strippedRows" *ngFor="let note of (widgetsState$ | async)?.notes">
+        <ion-col>
+            <ion-text color="medium">{{note.Title}}</ion-text>
+        </ion-col>
+        <ion-col>
+            <ion-text color="medium">{{note.Body}}</ion-text>
+        </ion-col>
+    </ion-row>
+</ion-grid>

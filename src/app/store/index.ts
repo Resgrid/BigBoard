@@ -39,6 +39,12 @@ export const selectIsAppActive = createSelector(
 
 export const selectHomeState = createFeatureSelector<HomeState>('homeModule');
 
+export const selectHomeWidgetsState = createSelector(
+  selectHomeState,
+  homeReducers.getWidgets
+);
+
+
 export const selectVoiceState = createFeatureSelector<VoiceState>('voiceModule');
 
 export const selectAvailableChannelsState = createSelector(
@@ -66,4 +72,19 @@ export const selectCallsWidgetSettingsState = createSelector(
 export const selectUnitsWidgetSettingsState = createSelector(
   selectWidgetsState,
   widgetsReducers.getUnitsWidgetSettings
+);
+
+export const selectNotesWidgetSettingsState = createSelector(
+  selectWidgetsState,
+  widgetsReducers.getNotesWidgetSettings
+);
+
+export const selectMapWidgetSettingsState = createSelector(
+  selectWidgetsState,
+  widgetsReducers.getMapWidgetSettings
+);
+
+export const selectMapWidgetDataState = createSelector(
+  selectWidgetsState,
+  widgetsReducers.getMapWidgetData
 );

@@ -1,16 +1,18 @@
 <ion-content [fullscreen]="true">
     <div class="grid-container">
-        <ktd-grid [cols]="cols" [height]="rowHeightFit && gridHeight ? gridHeight : null" [rowHeight]="rowHeightFit ? 'fit' : rowHeight" [layout]="widgets" [compactType]="compactType"
+        <ktd-grid [cols]="cols" [height]="rowHeightFit && gridHeight ? gridHeight : null" [rowHeight]="rowHeightFit ? 'fit' : rowHeight" [layout]="(widgetsState$ | async)!" [compactType]="compactType"
             [preventCollision]="preventCollision" [scrollableParent]="autoScroll ? document : null" [gap]="gap" scrollSpeed="4" (dragStarted)="onDragStarted($event)"
             (resizeStarted)="onResizeStarted($event)" (dragEnded)="onDragEnded($event)" (resizeEnded)="onResizeEnded($event)" (layoutUpdated)="onLayoutUpdated($event)">
-            <ktd-grid-item *ngFor="let item of widgets; trackBy:trackById" [id]="item.id" [transition]="currentTransition" [dragStartThreshold]="dragStartThreshold" [draggable]="!disableDrag" [resizable]="!disableResize">
+            <ktd-grid-item *ngFor="let item of (widgetsState$ | async); trackBy:trackById" [id]="item.id" [transition]="currentTransition" [dragStartThreshold]="dragStartThreshold" [draggable]="!disableDrag" [resizable]="!disableResize">
                 
                 
                 <div class="grid-item-content">
-                  <app-widgets-weather *ngIf="item.type === 3"></app-widgets-weather>
                   <app-widgets-personnel *ngIf="item.type === 1"></app-widgets-personnel>
-                  <app-widgets-calls *ngIf="item.type === 5"></app-widgets-calls>
+                  <app-widgets-map *ngIf="item.type === 2"></app-widgets-map>
+                  <app-widgets-weather *ngIf="item.type === 3"></app-widgets-weather>
                   <app-widgets-units *ngIf="item.type === 4"></app-widgets-units>
+                  <app-widgets-calls *ngIf="item.type === 5"></app-widgets-calls>
+                  <app-widgets-notes *ngIf="item.type === 8"></app-widgets-notes>
                 </div>
 
                 <div class="grid-item-remove-handle" *ngIf="!disableRemove" (mousedown)="stopEventPropagation($event)" (click)="removeItem(item.id)">
@@ -41,9 +43,9 @@
             <ion-fab-button>
                 <ion-icon name="thunderstorm"></ion-icon>
             </ion-fab-button>
-            <ion-fab-button (click)="addWidget(7)" [hidden]="isWidgetActive(7)">
+            <!--<ion-fab-button (click)="addWidget(7)" [hidden]="isWidgetActive(7)">
                 <ion-icon name="link"></ion-icon>
-            </ion-fab-button>
+            </ion-fab-button>-->
             <ion-fab-button (click)="addWidget(8)" [hidden]="isWidgetActive(8)">
                 <ion-icon name="document"></ion-icon>
             </ion-fab-button>

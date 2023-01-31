@@ -31,6 +31,16 @@ export function reducer(
         ...state,
         units: action.units,
       };
+    case WidgetsActionTypes.GET_NOTES_DONE:
+      return {
+        ...state,
+        notes: action.notes,
+      };
+    case WidgetsActionTypes.GET_MAPDATA_DONE:
+      return {
+        ...state,
+        mapData: action.data,
+      };
     default:
       return state;
   }
@@ -44,3 +54,9 @@ export const getCallsWidgetSettings = (state: WidgetsState) =>
   state.callsWidgetSettings;
 export const getUnitsWidgetSettings = (state: WidgetsState) =>
   state.unitsWidgetSettings;
+export const getNotesWidgetSettings = (state: WidgetsState) =>
+  state.notesWidgetSettings;
+export const getMapWidgetSettings = (state: WidgetsState) =>
+  state.mapWidgetSettings;
+export const getMapWidgetData = (state: WidgetsState) =>
+  state.mapData;

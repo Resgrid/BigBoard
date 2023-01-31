@@ -24,7 +24,7 @@ export function reducer(
         connected = true;
         status = 'Connected';
         statusColor = 'green';
-      } 
+      }
 
       return {
         ...state,
@@ -33,7 +33,32 @@ export function reducer(
         status: status,
         statusColor: statusColor,
       };
+    case HomeActionTypes.ADD_WIDGET:  
+      return {
+        ...state,
+        widgets: [...state.widgets, action.widget],
+      };
+    case HomeActionTypes.UPDATE_WIDGET_LAYOUT:
+      const updatingWidgets = _.cloneDeep(state.widgets);
+
+      for (const layoutItem of action.layout) {
+        for (const widget of updatingWidgets) {
+          if (widget.id === layoutItem.id) {
+            widget.x = layoutItem.x;
+            widget.y = layoutItem.y;
+            widget.w = layoutItem.w;
+            widget.h = layoutItem.h;
+          }
+        }
+      }
+      return {
+        ...state,
+        widgets: updatingWidgets,
+      };
     default:
       return state;
   }
 }
+
+export const getWidgets = (state: HomeState) =>
+  state.widgets;

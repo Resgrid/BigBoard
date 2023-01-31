@@ -1,7 +1,7 @@
 import { Action } from '@ngrx/store';
 import { PersonnelWidgetSettings } from 'src/app/models/personnelWidgetSettings';
 import { WeatherWidgetSettings } from 'src/app/models/weatherWidgetSettings';
-import { PersonnelInfoResultData, CallResultData, UnitInfoResultData } from "@resgrid/ngx-resgridlib";
+import { PersonnelInfoResultData, CallResultData, UnitInfoResultData, NoteResultData, MapDataAndMarkersData } from "@resgrid/ngx-resgridlib";
 
 export enum WidgetsActionTypes {
   GET_WEATHER_SETTTINGS = '[WIDGETS] GET_WEATHER_SETTTINGS',
@@ -19,6 +19,12 @@ export enum WidgetsActionTypes {
 
   GET_UNITS = '[WIDGETS] GET_UNITS',
   GET_UNITS_DONE = '[WIDGETS] GET_UNITS_DONE',
+
+  GET_NOTES = '[WIDGETS] GET_NOTES',
+  GET_NOTES_DONE = '[WIDGETS] GET_NOTES_DONE',
+
+  GET_MAPDATA = '[WIDGETS] GET_MAPDATA',
+  GET_MAPDATA_DONE = '[WIDGETS] GET_MAPDATA_DONE',
 
   DONE = '[WIDGETS] DONE',
 }
@@ -78,6 +84,26 @@ export class GetUnitsDone implements Action {
   constructor(public units: UnitInfoResultData[]) {}
 }
 
+export class GetNotes implements Action {
+  readonly type = WidgetsActionTypes.GET_NOTES;
+  constructor() {}
+}
+
+export class GetNotesDone implements Action {
+  readonly type = WidgetsActionTypes.GET_NOTES_DONE;
+  constructor(public notes: NoteResultData[]) {}
+}
+
+export class GetMapData implements Action {
+  readonly type = WidgetsActionTypes.GET_MAPDATA;
+  constructor() {}
+}
+
+export class GetMapDataDone implements Action {
+  readonly type = WidgetsActionTypes.GET_MAPDATA_DONE;
+  constructor(public data: MapDataAndMarkersData) {}
+}
+
 export class Done implements Action {
   readonly type = WidgetsActionTypes.DONE;
   constructor() {}
@@ -95,5 +121,9 @@ export type WidgetsActionsUnion =
   | GetCallsDone
   | GetUnits
   | GetUnitsDone
+  | GetNotes
+  | GetNotesDone
+  | GetMapData
+  | GetMapDataDone
   | Done
   ;
