@@ -21,6 +21,7 @@ import {
   debounceTime,
   filter,
   fromEvent,
+  map,
   merge,
   Observable,
   Subscription,
@@ -33,6 +34,7 @@ import { HomeState } from '../../store/home.store';
 import { Store } from '@ngrx/store';
 import { selectHomeWidgetsState } from 'src/app/store';
 import * as HomeActions from "../../actions/home.actions"; 
+import { SubSink } from 'subsink';
 
 @Component({
   selector: 'app-home-dashboard',
@@ -47,8 +49,10 @@ export class DashboardPage {
   rowHeightFit = false;
   gridHeight: null | number = null;
   compactType: 'vertical' | 'horizontal' | null = 'vertical';
+  private subs = new SubSink();
 
   public widgetsState$: Observable<Widget[]>;
+  public widgets: Widget[] = [];
 
   transitions: { name: string; value: string }[] = [
     {
@@ -117,11 +121,21 @@ export class DashboardPage {
         this.grid.resize();
       });
 
+      this.subs.sink = this.widgetsState$.subscribe((widgets) => {
+        if (widgets) {
+          this.widgets = _.cloneDeep(widgets);
+        }
+      });
+
     this.homeProvider.startSignalR();
   }
 
   ionViewWillLeave() {
     this.homeProvider.stopSignalR();
+
+    if (this.subs) {
+      this.subs.unsubscribe();
+    }
   }
 
   onDragStarted(event: KtdDragStart) {
@@ -184,7 +198,7 @@ export class DashboardPage {
             x: 0,
             y: 0,
             w: 4,
-            h: 4,
+            h: 6,
             id: widgets.length.toString(),
             type: type,
             name: 'Map',
@@ -231,14 +245,16 @@ export class DashboardPage {
     });
   }
 
-  public isWidgetActive(type: number): boolean {
-    //const widget = _.find(this.widgets, { type: type });
+  public isWidgetActive(type: number): Observable<boolean> {
+    return this.widgetsState$.pipe(take(1)).pipe(map(widgets =>  {
+      const widget = _.find(widgets, { type: type });
 
-    //if (widget) {
-    //  return true;
-    //}
+      if (widget) {
+          return true;
+      }
 
-    return false;
+      return false;
+    }));
   }
 
   private ktdArrayRemoveItem<T>(array: T[], condition: (item: T) => boolean) {

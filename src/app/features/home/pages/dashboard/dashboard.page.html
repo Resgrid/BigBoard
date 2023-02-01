@@ -1,6 +1,6 @@
 <ion-content [fullscreen]="true">
     <div class="grid-container">
-        <ktd-grid [cols]="cols" [height]="rowHeightFit && gridHeight ? gridHeight : null" [rowHeight]="rowHeightFit ? 'fit' : rowHeight" [layout]="(widgetsState$ | async)!" [compactType]="compactType"
+        <ktd-grid [cols]="cols" [height]="rowHeightFit && gridHeight ? gridHeight : null" [rowHeight]="rowHeightFit ? 'fit' : rowHeight" [layout]="widgets" [compactType]="compactType"
             [preventCollision]="preventCollision" [scrollableParent]="autoScroll ? document : null" [gap]="gap" scrollSpeed="4" (dragStarted)="onDragStarted($event)"
             (resizeStarted)="onResizeStarted($event)" (dragEnded)="onDragEnded($event)" (resizeEnded)="onResizeEnded($event)" (layoutUpdated)="onLayoutUpdated($event)">
             <ktd-grid-item *ngFor="let item of (widgetsState$ | async); trackBy:trackById" [id]="item.id" [transition]="currentTransition" [dragStartThreshold]="dragStartThreshold" [draggable]="!disableDrag" [resizable]="!disableResize">
@@ -25,19 +25,19 @@
             <ion-icon name="add"></ion-icon>
         </ion-fab-button>
         <ion-fab-list side="top">
-            <ion-fab-button (click)="addWidget(1)" [hidden]="isWidgetActive(1)">
+            <ion-fab-button (click)="addWidget(1)" [hidden]="isWidgetActive(1) | async">
                 <ion-icon name="people"></ion-icon>
             </ion-fab-button>
-            <ion-fab-button (click)="addWidget(5)" [hidden]="isWidgetActive(5)">
+            <ion-fab-button (click)="addWidget(5)" [hidden]="isWidgetActive(5) | async">
                 <ion-icon name="megaphone"></ion-icon>
             </ion-fab-button>
-            <ion-fab-button (click)="addWidget(4)" [hidden]="isWidgetActive(4)">
+            <ion-fab-button (click)="addWidget(4)" [hidden]="isWidgetActive(4) | async">
                 <ion-icon name="car"></ion-icon>
             </ion-fab-button>
-            <ion-fab-button (click)="addWidget(2)" [hidden]="isWidgetActive(2)">
+            <ion-fab-button (click)="addWidget(2)" [hidden]="isWidgetActive(2) | async">
                 <ion-icon name="map"></ion-icon>
             </ion-fab-button>
-            <ion-fab-button (click)="addWidget(3)" [hidden]="isWidgetActive(3)">
+            <ion-fab-button (click)="addWidget(3)" [hidden]="isWidgetActive(3) | async">
                 <ion-icon name="sunny"></ion-icon>
             </ion-fab-button>
             <ion-fab-button>
@@ -46,7 +46,7 @@
             <!--<ion-fab-button (click)="addWidget(7)" [hidden]="isWidgetActive(7)">
                 <ion-icon name="link"></ion-icon>
             </ion-fab-button>-->
-            <ion-fab-button (click)="addWidget(8)" [hidden]="isWidgetActive(8)">
+            <ion-fab-button (click)="addWidget(8)" [hidden]="isWidgetActive(8) | async">
                 <ion-icon name="document"></ion-icon>
             </ion-fab-button>
             <ion-fab-button>

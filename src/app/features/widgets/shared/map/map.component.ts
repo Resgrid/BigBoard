@@ -70,15 +70,17 @@ export class MapWidgetComponent implements OnInit, OnDestroy {
           dragging: false,
           doubleClickZoom: false,
           zoomControl: false,
+		  attributionControl: false
         });
 
         L.tileLayer(
-          'https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=' +
-            environment.mapTilerKey,
+          'https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=' + environment.mapTilerKey,
           {
-            crossOrigin: true,
+            crossOrigin: true
           }
         ).addTo(this.map);
+
+		L.control.attribution({position: 'bottomleft'}).addTo(this.map);
       }
 
       //this.mapProvider.setMarkersForMap(this.map);
