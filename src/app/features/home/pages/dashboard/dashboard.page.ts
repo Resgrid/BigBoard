@@ -33,8 +33,9 @@ import * as _ from 'lodash';
 import { HomeState } from '../../store/home.store';
 import { Store } from '@ngrx/store';
 import { selectHomeWidgetsState } from 'src/app/store';
-import * as HomeActions from "../../actions/home.actions"; 
+import * as HomeActions from '../../actions/home.actions';
 import { SubSink } from 'subsink';
+import { UtilsService } from '@resgrid/ngx-resgridlib';
 
 @Component({
   selector: 'app-home-dashboard',
@@ -103,7 +104,8 @@ export class DashboardPage {
     public elementRef: ElementRef,
     @Inject(DOCUMENT) public document: Document,
     private homeProvider: HomeProvider,
-    private store: Store<HomeState>
+    private store: Store<HomeState>,
+    private utilsService: UtilsService
   ) {
     this.widgetsState$ = this.store.select(selectHomeWidgetsState);
   }
@@ -121,13 +123,14 @@ export class DashboardPage {
         this.grid.resize();
       });
 
-      this.subs.sink = this.widgetsState$.subscribe((widgets) => {
-        if (widgets) {
-          this.widgets = _.cloneDeep(widgets);
-        }
-      });
+    this.subs.sink = this.widgetsState$.subscribe((widgets) => {
+      if (widgets) {
+        this.widgets = _.cloneDeep(widgets);
+      }
+    });
 
     this.homeProvider.startSignalR();
+    this.store.dispatch(new HomeActions.LoadWidgetLayout());
   }
 
   ionViewWillLeave() {
@@ -171,98 +174,97 @@ export class DashboardPage {
 
   /** Removes the item from the layout */
   public removeItem(id: string) {
-    // Important: Don't mutate the array. Let Angular know that the layout has changed creating a new reference.
-    //this.widgets = this.ktdArrayRemoveItem(
-    //  this.widgets,
-    //  (item) => item.id === id
-    //);
+    this.store.dispatch(new HomeActions.RemoveWidget(id));
   }
 
   public addWidget(type: number) {
-    this.widgetsState$.pipe(take(1)).subscribe((widgets) => {
-      switch (type) {
-        case 1: // Personnel
-          const personnelWdiget = {
-            x: 0,
-            y: 0,
-            w: 6,
-            h: 4,
-            id: widgets.length.toString(),
-            type: type,
-            name: 'Personnel',
-          };
-          this.store.dispatch(new HomeActions.AddWidget(personnelWdiget));
-          break;
-        case 2: // Personnel
-          const mapWdiget = {
-            x: 0,
-            y: 0,
-            w: 4,
-            h: 6,
-            id: widgets.length.toString(),
-            type: type,
-            name: 'Map',
-          };
-          this.store.dispatch(new HomeActions.AddWidget(mapWdiget));
-          break;
-        case 4: // Units
-          const unitsWidget = {
-            x: 0,
-            y: 0,
-            w: 5,
-            h: 3,
-            id: widgets.length.toString(),
-            type: type,
-            name: 'Units',
-          };
-          this.store.dispatch(new HomeActions.AddWidget(unitsWidget));
-          break;
-        case 5: // Calls
-          const callsWidget = {
-            x: 0,
-            y: 0,
-            w: 6,
-            h: 4,
-            id: widgets.length.toString(),
-            type: type,
-            name: 'Calls',
-          };
-          this.store.dispatch(new HomeActions.AddWidget(callsWidget));
-          break;
-        case 8: // Notes
-          const notesWidget = {
-            x: 0,
-            y: 0,
-            w: 4,
-            h: 2,
-            id: widgets.length.toString(),
-            type: type,
-            name: 'Notes',
-          };
-          this.store.dispatch(new HomeActions.AddWidget(notesWidget));
-          break;
-      }
-    });
+    switch (type) {
+      case 1: // Personnel
+        const personnelWdiget = {
+          x: 0,
+          y: 0,
+          w: 6,
+          h: 4,
+          id: this.utilsService.generateUUID(),
+          type: type,
+          name: 'Personnel',
+        };
+        this.store.dispatch(new HomeActions.AddWidget(personnelWdiget));
+        break;
+      case 2: // Personnel
+        const mapWdiget = {
+          x: 0,
+          y: 0,
+          w: 4,
+          h: 6,
+          id: this.utilsService.generateUUID(),
+          type: type,
+          name: 'Map',
+        };
+        this.store.dispatch(new HomeActions.AddWidget(mapWdiget));
+        break;
+      case 3: // Weather
+        const weatherWdiget = {
+          x: 0,
+          y: 0,
+          w: 5,
+          h: 5,
+          id: this.utilsService.generateUUID(),
+          type: type,
+          name: 'Weather',
+        };
+        this.store.dispatch(new HomeActions.AddWidget(weatherWdiget));
+        break;
+      case 4: // Units
+        const unitsWidget = {
+          x: 0,
+          y: 0,
+          w: 5,
+          h: 3,
+          id: this.utilsService.generateUUID(),
+          type: type,
+          name: 'Units',
+        };
+        this.store.dispatch(new HomeActions.AddWidget(unitsWidget));
+        break;
+      case 5: // Calls
+        const callsWidget = {
+          x: 0,
+          y: 0,
+          w: 6,
+          h: 4,
+          id: this.utilsService.generateUUID(),
+          type: type,
+          name: 'Calls',
+        };
+        this.store.dispatch(new HomeActions.AddWidget(callsWidget));
+        break;
+      case 8: // Notes
+        const notesWidget = {
+          x: 0,
+          y: 0,
+          w: 4,
+          h: 2,
+          id: this.utilsService.generateUUID(),
+          type: type,
+          name: 'Notes',
+        };
+        this.store.dispatch(new HomeActions.AddWidget(notesWidget));
+        break;
+    }
   }
 
   public isWidgetActive(type: number): Observable<boolean> {
-    return this.widgetsState$.pipe(take(1)).pipe(map(widgets =>  {
-      const widget = _.find(widgets, { type: type });
+    return this.widgetsState$.pipe(take(1)).pipe(
+      map((widgets) => {
+        const widget = _.find(widgets, { type: type });
 
-      if (widget) {
+        if (widget) {
           return true;
-      }
+        }
 
-      return false;
-    }));
-  }
-
-  private ktdArrayRemoveItem<T>(array: T[], condition: (item: T) => boolean) {
-    const arrayCopy = [...array];
-    const index = array.findIndex((item) => condition(item));
-    if (index > -1) {
-      arrayCopy.splice(index, 1);
-    }
-    return arrayCopy;
+        return false;
+      })
+    );
   }
 }

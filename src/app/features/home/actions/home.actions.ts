@@ -9,6 +9,10 @@ export enum HomeActionTypes {
   ADD_WIDGET = '[HOME] ADD_WIDGET',
   CLOSE_MODAL = '[HOME] CLOSE_MODAL',
   UPDATE_WIDGET_LAYOUT = '[HOME] UPDATE_WIDGET_LAYOUT',
+  REMOVE_WIDGET = '[HOME] REMOVE_WIDGET',
+  SAVE_WIDGET_LAYOUT = '[HOME] SAVE_WIDGET_LAYOUT',
+  LOAD_WIDGET_LAYOUT = '[HOME] LOAD_WIDGET_LAYOUT',
+  LOAD_WIDGET_LAYOUT_DONE = '[HOME] LOAD_WIDGET_LAYOUT_DONE',
 }
 
 export class StartSignalR implements Action {
@@ -41,11 +45,35 @@ export class WidgetLayoutUpdated implements Action {
   constructor(public layout: KtdGridLayout) {}
 }
 
+export class RemoveWidget implements Action {
+  readonly type = HomeActionTypes.REMOVE_WIDGET;
+  constructor(public id: string) {}
+}
+
+export class SaveWidgetLayout implements Action {
+  readonly type = HomeActionTypes.SAVE_WIDGET_LAYOUT;
+  constructor() {}
+}
+
+export class LoadWidgetLayout implements Action {
+  readonly type = HomeActionTypes.LOAD_WIDGET_LAYOUT;
+  constructor() {}
+}
+
+export class LoadWidgetLayoutDone implements Action {
+  readonly type = HomeActionTypes.LOAD_WIDGET_LAYOUT_DONE;
+  constructor(public widgets: Widget[]) {}
+}
+
 export type HomeActionsUnion =
   | StartSignalR
   | StopSignalR
   | UpdateSignalrState
   | CloseModal
   | AddWidget
+  | RemoveWidget
   | WidgetLayoutUpdated
+  | SaveWidgetLayout
+  | LoadWidgetLayout
+  | LoadWidgetLayoutDone
   ;

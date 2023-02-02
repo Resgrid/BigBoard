@@ -33,7 +33,7 @@ export function reducer(
         status: status,
         statusColor: statusColor,
       };
-    case HomeActionTypes.ADD_WIDGET:  
+    case HomeActionTypes.ADD_WIDGET:
       return {
         ...state,
         widgets: [...state.widgets, action.widget],
@@ -55,10 +55,25 @@ export function reducer(
         ...state,
         widgets: updatingWidgets,
       };
+    case HomeActionTypes.REMOVE_WIDGET:
+      const arrayCopy = _.cloneDeep(state.widgets);
+      const index = arrayCopy.findIndex((item) => item.id === action.id);
+      if (index > -1) {
+        arrayCopy.splice(index, 1);
+      }
+
+      return {
+        ...state,
+        widgets: arrayCopy,
+      };
+    case HomeActionTypes.LOAD_WIDGET_LAYOUT_DONE:
+      return {
+        ...state,
+        widgets: action.widgets,
+      };
     default:
       return state;
   }
 }
 
-export const getWidgets = (state: HomeState) =>
-  state.widgets;
+export const getWidgets = (state: HomeState) => state.widgets;

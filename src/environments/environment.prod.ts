@@ -14,4 +14,5 @@ export const environment = {
   mapTilerKey: 'MTKEY',
   googleMapsKey: 'GOOGLEMAPKEY',
   loggingKey: 'LOGGINGKEY',
+  weatherApiKey: 'WEATHERKEY',
 };

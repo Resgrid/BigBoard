@@ -60,6 +60,41 @@ export class HomeEffects {
     { dispatch: false }
   );
 
+  saveWidgetLayout$ = createEffect(() =>
+		this.actions$.pipe(
+			ofType<homeAction.SaveWidgetLayout>(homeAction.HomeActionTypes.SAVE_WIDGET_LAYOUT),
+			concatLatestFrom(() => [this.store.select(selectHomeState)]),
+			switchMap(([action, homeState], index) => {
+				return this.storageProvider.saveLayout(homeState.widgets);
+			})
+		),
+    { dispatch: false }
+	);
+
+  widgetLayoutUpdated$ = createEffect(
+		() =>
+			this.actions$.pipe(
+				ofType(homeAction.HomeActionTypes.UPDATE_WIDGET_LAYOUT),
+				map((data) => ({
+					type: homeAction.HomeActionTypes.SAVE_WIDGET_LAYOUT,
+				}))
+			)
+	);
+
+  loadWidgetLayout$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType<homeAction.LoadWidgetLayout>(homeAction.HomeActionTypes.LOAD_WIDGET_LAYOUT),
+      switchMap((action) =>
+        from(this.storageProvider.loadLayout()).pipe(
+          map((data) => ({
+            type: homeAction.HomeActionTypes.LOAD_WIDGET_LAYOUT_DONE,
+            widgets: data,
+          }))
+        )
+      )
+    )
+  );
+
   closeModal$ = createEffect(
     () =>
       this.actions$.pipe(
@@ -73,7 +108,8 @@ export class HomeEffects {
     private actions$: Actions,
     private store: Store<HomeState>,
     private homeProvider: HomeProvider,
-    private modalProvider: ModalProvider
+    private modalProvider: ModalProvider,
+    private storageProvider: StorageProvider
   ) {}
 
 }

@@ -50,11 +50,11 @@ export class StorageProvider {
   }
 
   public async getServerAddress(): Promise<string> {
-    return await this.get('serverAddress');
+    return await this.get('RGBBserverAddress');
   }
 
   public async setServerAddress(serverAddress: string): Promise<any> {
-    return await this.set('serverAddress', serverAddress);
+    return await this.set('RGBBserverAddress', serverAddress);
   }
 
   public async getDeviceId(): Promise<string> {
@@ -99,7 +99,6 @@ export class StorageProvider {
     return false;
   }
 
-
   public async getStartupData(): Promise<StartupData> {
     const loginData = await this.getLoginData();
     const darkMode = await this.getPerferDarkMode();
@@ -138,7 +137,13 @@ export class StorageProvider {
   }
 
   public async loadLayout(): Promise<Array<Widget>> {
-    return await this.get("RGBBwidgets");
+    const widgets = await this.get("RGBBwidgets");
+
+    if (widgets) {
+      return JSON.parse(widgets);
+    }
+
+    return [];
   }
 
   public async clearLayout(): Promise<any> {
