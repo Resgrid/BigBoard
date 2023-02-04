@@ -1,5 +1,6 @@
 import { KtdGridLayout } from '@katoid/angular-grid-layout';
 import { Action } from '@ngrx/store';
+import { GroupResultData } from '@resgrid/ngx-resgridlib';
 import { Widget } from 'src/app/models/widget';
 
 export enum HomeActionTypes {
@@ -13,6 +14,9 @@ export enum HomeActionTypes {
   SAVE_WIDGET_LAYOUT = '[HOME] SAVE_WIDGET_LAYOUT',
   LOAD_WIDGET_LAYOUT = '[HOME] LOAD_WIDGET_LAYOUT',
   LOAD_WIDGET_LAYOUT_DONE = '[HOME] LOAD_WIDGET_LAYOUT_DONE',
+
+  GET_GROUPS = '[HOME] GET_GROUPS',
+  GET_GROUPS_DONE = '[HOME] GET_GROUPS_DONE',
 }
 
 export class StartSignalR implements Action {
@@ -65,6 +69,16 @@ export class LoadWidgetLayoutDone implements Action {
   constructor(public widgets: Widget[]) {}
 }
 
+export class GetGroups implements Action {
+  readonly type = HomeActionTypes.GET_GROUPS;
+  constructor() {}
+}
+
+export class GetGroupsDone implements Action {
+  readonly type = HomeActionTypes.GET_GROUPS_DONE;
+  constructor(public groups: GroupResultData[]) {}
+}
+
 export type HomeActionsUnion =
   | StartSignalR
   | StopSignalR
@@ -76,4 +90,6 @@ export type HomeActionsUnion =
   | SaveWidgetLayout
   | LoadWidgetLayout
   | LoadWidgetLayoutDone
+  | GetGroups
+  | GetGroupsDone
   ;

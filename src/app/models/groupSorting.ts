@@ -1,4 +1,4 @@
 export class GroupSorting  {
-    public GroupId: number = 0;
+    public GroupId: string = '';
     public Weight: number = 10;
 }

@@ -16,6 +16,10 @@ const routes: Routes = [
         loadChildren: () => import('../settings/settings.module').then(m => m.SettingsPageModule)
       },
       {
+        path: 'configure',
+        loadChildren: () => import('../configure/configure.module').then(m => m.ConfigurePageModule)
+      },
+      {
         path: '',
         redirectTo: '/home/tabs/dashboard',
         pathMatch: 'full'

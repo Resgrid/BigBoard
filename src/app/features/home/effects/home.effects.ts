@@ -28,6 +28,7 @@ import {
   UnitLocationService,
   SaveUnitLocationInput,
   UnitRolesService,
+  GroupsService,
 } from '@resgrid/ngx-resgridlib';
 import { HomeState } from '../store/home.store';
 import { HomeProvider } from '../providers/home';
@@ -95,6 +96,20 @@ export class HomeEffects {
     )
   );
 
+  getGroups$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType<homeAction.GetGroups>(homeAction.HomeActionTypes.GET_GROUPS),
+      switchMap((action) =>
+        from(this.groupsService.getallGroups()).pipe(
+          map((data) => ({
+            type: homeAction.HomeActionTypes.LOAD_WIDGET_LAYOUT_DONE,
+            groups: data.Data,
+          }))
+        )
+      )
+    )
+  );
+
   closeModal$ = createEffect(
     () =>
       this.actions$.pipe(
@@ -109,7 +124,8 @@ export class HomeEffects {
     private store: Store<HomeState>,
     private homeProvider: HomeProvider,
     private modalProvider: ModalProvider,
-    private storageProvider: StorageProvider
+    private storageProvider: StorageProvider,
+    private groupsService: GroupsService,
   ) {}
 
 }

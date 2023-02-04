@@ -1,6 +1,4 @@
 
-body.dark {
-
 /* Util */
 ::selection {
     background: var(--ion-color-primary);
@@ -18,6 +16,8 @@ body.dark {
     font-family: "Inter" !important;
     --ion-background-color: #141A1F;
     --ion-background-color-rgb: 20, 26, 31;
+    --ion-text-color: #ffffff;
+    --ion-text-color-rgb: 255, 255, 255;
   }
   
   ion-content {
@@ -922,4 +922,12 @@ body.dark {
   ion-avatar ion-skeleton-text {
     --border-radius: 50%;
   }
-}
+
+  .alert-radio-label {
+    color: var(--ion-text-color) !important;
+  }
+
+  input[type="text"], input[type="number"], textarea {
+    color: var(--ion-text-color);
+    background-color: var(--ion-color-step-450); 
+  }

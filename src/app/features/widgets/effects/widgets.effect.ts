@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 import { WidgetsState } from '../store/widgets.store';
 import { MenuController, ToastController } from '@ionic/angular';
 import { StorageProvider } from 'src/app/providers/storage';
-import { catchError, from, map, mergeMap, of, switchMap } from 'rxjs';
+import { catchError, forkJoin, from, map, mergeMap, of, switchMap } from 'rxjs';
 import { ModalProvider } from 'src/app/providers/modal';
 import {
   CallsService,
@@ -163,6 +163,34 @@ export class WidgetsEffects {
       )
     )
   );
+
+  loadAllWidgetSettings$ = createEffect(() =>
+		this.actions$.pipe(
+			ofType<widgetsAction.LoadAllWidgetSettings>(
+				widgetsAction.WidgetsActionTypes.LOAD_ALL_WIDGET_SETTINGS
+			),
+			switchMap((action) =>
+				forkJoin([
+					from(this.storageProvider.loadWeatherWidgetSettings()),
+					from(this.storageProvider.loadPersonnelWidgetSettings()),
+					from(this.storageProvider.loadCallWidgetSettings()),
+					from(this.storageProvider.loadUnitsWidgetSettings()),
+					from(this.storageProvider.loadNotesWidgetSettings()),
+          from(this.storageProvider.loadMapWidgetSettings()),
+				]).pipe(
+					map((result) => ({
+						type: widgetsAction.WidgetsActionTypes.LOAD_ALL_WIDGET_SETTINGS_DONE,
+						weatherWidgetSettings: result[0],
+						personnelWidgetSettings: result[1],
+						callsWidgetSettings: result[2],
+						unitsWidgetSettings: result[3],
+						notesWidgetSettings: result[4],
+            mapWidgetSettings: result[5],
+					}))
+				)
+			)
+		)
+	);
 
   done$ = createEffect(
     () =>

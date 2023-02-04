@@ -2,6 +2,10 @@ import { Action } from '@ngrx/store';
 import { PersonnelWidgetSettings } from 'src/app/models/personnelWidgetSettings';
 import { WeatherWidgetSettings } from 'src/app/models/weatherWidgetSettings';
 import { PersonnelInfoResultData, CallResultData, UnitInfoResultData, NoteResultData, MapDataAndMarkersData, GpsLocation } from "@resgrid/ngx-resgridlib";
+import { CallsWidgetSettings } from 'src/app/models/callsWidgetSettings';
+import { UnitsWidgetSettings } from 'src/app/models/unitsWidgetSettings';
+import { MapWidgetSettings } from 'src/app/models/mapWidgetSettings';
+import { NotesWidgetSettings } from 'src/app/models/notesWidgetSettings';
 
 export enum WidgetsActionTypes {
   GET_WEATHER_SETTTINGS = '[WIDGETS] GET_WEATHER_SETTTINGS',
@@ -26,6 +30,9 @@ export enum WidgetsActionTypes {
 
   GET_MAPDATA = '[WIDGETS] GET_MAPDATA',
   GET_MAPDATA_DONE = '[WIDGETS] GET_MAPDATA_DONE',
+
+  LOAD_ALL_WIDGET_SETTINGS = '[WIDGETS] LOAD_ALL_WIDGET_SETTINGS',
+  LOAD_ALL_WIDGET_SETTINGS_DONE = '[WIDGETS] LOAD_ALL_WIDGET_SETTINGS_DONE',
 
   DONE = '[WIDGETS] DONE',
 }
@@ -110,6 +117,18 @@ export class SetWeatherLocation implements Action {
   constructor(public location: GpsLocation) {}
 }
 
+export class LoadAllWidgetSettings implements Action {
+  readonly type = WidgetsActionTypes.LOAD_ALL_WIDGET_SETTINGS;
+  constructor() {}
+}
+
+export class LoadAllWidgetSettingsDone implements Action {
+  readonly type = WidgetsActionTypes.LOAD_ALL_WIDGET_SETTINGS_DONE;
+  constructor(public weatherWidgetSettings: WeatherWidgetSettings, public personnelWidgetSettings: PersonnelWidgetSettings, 
+    public callsWidgetSettings: CallsWidgetSettings, public unitsWidgetSettings: UnitsWidgetSettings, 
+    public notesWidgetSettings: NotesWidgetSettings, public mapWidgetSettings: MapWidgetSettings) {}
+}
+
 export class Done implements Action {
   readonly type = WidgetsActionTypes.DONE;
   constructor() {}
@@ -132,5 +151,7 @@ export type WidgetsActionsUnion =
   | GetMapData
   | GetMapDataDone
   | SetWeatherLocation
+  | LoadAllWidgetSettings
+  | LoadAllWidgetSettingsDone
   | Done
   ;

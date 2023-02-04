@@ -9,8 +9,13 @@ export interface HomeState {
 	status: string;
 	statusColor: string;
 
+    groups: GroupResultData[];
+
     // Dashboard
     widgets: Widget[];
+
+    // Configure
+    activeConfigureTab: string;
 }
 
 export const initialState: HomeState = {
@@ -19,4 +24,6 @@ export const initialState: HomeState = {
     status: "Connecting to Resgrid...",
     statusColor: "orange",
     widgets: [],
+    activeConfigureTab: "personnel",
+    groups: [],
 };

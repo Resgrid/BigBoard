@@ -71,6 +71,11 @@ export function reducer(
         ...state,
         widgets: action.widgets,
       };
+    case HomeActionTypes.GET_GROUPS_DONE:
+      return {
+        ...state,
+        groups: action.groups,
+      };
     default:
       return state;
   }

@@ -1,0 +1,498 @@
+<ion-content [fullscreen]="true" class="ion-padding-horizontal">
+  <ion-segment [(ngModel)]="tabType" scrollable="true">
+    <ion-segment-button value="personnel">
+      <ion-label>Personnel</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="map">
+      <ion-label>Map</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="weather">
+      <ion-label>Weather</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="units">
+      <ion-label>Units</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="calls">
+      <ion-label>Calls</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="notes">
+      <ion-label>Notes</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+  <div [ngSwitch]="tabType" style="overflow-y: auto;">
+    <div *ngSwitchCase="'personnel'" style="overflow-y: auto;">
+      <h6>Configure Personnel Widget</h6>
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <h3 class="name">Visible Columns</h3>
+          </ion-col>
+        </ion-row>
+        <ion-row wrap>
+          <ion-col>
+            <ion-item>
+              <ion-label>Group</ion-label>
+              <ion-toggle [(ngModel)]="personnelWidgetSettings.ShowGroup"></ion-toggle>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label>Staffing</ion-label>
+              <ion-toggle [(ngModel)]="personnelWidgetSettings.ShowStaffing"></ion-toggle>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label>Status</ion-label>
+              <ion-toggle [(ngModel)]="personnelWidgetSettings.ShowStatus"></ion-toggle>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label>Roles</ion-label>
+              <ion-toggle [(ngModel)]="personnelWidgetSettings.ShowRoles"></ion-toggle>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label>Timestamp</ion-label>
+              <ion-toggle [(ngModel)]="personnelWidgetSettings.ShowTimestamp"></ion-toggle>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <h3 class="name">Options</h3>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-item>
+              <ion-label>Sort Responding To Top</ion-label>
+              <ion-toggle [(ngModel)]="personnelWidgetSettings.SortRespondingToTop"></ion-toggle>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-input type="text" placeholder="Responding Text" [(ngModel)]="personnelWidgetSettings.RespondingText"></ion-input>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-item>
+              <ion-label>Hide Not Responding</ion-label>
+              <ion-toggle [(ngModel)]="personnelWidgetSettings.HideNotResponding"></ion-toggle>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-input type="text" placeholder="Not Responding Text" [(ngModel)]="personnelWidgetSettings.NotRespondingText"></ion-input>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-item>
+              <ion-label>Hide Unavailable</ion-label>
+              <ion-toggle [(ngModel)]="personnelWidgetSettings.HideUnavailable"></ion-toggle>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-input type="text" placeholder="Unavailable Text" [(ngModel)]="personnelWidgetSettings.UnavailableText"></ion-input>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-list-header>
+              Adjust Text Size
+            </ion-list-header>
+            <ion-item>
+              <ion-range min="4" step="1" max="30" snaps="true" [(ngModel)]="personnelWidgetSettings.FontSize">
+                <ion-label range-left class="small-text">a</ion-label>
+                <ion-label range-right>A</ion-label>
+              </ion-range>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <h3 class="name">Order Groups</h3>
+          </ion-col>
+        </ion-row>
+        <ion-row *ngFor="let group of (homeState$ | async)?.groups">
+          <ion-col>
+            <ion-item>
+              <ion-input type="number" [value]="getSortWeightForGroup(group.GroupId)" (change)="setSortWeightForGroup(group.GroupId, $event)"></ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              {{group.Name}}
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <h3 class="name">Hide Groups</h3>
+          </ion-col>
+        </ion-row>
+        <ion-row *ngFor="let group of (homeState$ | async)?.groups">
+          <ion-col>
+            <ion-item>
+              <ion-checkbox color="primary" [checked]="getIsHiddenForGroup(group.GroupId)" (ionChange)="setIsHiddenForGroup(group.GroupId, $event)"></ion-checkbox>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              {{group.Name}}
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col width-70>
+          </ion-col>
+          <ion-col width-30 style="text-align: right;">
+            <button ion-button color="success" (click)="savePersonnelWidgetSettings()" end>Save Personnel Widget Settings</button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+    <div *ngSwitchCase="'map'" style="overflow-y: auto;">
+      <h6>Configure Map Widget</h6>
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <h4 class="name">Options</h4>
+          </ion-col>
+        </ion-row>
+        <ion-row wrap>
+          <ion-col>
+            <ion-item>
+              <ion-label>Map Zoom Level</ion-label>
+              <ion-input type="number" [(ngModel)]="mapWidgetSettings.ZoomLevel"></ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label>Zoom Out To Show All Pins</ion-label>
+              <ion-toggle [(ngModel)]="mapWidgetSettings.ShowAllMarkers"></ion-toggle>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label>Show Call Pins</ion-label>
+              <ion-toggle [(ngModel)]="mapWidgetSettings.ShowCalls"></ion-toggle>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label>Show Linked Call Pins</ion-label>
+              <ion-toggle [(ngModel)]="mapWidgetSettings.ShowLinkedCalls"></ion-toggle>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label>Show Station Pins</ion-label>
+              <ion-toggle [(ngModel)]="mapWidgetSettings.ShowStations"></ion-toggle>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label>Show Unit Pins</ion-label>
+              <ion-toggle [(ngModel)]="mapWidgetSettings.ShowUnits"></ion-toggle>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label>Show Personnel Pins</ion-label>
+              <ion-toggle [(ngModel)]="mapWidgetSettings.ShowPersonnel"></ion-toggle>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-list-header>
+              Map Center Latitude
+            </ion-list-header>
+            <ion-item>
+               <ion-input type="number" [(ngModel)]="mapWidgetSettings.Latitude"></ion-input>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-list-header>
+               Map Center Longitude
+            </ion-list-header>
+            <ion-item>
+               <ion-input type="number" [(ngModel)]="mapWidgetSettings.Longitude"></ion-input>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col width-70>
+          </ion-col>
+          <ion-col width-30 style="text-align: right;">
+            <button ion-button color="success" (click)="saveMapWidgetSettings()" end>Save Map Widget Settings</button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+    <div *ngSwitchCase="'weather'" style="overflow-y: auto;">
+      <h6>Configure Weather Widget</h6>
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <h4 class="name">Options</h4>
+          </ion-col>
+        </ion-row>
+        <ion-row wrap>
+          <ion-col>
+            <ion-item>
+              <ion-label>Units</ion-label>
+              <ion-select [(ngModel)]="weatherWidgetSettings.Units">
+                <ion-select-option *ngFor="let unit of weatherUnits" [value]="unit">{{unit}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-list-header>
+              Latitude
+            </ion-list-header>
+            <ion-item>
+               <ion-input type="number" [(ngModel)]="weatherWidgetSettings.Latitude"></ion-input>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-list-header>
+              Longitude
+            </ion-list-header>
+            <ion-item>
+               <ion-input type="number" [(ngModel)]="weatherWidgetSettings.Longitude"></ion-input>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col width-70>
+          </ion-col>
+          <ion-col width-30 style="text-align: right;">
+            <button ion-button color="success" (click)="saveWeatherWidgetSettings()" end>Save Weather Widget Settings</button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+    <div *ngSwitchCase="'units'" style="overflow-y: auto;">
+      <h6>Configure Units Widget</h6>
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <h4 class="name">Visible Columns</h4>
+          </ion-col>
+        </ion-row>
+        <ion-row wrap>
+          <ion-col>
+            <ion-item>
+              <ion-label>Station</ion-label>
+              <ion-toggle [(ngModel)]="unitsWidgetSettings.ShowStation"></ion-toggle>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label>Type</ion-label>
+              <ion-toggle [(ngModel)]="unitsWidgetSettings.ShowType"></ion-toggle>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label>State</ion-label>
+              <ion-toggle [(ngModel)]="unitsWidgetSettings.ShowState"></ion-toggle>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label>Timestamp</ion-label>
+              <ion-toggle [(ngModel)]="unitsWidgetSettings.ShowTimestamp"></ion-toggle>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-list-header>
+              Adjust Text Size
+            </ion-list-header>
+            <ion-item>
+              <ion-range min="4" step="1" max="30" snaps="true" [(ngModel)]="unitsWidgetSettings.FontSize">
+                <ion-label range-left class="small-text">a</ion-label>
+                <ion-label range-right>A</ion-label>
+              </ion-range>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <h3 class="name">Order Groups</h3>
+          </ion-col>
+        </ion-row>
+        <ion-row *ngFor="let group of (homeState$ | async)?.groups">
+          <ion-col>
+            <ion-item>
+              <ion-input type="number" [value]="getGroupWidgetSortWeightForGroup(group.GroupId)" (change)="setGroupWidgetSortWeightForGroup(group.GroupId, $event)"></ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              {{group.Name}}
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <h3 class="name">Hide Groups</h3>
+          </ion-col>
+        </ion-row>
+        <ion-row *ngFor="let group of (homeState$ | async)?.groups">
+          <ion-col>
+            <ion-item>
+              <ion-checkbox color="primary" [checked]="getGroupWidgetIsHiddenForGroup(group.GroupId)" (ionChange)="setGroupWidgetIsHiddenForGroup(group.GroupId, $event)"></ion-checkbox>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              {{group.Name}}
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col width-70>
+          </ion-col>
+          <ion-col width-30 style="text-align: right;">
+            <button ion-button color="success" (click)="saveUnitWidgetSettings()" end>Save Unit Widget Settings</button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+    <div *ngSwitchCase="'calls'" style="overflow-y: auto;">
+      <h6>Configure Calls Widget</h6>
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <h4 class="name">Visible Columns</h4>
+          </ion-col>
+        </ion-row>
+        <ion-row wrap>
+          <ion-col>
+            <ion-item>
+              <ion-label>Id</ion-label>
+              <ion-toggle [(ngModel)]="callsWidgetSettings.ShowId"></ion-toggle>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label>Name</ion-label>
+              <ion-toggle [(ngModel)]="callsWidgetSettings.ShowName"></ion-toggle>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label>Timestamp</ion-label>
+              <ion-toggle [(ngModel)]="callsWidgetSettings.ShowTimestamp"></ion-toggle>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label>Logged By</ion-label>
+              <ion-toggle [(ngModel)]="callsWidgetSettings.ShowUser"></ion-toggle>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label>Priority</ion-label>
+              <ion-toggle [(ngModel)]="callsWidgetSettings.ShowPriority"></ion-toggle>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label>Address</ion-label>
+              <ion-toggle [(ngModel)]="callsWidgetSettings.ShowAddress"></ion-toggle>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <h4 class="name">Options</h4>
+          </ion-col>
+        </ion-row>
+        <ion-row wrap>
+          <ion-col>
+            <ion-item>
+              <ion-label>Show Linked Calls</ion-label>
+              <ion-toggle [(ngModel)]="callsWidgetSettings.ShowLinkedCalls"></ion-toggle>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-list-header>
+              Adjust Text Size
+            </ion-list-header>
+            <ion-item>
+              <ion-range min="4" step="1" max="30" snaps="true" [(ngModel)]="callsWidgetSettings.FontSize">
+                <ion-label range-left class="small-text">a</ion-label>
+                <ion-label range-right>A</ion-label>
+              </ion-range>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col width-70>
+          </ion-col>
+          <ion-col width-30 style="text-align: right;">
+            <button ion-button color="success" (click)="saveCallWidgetSettings()" end>Save Call Widget Settings</button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+    <div *ngSwitchCase="'notes'" style="overflow-y: auto;">
+      <h6>Configure Notes Widget</h6>
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <h4 class="name">Options</h4>
+          </ion-col>
+        </ion-row>
+        <ion-row wrap>
+          <ion-col>
+            <ion-item>
+              <ion-label>Note Category</ion-label>
+              <ion-select [(ngModel)]="notesWidgetSettings.Category">
+                <ion-select-option *ngFor="let category of noteCategories" [value]="category">{{category}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row wrap>
+          <ion-col>
+            <ion-item>
+              <ion-label>Include UnCategorized Notes</ion-label>
+              <ion-toggle [(ngModel)]="notesWidgetSettings.IncludeUnCategorized"></ion-toggle>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col width-70>
+          </ion-col>
+          <ion-col width-30 style="text-align: right;">
+            <button ion-button color="success" (click)="saveNoteWidgetSettings()" end>Save Note Widget Settings</button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+  </div>
+</ion-content>

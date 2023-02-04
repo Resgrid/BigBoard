@@ -191,7 +191,7 @@ export class DashboardPage {
         };
         this.store.dispatch(new HomeActions.AddWidget(personnelWdiget));
         break;
-      case 2: // Personnel
+      case 2: // Map
         const mapWdiget = {
           x: 0,
           y: 0,

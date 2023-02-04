@@ -6,7 +6,6 @@ import { SubSink } from 'subsink';
 import { Weather } from '../../models/weather';
 import { WeatherProvider } from '../../providers/weather';
 import { WidgetsState } from '../../store/widgets.store';
-import * as WidgetsActions from "../../actions/widgets.actions"; 
 import { selectWeatherWidgetLocationState } from 'src/app/store';
 
 @Component({
@@ -47,25 +46,14 @@ export class ForcastComponent implements OnInit, OnDestroy {
       this.weatherProvider.getForcast(this.location.Latitude, this.location.Longitude, this.units, this.lang).subscribe((data: Weather) => {
 
         if (data) {
-          const days = this.getNextEightDays();
-
           for (let i = 0; i < data.daily.length; i++) {
             const date = new Date(data.daily[i].dt * 1000);
-            data.daily[i].day_name = days[date.getDay()];
+            data.daily[i].day_name = date.toLocaleString('en-us', {  weekday: 'short' });
           }
 
           this.forcast = data;
         }
       });
     }
-  }
-
-  private getNextEightDays(): string[] {
-    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    const next7Days: string[] = [];
-    for (let i = 0; i < 8; i++) {
-      next7Days.push(days[new Date(Date.now() + (i + 1) * 24 * 60 * 60 * 1000).getDay()]);
-    }
-    return next7Days;
   }
 }
