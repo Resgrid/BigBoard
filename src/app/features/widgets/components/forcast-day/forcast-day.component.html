@@ -1,0 +1,12 @@
+<div class="forcast-item">
+  <h6>{{day.day_name}}</h6>
+    <app-widgets-weather-icon [code]="day.weather[0].id"></app-widgets-weather-icon>
+  <p>{{day.weather[0].main}}</p>
+  <span>
+    {{day.temp.max.toFixed(0)}}
+    <sup>&deg;</sup>
+    <small>/</small>
+    {{day.temp.min.toFixed(0)}}
+    <sup>&deg;</sup>
+  </span>
+</div>

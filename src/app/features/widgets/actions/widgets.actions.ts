@@ -1,13 +1,14 @@
 import { Action } from '@ngrx/store';
 import { PersonnelWidgetSettings } from 'src/app/models/personnelWidgetSettings';
 import { WeatherWidgetSettings } from 'src/app/models/weatherWidgetSettings';
-import { PersonnelInfoResultData, CallResultData, UnitInfoResultData, NoteResultData, MapDataAndMarkersData } from "@resgrid/ngx-resgridlib";
+import { PersonnelInfoResultData, CallResultData, UnitInfoResultData, NoteResultData, MapDataAndMarkersData, GpsLocation } from "@resgrid/ngx-resgridlib";
 
 export enum WidgetsActionTypes {
   GET_WEATHER_SETTTINGS = '[WIDGETS] GET_WEATHER_SETTTINGS',
   GET_WEATHER_SETTTINGS_DONE = '[WIDGETS] GET_WEATHER_SETTTINGS_DONE',
   SET_WEATHER_SETTINGS = '[WIDGETS] SET_WEATHER_SETTINGS',
   SET_WEATHER_SETTINGS_DONE = '[WIDGETS] SET_WEATHER_SETTINGS_DONE',
+  SET_WEATHER_LOCATION = '[WIDGETS] SET_WEATHER_LOCATION',
 
   GET_PERSONNEL_SETTINGS = '[WIDGETS] GET_PERSONNEL_SETTINGS',
   GET_PERSONNEL_SETTINGS_DONE = '[WIDGETS] GET_PERSONNEL_SETTINGS_DONE',
@@ -104,6 +105,11 @@ export class GetMapDataDone implements Action {
   constructor(public data: MapDataAndMarkersData) {}
 }
 
+export class SetWeatherLocation implements Action {
+  readonly type = WidgetsActionTypes.SET_WEATHER_LOCATION;
+  constructor(public location: GpsLocation) {}
+}
+
 export class Done implements Action {
   readonly type = WidgetsActionTypes.DONE;
   constructor() {}
@@ -125,5 +131,6 @@ export type WidgetsActionsUnion =
   | GetNotesDone
   | GetMapData
   | GetMapDataDone
+  | SetWeatherLocation
   | Done
   ;

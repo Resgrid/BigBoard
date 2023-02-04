@@ -1,4 +1,4 @@
-import { CallResultData, PersonnelInfoResultData, UnitResultData, UnitInfoResultData, NoteResultData, MapDataAndMarkersData } from "@resgrid/ngx-resgridlib";
+import { CallResultData, PersonnelInfoResultData, UnitResultData, UnitInfoResultData, NoteResultData, MapDataAndMarkersData, GpsLocation } from "@resgrid/ngx-resgridlib";
 import { CallsWidgetSettings } from "src/app/models/callsWidgetSettings";
 import { GroupSorting } from "src/app/models/groupSorting";
 import { MapWidgetSettings } from "src/app/models/mapWidgetSettings";
@@ -9,7 +9,9 @@ import { WeatherWidgetSettings } from "src/app/models/weatherWidgetSettings";
 
 
 export interface WidgetsState {
+    // Weather Widget
     weatherWidgetSettings: WeatherWidgetSettings | null;
+    location: GpsLocation | null;
 
     // Personnel Widget
     personnelWidgetSettings: PersonnelWidgetSettings | null;
@@ -48,4 +50,5 @@ export const initialState: WidgetsState = {
     notes: [],
     mapWidgetSettings: new MapWidgetSettings(),
     mapData: null,
+    location: null
 };

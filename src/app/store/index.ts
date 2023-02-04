@@ -88,3 +88,8 @@ export const selectMapWidgetDataState = createSelector(
   selectWidgetsState,
   widgetsReducers.getMapWidgetData
 );
+
+export const selectWeatherWidgetLocationState = createSelector(
+  selectWidgetsState,
+  widgetsReducers.getWeatherWidgetLocation
+);

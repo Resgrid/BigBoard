@@ -41,6 +41,11 @@ export function reducer(
         ...state,
         mapData: action.data,
       };
+    case WidgetsActionTypes.SET_WEATHER_LOCATION:
+      return {
+        ...state,
+        location: action.location,
+      };
     default:
       return state;
   }
@@ -58,5 +63,5 @@ export const getNotesWidgetSettings = (state: WidgetsState) =>
   state.notesWidgetSettings;
 export const getMapWidgetSettings = (state: WidgetsState) =>
   state.mapWidgetSettings;
-export const getMapWidgetData = (state: WidgetsState) =>
-  state.mapData;
+export const getMapWidgetData = (state: WidgetsState) => state.mapData;
+export const getWeatherWidgetLocation = (state: WidgetsState) => state.location;

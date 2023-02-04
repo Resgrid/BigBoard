@@ -207,8 +207,8 @@ export class DashboardPage {
         const weatherWdiget = {
           x: 0,
           y: 0,
-          w: 5,
-          h: 5,
+          w: 7,
+          h: 4,
           id: this.utilsService.generateUUID(),
           type: type,
           name: 'Weather',

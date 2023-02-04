@@ -1,11 +1,14 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable, take } from 'rxjs';
+import { map, Observable, take } from 'rxjs';
 import { WeatherWidgetSettings } from 'src/app/models/weatherWidgetSettings';
 import { selectWeatherWidgetSettingsState, selectWidgetsState } from 'src/app/store';
 import { SubSink } from 'subsink';
 import { WidgetsState } from '../../store/widgets.store';
 import { Geolocation } from '@capacitor/geolocation';
+import { environment } from 'src/environments/environment';
+import { GpsLocation } from '@resgrid/ngx-resgridlib';
+import * as WidgetsActions from "../../actions/widgets.actions"; 
 
 @Component({
   selector: 'app-widgets-weather',
@@ -25,12 +28,14 @@ export class WeatherWidgetComponent implements OnInit, OnDestroy {
   }
   
   ngOnInit(): void {
+    this.getLocation();
+
     this.subs.sink = this.widgetSettingsState$.subscribe((settings) => {
-      this.setWeather();
+      //this.setWeather();
     });
 
     this.intervalId = setInterval(() => {
-      this.setWeather();
+      //this.setWeather();
     }, 3600000);
   }
 
@@ -44,15 +49,15 @@ export class WeatherWidgetComponent implements OnInit, OnDestroy {
     }
   }
 
-  private setWeather() {
+  public getLocation() {
     this.widgetsState$.pipe(take(1)).subscribe((state) => {
       if (state && state.weatherWidgetSettings) {
         if (state.weatherWidgetSettings.Latitude != 0 && state.weatherWidgetSettings.Longitude != 0) {
-          this.source = "https://forecast.io/embed/#lat=" + state.weatherWidgetSettings.Latitude + "&lon=" + state.weatherWidgetSettings.Longitude + "&units=" + state.weatherWidgetSettings.Units + "&name="
+          this.store.dispatch(new WidgetsActions.SetWeatherLocation(new GpsLocation(state.weatherWidgetSettings.Latitude, state.weatherWidgetSettings.Longitude)));
         } else {
           Geolocation.getCurrentPosition().then((position) => {
             if (position && position.coords) {
-              this.source = "https://forecast.io/embed/#lat=" + position.coords.latitude + "&lon=" + position.coords.longitude + "&units=" + state.weatherWidgetSettings!.Units + "&name="
+              this.store.dispatch(new WidgetsActions.SetWeatherLocation(new GpsLocation(position.coords.latitude, position.coords.longitude)));
             }
           }, (err) => {
             console.log(err);
@@ -60,5 +65,13 @@ export class WeatherWidgetComponent implements OnInit, OnDestroy {
         }
       }
     });
+  }
+
+  public getUnits() {
+    return 'imperial';
+  }
+
+  public getLang() {
+    return 'en';
   }
 }

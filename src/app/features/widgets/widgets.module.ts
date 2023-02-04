@@ -19,6 +19,12 @@ import { PTTWidgetComponent } from './shared/ptt/ptt.component';
 import { UnitsWidgetComponent } from './shared/units/units.component';
 import { WeatherWidgetComponent } from './shared/weather/weather.component';
 import { PipesModule } from 'src/app/pipes/pipes.module';
+import { AngularSvgIconModule } from 'angular-svg-icon';
+import { WeatherIconComponent } from './components/weather-icon/weather-icon.component';
+import { TemperatureComponent } from './components/temperature/temperature.component';
+import { ForcastComponent } from './components/forcast/forcast.component';
+import { ForcastDayComponent } from './components/forcast-day/forcast-day.component';
+import { WeatherProvider } from './providers/weather';
 
 @NgModule({
     declarations: [
@@ -30,7 +36,11 @@ import { PipesModule } from 'src/app/pipes/pipes.module';
         PersonnelWidgetComponent,
         PTTWidgetComponent,
         UnitsWidgetComponent,
-        WeatherWidgetComponent
+        WeatherWidgetComponent,
+        WeatherIconComponent,
+        TemperatureComponent,
+        ForcastDayComponent,
+        ForcastComponent
     ],
     imports: [
         IonicModule,
@@ -41,9 +51,10 @@ import { PipesModule } from 'src/app/pipes/pipes.module';
         StoreModule.forFeature('widgetsModule', reducer),
         EffectsModule.forFeature([WidgetsEffects]),
         HammerModule,
-        PipesModule
+        PipesModule,
+        AngularSvgIconModule.forRoot()
     ],
-    providers: [],
+    providers: [WeatherProvider],
     exports: [
         CallsWidgetComponent,
         ClockWidgetComponent,
@@ -53,7 +64,11 @@ import { PipesModule } from 'src/app/pipes/pipes.module';
         PersonnelWidgetComponent,
         PTTWidgetComponent,
         UnitsWidgetComponent,
-        WeatherWidgetComponent
+        WeatherWidgetComponent,
+        WeatherIconComponent,
+        TemperatureComponent,
+        ForcastDayComponent,
+        ForcastComponent
     ]
 })
 export class WidgetsModule { }
