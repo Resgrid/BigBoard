@@ -4,6 +4,8 @@ import {
 	SQLiteConnection,
 	SQLiteDBConnection,
 } from '@capacitor-community/sqlite';
+import { Capacitor } from '@capacitor/core';
+import { defineCustomElements as jeepSqlite} from 'jeep-sqlite/loader';
 
 @Injectable({
 	providedIn: 'root',
@@ -22,16 +24,17 @@ export class CacheProvider {
 	public async initialize() {
 		console.log(`initializing the cache provider`);
 
+		const platform = Capacitor.getPlatform();
 		if (!this.isInitialized) {
-			if (this.isWeb) {
-				if (!document.querySelector(this.db_name)) {
-					const sqlitedb = document.createElement(this.db_name);
-					document.body.appendChild(sqlitedb);
-					await customElements.whenDefined(this.db_name);
-				}
+			if (platform === "web") {
+				jeepSqlite(window);
 
-				await this.sqlite.initWebStore();
-				this.isInitialized = true;
+				if (!document.querySelector("jeep-sqlite")) {
+					const jeepEl = document.createElement("jeep-sqlite");
+					document.body.appendChild(jeepEl);
+					await customElements.whenDefined('jeep-sqlite');
+					await this.sqlite.initWebStore();
+				}
 			}
 			
 			try {

@@ -65,7 +65,7 @@ export class MapWidgetComponent implements OnInit, OnDestroy {
 
   private processMapData(data: MapDataAndMarkersData) {
     if (data) {
-      if (!this.map) {
+      if (!this.map && this.mapContainer && this.mapContainer.nativeElement) {
         this.map = L.map(this.mapContainer.nativeElement, {
           dragging: false,
           doubleClickZoom: false,
