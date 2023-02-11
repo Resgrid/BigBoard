@@ -51,9 +51,9 @@ export class MapWidgetComponent implements OnInit, OnDestroy {
     });
 
     this.subs.sink = this.widgetLayoutState$.subscribe((widgets) => {
-		if (widgets && widgets.length > 0 && this.map) {
-			this.map.invalidateSize();
-		}
+      if (widgets && widgets.length > 0 && this.map) {
+        this.map.invalidateSize();
+      }
     });
   }
 
@@ -70,71 +70,74 @@ export class MapWidgetComponent implements OnInit, OnDestroy {
           dragging: false,
           doubleClickZoom: false,
           zoomControl: false,
-		  attributionControl: false
+          attributionControl: false,
         });
 
         L.tileLayer(
-          'https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=' + environment.mapTilerKey,
+          'https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=' +
+            environment.mapTilerKey,
           {
-            crossOrigin: true
+            crossOrigin: true,
           }
         ).addTo(this.map);
 
-		L.control.attribution({position: 'bottomleft'}).addTo(this.map);
+        L.control.attribution({ position: 'bottomleft' }).addTo(this.map);
       }
 
-      //this.mapProvider.setMarkersForMap(this.map);
+      if (this.map) {
+        this.map.setView([data.CenterLat, data.CenterLon], data.ZoomLevel);
 
-      //this.setMapBounds();
-
-      //if (this.map) {
-      this.map.setView([data.CenterLat, data.CenterLon], data.ZoomLevel);
-      //}
-
-      // clear map markers
-      if (this.markers && this.markers.length >= 0) {
-        for (var i = 0; i < this.markers.length; i++) {
-          if (this.markers[i]) {
-            this.map.removeLayer(this.markers[i]);
+        // clear map markers
+        if (this.markers && this.markers.length >= 0) {
+          for (var i = 0; i < this.markers.length; i++) {
+            if (this.markers[i]) {
+              this.map.removeLayer(this.markers[i]);
+            }
           }
+
+          this.markers = new Array<any>();
         }
 
-        this.markers = new Array<any>();
-      }
+        if (data.MapMakerInfos && data.MapMakerInfos.length > 0) {
+          if (data && data.MapMakerInfos) {
+            data.MapMakerInfos.forEach((markerInfo) => {
+              let marker = L.marker(
+                [markerInfo.Latitude, markerInfo.Longitude],
+                {
+                  icon: L.icon({
+                    iconUrl:
+                      'assets/images/mapping/' + markerInfo.ImagePath + '.png',
+                    iconSize: [32, 37],
+                    iconAnchor: [16, 37],
+                  }),
+                  draggable: false,
+                  title: markerInfo.Title,
+                  //tooltip: markerInfo.Title,
+                }
+              )
+                .bindTooltip(markerInfo.Title, {
+                  permanent: true,
+                  direction: 'bottom',
+                })
+                .addTo(this.map);
 
-      if (data.MapMakerInfos && data.MapMakerInfos.length > 0) {
-        if (data && data.MapMakerInfos) {
-          data.MapMakerInfos.forEach((markerInfo) => {
-            let marker = L.marker([markerInfo.Latitude, markerInfo.Longitude], {
-              icon: L.icon({
-                iconUrl:
-                  'assets/images/mapping/' + markerInfo.ImagePath + '.png',
-                iconSize: [32, 37],
-                iconAnchor: [16, 37],
-              }),
-              draggable: false,
-              title: markerInfo.Title,
-              //tooltip: markerInfo.Title,
-            })
-              .bindTooltip(markerInfo.Title, {
-                permanent: true,
-                direction: 'bottom',
-              })
-              .addTo(this.map);
+              this.markers.push(marker);
+            });
+          }
 
-            this.markers.push(marker);
-          });
+          var group = L.featureGroup(this.markers);
+          this.map.fitBounds(group.getBounds());
         }
-
-        var group = L.featureGroup(this.markers);
-        this.map.fitBounds(group.getBounds());
       }
 
       let that = this;
       setTimeout(function () {
         //window.dispatchEvent(new Event('resize'));
         //that.map.invalidateSize.bind(that.map)
-        that.map.invalidateSize();
+
+        if (that.map) {
+          that.map.invalidateSize();
+        }
       }, 500);
     }
   }

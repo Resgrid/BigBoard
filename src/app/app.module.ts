@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { BrowserModule, HammerModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
@@ -37,13 +37,14 @@ let getBaseUrl = (): string => {
   return environment.baseApiUrl;
 };
 
+const cacheProvider = new CacheProvider();
+
 @NgModule({
     declarations: [AppComponent],
     imports: [
         BrowserModule,
         CommonModule,
         HttpClientModule,
-        IonicStorageModule.forRoot(),
         NgxResgridLibModule.forRoot({
             baseApiUrl: getBaseUrl,
             apiVersion: 'v4',
@@ -54,7 +55,7 @@ let getBaseUrl = (): string => {
             realtimeGeolocationHubName: environment.realtimeGeolocationHubName,
             logLevel: environment.logLevel,
             isMobileApp: true,
-            cacheProvider: new CacheProvider()
+            cacheProvider: cacheProvider
         }),
         StoreModule.forRoot(reducers, { metaReducers }),
         EffectsModule.forRoot([]),
@@ -86,8 +87,10 @@ let getBaseUrl = (): string => {
         PipesModule
     ],
     providers: [
-        { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
+        { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+        { provide: CacheProvider, useValue: cacheProvider }
     ],
-    bootstrap: [AppComponent]
+    bootstrap: [AppComponent],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class AppModule {}

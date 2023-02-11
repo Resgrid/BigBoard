@@ -102,7 +102,7 @@ export class HomeEffects {
       switchMap((action) =>
         from(this.groupsService.getallGroups()).pipe(
           map((data) => ({
-            type: homeAction.HomeActionTypes.LOAD_WIDGET_LAYOUT_DONE,
+            type: homeAction.HomeActionTypes.GET_GROUPS_DONE,
             groups: data.Data,
           }))
         )
