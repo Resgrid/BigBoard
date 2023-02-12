@@ -46,6 +46,36 @@ export function reducer(
         ...state,
         location: action.location,
       };
+    case WidgetsActionTypes.SET_PERSONNEL_SETTINGS_DONE:
+      return {
+        ...state,
+        personnelWidgetSettings: action.settings,
+      };
+    case WidgetsActionTypes.SET_MAP_SETTINGS_DONE:
+      return {
+        ...state,
+        mapWidgetSettings: action.settings,
+      };
+    case WidgetsActionTypes.SET_WEATHER_SETTINGS_DONE:
+      return {
+        ...state,
+        weatherWidgetSettings: action.settings,
+      };
+    case WidgetsActionTypes.SET_UNITS_SETTINGS_DONE:
+      return {
+        ...state,
+        unitsWidgetSettings: action.settings,
+      };
+    case WidgetsActionTypes.SET_CALLS_SETTINGS_DONE:
+      return {
+        ...state,
+        callsWidgetSettings: action.settings,
+      };
+    case WidgetsActionTypes.SET_NOTES_SETTINGS_DONE:
+      return {
+        ...state,
+        notesWidgetSettings: action.settings,
+      };
     case WidgetsActionTypes.LOAD_ALL_WIDGET_SETTINGS_DONE:
       return {
         ...state,

@@ -1,3 +1,4 @@
+import { GroupSorting } from './groupSorting';
 import { SortModel } from './sortModel';
 
 export class UnitsWidgetSettings  {
@@ -7,6 +8,6 @@ export class UnitsWidgetSettings  {
     public ShowTimestamp: boolean = true;
     public ShowEta: boolean = false;
     public FontSize: number = 12;
-    public SortOrders: SortModel[];
-    public HideGroups: number[];
+    public SortOrders: GroupSorting[];
+    public HideGroups: string[];
 }

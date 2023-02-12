@@ -1,3 +1,4 @@
+import { GroupSorting } from './groupSorting';
 import { SortModel } from './sortModel';
 
 export class PersonnelWidgetSettings  {
@@ -14,6 +15,6 @@ export class PersonnelWidgetSettings  {
     public NotRespondingText: string = "";
     public UnavailableText: string = "";
     public FontSize: number = 12;
-    public SortOrders: SortModel[];
-    public HideGroups: number[];
+    public SortOrders: GroupSorting[] = [];
+    public HideGroups: string[] = [];
 }

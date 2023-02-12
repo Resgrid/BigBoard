@@ -26,6 +26,7 @@ import { WeatherWidgetSettings } from 'src/app/models/weatherWidgetSettings';
 import { UnitsWidgetSettings } from 'src/app/models/unitsWidgetSettings';
 import { CallsWidgetSettings } from 'src/app/models/callsWidgetSettings';
 import { NotesWidgetSettings } from 'src/app/models/notesWidgetSettings';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-home-configure',
@@ -38,10 +39,7 @@ export class ConfigurePage implements OnInit {
   private subs = new SubSink();
   public tabType: string = 'personnel';
 
-  public personnelWidgetSettings: PersonnelWidgetSettings =
-    new PersonnelWidgetSettings();
-  public personnelWidgetGroupSorts: GroupSorting[] = new Array<GroupSorting>();
-  public personnelWidgetGroupHides: string[] = new Array<string>();
+  public personnelWidgetSettings: PersonnelWidgetSettings = new PersonnelWidgetSettings();
 
   public mapWidgetSettings: MapWidgetSettings = new MapWidgetSettings();
 
@@ -49,8 +47,6 @@ export class ConfigurePage implements OnInit {
   public weatherUnits: string[];
 
   public unitsWidgetSettings: UnitsWidgetSettings = new UnitsWidgetSettings();
-  public unitsWidgetGroupSorts: GroupSorting[] = new Array<GroupSorting>();
-  public unitsWidgetGroupHides: string[] = new Array<string>();
 
   public callsWidgetSettings: CallsWidgetSettings = new CallsWidgetSettings();
 
@@ -78,7 +74,35 @@ export class ConfigurePage implements OnInit {
     this.subs.sink = this.widgetsState$.subscribe((widgetSettings) => {
       if (widgetSettings) {
         if (widgetSettings.personnelWidgetSettings) {
-          this.personnelWidgetSettings = widgetSettings.personnelWidgetSettings;
+          this.personnelWidgetSettings = _.cloneDeep(widgetSettings.personnelWidgetSettings);
+
+          if (this.personnelWidgetSettings.SortOrders == null) {
+            this.personnelWidgetSettings.SortOrders = new Array<GroupSorting>();
+          }
+
+          if (this.personnelWidgetSettings.HideGroups == null) {
+            this.personnelWidgetSettings.HideGroups = new Array<string>();
+          }
+        }
+
+        if (widgetSettings.mapWidgetSettings) {
+          this.mapWidgetSettings = _.cloneDeep(widgetSettings.mapWidgetSettings);
+        }
+
+        if (widgetSettings.weatherWidgetSettings) {
+          this.weatherWidgetSettings = _.cloneDeep(widgetSettings.weatherWidgetSettings);
+        }
+
+        if (widgetSettings.unitsWidgetSettings) {
+          this.unitsWidgetSettings = _.cloneDeep(widgetSettings.unitsWidgetSettings);
+        }
+
+        if (widgetSettings.callsWidgetSettings) {
+          this.callsWidgetSettings = _.cloneDeep(widgetSettings.callsWidgetSettings);
+        }
+
+        if (widgetSettings.notesWidgetSettings) {
+          this.notesWidgetSettings = _.cloneDeep(widgetSettings.notesWidgetSettings);
         }
       }
     });
@@ -96,9 +120,11 @@ export class ConfigurePage implements OnInit {
   }
 
   public getSortWeightForGroup(groupId: string): number {
-    for (let group of this.personnelWidgetGroupSorts) {
-      if (group.GroupId == groupId) {
-        return group.Weight;
+    if (this.personnelWidgetSettings && this.personnelWidgetSettings.SortOrders) {
+      for (let group of this.personnelWidgetSettings.SortOrders) {
+        if (group.GroupId == groupId) {
+          return group.Weight;
+        }
       }
     }
 
@@ -108,7 +134,7 @@ export class ConfigurePage implements OnInit {
   public setSortWeightForGroup(groupId: string, event: any): void {
     let groupSort: GroupSorting;
 
-    for (let group of this.personnelWidgetGroupSorts) {
+    for (let group of this.personnelWidgetSettings.SortOrders) {
       if (group.GroupId == groupId) {
         group.Weight = event.target.value;
         groupSort = group;
@@ -121,13 +147,15 @@ export class ConfigurePage implements OnInit {
     groupSort.GroupId = groupId;
     groupSort.Weight = event.target.value;
 
-    this.personnelWidgetGroupSorts.push(groupSort);
+    this.personnelWidgetSettings.SortOrders.push(groupSort);
   }
 
   public getIsHiddenForGroup(groupId: string): boolean {
-    for (let group of this.personnelWidgetGroupHides) {
-      if (group == groupId) {
-        return true;
+    if (this.personnelWidgetSettings && this.personnelWidgetSettings.HideGroups) {
+      for (let group of this.personnelWidgetSettings.HideGroups) {
+        if (group == groupId) {
+          return true;
+        }
       }
     }
 
@@ -136,17 +164,17 @@ export class ConfigurePage implements OnInit {
 
   public setIsHiddenForGroup(groupId: string, event: any): void {
     let isHidden: boolean = event.checked;
-    let index = this.personnelWidgetGroupHides.indexOf(groupId, 0);
+    let index = this.personnelWidgetSettings.HideGroups.indexOf(groupId, 0);
 
     if (isHidden && index <= -1) {
-      this.personnelWidgetGroupHides.push(groupId);
+      this.personnelWidgetSettings.HideGroups.push(groupId);
     } else if (!isHidden && index > -1) {
-      this.personnelWidgetGroupHides.splice(index, 1);
+      this.personnelWidgetSettings.HideGroups.splice(index, 1);
     }
   }
 
   public getGroupWidgetSortWeightForGroup(groupId: string): number {
-    for (let group of this.unitsWidgetGroupSorts) {
+    for (let group of this.unitsWidgetSettings.SortOrders) {
       if (group.GroupId == groupId) {
         return group.Weight;
       }
@@ -158,7 +186,7 @@ export class ConfigurePage implements OnInit {
   public setGroupWidgetSortWeightForGroup(groupId: string, event: any): void {
     let groupSort: GroupSorting;
 
-    for (let group of this.unitsWidgetGroupSorts) {
+    for (let group of this.unitsWidgetSettings.SortOrders) {
       if (group.GroupId == groupId) {
         group.Weight = event.target.value;
         groupSort = group;
@@ -171,13 +199,15 @@ export class ConfigurePage implements OnInit {
     groupSort.GroupId = groupId;
     groupSort.Weight = event.target.value;
 
-    this.unitsWidgetGroupSorts.push(groupSort);
+    this.unitsWidgetSettings.SortOrders.push(groupSort);
   }
 
   public getGroupWidgetIsHiddenForGroup(groupId: string): boolean {
-    for (let group of this.unitsWidgetGroupHides) {
-      if (group == groupId) {
-        return true;
+    if (this.unitsWidgetSettings && this.unitsWidgetSettings.HideGroups) {
+      for (let group of this.unitsWidgetSettings.HideGroups) {
+        if (group == groupId) {
+          return true;
+        }
       }
     }
 
@@ -186,24 +216,36 @@ export class ConfigurePage implements OnInit {
 
   public setGroupWidgetIsHiddenForGroup(groupId: string, event: any): void {
     let isHidden: boolean = event.checked;
-    let index = this.unitsWidgetGroupHides.indexOf(groupId, 0);
+    let index = this.unitsWidgetSettings.HideGroups.indexOf(groupId, 0);
 
     if (isHidden && index <= -1) {
-      this.unitsWidgetGroupHides.push(groupId);
+      this.unitsWidgetSettings.HideGroups.push(groupId);
     } else if (!isHidden && index > -1) {
-      this.unitsWidgetGroupHides.splice(index, 1);
+      this.unitsWidgetSettings.HideGroups.splice(index, 1);
     }
   }
 
-  public savePersonnelWidgetSettings() {}
+  public savePersonnelWidgetSettings() {
+    this.widgetsStore.dispatch(new WidgetActions.SetPersonnelSettings(this.personnelWidgetSettings));
+  }
 
-  public saveMapWidgetSettings() {}
+  public saveMapWidgetSettings() {
+    this.widgetsStore.dispatch(new WidgetActions.SetMapSettings(this.mapWidgetSettings));
+  }
 
-  public saveWeatherWidgetSettings() {}
+  public saveWeatherWidgetSettings() {
+    this.widgetsStore.dispatch(new WidgetActions.SetWeatherSettings(this.weatherWidgetSettings));
+  }
 
-  public saveUnitWidgetSettings() {}
+  public saveUnitWidgetSettings() {
+    this.widgetsStore.dispatch(new WidgetActions.SetUnitSettings(this.unitsWidgetSettings));
+  }
 
-  public saveCallWidgetSettings() {}
+  public saveCallWidgetSettings() {
+    this.widgetsStore.dispatch(new WidgetActions.SetCallsSettings(this.callsWidgetSettings));
+  }
 
-  public saveNoteWidgetSettings() {}
+  public saveNoteWidgetSettings() {
+    this.widgetsStore.dispatch(new WidgetActions.SetNotesSettings(this.notesWidgetSettings));
+  }
 }

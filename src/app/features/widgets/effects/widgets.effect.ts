@@ -29,18 +29,95 @@ export class WidgetsEffects {
       map((data) => {
         return {
           type: widgetsAction.WidgetsActionTypes.SET_WEATHER_SETTINGS_DONE,
+          settings: data
         };
       })
     )
   );
 
-  setWeatherSettingsDone$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(widgetsAction.WidgetsActionTypes.SET_WEATHER_SETTINGS_DONE),
-        switchMap((action) => this.modalProvider.closeModal(null))
+  setPersonnelSettings$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType<widgetsAction.SetPersonnelSettings>(
+        widgetsAction.WidgetsActionTypes.SET_PERSONNEL_SETTINGS
       ),
-    { dispatch: false }
+      switchMap((action) =>
+        this.storageProvider.savePersonnelWidgetSettings(action.settings)
+      ),
+      map((data) => {
+        return {
+          type: widgetsAction.WidgetsActionTypes.SET_PERSONNEL_SETTINGS_DONE,
+          settings: data
+        };
+      })
+    )
+  );
+
+  setUnitSettings$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType<widgetsAction.SetUnitSettings>(
+        widgetsAction.WidgetsActionTypes.SET_UNITS_SETTINGS
+      ),
+      switchMap((action) =>
+        this.storageProvider.saveUnitsWidgetSettings(action.settings)
+      ),
+      map((data) => {
+        return {
+          type: widgetsAction.WidgetsActionTypes.SET_UNITS_SETTINGS_DONE,
+          settings: data
+        };
+      })
+    )
+  );
+
+  setCallsSettings$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType<widgetsAction.SetCallsSettings>(
+        widgetsAction.WidgetsActionTypes.SET_CALLS_SETTINGS
+      ),
+      switchMap((action) =>
+        this.storageProvider.saveCallWidgetSettings(action.settings)
+      ),
+      map((data) => {
+        return {
+          type: widgetsAction.WidgetsActionTypes.SET_CALLS_SETTINGS_DONE,
+          settings: data
+        };
+      })
+    )
+  );
+
+  setNotesSettings$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType<widgetsAction.SetNotesSettings>(
+        widgetsAction.WidgetsActionTypes.SET_NOTES_SETTINGS
+      ),
+      switchMap((action) =>
+        this.storageProvider.saveNotesWidgetSettings(action.settings)
+      ),
+      map((data) => {
+        return {
+          type: widgetsAction.WidgetsActionTypes.SET_NOTES_SETTINGS_DONE,
+          settings: data
+        };
+      })
+    )
+  );
+
+  setMapSettings$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType<widgetsAction.SetMapSettings>(
+        widgetsAction.WidgetsActionTypes.SET_MAP_SETTINGS
+      ),
+      switchMap((action) =>
+        this.storageProvider.saveMapWidgetSettings(action.settings)
+      ),
+      map((data) => {
+        return {
+          type: widgetsAction.WidgetsActionTypes.SET_MAP_SETTINGS_DONE,
+          settings: data
+        };
+      })
+    )
   );
 
   getWeatherSettings$ = createEffect(() =>

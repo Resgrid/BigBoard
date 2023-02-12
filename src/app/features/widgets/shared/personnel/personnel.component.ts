@@ -39,9 +39,9 @@ export class PersonnelWidgetComponent implements OnInit, OnDestroy {
     return this.widgetsState$.pipe(take(1)).pipe(map(state => 
       {
         if (state) {
-          let index = state.personnelWidgetGroupHides.indexOf(parseInt(status.GroupId), 0);
+          let index = state.personnelWidgetSettings.HideGroups?.indexOf(status.GroupId, 0);
   
-          if (index > -1) {
+          if (index && index > -1) {
             return true;
           }
   

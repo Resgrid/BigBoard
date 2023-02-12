@@ -151,19 +151,34 @@ export class StorageProvider {
   }
 
   public async saveCallWidgetSettings(callWidgetSettings: CallsWidgetSettings): Promise<CallsWidgetSettings> {
-    return await this.set('RGBBcallWidgetSettings', JSON.stringify(callWidgetSettings));
+    await this.set('RGBBcallWidgetSettings', JSON.stringify(callWidgetSettings));
+    return callWidgetSettings;
   }
 
-  public async loadCallWidgetSettings(): Promise<CallsWidgetSettings> {
-    return await this.get("RGBBcallWidgetSettings");
+  public async loadCallWidgetSettings(): Promise<CallsWidgetSettings | null> {
+    const result = await this.get("RGBBcallWidgetSettings");
+
+    if (result) {
+      return JSON.parse(result);
+    }
+
+    return null;
   }
 
   public async savePersonnelWidgetSettings(personnelWidgetSettings: PersonnelWidgetSettings): Promise<PersonnelWidgetSettings> {
-    return await this.set('RGBBpersonnelWidgetSettings', JSON.stringify(personnelWidgetSettings));
+    await this.set('RGBBpersonnelWidgetSettings', JSON.stringify(personnelWidgetSettings));
+
+    return personnelWidgetSettings;
   }
 
-  public async loadPersonnelWidgetSettings(): Promise<PersonnelWidgetSettings> {
-    return await this.get("RGBBpersonnelWidgetSettings");
+  public async loadPersonnelWidgetSettings(): Promise<PersonnelWidgetSettings | null> {
+    const result = await this.get("RGBBpersonnelWidgetSettings");
+
+    if (result) {
+      return JSON.parse(result);
+    }
+
+    return null;
   }
 
   public async saveUnitsWidgetSettings(unitsWidgetSettings: UnitsWidgetSettings): Promise<UnitsWidgetSettings> {
@@ -191,11 +206,18 @@ export class StorageProvider {
   }
 
   public async saveWeatherWidgetSettings(weatherWidgetSettings: WeatherWidgetSettings): Promise<WeatherWidgetSettings> {
-    return await this.set('RGBBweatherWidgetSettings', JSON.stringify(weatherWidgetSettings));
+    await this.set('RGBBweatherWidgetSettings', JSON.stringify(weatherWidgetSettings));
+    return weatherWidgetSettings;
   }
 
-  public async loadWeatherWidgetSettings(): Promise<WeatherWidgetSettings> {
-    return await this.get("RGBBweatherWidgetSettings");
+  public async loadWeatherWidgetSettings(): Promise<WeatherWidgetSettings | null> {
+    const result = await this.get("RGBBweatherWidgetSettings");
+
+    if (result) {
+      return JSON.parse(result);
+    }
+
+    return null;
   }
 
   public async saveNotesWidgetSettings(notesWidgetSettings: NotesWidgetSettings): Promise<NotesWidgetSettings> {
@@ -207,10 +229,17 @@ export class StorageProvider {
   }
 
   public async saveMapWidgetSettings(mapWidgetSettings: MapWidgetSettings): Promise<MapWidgetSettings> {
-    return await this.set('RGBBmapWidgetSettings', JSON.stringify(mapWidgetSettings));
+    await this.set('RGBBmapWidgetSettings', JSON.stringify(mapWidgetSettings));
+    return mapWidgetSettings;
   }
 
-  public async loadMapWidgetSettings(): Promise<MapWidgetSettings> {
-    return await this.get("RGBBmapWidgetSettings");
+  public async loadMapWidgetSettings(): Promise<MapWidgetSettings | null> {
+    const result = await this.get("RGBBmapWidgetSettings");
+
+    if (result) {
+      return JSON.parse(result);
+    }
+
+    return null;
   }
 }

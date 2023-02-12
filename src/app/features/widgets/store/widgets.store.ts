@@ -10,37 +10,37 @@ import { WeatherWidgetSettings } from "src/app/models/weatherWidgetSettings";
 
 export interface WidgetsState {
     // Weather Widget
-    weatherWidgetSettings: WeatherWidgetSettings | null;
+    weatherWidgetSettings: WeatherWidgetSettings;
     location: GpsLocation | null;
 
     // Personnel Widget
-    personnelWidgetSettings: PersonnelWidgetSettings | null;
-    personnelWidgetGroupHides: Array<number>;
-    personnelWidgetGroupWeights: Array<GroupSorting>;
+    personnelWidgetSettings: PersonnelWidgetSettings;
+    //personnelWidgetGroupHides: Array<number>;
+    //personnelWidgetGroupWeights: Array<GroupSorting>;
     personnel: PersonnelInfoResultData[]
 
     // Calls Widget
-    callsWidgetSettings: CallsWidgetSettings | null;
+    callsWidgetSettings: CallsWidgetSettings;
     calls: CallResultData[];
 
     // Units Widget
-    unitsWidgetSettings: UnitsWidgetSettings | null;
+    unitsWidgetSettings: UnitsWidgetSettings;
     units: UnitInfoResultData[];
 
     // Notes Widget
-    notesWidgetSettings: NotesWidgetSettings | null;
+    notesWidgetSettings: NotesWidgetSettings;
     notes: NoteResultData[];
 
     // Map Widget
-    mapWidgetSettings: MapWidgetSettings | null;
+    mapWidgetSettings: MapWidgetSettings;
     mapData: MapDataAndMarkersData | null;
 }
 
 export const initialState: WidgetsState = {
     weatherWidgetSettings: new WeatherWidgetSettings(),
     personnelWidgetSettings: new PersonnelWidgetSettings(),
-    personnelWidgetGroupHides: [],
-    personnelWidgetGroupWeights: [],
+    //personnelWidgetGroupHides: [],
+    //personnelWidgetGroupWeights: [],
     personnel: [],
     callsWidgetSettings: new CallsWidgetSettings(),
     calls: [],
