@@ -33,6 +33,8 @@ import { SleepProvider } from 'src/app/providers/sleep';
 import { ModalConfirmLogoutPage } from '../modals/confirmLogout/modal-confirmLogout.page';
 import { ModalAboutPage } from '../modals/about/modal-about.page';
 import * as Sentry from "@sentry/angular";
+import * as WidgetActions from '../../widgets/actions/widgets.actions';
+
 @Injectable()
 export class SettingsEffects {
   private _modalRef: HTMLIonModalElement | null;
@@ -203,6 +205,9 @@ export class SettingsEffects {
         ofType(settingsAction.SettingActionTypes.SET_LOGINDATA_NAV_HOME),
         tap(() => {
           this.authProvider.startTrackingRefreshToken();
+        }),
+        tap(() => {
+          this.store.dispatch(new WidgetActions.LoadAllWidgetSettings());
         }),
         switchMap(() => this.loadingProvider.hide()),
         switchMap(() => this.closeModal()),
