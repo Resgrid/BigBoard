@@ -5,6 +5,12 @@ import {
 } from '../actions/widgets.actions';
 
 import * as _ from 'lodash';
+import { CallsWidgetSettings } from 'src/app/models/callsWidgetSettings';
+import { NotesWidgetSettings } from 'src/app/models/notesWidgetSettings';
+import { UnitsWidgetSettings } from 'src/app/models/unitsWidgetSettings';
+import { WeatherWidgetSettings } from 'src/app/models/weatherWidgetSettings';
+import { MapWidgetSettings } from 'src/app/models/mapWidgetSettings';
+import { PersonnelWidgetSettings } from 'src/app/models/personnelWidgetSettings';
 
 export function reducer(
   state: WidgetsState = initialState,
@@ -47,44 +53,135 @@ export function reducer(
         location: action.location,
       };
     case WidgetsActionTypes.SET_PERSONNEL_SETTINGS_DONE:
+      let personnelWidgetSettings: PersonnelWidgetSettings;
+
+      if (action.settings) {
+        personnelWidgetSettings = action.settings;
+      } else {
+        personnelWidgetSettings = new PersonnelWidgetSettings();
+      }
+
       return {
         ...state,
-        personnelWidgetSettings: action.settings,
+        personnelWidgetSettings: personnelWidgetSettings,
       };
     case WidgetsActionTypes.SET_MAP_SETTINGS_DONE:
+      let mapWidgetSettings: MapWidgetSettings;
+
+      if (action.settings) {
+        mapWidgetSettings = action.settings;
+      } else {
+        mapWidgetSettings = new MapWidgetSettings();
+      }
+
       return {
         ...state,
-        mapWidgetSettings: action.settings,
+        mapWidgetSettings: mapWidgetSettings,
       };
     case WidgetsActionTypes.SET_WEATHER_SETTINGS_DONE:
+      let weatherWidgetSettings: WeatherWidgetSettings;
+
+      if (action.settings) {
+        weatherWidgetSettings = action.settings;
+      } else {
+        weatherWidgetSettings = new WeatherWidgetSettings();
+      }
+
       return {
         ...state,
-        weatherWidgetSettings: action.settings,
+        weatherWidgetSettings: weatherWidgetSettings,
       };
     case WidgetsActionTypes.SET_UNITS_SETTINGS_DONE:
+      let unitWidgetSettings: UnitsWidgetSettings;
+
+      if (action.settings) {
+        unitWidgetSettings = action.settings;
+      } else {
+        unitWidgetSettings = new UnitsWidgetSettings();
+      }
+
       return {
         ...state,
-        unitsWidgetSettings: action.settings,
+        unitsWidgetSettings: unitWidgetSettings,
       };
     case WidgetsActionTypes.SET_CALLS_SETTINGS_DONE:
+      let callWidgetSettings: CallsWidgetSettings;
+
+      if (action.settings) {
+        callWidgetSettings = action.settings;
+      } else {
+        callWidgetSettings = new CallsWidgetSettings();
+      }
+
       return {
         ...state,
-        callsWidgetSettings: action.settings,
+        callsWidgetSettings: callWidgetSettings,
       };
     case WidgetsActionTypes.SET_NOTES_SETTINGS_DONE:
+      let noteWidgetSettings: NotesWidgetSettings;
+
+      if (action.settings) {
+        noteWidgetSettings = action.settings;
+      } else {
+        noteWidgetSettings = new NotesWidgetSettings();
+      }
+
       return {
         ...state,
-        notesWidgetSettings: action.settings,
+        notesWidgetSettings: noteWidgetSettings,
       };
     case WidgetsActionTypes.LOAD_ALL_WIDGET_SETTINGS_DONE:
+      let weatherWidgetSettingsAll: WeatherWidgetSettings;
+      let personnelWidgetSettingsAll: PersonnelWidgetSettings;
+      let callsWidgetSettingsAll: CallsWidgetSettings;
+      let unitsWidgetSettingsAll: UnitsWidgetSettings;
+      let notesWidgetSettingsAll: NotesWidgetSettings;
+      let mapWidgetSettingsAll: MapWidgetSettings;
+
+      if (action.weatherWidgetSettings) {
+        weatherWidgetSettingsAll = action.weatherWidgetSettings;
+      } else {
+        weatherWidgetSettingsAll = new WeatherWidgetSettings();
+      }
+
+      if (action.personnelWidgetSettings) {
+        personnelWidgetSettingsAll = action.personnelWidgetSettings;
+      } else {
+        personnelWidgetSettingsAll = new PersonnelWidgetSettings();
+      }
+
+      if (action.callsWidgetSettings) {
+        callsWidgetSettingsAll = action.callsWidgetSettings;
+      } else {
+        callsWidgetSettingsAll = new CallsWidgetSettings();
+      }
+
+      if (action.unitsWidgetSettings) {
+        unitsWidgetSettingsAll = action.unitsWidgetSettings;
+      } else {
+        unitsWidgetSettingsAll = new UnitsWidgetSettings();
+      }
+
+      if (action.notesWidgetSettings) {
+        notesWidgetSettingsAll = action.notesWidgetSettings;
+      } else {
+        notesWidgetSettingsAll = new NotesWidgetSettings();
+      }
+
+      if (action.mapWidgetSettings) {
+        mapWidgetSettingsAll = action.mapWidgetSettings;
+      } else {
+        mapWidgetSettingsAll = new MapWidgetSettings();
+      }
+
       return {
         ...state,
-        weatherWidgetSettings: action.weatherWidgetSettings,
-        personnelWidgetSettings: action.personnelWidgetSettings,
-        callsWidgetSettings: action.callsWidgetSettings,
-        unitsWidgetSettings: action.unitsWidgetSettings,
-        notesWidgetSettings: action.notesWidgetSettings,
-        mapWidgetSettings: action.mapWidgetSettings,
+        weatherWidgetSettings: weatherWidgetSettingsAll,
+        personnelWidgetSettings: personnelWidgetSettingsAll,
+        callsWidgetSettings: callsWidgetSettingsAll,
+        unitsWidgetSettings: unitsWidgetSettingsAll,
+        notesWidgetSettings: notesWidgetSettingsAll,
+        mapWidgetSettings: mapWidgetSettingsAll,
       };
     default:
       return state;

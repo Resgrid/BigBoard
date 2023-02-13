@@ -174,9 +174,11 @@ export class ConfigurePage implements OnInit {
   }
 
   public getGroupWidgetSortWeightForGroup(groupId: string): number {
-    for (let group of this.unitsWidgetSettings.SortOrders) {
-      if (group.GroupId == groupId) {
-        return group.Weight;
+    if (this.unitsWidgetSettings && this.unitsWidgetSettings.SortOrders) {
+      for (let group of this.unitsWidgetSettings.SortOrders) {
+        if (group.GroupId == groupId) {
+          return group.Weight;
+        }
       }
     }
 
