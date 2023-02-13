@@ -1,3 +1,4 @@
+import { GetConfigResultData } from "@resgrid/ngx-resgridlib";
 import { HeadsetType } from "src/app/models/headsetType";
 import { UserInfo } from "src/app/models/userInfo";
 
@@ -9,6 +10,7 @@ export interface SettingsState {
     perferDarkMode: boolean;
     keepAlive: boolean;
     isAppActive: boolean;
+    appSettings: GetConfigResultData;
 }
 
 export const initialState: SettingsState = {
@@ -19,4 +21,5 @@ export const initialState: SettingsState = {
     perferDarkMode: false,
     keepAlive: false,
     isAppActive: true,
+    appSettings: new GetConfigResultData()
 };

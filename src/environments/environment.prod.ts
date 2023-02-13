@@ -15,4 +15,5 @@ export const environment = {
   googleMapsKey: 'GOOGLEMAPKEY',
   loggingKey: 'LOGGINGKEY',
   weatherApiKey: 'WEATHERKEY',
+  apiSettingsConfigKey: 'APISETTINGSKEY',
 };

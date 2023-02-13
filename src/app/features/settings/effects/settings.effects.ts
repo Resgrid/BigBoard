@@ -34,6 +34,8 @@ import { ModalConfirmLogoutPage } from '../modals/confirmLogout/modal-confirmLog
 import { ModalAboutPage } from '../modals/about/modal-about.page';
 import * as Sentry from "@sentry/angular";
 import * as WidgetActions from '../../widgets/actions/widgets.actions';
+import { ConfigService } from '@resgrid/ngx-resgridlib';
+import { environment } from 'src/environments/environment';
 
 @Injectable()
 export class SettingsEffects {
@@ -153,18 +155,18 @@ export class SettingsEffects {
         ]).pipe(
           map((data) => {
             try {
-              if (
-                data &&
+              if (data &&
                 data[0] &&
                 data[0].loginData &&
-                data[0].loginData.Rights
-              ) {
-                Sentry.setUser({ 
-                  username: data[0].loginData.sub, 
-                  email: data[0].loginData.Rights.EmailAddress,
-                  name: data[0].loginData.Rights.FullName,
-                  departmentId: data[0].loginData.Rights.DepartmentId,
-                  departmentName: data[0].loginData.Rights.DepartmentName });
+                data[0].loginData.Rights) {
+                  try {
+                    Sentry.setUser({ 
+                      username: data[0].loginData.sub, 
+                      email: data[0].loginData.Rights.EmailAddress,
+                      name: data[0].loginData.Rights.FullName,
+                      departmentId: data[0].loginData.Rights.DepartmentId,
+                      departmentName: data[0].loginData.Rights.DepartmentName });
+                  } catch {}
 
                 return {
                   type: settingsAction.SettingActionTypes
@@ -208,6 +210,9 @@ export class SettingsEffects {
         }),
         tap(() => {
           this.store.dispatch(new WidgetActions.LoadAllWidgetSettings());
+        }),
+        tap(() => {
+          this.store.dispatch(new settingsAction.GetAppSettingsFromServer());
         }),
         switchMap(() => this.loadingProvider.hide()),
         switchMap(() => this.closeModal()),
@@ -379,6 +384,23 @@ export class SettingsEffects {
     )
   );
 
+  getAppSettingsFromServer$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType<settingsAction.GetAppSettingsFromServer>(settingsAction.SettingActionTypes.GET_APP_SETTINGS_FROM_SERVER),
+      exhaustMap((action) =>
+        this.configService.getConfig(environment.apiSettingsConfigKey)
+          .pipe(
+            map((data) => {
+              return {
+                type: settingsAction.SettingActionTypes.GET_APP_SETTINGS_FROM_SERVER_DONE,
+                appSettings: data.Data
+              };
+            })
+          )
+      )
+    )
+  );
+
   done$ = createEffect(
     () => this.actions$.pipe(ofType(settingsAction.SettingActionTypes.DONE)),
     { dispatch: false }
@@ -404,7 +426,8 @@ export class SettingsEffects {
     private router: Router,
     private homeStore: Store<HomeState>,
     private menuCtrl: MenuController,
-    private platform: Platform
+    private platform: Platform,
+    private configService: ConfigService
   ) {}
 
   runModal = async (component, cssClass, properties, opts = {}) => {

@@ -1,5 +1,5 @@
 import { Action } from '@ngrx/store';
-import { CallPriorityResultData, CallResultData, UnitResultData, UnitTypeStatusResultData } from '@resgrid/ngx-resgridlib';
+import { CallPriorityResultData, CallResultData, GetConfigResultData, UnitResultData, UnitTypeStatusResultData } from '@resgrid/ngx-resgridlib';
 import { UserInfo } from 'src/app/models/userInfo';
 import { LoginPayload } from '../models/loginPayload';
 
@@ -27,6 +27,8 @@ export enum SettingActionTypes {
   SHOW_ABOUT_MODAL = '[SETTINGS] SHOW_ABOUT_MODAL',
   SET_IS_APP_ACTIVE = '[SETTINGS] SET_IS_APP_ACTIVE',
   DISMISS_MODAL = '[SETTINGS] DISMISS_MODAL',
+  GET_APP_SETTINGS_FROM_SERVER = '[SETTINGS] GET_APP_SETTINGS_FROM_SERVER',
+  GET_APP_SETTINGS_FROM_SERVER_DONE = '[SETTINGS] GET_APP_SETTINGS_FROM_SERVER_DONE',
 }
 
 export class ShowLoginModal implements Action {
@@ -143,6 +145,16 @@ export class DismissModal implements Action {
   constructor() {}
 }
 
+export class GetAppSettingsFromServer implements Action {
+  readonly type = SettingActionTypes.GET_APP_SETTINGS_FROM_SERVER;
+  constructor() {}
+}
+
+export class GetAppSettingsFromServerDone implements Action {
+  readonly type = SettingActionTypes.GET_APP_SETTINGS_FROM_SERVER_DONE;
+  constructor(public appSettings: GetConfigResultData) {}
+}
+
 export type SettingsActionsUnion =
   | ShowLoginModal
   | Login
@@ -166,5 +178,7 @@ export type SettingsActionsUnion =
   | Logout
   | ShowAboutModal
   | SetIsAppActive
+  | GetAppSettingsFromServer
+  | GetAppSettingsFromServerDone
   | DismissModal
   ;

@@ -76,12 +76,18 @@ export function reducer(
         ...state,
         isAppActive: action.isActive,
       };
+    case SettingActionTypes.GET_APP_SETTINGS_FROM_SERVER_DONE:
+      return {
+        ...state,
+        appSettings: action.appSettings,
+      };
     default:
       return state;
   }
 }
 
 export const getIsLoggedInState = (state: SettingsState) => state.loggedIn;
-export const getPerferDarkModeState = (state: SettingsState) => state.perferDarkMode;
+export const getPerferDarkModeState = (state: SettingsState) =>
+  state.perferDarkMode;
 export const getKeepAliveState = (state: SettingsState) => state.keepAlive;
 export const getIsAppActiveState = (state: SettingsState) => state.isAppActive;
