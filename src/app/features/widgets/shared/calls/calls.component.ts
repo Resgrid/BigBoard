@@ -38,7 +38,13 @@ export class CallsWidgetComponent implements OnInit, OnDestroy {
   }
 
   public getTimeago(date) {
-		return this.utilsProvider.getTimeAgo(date);
+		const timeText = this.utilsProvider.getTimeAgo(date);
+
+    if (timeText.indexOf('seconds') > -1) {
+      return '1 minute ago';
+    }
+
+    return timeText;
 	}
 
   public getFontSize(settings: CallsWidgetSettings | null | undefined): number {

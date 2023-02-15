@@ -69,7 +69,7 @@ export class MapWidgetComponent implements OnInit, OnDestroy {
 
   private processMapData(data: MapDataAndMarkersData) {
     this.settingsState$.pipe(take(1)).subscribe((settings) => {
-      if (data && settings && settings.appSettings) {
+      if (data && settings && settings.appSettings && settings.appSettings.MapUrl) {
         if (!this.map && this.mapContainer && this.mapContainer.nativeElement) {
           this.map = L.map(this.mapContainer.nativeElement, {
             dragging: false,

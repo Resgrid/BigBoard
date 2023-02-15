@@ -9,7 +9,7 @@ install:
   # install modules
   - npm install --global npm@latest
   - set PATH=%APPDATA%\npm;%PATH%
-  - npm install
+  - npm ci
 
 # Post-install test scripts.
 test_script:

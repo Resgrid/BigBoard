@@ -8,7 +8,6 @@ import { HomeState } from '../../store/home.store';
 import {
   selectHomeState,
   selectKeepAliveState,
-  selectPerferDarkModeState,
   selectSettingsState,
   selectWidgetsState,
 } from 'src/app/store';

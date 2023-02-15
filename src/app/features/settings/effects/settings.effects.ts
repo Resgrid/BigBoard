@@ -178,7 +178,7 @@ export class SettingsEffects {
                     departmentId: data[0].loginData.Rights.DepartmentId,
                     departmentName: data[0].loginData.Rights.DepartmentName,
                   },
-                  perferDarkMode: data[0].perferDarkMode,
+                  themePreference: data[0].perferDarkMode,
                   keepAlive: data[0].keepAlive,
                 };
               } else {
@@ -279,11 +279,12 @@ export class SettingsEffects {
         settingsAction.SettingActionTypes.SAVE_PERFER_DARKMODE_SETTING
       ),
       switchMap((action) =>
-        this.storageProvider.setPerferDarkMode(action.perferDarkMode)
+        this.storageProvider.setPerferDarkMode(action.themePreference)
       ),
       map((data) => {
         return {
-          type: settingsAction.SettingActionTypes.DONE,
+          type: settingsAction.SettingActionTypes.SAVE_PERFER_DARKMODE_SETTING_DONE,
+          themePreference: data
         };
       })
     )

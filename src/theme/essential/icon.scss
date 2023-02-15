@@ -1,0 +1,16 @@
+.is-icon-xl {
+  width: 200px;
+  height: 200px;
+  font-size: 80px;
+}
+.is-solid-circle-icon {
+  border-radius: 100px;
+  background-color: var(--ion-color-success);
+  color: #ffffff;
+  display: flex;
+  align-items: center !important;
+
+  ion-icon {
+    width: 100%;
+  }
+}

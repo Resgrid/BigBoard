@@ -49,7 +49,7 @@ const cacheProvider = new CacheProvider();
             baseApiUrl: getBaseUrl,
             apiVersion: 'v4',
             clientId: 'RgBigBoardApp',
-            googleApiKey: environment.googleMapsKey,
+            googleApiKey: '',
             channelUrl: environment.channelUrl,
             channelHubName: environment.channelHubName,
             realtimeGeolocationHubName: environment.realtimeGeolocationHubName,
@@ -90,7 +90,6 @@ const cacheProvider = new CacheProvider();
         { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
         { provide: CacheProvider, useValue: cacheProvider }
     ],
-    bootstrap: [AppComponent],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    bootstrap: [AppComponent]
 })
 export class AppModule {}

@@ -22,11 +22,6 @@ export const selectIsLoggedInState = createSelector(
   settingsReducers.getIsLoggedInState
 );
 
-export const selectPerferDarkModeState = createSelector(
-  selectSettingsState,
-  settingsReducers.getPerferDarkModeState
-);
-
 export const selectKeepAliveState = createSelector(
   selectSettingsState,
   settingsReducers.getKeepAliveState
@@ -35,6 +30,11 @@ export const selectKeepAliveState = createSelector(
 export const selectIsAppActive = createSelector(
   selectSettingsState,
   settingsReducers.getIsAppActiveState
+);
+
+export const selectAppSettingsState = createSelector(
+  selectSettingsState,
+  settingsReducers.getAppSettingsState
 );
 
 export const selectHomeState = createFeatureSelector<HomeState>('homeModule');
@@ -92,4 +92,9 @@ export const selectMapWidgetDataState = createSelector(
 export const selectWeatherWidgetLocationState = createSelector(
   selectWidgetsState,
   widgetsReducers.getWeatherWidgetLocation
+);
+
+export const selectThemePreferenceState = createSelector(
+  selectSettingsState,
+  settingsReducers.getThemePreferenceState
 );

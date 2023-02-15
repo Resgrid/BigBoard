@@ -1,0 +1,89 @@
+// (Note: Don't change the order of the devices as it may break the correct css precedence)
+
+// (see: https://css-tricks.com/snippets/css/media-queries-for-standard-devices/#iphone-queries)
+// (see: https://stackoverflow.com/a/47750261/1116959)
+
+/* ----------- iPhone 4 and 4S ----------- */
+@media only screen
+  and (min-device-width : 320px)
+  and (max-device-width : 480px)
+  and (-webkit-min-device-pixel-ratio: 2)
+  and (device-aspect-ratio: 2/3)
+  // uncomment for only portrait:
+  // and (orientation: portrait)
+  // uncomment for only landscape:
+  // and (orientation: landscape)
+{
+  .app-sidemenu {
+    .user-info-wrapper {
+      .user-name {
+        font-size: 18px;
+      }
+    }
+
+    ion-list {
+      ion-item {
+        font-size: 14px;
+      }
+    }
+  }
+}
+
+/* ----------- iPhone 5, 5S, 5C and 5SE ----------- */
+@media only screen
+  and (min-device-width : 320px)
+  and (max-device-width : 568px)
+  and (-webkit-min-device-pixel-ratio: 2)
+  and (device-aspect-ratio: 40 / 71)
+  // uncomment for only portrait:
+  // and (orientation: portrait)
+  // uncomment for only landscape:
+  // and (orientation: landscape)
+{
+  .interests-to-follow-slide {
+    .custom-checkbox {
+      .checkbox-title {
+        font-size: 18px;
+      }
+    }
+  }
+}
+
+/* ----------- iPhone 6, 6S, 7 and 8 ----------- */
+@media only screen
+  and (min-device-width : 375px)
+  and (max-device-width : 667px)
+  and (-webkit-min-device-pixel-ratio: 2)
+  // uncomment for only portrait:
+  // and (orientation: portrait)
+  // uncomment for only landscape:
+  // and (orientation: landscape)
+{
+
+}
+
+/* ----------- iPhone X ----------- */
+@media only screen
+  and (min-device-width : 375px)
+  and (max-device-width : 812px)
+  and (-webkit-min-device-pixel-ratio : 3)
+  // uncomment for only portrait:
+  // and (orientation: portrait)
+  // uncomment for only landscape:
+  // and (orientation: landscape)
+{
+
+}
+
+/* ----------- iPhone 6+, 7+ and 8+ ----------- */
+@media only screen
+  and (min-device-width : 414px)
+  and (max-device-width : 736px)
+  and (-webkit-min-device-pixel-ratio: 3)
+  // uncomment for only portrait:
+  // and (orientation: portrait)
+  // uncomment for only landscape:
+  // and (orientation: landscape)
+{
+
+}

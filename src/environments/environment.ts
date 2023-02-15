@@ -4,22 +4,15 @@
 
 export const environment = {
   production: false,
-  baseApiUrl: 'https://api.resgrid.com',
-  resgridApiUrl: '/api/v4',
-  channelUrl: 'https://events.resgrid.com/',
-  channelHubName: 'eventingHub',
-  realtimeGeolocationHubName: 'geolocationHub',
+  baseApiUrl: window["env"]["baseApiUrl"] || 'https://api.resgrid.com',
+  resgridApiUrl: window["env"]["resgridApiUrl"] || '/api/v4',
+  channelUrl: window["env"]["channelUrl"] || 'https://events.resgrid.com/',
+  channelHubName: window["env"]["channelHubName"] || 'eventingHub',
+  realtimeGeolocationHubName: window["env"]["realtimeGeolocationHubName"] || 'geolocationHub',
   logLevel: 0,
-  what3WordsKey: 'W3WKEY',
-  isDemo: false,
-  demoToken: 'DEMOTOKEN',
   version: '99.99.99',
-  osmMapKey: 'OSMKEY',
-  mapTilerKey: 'MTKEY',
-  googleMapsKey: 'GOOGLEMAPKEY',
-  loggingKey: 'LOGGINGKEY',
-  weatherApiKey: 'WEATHERKEY',
-  apiSettingsConfigKey: 'APISETTINGSKEY',
+  loggingKey:  window["env"]["loggingKey"] || 'LOGGINGKEY',
+  apiSettingsConfigKey:  window["env"]["apiSettingsConfigKey"] || 'APISETTINGSKEY',
 };
 
 /*

@@ -26,7 +26,7 @@ export function reducer(
         ...state,
         loggedIn: true,
         user: action.user,
-        perferDarkMode: action.perferDarkMode,
+        themePreference: action.themePreference,
         keepAlive: action.keepAlive,
       };
     case SettingActionTypes.LOGIN_FAIL:
@@ -48,7 +48,7 @@ export function reducer(
     case SettingActionTypes.SAVE_PERFER_DARKMODE_SETTING:
       return {
         ...state,
-        perferDarkMode: action.perferDarkMode,
+        themePreference: action.themePreference,
       };
     case SettingActionTypes.SAVE_KEEP_ALIVE_SETTING:
       return {
@@ -59,7 +59,7 @@ export function reducer(
       return {
         ...state,
         keepAlive: action.keepAlive,
-        perferDarkMode: action.perferDarkMode,
+        themePreference: action.themePreference,
       };
     case SettingActionTypes.LOGOUT:
       return {
@@ -68,7 +68,7 @@ export function reducer(
         errorMsg: null,
         isLogging: false,
         user: null,
-        perferDarkMode: false,
+        themePreference: -1,
         keepAlive: false,
       };
     case SettingActionTypes.SET_IS_APP_ACTIVE:
@@ -81,13 +81,19 @@ export function reducer(
         ...state,
         appSettings: action.appSettings,
       };
+    case SettingActionTypes.SAVE_PERFER_DARKMODE_SETTING_DONE:
+      return {
+        ...state,
+        themePreference: action.themePreference,
+      };
     default:
       return state;
   }
 }
 
 export const getIsLoggedInState = (state: SettingsState) => state.loggedIn;
-export const getPerferDarkModeState = (state: SettingsState) =>
-  state.perferDarkMode;
 export const getKeepAliveState = (state: SettingsState) => state.keepAlive;
 export const getIsAppActiveState = (state: SettingsState) => state.isAppActive;
+export const getThemePreferenceState = (state: SettingsState) =>
+  state.themePreference;
+export const getAppSettingsState = (state: SettingsState) => state.appSettings;

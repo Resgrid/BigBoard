@@ -7,10 +7,10 @@ export interface SettingsState {
     errorMsg: string | null;
     isLogging: boolean;
     user: UserInfo | null;
-    perferDarkMode: boolean;
     keepAlive: boolean;
     isAppActive: boolean;
     appSettings: GetConfigResultData;
+    themePreference: number;
 }
 
 export const initialState: SettingsState = {
@@ -18,8 +18,8 @@ export const initialState: SettingsState = {
     errorMsg: null,
     isLogging: false,
     user: null,
-    perferDarkMode: false,
     keepAlive: false,
     isAppActive: true,
-    appSettings: new GetConfigResultData()
+    appSettings: new GetConfigResultData(),
+    themePreference: -1,
 };

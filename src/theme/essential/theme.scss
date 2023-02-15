@@ -1,0 +1,28 @@
+/*
+ * Load Dark/Light theme
+ */
+
+@import "../variables";
+@import "./variables";
+@import "./core";
+@import "./rubik";
+@import "./segment-clear";
+@import "./grid";
+@import "./segment-bordered";
+@import "./header-logo-centered";
+@import "./list";
+@import "./list-square";
+@import "./list-condensed";
+@import "./list-colored";
+@import "./list-ordered";
+@import "./list-item-start-buttons-end";
+@import "./payment-cards";
+@import "./product-tile";
+@import "./collapsible-list-with-divider";
+@import "./icon";
+
+body.dark {
+  @import "./theme-dark";
+} else {
+  @import "./theme-light";
+}

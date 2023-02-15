@@ -71,22 +71,23 @@ export class StorageProvider {
     return JSON.parse(await this.get('RGBBLoginData'));
   }
 
-  public async setPerferDarkMode(perferDark: boolean): Promise<any> {
-    return await this.set('RGBBPerferDark', perferDark?.toString());
+  public async setPerferDarkMode(perferDark: number): Promise<any> {
+    await this.set('RGBBPerferDark', perferDark?.toString());
+
+    return perferDark;
   }
 
   public async setKeepAlive(keepAlive: boolean): Promise<any> {
     return await this.set('RGBBKeepAlive', keepAlive?.toString());
   }
 
-  public async getPerferDarkMode(): Promise<boolean> {
+  public async getPerferDarkMode(): Promise<number> {
     let data = await this.get('RGBBPerferDark');
     if (data) {
-      let isSet = (data === 'true');
-      return isSet;
+      return parseInt(data);
     }
 
-    return false;
+    return -1;
   }
 
   public async getKeepAlive(): Promise<boolean> {
@@ -111,11 +112,6 @@ export class StorageProvider {
     };
   }
 
-
-
-
-
-  
   public async saveGroupSorting(weights: Array<GroupSorting>): Promise<Array<GroupSorting>> {
     return await this.set('RGBBgroupWeights', weights.toString());
   }

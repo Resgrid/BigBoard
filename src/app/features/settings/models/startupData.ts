@@ -2,6 +2,6 @@ import { LoginResult } from "src/app/models/loginResult";
 
 export class StartupData  {
     public loginData: LoginResult = new LoginResult();
-    public perferDarkMode: boolean = false;
+    public perferDarkMode: number = -1;
     public keepAlive: boolean = false;
 }

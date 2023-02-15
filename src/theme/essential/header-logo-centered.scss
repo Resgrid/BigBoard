@@ -1,0 +1,22 @@
+.essential-theme {
+  ion-header.is-header-logo-centered ion-toolbar {
+    ion-title {
+      &.md {
+        left: 0;
+        top: 0;
+        padding-left: 90px;
+        padding-right: 90px;
+        padding-top: 0;
+        padding-bottom: 0;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+      }
+      img {
+        max-height: 45px;
+        margin-top: 2px;
+      }
+    }
+  }
+}

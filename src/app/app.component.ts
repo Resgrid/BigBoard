@@ -6,7 +6,7 @@ import { StorageProvider } from './providers/storage';
 import * as SettingsActions from './features/settings/actions/settings.actions';
 import { Observable } from 'rxjs';
 import { HomeState } from './features/home/store/home.store';
-import { selectHomeState, selectPerferDarkModeState, selectSettingsState } from './store';
+import { selectHomeState, selectSettingsState, selectThemePreferenceState } from './store';
 import { CallResultData, UnitResultData, UtilsService } from '@resgrid/ngx-resgridlib';
 import * as HomeActions from './features/home/actions/home.actions';
 import { take } from 'rxjs/operators';
@@ -14,6 +14,7 @@ import { App as CapacitorApp } from '@capacitor/app';
 import { SplashScreen } from '@capacitor/splash-screen';
 import { TranslateService } from '@ngx-translate/core';
 import { SleepProvider } from './providers/sleep';
+import { SubSink } from 'subsink';
 
 declare var cordova:any;
 
@@ -26,8 +27,9 @@ export class AppComponent {
   public noCallSelected: CallResultData;
   public noUnitSelected: UnitResultData;
   public homeState$: Observable<HomeState | null>;
-  public perferDarkMode$: Observable<boolean | null>;
   public settingsState$: Observable<SettingsState | null>;
+  public themePreference$: Observable<number | null>;
+  private subs = new SubSink();
 
   constructor(
     private platform: Platform,
@@ -42,9 +44,9 @@ export class AppComponent {
     private utilsProvider: UtilsService
   ) {
     this.homeState$ = this.homeStore.select(selectHomeState);
-    this.perferDarkMode$ = this.store.select(selectPerferDarkModeState);
     this.settingsState$ = this.store.select(selectSettingsState);
-
+    this.themePreference$ = this.store.select(selectThemePreferenceState);
+    
     this.noCallSelected = new CallResultData();
     this.noCallSelected.Name = 'No Call Selected';
     this.noCallSelected.CallId = '0';
@@ -70,17 +72,16 @@ export class AppComponent {
       await this.storage.init();
 
       //StatusBar.styleDefault();
-      //this.splashScreen.hide();
-
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
-      this.toggleDarkTheme(prefersDark.matches);
-      prefersDark.addListener((mediaQuery) =>
-        this.toggleDarkTheme(mediaQuery.matches)
-      );
 
       this.wireupAppEvents();
       await this.sleepProvider.init();
       await SplashScreen.hide();
+
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+			this.toggleDarkTheme(prefersDark.matches);
+			prefersDark.addListener((mediaQuery) =>
+				this.toggleDarkTheme(mediaQuery.matches)
+			);
 
       setTimeout(function () {
         that.store.dispatch(new SettingsActions.PrimeSettings());
@@ -101,15 +102,17 @@ export class AppComponent {
 	}
 
   // Add or remove the "dark" class based on if the media query matches
-  private toggleDarkTheme(shouldAdd: boolean) {
-    this.perferDarkMode$.subscribe((enableDarkMode) => {
-      if (enableDarkMode) {
-        document.body.classList.toggle('dark', true);
-      } else {
-        document.body.classList.toggle('dark', shouldAdd);
-      }
-    });
-  }
+  private toggleDarkTheme(shouldAdd) {
+		this.themePreference$.pipe(take(1)).subscribe((enableDarkMode) => {
+			if (enableDarkMode === -1) {
+				document.body.classList.toggle('dark', shouldAdd);
+			} else if (enableDarkMode === 0) {
+				document.body.classList.toggle('dark', false);
+			} else if (enableDarkMode === 1) {
+				document.body.classList.toggle('dark', true);
+			}
+		});
+	}
 
   private wireupAppEvents() {
     CapacitorApp.addListener('backButton', ({canGoBack}) => {

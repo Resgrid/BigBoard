@@ -21,6 +21,7 @@ export enum SettingActionTypes {
   SET_APP_SETTINGS = '[SETTINGS] SET_APP_SETTINGS',
   DONE = '[SETTINGS] DONE',
   SAVE_PERFER_DARKMODE_SETTING = '[SETTINGS] SAVE_PERFER_DARKMODE_SETTING',
+  SAVE_PERFER_DARKMODE_SETTING_DONE = '[SETTINGS] SAVE_PERFER_DARKMODE_SETTING_DONE',
   SAVE_KEEP_ALIVE_SETTING = '[SETTINGS] SAVE_KEEP_ALIVE_SETTING',
   SHOW_LOGOUTPROMPT = '[SETTINGS] SHOW_LOGOUTPROMPT',
   LOGOUT = '[SETTINGS] LOGOUT',
@@ -75,7 +76,7 @@ export class NavigateToHome implements Action {
 export class SetLoginDataAndNavigateToHome implements Action {
   readonly type = SettingActionTypes.SET_LOGINDATA_NAV_HOME;
   constructor(public user: UserInfo, public enablePushNotifications: boolean,
-    public perferDarkMode: boolean, public keepAlive: boolean, public headsetType: number,
+    public themePreference: number, public keepAlive: boolean, public headsetType: number,
     public backgroundGeolocationEnabled: boolean) {}
 }
 
@@ -96,7 +97,12 @@ export class ShowSetServerModal implements Action {
 
 export class SavePerferDarkModeSetting implements Action {
   readonly type = SettingActionTypes.SAVE_PERFER_DARKMODE_SETTING;
-  constructor(public perferDarkMode: boolean) {}
+  constructor(public themePreference: number) {}
+}
+
+export class SavePerferDarkModeSettingDone implements Action {
+  readonly type = SettingActionTypes.SAVE_PERFER_DARKMODE_SETTING_DONE;
+  constructor(public themePreference: number) {}
 }
 
 export class SaveKeepAliveSetting implements Action {
@@ -111,7 +117,7 @@ export class GetApplicationSettings implements Action {
 
 export class SetApplicationSettings implements Action {
   readonly type = SettingActionTypes.SET_APP_SETTINGS;
-  constructor(public enablePushNotifications: boolean, public perferDarkMode: boolean, public keepAlive: boolean,
+  constructor(public enablePushNotifications: boolean, public themePreference: number, public keepAlive: boolean,
     public headsetType: number, public selectedMic: string) {}
 }
 
@@ -181,4 +187,5 @@ export type SettingsActionsUnion =
   | GetAppSettingsFromServer
   | GetAppSettingsFromServerDone
   | DismissModal
+  | SavePerferDarkModeSettingDone
   ;

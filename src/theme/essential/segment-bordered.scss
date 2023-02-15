@@ -1,0 +1,16 @@
+.essential-theme {
+  .is-segment-bordered {
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: var(--ion-color-is-mute-light);
+
+    ion-segment-button {
+      border-right-width: 1px;
+      border-right-style: solid;
+      border-right-color: var(--ion-color-is-mute-light);
+    }
+    ion-segment-button:last-child {
+      border-right-width: 0px;
+    }
+  }
+}

@@ -1,0 +1,20 @@
+.essential-theme {
+  .is-segment-clear {
+    &.ios:not([color]) {
+      --background: transparent;
+    }
+    ion-segment-button {
+      --indicator-color: transparent;
+      --background-checked: transparent;
+      --background: transparent;
+      --border-width: 0px;
+      --color: var(--is-segment-color);
+      --color-checked: var(--is-segment-checked-color);
+      &.ios {
+        --margin-top: 3px;
+        --indicator-box-shadow: none;
+        --border-radius: 0px;
+      }
+    }
+  }
+}

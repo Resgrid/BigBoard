@@ -1,4 +1,4 @@
-import { Component, OnInit, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, Output } from '@angular/core';
 import { MenuController, Platform } from '@ionic/angular';
 import { Store } from '@ngrx/store';
 import { SettingsState } from '../../../../features/settings/store/settings.store';
@@ -8,8 +8,8 @@ import { HomeState } from '../../store/home.store';
 import {
   selectHomeState,
   selectKeepAliveState,
-  selectPerferDarkModeState,
   selectSettingsState,
+  selectThemePreferenceState,
 } from 'src/app/store';
 import { SubSink } from 'subsink';
 import { SleepProvider } from 'src/app/providers/sleep';
@@ -24,13 +24,12 @@ import { IDevice } from 'src/app/models/deviceType';
 export class SettingsPage implements OnInit {
   public homeState$: Observable<HomeState | null>;
   public settingsState$: Observable<SettingsState | null>;
-
-  public perferDarkMode$: Observable<boolean | null>;
+  public themePreference$: Observable<number | null>;
   public keepAlive$: Observable<boolean | null>;
 
-  public perferDarkMode: boolean = false;
   public keepAliveEnabled: boolean = false;
   public headSetType: string = '-1';
+  public themePreference: string = '-1';
 
   private subs = new SubSink();
 
@@ -46,11 +45,12 @@ export class SettingsPage implements OnInit {
     private homeStore: Store<HomeState>,
     private sleepProvider: SleepProvider,
     private platform: Platform,
-    private deviceService: OpenViduDevicesService
+    private deviceService: OpenViduDevicesService,
+    private changeDetection: ChangeDetectorRef
   ) {
     this.homeState$ = this.homeStore.select(selectHomeState);
     this.settingsState$ = this.store.select(selectSettingsState);
-    this.perferDarkMode$ = this.store.select(selectPerferDarkModeState);
+    this.themePreference$ = this.store.select(selectThemePreferenceState);
     this.keepAlive$ = this.store.select(selectKeepAliveState);
   }
 
@@ -67,6 +67,13 @@ export class SettingsPage implements OnInit {
 
     await this.deviceService.initDevices(); //.then(() => {
     this.microphones = this.deviceService.getMicrophones();
+
+    this.subs.sink = this.themePreference$.subscribe((themePreference) => {
+      if (themePreference !== null && themePreference !== undefined) {
+        this.themePreference = themePreference.toString();
+        this.changeDetection.detectChanges();
+      }
+    });
   }
 
   ionViewWillLeave() {
@@ -89,7 +96,7 @@ export class SettingsPage implements OnInit {
 
   public setPerferDarkMode(event) {
     this.store.dispatch(
-      new SettingsActions.SavePerferDarkModeSetting(event.detail.checked)
+      new SettingsActions.SavePerferDarkModeSetting(parseInt(event))
     );
   }
 

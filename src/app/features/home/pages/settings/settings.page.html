@@ -50,7 +50,11 @@
               <h2>{{'settingsPage.darkThemeLabel' | translate}}</h2>
               <p>{{'settingsPage.darkThemeText' | translate}}</p>
             </ion-label>
-            <ion-toggle item-end color="primary" [checked]="perferDarkMode$ | async" (ionChange)="setPerferDarkMode($event)"></ion-toggle>
+            <ion-select item-end placeholder="Default" (ngModelChange)="setPerferDarkMode($event)" [(ngModel)]="themePreference">
+              <ion-select-option value="-1">Default</ion-select-option>
+              <ion-select-option value="0">Light</ion-select-option>
+              <ion-select-option value="1">Dark</ion-select-option>
+            </ion-select>
           </ion-item>
           <ion-item lines="none">
             <ion-avatar slot="start" class="blue-bg">
