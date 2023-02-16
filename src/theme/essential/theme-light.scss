@@ -1,0 +1,102 @@
+:root {
+  --ion-background-color-theme: #fff;
+  --ion-background-color-rgb-theme: 255, 255, 255;
+  --ion-text-color-theme: #AFB8BB;
+  --ion-item-color-theme: black;
+  --is-link-color-theme: #61CFE9;
+  --is-ion-select-action-sheet-ios-selected-opacity-theme: 1;
+  --is-list-buttons-detail-icon-opacity-theme: 0.25;
+  --is-item-divider-background-theme: #fbfbfb;
+  --is-item-divider-background-active-theme: #f7f7f7;
+  --is-ion-card-background-theme: white;
+  --is-item-in-ion-card-background-theme: rgba(255, 255, 255);
+  --is-ion-popover-ion-backdrop-background-theme: rgba(0, 0, 0);
+  --is-searchbar-color-theme: #F9F9FA;
+  --is-segment-color-theme: #AFB8BB;
+  --is-segment-checked-color-theme: #61CFE9;
+
+  --ion-color-primary-contrast-theme: #fff;
+  --ion-color-primary-contrast-rgb-theme: 255,255,255;
+
+  --ion-color-secondary-contrast-theme: #fff;
+  --ion-color-secondary-contrast-rgb-theme: 255,255,255;
+
+  --ion-color-success-contrast-theme: #fff;
+  --ion-color-success-contrast-rgb-theme: 255,255,255;
+
+  --ion-color-danger-contrast-theme: #fff;
+  --ion-color-danger-contrast-rgb-theme: 255,255,255;
+
+  --ion-color-warning-contrast-theme: #000000;
+  --ion-color-warning-contrast-rgb-theme: 0,0,0;
+
+  --ion-color-dark-contrast-theme: #fff;
+  --ion-color-dark-contrast-rgb-theme: 255,255,255;
+
+  --ion-color-light-contrast-theme: #fff;
+  --ion-color-light-contrast-rgb-theme: 255,255,255;
+
+  --ion-color-is-facebook-contrast-theme: #fff;
+  --ion-color-is-facebook-contrast-rgb-theme: 255,255,255;
+
+  --ion-color-is-twitter-contrast-theme: #fff;
+  --ion-color-is-twitter-contrast-rgb-theme: 255,255,255;
+
+  --ion-color-is-linkedin-contrast-theme: #fff;
+  --ion-color-is-linkedin-contrast-rgb-theme: 255,255,255;
+
+  --ion-color-is-mute-normal-theme: #AFB8BB;
+  --ion-color-is-mute-normal-rgb-theme: 175,184,187;
+  --ion-color-is-mute-normal-contrast-theme: #fff;
+  --ion-color-is-mute-normal-contrast-rgb-theme: 255,255,255;
+  --ion-color-is-mute-normal-shade-theme: #9aa2a5;
+  --ion-color-is-mute-normal-tint-theme: #b7bfc2;
+
+  --ion-color-is-mute-dark-theme: #75888C;
+
+  --ion-color-is-mute-light-theme: #EEF3F5;
+  --ion-color-is-mute-light-rgb-theme: 238,243,245;
+  --ion-color-is-mute-light-contrast-theme: #000000;
+  --ion-color-is-mute-light-contrast-rgb-theme: 0,0,0;
+  --ion-color-is-mute-light-shade-theme: #d1d6d8;
+  --ion-color-is-mute-light-tint-theme: #f0f4f6;
+
+  --ion-color-is-text-dark-theme: #233539;
+  --ion-color-is-text-dark-rgb-theme: 35,53,57;
+  --ion-color-is-text-dark-contrast-theme: #fff;
+  --ion-color-is-text-dark-contrast-rgb-theme: 255,255,255;
+  --ion-color-is-text-dark-shade-theme: #1f2f32;
+  --ion-color-is-text-dark-tint-theme: #39494d;
+
+  --ion-color-is-facebook-icon-theme: #3B5998;
+  --ion-color-is-facebook-icon-rgb-theme: 35,53,57;
+  --ion-color-is-facebook-icon-contrast-theme: #ffffff;
+  --ion-color-is-facebook-icon-contrast-rgb-theme: 255,255,255;
+  --ion-color-is-facebook-icon-shade-theme: #344e86;
+  --ion-color-is-facebook-icon-tint-theme: #4f6aa2;
+
+  --ion-color-is-twitter-icon-theme: #55ACEE;
+  --ion-color-is-twitter-icon-rgb-theme: 85,172,238;
+  --ion-color-is-twitter-icon-contrast-theme: #ffffff;
+  --ion-color-is-twitter-icon-contrast-rgb-theme: 255,255,255;
+  --ion-color-is-twitter-icon-shade-theme: #4b97d1;
+  --ion-color-is-twitter-icon-tint-theme: #66b4f0;
+
+  --ion-color-is-linkedin-icon-theme: #0073B0;
+  --ion-color-is-linkedin-icon-rgb-theme: 0,115,176;
+  --ion-color-is-linkedin-icon-contrast-theme: #ffffff;
+  --ion-color-is-linkedin-icon-contrast-rgb-theme: 255,255,255;
+  --ion-color-is-linkedin-icon-shade-theme: #00659b;
+  --ion-color-is-linkedin-icon-tint-theme: #1a81b8;
+
+  --ion-toolbar-background-theme: #fff;
+  --ion-toolbar-color-theme: #424242;
+
+  --placeholder-color-theme: black;
+}
+.essential-theme {
+  ion-menu ion-list ion-item-divider:not([color]) {
+    background-color: var(--ion-color-secondary);
+    color: var(--ion-color-secondary-contrast-theme);
+  }
+}

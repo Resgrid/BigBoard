@@ -1,0 +1,79 @@
+ion-toolbar {
+  --background: transparent;
+}
+
+ion-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  ion-icon {
+    font-size: 16pt;
+    color: #ffffff;
+  }
+}
+
+ion-list-header {
+  font-weight: 600;
+  font-size: 17px;
+  line-height: 22px;
+  padding: 0;
+  color: var(--ion-color-facebook);
+}
+
+ion-item {
+  --padding-start: 0;
+  --inner-padding-end: 0;
+
+  h2 {
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 20px;
+  }
+
+  p {
+    font-size: 13px;
+    line-height: 18px;
+    color: #999999;
+  }
+}
+
+.blue-bg {
+  background: var(--ion-color-primary);
+}
+
+.red-bg {
+  background: var(--ion-color-google);
+}
+
+.green-bg {
+  background: var(--ion-color-success);
+}
+
+.navy-bg {
+  background: var(--ion-color-facebook);
+}
+
+.cyan-bg {
+  background: var(--ion-color-secondary);
+}
+
+.yellow-bg {
+  background: var(--ion-color-warning);
+}
+
+.orange-bg {
+  background: var(--ion-color-mbt-orange);
+}
+
+.purple-bg {
+  background: var(--ion-color-tertiary);
+}
+
+.pink-bg {
+  background: var(--ion-color-mbt-pink);
+}
+
+.gray-bg {
+  background: var(--ion-color-medium);
+}

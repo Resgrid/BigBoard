@@ -1,0 +1,47 @@
+.essential-theme {
+  .is-list-ordered {
+
+    .item-block:last-child {
+      border-bottom: 1px solid var(--ion-color-is-mute-light);
+    }
+
+    .item-block:first-child {
+      border-top: 1px solid var(--ion-color-is-mute-light);
+    }
+
+    ion-thumbnail {
+      border-radius: 50px;
+      width: 30px;
+      height: 30px;
+      border: 1px solid var(--ion-color-is-mute-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .is-order-number {
+      span {
+        color: var(--ion-color-is-mute-normal);
+        font-weight: 500;
+      }
+    }
+
+    ion-item {
+
+      .is-item-info {
+        margin: 13px 8px 9px 0;
+        color: var(--ion-color-primary);
+        font-size: 25px;
+        font-weight: lighter;
+      }
+    }
+
+    ion-item.is-item-active {
+      --ion-item-background: var(--ion-color-primary);
+
+      h2, p, .is-order-number span, .is-item-info {
+        color: white;
+      }
+    }
+  }
+}

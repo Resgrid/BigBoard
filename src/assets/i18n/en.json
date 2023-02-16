@@ -1,6 +1,377 @@
 {
   "appName": "Resgrid BigBoard",
-  "home": "Home",
+  "settingsPage": {
+    "title": "Settings",
+    "advancedSettingsTitle": "Advanced Settings",
+    "advResyncLabel": "ReSync Data",
+    "advCustomRespondingLabel": "Custom Responding Text",
+    "advCustomUrlLabel": "Custom Url",
+    "accountSettingsSection": "Account Settings",
+    "serverInfoLabel": "Server Information",
+    "serverInfoText": "The server (api) the app will talk to",
+    "loginInfoLabel": "Login Information",
+    "loginInfoText": "Your login information needed to authenticate",
+    "logoutLabel": "Log out",
+    "logoutText": "Log out of Resgrid Unit",
+    "applicationSection": "Application settings",
+    "setActiveUnitLabel": "Set Active Unit",
+    "setActiveUnitText": "Select what unit this app is currently operating for",
+    "darkThemeLabel": "Dark Theme",
+    "darkThemeText": "Prefer Dark Mode (Theme)",
+    "keepActiveLabel": "Keep Active",
+    "keepActiveText": "Prevent sleep when the app is active",
+    "backgroundGeolocationLabel": "Background Geolocation",
+    "backgroundGeolocationText": "Geolocation updated is app is in the background",
+    "pushNotificationLabel": "Push Notifications",
+    "pushNotificationText": "Enable push notifications on this device",
+    "headsetLabel": "Headset",
+    "headsetText": "Bluetooth headset for Push-To-Talk",
+    "microphoneLabel": "Microphone",
+    "microphoneText": "Microphone used for Push-To-Talk",
+    "optionsSection": "Options",
+    "aboutLabel": "About",
+    "aboutText": "Shows application information",
+    "requestPermissionsLabel": "Request Permissions",
+    "requestPermissionsText": "Requests the require app permissions (audio, microphone, gps)"
+  },
+  "personnelPage": {
+    "title": "Personnel",
+    "ctaPanel": {
+      "title": "No Personnel",
+      "details": "",
+      "extraDetails": "",
+      "buttonLabel": ""
+    },
+    "ctaPanel2": {
+      "title": "Load in Progress",
+      "details": "We are currently fetching your latest department information and can't show you personnel yet.",
+      "extraDetails": "This message will disappear once the load is finished or you can pull to refresh to retry",
+      "buttonLabel": ""
+    }
+  },
+  "pttPage": {
+    "title": "PTT",
+    "ctaPanel": {
+      "title": "PTT Not Enabled",
+      "details": "Your department has not enabled PTT",
+      "extraDetails": "PTT is an addon that you can add to your subscription to allow voice communications via Resgrid",
+      "buttonLabel": ""
+    },
+    "transmittingOnChan": "Tranmitting on channel",
+    "startTalking": "Tap to Start Talking",
+    "stopTalking": "Transmitting... Tap to Stop",
+    "noChanSelected": "No channel selected, please select one from the top right hand drop down."
+  },
+  "unitsPage": {
+    "title": "Units",
+    "ctaPanel": {
+      "title": "No Units",
+      "details": "",
+      "extraDetails": "",
+      "buttonLabel": ""
+    }
+  },
+  "aboutPage": {
+    "appVersion": "Application Version",
+    "apiLocation": "Current API"
+  },
+  "logoutModal": {
+    "confirmLogoutText": "Are you sure you want to log out?"
+  },
+  "loginModal": {
+    "loginText": "Please enter your Resgrid credentials to log into the app",
+    "usernameLabel": "Username",
+    "usernameErrorText": "Username is required",
+    "passwordLabel": "Password",
+    "passwordErrorText": "Password is required"
+  },
+  "setServerModal": {
+    "serverInfoText": "The default server address is https://api.resgrid.com and should be unchanged unless you are using a custom server.",
+    "serverLabel": "Server",
+    "serverErrorText": "Server Address is required",
+    "saveButton": "Set Server and Validate"
+  },
+  "setDestinationModal": {
+    "destinationLabel": "Destination",
+    "setButton": "Set Destination"
+  },
+  "setStatusModal": {
+    "noteLabel": "Note",
+    "setButton": "Set Note"
+  },
+  "tabsPage": {
+    "mapTab": "Dashboard",
+    "configureTab": "Configure",
+    "pttTab": "PTT",
+    "callsTab": "Calls",
+    "settingsTab": "Settings"
+  },
+  "notesPage": {
+    "title": "Notes",
+    "addLabel": "Add",
+    "ctaPanel": {
+      "title": "No Notes",
+      "details": "Click the add button to add a note, or you can add notes from the website.",
+      "extraDetails": "",
+      "buttonLabel": ""
+    }
+  },
+  "protocolsPage": {
+    "title": "Protocols",
+    "addLabel": "Add",
+    "ctaPanel": {
+      "title": "No Protocols",
+      "details": "There are no Dispatch Protocols, you can add them using the website.",
+      "extraDetails": "",
+      "buttonLabel": ""
+    }
+  },
+  "callNotesPage": {
+    "title": "Call Notes",
+    "addLabel": "Add",
+    "ctaPanel": {
+      "title": "No Call Notes",
+      "details": "",
+      "extraDetails": "",
+      "buttonLabel": ""
+    }
+  },
+  "customDetailPage": {
+    "title": "Custom Detail",
+    "addLabel": "",
+    "ctaPanel": {
+      "title": "",
+      "details": "",
+      "extraDetails": "",
+      "buttonLabel": ""
+    }
+  },
+  "customNotePage": {
+    "title": "Note For Action",
+    "noteLabel": "Note",
+    "buttonText": "Next",
+    "noteRequired": "The note is required",
+    "noteOptional": "The note is optional",
+    "ctaPanel": {
+      "title": "",
+      "details": "",
+      "extraDetails": "",
+      "buttonLabel": ""
+    }
+  },
+  "callImagesPage": {
+    "title": "Call Images",
+    "addLabel": "Add",
+    "ctaPanel": {
+      "title": "No Call Images",
+      "details": "",
+      "extraDetails": "",
+      "buttonLabel": ""
+    }
+  },
+  "callFilesPage": {
+    "title": "Call Files",
+    "addLabel": "Add",
+    "ctaPanel": {
+      "title": "No Call Files",
+      "details": "",
+      "extraDetails": "",
+      "buttonLabel": ""
+    }
+  },
+  "callsPage": {
+    "title": "Calls",
+    "ctaPanel": {
+      "title": "No Calls",
+      "details": "",
+      "extraDetails": "",
+      "buttonLabel": ""
+    }
+  },
+  "callDetailPage": {
+    "title": "Calls",
+    "notesButton": "Notes",
+    "imagesButton": "Images",
+    "filesButton": "Files",
+    "routeButton": "Route",
+    "dataTab": "Data",
+    "contactTab": "Contact",
+    "protocolsTab": "Protocols",
+    "dispatchTab": "Dispatch",
+    "activityTab": "Activity",
+    "dataTabPriority": "Priority",
+    "dataTabTimestamp": "Timestamp",
+    "dataTabType": "Type",
+    "dataTabAddress": "Address",
+    "dataTabNotes": "Notes",
+    "contactTabReferenceId": "Reference Id",
+    "contactTabExternalId": "External Id",
+    "contactTabContactName": "Contact Name",
+    "contactTabContactInfo": "Contact Info",
+    "callNotes": "Call Notes",
+    "enterNoteLabel": "Enter Note...",
+    "callImages": "Call Images",
+    "imageNoteLabel": "Image Note...",
+    "uploadPhotoButton": "Upload Photo",
+    "callFiles": "Call Files"
+  },
+  "newCallPushModal": {
+    "newCallPrefix": "New Call",
+    "respondButton": "Respond and Set Active"
+  },
+  "unitDetailPage": {
+    "title": "Unit Detail",
+    "ctaPanel": {
+      "title": "",
+      "details": "",
+      "extraDetails": "",
+      "buttonLabel": ""
+    }
+  },
+  "profilePage": {
+    "title": "Profile",
+    "editButton": "Edit Info",
+    "ctaPanel": {
+      "title": "",
+      "details": "",
+      "extraDetails": "",
+      "buttonLabel": ""
+    }
+  },
+  "staffingSchedulePage": {
+    "title": "Staffing Schedule",
+    "timeframeLablel": "Timeframe",
+    "stateLablel": "State",
+    "changeToLablel": "Change To",
+    "enabledText": "Enabled",
+    "disabledText": "Disabled"
+  },
+  "staffingSchedulesPage": {
+    "title": "Staffing Schedules",
+    "addButton": "Add",
+    "timeframeLablel": "Timeframe",
+    "changeToLablel": "Change To",
+    "ctaPanel": {
+      "title": "No Staffing Schedules",
+      "details": "Click the Add button to add an automatated staffing change",
+      "extraDetails": "",
+      "buttonLabel": ""
+    }
+  },
+  "messagesPage": {
+    "title": "Messages",
+    "newLabel": "New",
+    "messageTypeLabel": "Message",
+    "callbackTypeLabel": "Callback",
+    "pollTypeLabel": "Poll",
+    "inboxTab": "Inbox",
+    "outboxTab": "Outbox",
+    "ctaPanel": {
+      "title": "No Messages in the Inbox",
+      "details": "",
+      "extraDetails": "",
+      "buttonLabel": ""
+    }
+  },
+  "chatsPage": {
+    "title": "Chats",
+    "newLabel": "New",
+    "chatsTab": "Chats",
+    "groupsTab": "Groups",
+    "ctaPanel": {
+      "title": "No Chats",
+      "details": "Tap new to create a new 1 on 1 chat",
+      "extraDetails": "For group chats tap the groups tab at the bottom",
+      "buttonLabel": "New Chat"
+    }
+  },
+  "newChatPage": {
+    "title": "New Chat",
+    "newLabel": "New",
+    "chatsTab": "Chats",
+    "groupsTab": "Groups",
+    "ctaPanel": {
+      "title": "No Personnel",
+      "details": "Tap new to create a new 1 on 1 chat",
+      "extraDetails": "For group chats tap the groups tab at the bottom",
+      "buttonLabel": "New Chat"
+    }
+  },
+  "chatGroupsPage": {
+    "title": "Chat Groups",
+    "newLabel": "New",
+    "chatsTab": "Chats",
+    "groupsTab": "Groups"
+  },
+  "outboxPage": {
+    "title": "Sent Messages",
+    "newLabel": "New",
+    "messageTypeLabel": "Message",
+    "callbackTypeLabel": "Callback",
+    "pollTypeLabel": "Poll",
+    "inboxTab": "Inbox",
+    "outboxTab": "Outbox",
+    "ctaPanel": {
+      "title": "You have not sent any messages",
+      "details": "You can send a message by clicking the new button.",
+      "extraDetails": "",
+      "buttonLabel": ""
+    }
+  },
+  "addStaffingSchedulePage": {
+    "title": "New Staffing Schedule",
+    "typeLablel": "Type",
+    "dateText": "Date",
+    "weeklyText": "Weekly",
+    "timeLablel": "Time",
+    "dateLablel": "Date",
+    "staffingLablel": "Staffing",
+    "noteLablel": "Note",
+    "daysOfTheWeekText": "Days of the Week",
+    "saveButtonLabel": "Add Staffing Schedule"
+  },
+  "calendarPage": {
+    "title": "Calendar",
+    "todayLabel": "Today",
+    "upcomingLablel": "Upcoming",
+    "calendarLablel": "Calendar",
+    "ctaPanel": {
+      "title": "No Items For Today",
+      "details": "",
+      "extraDetails": "",
+      "buttonLabel": ""
+    },
+    "ctaPanel2": {
+      "title": "No Upcoming Items",
+      "details": "",
+      "extraDetails": "",
+      "buttonLabel": ""
+    }
+  },
+  "staffing": {
+    "title": "Staffing"
+  },
+  "availableAtPage": {
+    "title": "Standing By At"
+  },
+  "respondingToPage": {
+    "title": "Responding To"
+  },
+  "onsceneAtPage": {
+    "title": "Onscene At"
+  },
+  "personDetailPage": {
+    "title": "View Person"
+  },
+  "responding": "Responding",
+  "notResponding": "Not Responding",
+  "standingBy": "Standing By",
+  "onScene": "On Scene",
+  "available": "Available",
+  "delayed": "Delayed",
+  "unavailable": "Unavailable",
+  "comitted": "Committed",
+  "onShift": "On Shift",
   "settingsNotSetPanel": {
     "title": "Settings Not Set",
     "details": "It appears that this is your first time to the BigBoard app, or the first time here with this new version. You need to set your settings (login) before you can start adding widgets",
@@ -15,24 +386,32 @@
   },
   "account": "Account",
   "language": "Language",
-  "tutorial": "Tutorial",
   "ok": "Ok",
   "cancel": "Cancel",
   "skip": "Skip",
   "continue": "Continue",
+  "close": "Close",
   "login": "Login",
+  "setActive": "Set Active",
   "signup": "Signup",
   "email": "Email",
   "password": "Password",
   "passwordConfirm": "Password confirmation",
-  "tutorialPage": {
-    "slide1": {
-      "title": "Welcome to Ionic2 Essentials",
-      "description": "This Ionic2 starter comes pre-bundled with all the goodies you'll need for production ready mobile app"
+  "shiftsPage": {
+    "title": "Shifts",
+    "todaySegment": "Today",
+    "shiftsSegment": "Shifts",
+    "noShiftsPanel": {
+      "title": "No Shifts Today",
+      "details": "",
+      "extraDetails": "",
+      "buttonLabel": ""
     },
-    "slide2": {
-      "title": "Ready to Discover?",
-      "description": "You can explore some of the features directly in the app (like internationalization), while others are part of the development experience (like Redux and CodePush)"
+    "ctaPanel2": {
+      "title": "No Shifts Created",
+      "details": "",
+      "extraDetails": "",
+      "buttonLabel": ""
     }
   }
 }

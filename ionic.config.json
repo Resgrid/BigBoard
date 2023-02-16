@@ -1,10 +1,7 @@
 {
-  "name": "Resgrid BigBoard",
+  "name": "BigBoard",
   "integrations": {
-    "gulp": {},
-    "cordova": {}
+    "capacitor": {}
   },
-  "type": "ionic-angular",
-  "watchPatterns": [],
-  "id": "29930912"
+  "type": "angular"
 }

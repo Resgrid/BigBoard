@@ -1,0 +1,62 @@
+.essential-theme {
+  .is-payment-cards {
+    .swiper-pagination.swiper-pagination-bullets {
+      bottom: 0px;
+    }
+
+    .swiper-pagination-bullet {
+      background-color: var(--ion-color-is-mute-light);
+      opacity: 1;
+    }
+
+    .swiper-pagination-bullet-active {
+      background-color: var(--ion-color-primary);
+    }
+
+    .slide-zoom {
+      text-align: start;
+    }
+
+    ion-card {
+      width: 100%;
+      --background: var(--is-ion-card-background);
+      box-shadow: 8px 8px 20px 2px rgba(0, 0, 0, 0.07), -8px -8px 20px 2px rgba(0, 0, 0, 0.07);
+
+      ion-item {
+        --border-style: none;
+        --background: var(--is-item-in-ion-card-background);
+        padding-top: 8px;
+      }
+
+      ion-thumbnail img {
+        object-fit: contain;
+      }
+
+      div[slot=end] {
+        margin-top: 8px;
+        ion-icon {
+          color: var(--ion-color-is-mute-normal);
+        }
+      }
+
+      ion-card-content p {
+        color: var(--ion-color-is-mute-normal);
+        font-size: 1.1rem;
+        letter-spacing: 4px;
+      }
+
+      ion-col {
+        ion-note {
+          font-size: 0.8rem;
+          color: var(--ion-color-is-mute-normal);
+          font-weight: 400;
+        }
+
+        p {
+          font-size: 0.9rem;
+          color: var(--ion-color-is-text-dark);
+        }
+      }
+    }
+  }
+}

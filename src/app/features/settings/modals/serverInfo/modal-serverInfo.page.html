@@ -1,0 +1,37 @@
+<ion-content [fullscreen]="true">
+  <ion-fab vertical="top" horizontal="end" slot="fixed">
+    <ion-fab-button size="small" color="light" (click)="dismissModal()">
+      <ion-icon name="close-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+  <div class="container ion-padding the-form" style="padding-top: 40px;">
+    <ion-grid style="margin-left: 10px; margin-right: 10px;">
+      <ion-row class="ion-padding-top">
+        <ion-col>
+          {{'setServerModal.serverInfoText' | translate}}
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <form [formGroup]="serverForm" (ngSubmit)="save()">
+            <div class="input-item">
+              <ion-item lines="none" class="ion-no-padding">
+                <ion-label class="input-label" position="stacked">{{'setServerModal.serverLabel' | translate}}</ion-label>
+                <ion-input formControlName="serverAddress"></ion-input>
+              </ion-item>
+            </div>
+            <div class="errors-container" *ngIf="serverForm.get('serverAddress')?.invalid && (serverForm.get('serverAddress')?.dirty || serverForm.get('serverAddress')?.touched)">
+              <ng-container *ngIf="serverForm.get('serverAddress')?.errors?.required">{{'setServerModal.serverErrorText' | translate}}</ng-container>
+              <ng-container *ngIf="serverForm.get('serverAddress')?.errors?.invalidUrl">
+                {{serverForm.get('serverAddress')?.errors?.message}}
+              </ng-container>
+            </div>
+            <ion-button [disabled]="serverForm.invalid" class="action-button" expand="block" fill="solid" color="primary" type="submit">
+              <span>{{'setServerModal.saveButton' | translate}}</span>
+            </ion-button>
+          </form>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+</ion-content>

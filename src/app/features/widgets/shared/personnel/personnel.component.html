@@ -1,0 +1,49 @@
+<ion-grid id="personnelFullTable" [style.font-size]="getFontSize((widgetsState$ | async)?.personnelWidgetSettings)+'px'">
+    <ion-row>
+      <ion-col>
+        <ion-text color="tertiary">
+          <strong>Name</strong>
+        </ion-text>
+      </ion-col>
+      <ion-col [hidden]="!(widgetsState$ | async)?.personnelWidgetSettings?.ShowGroup">
+        <ion-text color="tertiary"><strong>Group</strong></ion-text>
+      </ion-col>
+      <ion-col [hidden]="!(widgetsState$ | async)?.personnelWidgetSettings?.ShowStaffing">
+        <ion-text color="tertiary"><strong>Staffing</strong></ion-text>
+      </ion-col>
+      <ion-col [hidden]="!(widgetsState$ | async)?.personnelWidgetSettings?.ShowStatus">
+        <ion-text color="tertiary"><strong>Status</strong></ion-text>
+      </ion-col>
+      <ion-col [hidden]="!(widgetsState$ | async)?.personnelWidgetSettings?.ShowRoles">
+        <ion-text color="tertiary"><strong>Roles</strong></ion-text>
+      </ion-col>
+      <ion-col [hidden]="!(widgetsState$ | async)?.personnelWidgetSettings?.ShowTimestamp">
+        <ion-text color="tertiary"><strong>Timestamp</strong></ion-text>
+      </ion-col>
+    </ion-row>
+    <ion-row class="strippedRows" *ngFor="let status of (widgetsState$ | async)?.personnel" [hidden]="(isPersonOrGroupHidden(status) | async)">
+      <ion-col>
+        <ion-text color="medium">
+          {{status.FirstName}} {{status.LastName}}
+        </ion-text>
+      </ion-col>
+      <ion-col [hidden]="!(widgetsState$ | async)?.personnelWidgetSettings?.ShowGroup">
+        <ion-text color="medium">
+        {{status.GroupName}}
+      </ion-text>
+      </ion-col>
+      <ion-col [hidden]="!(widgetsState$ | async)?.personnelWidgetSettings?.ShowStaffing">
+        <span class="status-label" [style.color]="status.StaffingColor">{{status.Staffing}}</span>
+      </ion-col>
+      <ion-col [hidden]="!(widgetsState$ | async)?.personnelWidgetSettings?.ShowStatus">
+        <span class="status-label" [style.color]="status.StatusColor">{{status.Status}}</span>
+      </ion-col>
+      <ion-col [hidden]="!(widgetsState$ | async)?.personnelWidgetSettings?.ShowRoles" [style.font-size]="(getFontSize((widgetsState$ | async)?.personnelWidgetSettings) - 2)+'px'">
+        <ion-text color="medium">{{status.Roles}}</ion-text>
+      </ion-col>
+      <ion-col [hidden]="!(widgetsState$ | async)?.personnelWidgetSettings?.ShowTimestamp">
+        <ion-text color="medium">{{getTimeago(status.StatusTimestamp)}}</ion-text>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  

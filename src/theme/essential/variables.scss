@@ -1,0 +1,170 @@
+/*
+* Default Ionic colors overridden by Essential's color scheme. New colors
+* added into the Essential theme such as "mute" shades.
+*/
+:root {
+  /** facebook **/
+  --ion-color-is-facebook: #3B5998;
+  --ion-color-is-facebook-rgb: 59,89,152;
+  --ion-color-is-facebook-contrast: var(--ion-color-is-facebook-contrast-theme);
+  --ion-color-is-facebook-contrast-rgb: var(--ion-color-is-facebook-contrast-rgb-theme);
+  --ion-color-is-facebook-shade: #344e86;
+  --ion-color-is-facebook-tint: #4f6aa2;
+
+  /** twitter **/
+  --ion-color-is-twitter: #55ACEE;
+  --ion-color-is-twitter-rgb: 85,172,238;
+  --ion-color-is-twitter-contrast: var(--ion-color-is-twitter-contrast-theme);
+  --ion-color-is-twitter-contrast-rgb: var(--ion-color-is-twitter-contrast-rgb-theme);
+  --ion-color-is-twitter-shade: #4b97d1;
+  --ion-color-is-twitter-tint: #66b4f0;
+
+  /** linkedin **/
+  --ion-color-is-linkedin: #0073B0;
+  --ion-color-is-linkedin-rgb: 0,115,176;
+  --ion-color-is-linkedin-contrast: var(--ion-color-is-linkedin-contrast-theme);
+  --ion-color-is-linkedin-contrast-rgb: var(--ion-color-is-linkedin-contrast-rgb-theme);
+  --ion-color-is-linkedin-shade: #00659b;
+  --ion-color-is-linkedin-tint: #1a81b8;
+
+  /** facebook icon **/
+  --ion-color-is-facebook-icon: var(--ion-color-is-facebook-icon-theme);
+  --ion-color-is-facebook-icon-rgb: var(--ion-color-is-facebook-icon-rgb-theme);
+  --ion-color-is-facebook-icon-contrast: var(--ion-color-is-facebook-icon-contrast-theme);
+  --ion-color-is-facebook-icon-contrast-rgb: var(--ion-color-is-facebook-icon-contrast-rgb-theme);
+  --ion-color-is-facebook-icon-shade: var(--ion-color-is-facebook-icon-shade-theme);
+  --ion-color-is-facebook-icon-tint: var(--ion-color-is-facebook-icon-tint-theme);
+
+  /** twitter icon **/
+  --ion-color-is-twitter-icon: var(--ion-color-is-twitter-icon-theme);
+  --ion-color-is-twitter-icon-rgb: var(--ion-color-is-twitter-icon-rgb-theme);
+  --ion-color-is-twitter-icon-contrast: var(--ion-color-is-twitter-icon-contrast-theme);
+  --ion-color-is-twitter-icon-contrast-rgb: var(--ion-color-is-twitter-icon-contrast-rgb-theme);
+  --ion-color-is-twitter-icon-shade: var(--ion-color-is-twitter-icon-shade-theme);
+  --ion-color-is-twitter-icon-tint: var(--ion-color-is-twitter-icon-tint-theme);
+
+  /** linkedin icon **/
+  --ion-color-is-linkedin-icon: var(--ion-color-is-linkedin-icon-theme);
+  --ion-color-is-linkedin-icon-rgb: var(--ion-color-is-linkedin-icon-rgb-theme);
+  --ion-color-is-linkedin-icon-contrast: var(--ion-color-is-linkedin-icon-contrast-theme);
+  --ion-color-is-linkedin-icon-contrast-rgb: var(--ion-color-is-linkedin-icon-contrast-rgb-theme);
+  --ion-color-is-linkedin-icon-shade: var(--ion-color-is-linkedin-icon-shade-theme);
+  --ion-color-is-linkedin-icon-tint: var(--ion-color-is-linkedin-icon-tint-theme);
+
+  --is-login-element-dark-contrast: #ffffff;
+  --ion-color-is-mute-normal: var(--ion-color-is-mute-normal-theme);
+  --ion-color-is-mute-dark: var(--ion-color-is-mute-dark-theme);
+  --ion-color-is-text-dark: var(--ion-color-is-text-dark-theme);
+
+  /** mute light **/
+  --ion-color-is-mute-light: var(--ion-color-is-mute-light-theme);
+  --ion-color-is-mute-light-rgb: var(--ion-color-is-mute-light-rgb-theme);
+  --ion-color-is-mute-light-contrast: var(--ion-color-is-mute-light-contrast-theme);
+  --ion-color-is-mute-light-contrast-rgb: var(--ion-color-is-mute-light-contrast-rgb-theme);
+  --ion-color-is-mute-light-shade: var(--ion-color-is-mute-light-shade-theme);
+  --ion-color-is-mute-light-tint: var(--ion-color-is-mute-light-tint-theme);
+
+  // Fonts used by the app for Android and iOS platforms
+  --ion-font-family: "Rubik", "Roboto", "Helvetica Neue", sans-serif;
+
+  --ion-background-color: var(--ion-background-color-theme);
+  --ion-background-color-rgb: var(--ion-background-color-rgb-theme);
+  --ion-toolbar-background: var(--ion-toolbar-background-theme);
+  --ion-toolbar-color: var(--ion-toolbar-color-theme);
+  --placeholder-color: var(--placeholder-color-theme);
+  --ion-text-color: var(--ion-text-color-theme);
+  --ion-item-color: var(--ion-item-color-theme);
+  --is-link-color: var(--is-link-color-theme);
+  --is-ion-select-action-sheet-ios-selected-opacity: var(--is-ion-select-action-sheet-ios-selected-opacity-theme);
+  --is-list-buttons-detail-icon-opacity: var(--is-list-buttons-detail-icon-opacity-theme);
+  --is-item-divider-background: var(--is-item-divider-background-theme);
+  --is-item-divider-background-active: var(--is-item-divider-background-active-theme);
+  --is-ion-card-background: var(--is-ion-card-background-theme);
+  --is-item-in-ion-card-background: var(--is-item-in-ion-card-background-theme);
+  --is-ion-popover-ion-backdrop-background: var(--is-ion-popover-ion-backdrop-background-theme);
+  --is-handle-background: var(--is-handle-background-theme);
+  --is-segment-color: var(--is-segment-color-theme);
+  --is-segment-checked-color: var(--is-segment-checked-color-theme);
+}
+
+// To use custom colors in Ionic Components set the following classes.
+// For more information, read
+// https://beta.ionicframework.com/docs/theming/advanced/#adding-colors
+.ion-color-is-mute-normal {
+  --ion-color-base: var(--ion-color-is-mute-normal-theme);
+  --ion-color-base-rgb: var(--ion-color-is-mute-normal-rgb-theme);
+  --ion-color-contrast: var(--ion-color-is-mute-normal-contrast-theme);
+  --ion-color-contrast-rgb: var(--ion-color-is-mute-normal-contrast-rgb-theme);
+  --ion-color-shade: var(--ion-color-is-mute-normal-shade-theme);
+  --ion-color-tint: var(--ion-color-is-mute-normal-tint-theme);
+}
+
+.ion-color-is-text-dark {
+  --ion-color-base: var(--ion-color-is-text-dark-theme);
+  --ion-color-base-rgb: var(--ion-color-is-text-dark-rgb-theme);
+  --ion-color-contrast: var(--ion-color-is-text-dark-contrast-theme);
+  --ion-color-contrast-rgb: var(--ion-color-is-text-dark-contrast-rgb-theme);
+  --ion-color-shade: var(--ion-color-is-text-dark-shade-theme);
+  --ion-color-tint: var(--ion-color-is-text-dark-tint-theme);
+}
+
+.ion-color-is-facebook {
+  --ion-color-base: var(--ion-color-is-facebook);
+  --ion-color-base-rgb: var(--ion-color-is-facebook-rgb);
+  --ion-color-contrast: var(--ion-color-is-facebook-contrast-theme);
+  --ion-color-contrast-rgb: var(--ion-color-is-facebook-contrast-rgb-theme);
+  --ion-color-shade: var(--ion-color-is-facebook-shade);
+  --ion-color-tint: var(--ion-color-is-facebook-tint);
+}
+
+.ion-color-is-facebook-icon {
+  --ion-color-base: var(--ion-color-is-facebook-icon);
+  --ion-color-base-rgb: var(--ion-color-is-facebook-icon-rgb);
+  --ion-color-contrast: var(--ion-color-is-facebook-icon-contrast);
+  --ion-color-contrast-rgb: var(--ion-color-is-facebook-icon-contrast-rgb);
+  --ion-color-shade: var(--ion-color-is-facebook-icon-shade);
+  --ion-color-tint: var(--ion-color-is-facebook-icon-tint);
+}
+
+.ion-color-is-twitter {
+  --ion-color-base: var(--ion-color-is-twitter);
+  --ion-color-base-rgb: var(--ion-color-is-twitter-rgb);
+  --ion-color-contrast: var(--ion-color-is-twitter-contrast-theme);
+  --ion-color-contrast-rgb: var(--ion-color-is-twitter-contrast-rgb-theme);
+  --ion-color-shade: var(--ion-color-is-twitter-shade);
+  --ion-color-tint: var(--ion-color-is-twitter-tint);
+}
+
+.ion-color-is-twitter-icon {
+  --ion-color-base: var(--ion-color-is-twitter-icon);
+  --ion-color-base-rgb: var(--ion-color-is-twitter-icon-rgb);
+  --ion-color-contrast: var(--ion-color-is-twitter-icon-contrast);
+  --ion-color-contrast-rgb: var(--ion-color-is-twitter-icon-contrast-rgb);
+  --ion-color-shade: var(--ion-color-is-twitter-icon-shade);
+  --ion-color-tint: var(--ion-color-is-twitter-icon-tint);
+}
+
+.ion-color-is-linkedin {
+  --ion-color-base: var(--ion-color-is-linkedin);
+  --ion-color-base-rgb: var(--ion-color-is-linkedin-rgb);
+  --ion-color-contrast: var(--ion-color-is-linkedin-contrast-theme);
+  --ion-color-contrast-rgb: var(--ion-color-is-linkedin-contrast-rgb-theme);
+  --ion-color-shade: var(--ion-color-is-linkedin-shade);
+  --ion-color-tint: var(--ion-color-is-linkedin-tint);
+}
+
+.ion-color-is-linkedin-icon {
+  --ion-color-base: var(--ion-color-is-linkedin-icon);
+  --ion-color-base-rgb: var(--ion-color-is-linkedin-icon-rgb);
+  --ion-color-contrast: var(--ion-color-is-linkedin-icon-contrast);
+  --ion-color-contrast-rgb: var(--ion-color-is-linkedin-icon-contrast-rgb);
+  --ion-color-shade: var(--ion-color-is-linkedin-icon-shade);
+  --ion-color-tint: var(--ion-color-is-linkedin-icon-tint);
+}
+
+/*
+* Added colors to be used less frequently. They don't
+* use the color function. For more information, read
+* https://ionicframework.com/docs/theming/theming-your-app/
+*/
+$is-searchbar-color: var(--is-searchbar-color-theme);
