@@ -51,13 +51,7 @@
 }
 
 
-/*-------------------------
-	Light color theme
---------------------------*/
-
-
 #clock.light{
-	//background-color:#f3f3f3;
 	color:#272e38;
 }
 
@@ -75,20 +69,6 @@
 	background-color:#272e38;
 }
 
-#clock.light .alarm{
-	// background:url('../img/alarm_light.jpg');
-}
-
-#clock.light .display{
-	//background-color:#dddddd;
-	//box-shadow:0 1px 1px rgba(0,0,0,0.08) inset, 0 1px 1px #fafafa;
-}
-
-
-/*-------------------------
-	Dark color theme
---------------------------*/
-
 
 #clock.dark{
 	color:#cacaca;
@@ -103,20 +83,10 @@
 	border-color:#cacaca;
 }
 
-#clock.dark .alarm{
-	// background:url('../img/alarm_dark.jpg');
-}
-
 #clock.dark .digits div.dots:before,
 #clock.dark .digits div.dots:after{
 	background-color:#cacaca;
 }
-
-
-/*-------------------------
-	The Digits
---------------------------*/
-
 
 #clock .digits div{
 	text-align:left;
@@ -296,17 +266,10 @@
 	top:34px;
 }
 
-
-/*-------------------------
-	The Alarm
---------------------------*/
-
-
 #clock .alarm{
 	width:16px;
 	height:16px;
 	bottom:20px;
-	//background:url('../img/alarm_light.jpg');
 	position:absolute;
 	opacity:0.2;
 }
@@ -314,12 +277,6 @@
 #clock .alarm.active{
 	opacity:1;
 }
-
-
-/*-------------------------
-	Weekdays
---------------------------*/
-
 
 #clock .weekdays{
 	font-size:12px;
@@ -339,12 +296,6 @@
 #clock .weekdays span.active{
 	opacity:1;
 }
-
-
-/*-------------------------
-		AM/PM
---------------------------*/
-
 
 #clock .ampm {
 	font-size:12px;
