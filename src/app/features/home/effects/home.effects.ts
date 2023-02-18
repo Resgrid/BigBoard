@@ -82,6 +82,16 @@ export class HomeEffects {
 			)
 	);
 
+  removeWidget$ = createEffect(
+		() =>
+			this.actions$.pipe(
+				ofType(homeAction.HomeActionTypes.REMOVE_WIDGET),
+				map((data) => ({
+					type: homeAction.HomeActionTypes.SAVE_WIDGET_LAYOUT,
+				}))
+			)
+	);
+
   loadWidgetLayout$ = createEffect(() =>
     this.actions$.pipe(
       ofType<homeAction.LoadWidgetLayout>(homeAction.HomeActionTypes.LOAD_WIDGET_LAYOUT),

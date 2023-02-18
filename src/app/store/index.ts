@@ -84,6 +84,11 @@ export const selectMapWidgetSettingsState = createSelector(
   widgetsReducers.getMapWidgetSettings
 );
 
+export const selectPTTWidgetSettingsState = createSelector(
+  selectWidgetsState,
+  widgetsReducers.getPTTWidgetSettings
+);
+
 export const selectMapWidgetDataState = createSelector(
   selectWidgetsState,
   widgetsReducers.getMapWidgetData

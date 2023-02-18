@@ -9,6 +9,7 @@ import {
   selectHomeState,
   selectKeepAliveState,
   selectSettingsState,
+  selectVoiceState,
   selectWidgetsState,
 } from 'src/app/store';
 import { SubSink } from 'subsink';
@@ -26,6 +27,9 @@ import { UnitsWidgetSettings } from 'src/app/models/unitsWidgetSettings';
 import { CallsWidgetSettings } from 'src/app/models/callsWidgetSettings';
 import { NotesWidgetSettings } from 'src/app/models/notesWidgetSettings';
 import * as _ from 'lodash';
+import { PTTWidgetSettings } from 'src/app/models/pttWidgetSettings';
+import { VoiceState } from 'src/app/features/voice/store/voice.store';
+import * as VoiceActions from '../../../voice/actions/voice.actions';
 
 @Component({
   selector: 'app-home-configure',
@@ -35,6 +39,7 @@ import * as _ from 'lodash';
 export class ConfigurePage implements OnInit {
   public homeState$: Observable<HomeState | null>;
   public widgetsState$: Observable<WidgetsState | null>;
+  public voiceState$: Observable<VoiceState>;
   private subs = new SubSink();
   public tabType: string = 'personnel';
 
@@ -52,16 +57,22 @@ export class ConfigurePage implements OnInit {
   public notesWidgetSettings: NotesWidgetSettings = new NotesWidgetSettings();
   public noteCategories: string[] = new Array<string>();
 
+  public pttWidgetSettings: PTTWidgetSettings = new PTTWidgetSettings();
+  public channels: string[] = new Array<string>();
+  public channel: string = '';
+
   constructor(
     public menuCtrl: MenuController,
     private widgetsStore: Store<WidgetsState>,
     private homeStore: Store<HomeState>,
     private sleepProvider: SleepProvider,
     private platform: Platform,
-    private deviceService: OpenViduDevicesService
+    private deviceService: OpenViduDevicesService,
+    private voiceStore: Store<VoiceState>
   ) {
     this.homeState$ = this.homeStore.select(selectHomeState);
     this.widgetsState$ = this.widgetsStore.select(selectWidgetsState);
+    this.voiceState$ = this.voiceStore.select(selectVoiceState);
 
     this.weatherUnits = new Array<string>('standard', 'metric', 'imperial');
     this.noteCategories.push('None');
@@ -69,7 +80,7 @@ export class ConfigurePage implements OnInit {
 
   ngOnInit() {}
 
-  ionViewWillEnter() {
+  ionViewDidEnter() {
     this.subs.sink = this.widgetsState$.subscribe((widgetSettings) => {
       if (widgetSettings) {
         if (widgetSettings.personnelWidgetSettings) {
@@ -103,14 +114,27 @@ export class ConfigurePage implements OnInit {
         if (widgetSettings.notesWidgetSettings) {
           this.notesWidgetSettings = _.cloneDeep(widgetSettings.notesWidgetSettings);
         }
+
+        if (widgetSettings.pttWidgetSettings) {
+          this.pttWidgetSettings = _.cloneDeep(widgetSettings.pttWidgetSettings);
+          this.channel = this.pttWidgetSettings.Channel;
+        }
+      }
+    });
+
+    this.subs.sink = this.voiceState$.subscribe((voiceState) => {
+      if (voiceState && voiceState.channels) {
+        this.channels = new Array<string>();
+        voiceState.channels.forEach(channel => {
+          this.channels.push(channel.Name);
+        });
       }
     });
 
     this.homeStore.dispatch(new HomeActions.GetGroups());
     this.widgetsStore.dispatch(new WidgetActions.LoadAllWidgetSettings());
+    this.voiceStore.dispatch(new VoiceActions.GetVoipInfo());
   }
-
-  async ionViewDidEnter() {}
 
   ionViewWillLeave() {
     if (this.subs) {
@@ -248,5 +272,10 @@ export class ConfigurePage implements OnInit {
 
   public saveNoteWidgetSettings() {
     this.widgetsStore.dispatch(new WidgetActions.SetNotesSettings(this.notesWidgetSettings));
+  }
+
+  public savePTTWidgetSettings() {
+    this.pttWidgetSettings.Channel = this.channel;
+    this.widgetsStore.dispatch(new WidgetActions.SetPTTSettings(this.pttWidgetSettings));
   }
 }

@@ -4,6 +4,7 @@ import { GroupSorting } from "src/app/models/groupSorting";
 import { MapWidgetSettings } from "src/app/models/mapWidgetSettings";
 import { NotesWidgetSettings } from "src/app/models/notesWidgetSettings";
 import { PersonnelWidgetSettings } from "src/app/models/personnelWidgetSettings";
+import { PTTWidgetSettings } from "src/app/models/pttWidgetSettings";
 import { UnitsWidgetSettings } from "src/app/models/unitsWidgetSettings";
 import { WeatherWidgetSettings } from "src/app/models/weatherWidgetSettings";
 
@@ -34,6 +35,9 @@ export interface WidgetsState {
     // Map Widget
     mapWidgetSettings: MapWidgetSettings;
     mapData: MapDataAndMarkersData | null;
+
+    // PTT Widget
+    pttWidgetSettings: PTTWidgetSettings;
 }
 
 export const initialState: WidgetsState = {
@@ -50,5 +54,6 @@ export const initialState: WidgetsState = {
     notes: [],
     mapWidgetSettings: new MapWidgetSettings(),
     mapData: null,
-    location: null
+    location: null,
+    pttWidgetSettings: new PTTWidgetSettings(),
 };

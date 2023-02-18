@@ -11,6 +11,7 @@ export enum HomeActionTypes {
   CLOSE_MODAL = '[HOME] CLOSE_MODAL',
   UPDATE_WIDGET_LAYOUT = '[HOME] UPDATE_WIDGET_LAYOUT',
   REMOVE_WIDGET = '[HOME] REMOVE_WIDGET',
+  REMOVE_WIDGET_DONE = '[HOME] REMOVE_WIDGET_DONE',
   SAVE_WIDGET_LAYOUT = '[HOME] SAVE_WIDGET_LAYOUT',
   LOAD_WIDGET_LAYOUT = '[HOME] LOAD_WIDGET_LAYOUT',
   LOAD_WIDGET_LAYOUT_DONE = '[HOME] LOAD_WIDGET_LAYOUT_DONE',
@@ -54,6 +55,11 @@ export class RemoveWidget implements Action {
   constructor(public id: string) {}
 }
 
+export class RemoveWidgetDone implements Action {
+  readonly type = HomeActionTypes.REMOVE_WIDGET_DONE;
+  constructor() {}
+}
+
 export class SaveWidgetLayout implements Action {
   readonly type = HomeActionTypes.SAVE_WIDGET_LAYOUT;
   constructor() {}
@@ -92,4 +98,5 @@ export type HomeActionsUnion =
   | LoadWidgetLayoutDone
   | GetGroups
   | GetGroupsDone
+  | RemoveWidgetDone
   ;

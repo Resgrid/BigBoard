@@ -5,15 +5,9 @@
         <ov-video [streamManager]="sub" *ngFor="let sub of openViduService.subscribers"></ov-video>
       </ion-col>
       <ion-col>
-        <ion-select placeholder="Disconnected" [(ngModel)]="selectedChannel" (ngModelChange)="onChannelChange($event)" interface="action-sheet">
+        <ion-select placeholder="Off" [(ngModel)]="selectedChannel" (ngModelChange)="onChannelChange($event)" interface="action-sheet">
           <ion-select-option *ngFor="let channel of (voiceState$ | async)?.channels;" [value]="channel">{{channel.Name}}</ion-select-option>
         </ion-select>
-      </ion-col>
-      <ion-col>
-        <ion-button (click)="toggleTransmitting()" color="primary">
-          <ion-icon name="mic-outline" *ngIf="(voiceState$ | async)?.isTransmitting" color="success"></ion-icon>
-          <ion-icon name="mic-off-outline" *ngIf="!(voiceState$ | async)?.isTransmitting" color="danger"></ion-icon>
-        </ion-button>
       </ion-col>
     </ion-row>
   </ion-grid>
