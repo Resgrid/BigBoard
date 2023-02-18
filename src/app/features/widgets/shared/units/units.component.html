@@ -1,19 +1,19 @@
 <ion-grid id="unitsFullTable" [style.font-size]="getFontSize((widgetsState$ | async)?.unitsWidgetSettings)+'px'">
     <ion-row>
       <ion-col>
-        <ion-text color="tertiary"><strong>Name</strong></ion-text>
+        <ion-text color="tertiary"><strong>{{'unitsWidget.nameColumn' | translate}}</strong></ion-text>
       </ion-col>
       <ion-col [hidden]="!(widgetsState$ | async)?.unitsWidgetSettings?.ShowStation">
-        <ion-text color="tertiary"><strong>Station</strong></ion-text>
+        <ion-text color="tertiary"><strong>{{'unitsWidget.stationColumn' | translate}}</strong></ion-text>
       </ion-col>
       <ion-col [hidden]="!(widgetsState$ | async)?.unitsWidgetSettings?.ShowType">
-        <ion-text color="tertiary"><strong>Type</strong></ion-text>
+        <ion-text color="tertiary"><strong>{{'unitsWidget.typeColumn' | translate}}</strong></ion-text>
       </ion-col>
       <ion-col [hidden]="!(widgetsState$ | async)?.unitsWidgetSettings?.ShowState">
-        <ion-text color="tertiary"><strong>State</strong></ion-text>
+        <ion-text color="tertiary"><strong>{{'unitsWidget.stateColumn' | translate}}</strong></ion-text>
       </ion-col>
       <ion-col [hidden]="!(widgetsState$ | async)?.unitsWidgetSettings?.ShowTimestamp">
-        <ion-text color="tertiary"><strong>Timestamp</strong></ion-text>
+        <ion-text color="tertiary"><strong>{{'unitsWidget.timestampColumn' | translate}}</strong></ion-text>
       </ion-col>
     </ion-row>
     <ion-row class="strippedRows" *ngFor="let unit of (widgetsState$ | async)?.units">
