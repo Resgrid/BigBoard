@@ -11,6 +11,7 @@ import { WeatherWidgetSettings } from '../models/weatherWidgetSettings';
 import { NotesWidgetSettings } from '../models/notesWidgetSettings';
 import { MapWidgetSettings } from '../models/mapWidgetSettings';
 import { Widget } from '../models/widget';
+import { PTTWidgetSettings } from '../models/pttWidgetSettings';
 
 @Injectable({
   providedIn: 'root',
@@ -153,6 +154,21 @@ export class StorageProvider {
 
   public async loadCallWidgetSettings(): Promise<CallsWidgetSettings | null> {
     const result = await this.get("RGBBcallWidgetSettings");
+
+    if (result) {
+      return JSON.parse(result);
+    }
+
+    return null;
+  }
+
+  public async savePTTWidgetSettings(pttWidgetSettings: PTTWidgetSettings): Promise<PTTWidgetSettings> {
+    await this.set('RGBBpttWidgetSettings', JSON.stringify(pttWidgetSettings));
+    return pttWidgetSettings;
+  }
+
+  public async loadPTTWidgetSettings(): Promise<PTTWidgetSettings | null> {
+    const result = await this.get("RGBBpttWidgetSettings");
 
     if (result) {
       return JSON.parse(result);

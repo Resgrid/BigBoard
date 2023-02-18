@@ -251,6 +251,18 @@ export class DashboardPage {
         };
         this.store.dispatch(new HomeActions.AddWidget(notesWidget));
         break;
+      case 9: // PTT
+        const pttWidget = {
+          x: 0,
+          y: 0,
+          w: 4,
+          h: 2,
+          id: this.utilsService.generateUUID(),
+          type: type,
+          name: 'PTT',
+        };
+        this.store.dispatch(new HomeActions.AddWidget(pttWidget));
+        break;
     }
   }
 

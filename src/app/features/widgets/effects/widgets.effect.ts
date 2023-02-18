@@ -136,6 +136,23 @@ export class WidgetsEffects {
     )
   );
 
+  setPTTSettings$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType<widgetsAction.SetPTTSettings>(
+        widgetsAction.WidgetsActionTypes.SET_PTT_SETTINGS
+      ),
+      switchMap((action) =>
+        this.storageProvider.savePTTWidgetSettings(action.settings)
+      ),
+      map((data) => {
+        return {
+          type: widgetsAction.WidgetsActionTypes.SET_PTT_SETTINGS_DONE,
+          settings: data
+        };
+      })
+    )
+  );
+
   getPersonnelList$ = createEffect(() =>
     this.actions$.pipe(
       ofType<widgetsAction.GetPersonnelStatuses>(
@@ -254,6 +271,7 @@ export class WidgetsEffects {
 					from(this.storageProvider.loadUnitsWidgetSettings()),
 					from(this.storageProvider.loadNotesWidgetSettings()),
           from(this.storageProvider.loadMapWidgetSettings()),
+          from(this.storageProvider.loadPTTWidgetSettings()),
 				]).pipe(
 					map((result) => ({
 						type: widgetsAction.WidgetsActionTypes.LOAD_ALL_WIDGET_SETTINGS_DONE,
@@ -263,6 +281,7 @@ export class WidgetsEffects {
 						unitsWidgetSettings: result[3],
 						notesWidgetSettings: result[4],
             mapWidgetSettings: result[5],
+            pttWidgetSettings: result[6],
 					}))
 				)
 			)

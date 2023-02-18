@@ -9,4 +9,5 @@ export class MapWidgetSettings  {
     public ShowStations: boolean = true;
     public ShowPersonnel: boolean = true;
     public ShowUnits: boolean = true;
+    public HideLabels: boolean = false;
 }

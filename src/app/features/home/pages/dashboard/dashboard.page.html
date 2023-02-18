@@ -13,6 +13,7 @@
                   <app-widgets-units *ngIf="item.type === 4"></app-widgets-units>
                   <app-widgets-calls *ngIf="item.type === 5"></app-widgets-calls>
                   <app-widgets-notes *ngIf="item.type === 8"></app-widgets-notes>
+                  <app-widgets-ptt *ngIf="item.type === 9"></app-widgets-ptt>
                 </div>
 
                 <div class="grid-item-remove-handle" *ngIf="!disableRemove" (mousedown)="stopEventPropagation($event)" (click)="removeItem(item.id)">
@@ -26,31 +27,31 @@
         </ion-fab-button>
         <ion-fab-list side="top">
             <ion-fab-button (click)="addWidget(1)" [hidden]="isWidgetActive(1) | async">
-                <ion-icon name="people"></ion-icon>
+                <ion-icon color="primary" color="primary" name="people"></ion-icon>
             </ion-fab-button>
             <ion-fab-button (click)="addWidget(5)" [hidden]="isWidgetActive(5) | async">
-                <ion-icon name="megaphone"></ion-icon>
+                <ion-icon color="primary" name="megaphone"></ion-icon>
             </ion-fab-button>
             <ion-fab-button (click)="addWidget(4)" [hidden]="isWidgetActive(4) | async">
-                <ion-icon name="car"></ion-icon>
+                <ion-icon color="primary" name="car"></ion-icon>
             </ion-fab-button>
             <ion-fab-button (click)="addWidget(2)" [hidden]="isWidgetActive(2) | async">
-                <ion-icon name="map"></ion-icon>
+                <ion-icon color="primary" name="map"></ion-icon>
             </ion-fab-button>
             <ion-fab-button (click)="addWidget(3)" [hidden]="isWidgetActive(3) | async">
-                <ion-icon name="sunny"></ion-icon>
+                <ion-icon color="primary" name="sunny"></ion-icon>
             </ion-fab-button>
-            <ion-fab-button>
+            <!--<ion-fab-button>
                 <ion-icon name="thunderstorm"></ion-icon>
             </ion-fab-button>
-            <!--<ion-fab-button (click)="addWidget(7)" [hidden]="isWidgetActive(7)">
+            <ion-fab-button (click)="addWidget(7)" [hidden]="isWidgetActive(7)">
                 <ion-icon name="link"></ion-icon>
             </ion-fab-button>-->
             <ion-fab-button (click)="addWidget(8)" [hidden]="isWidgetActive(8) | async">
-                <ion-icon name="document"></ion-icon>
+                <ion-icon color="primary" name="document"></ion-icon>
             </ion-fab-button>
-            <ion-fab-button>
-                <ion-icon name="mic"></ion-icon>
+            <ion-fab-button (click)="addWidget(9)" [hidden]="isWidgetActive(9) | async">
+                <ion-icon color="primary" name="mic"></ion-icon>
             </ion-fab-button>
         </ion-fab-list>
     </ion-fab>

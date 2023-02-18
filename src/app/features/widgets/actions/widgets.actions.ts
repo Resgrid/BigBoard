@@ -6,6 +6,7 @@ import { CallsWidgetSettings } from 'src/app/models/callsWidgetSettings';
 import { UnitsWidgetSettings } from 'src/app/models/unitsWidgetSettings';
 import { MapWidgetSettings } from 'src/app/models/mapWidgetSettings';
 import { NotesWidgetSettings } from 'src/app/models/notesWidgetSettings';
+import { PTTWidgetSettings } from 'src/app/models/pttWidgetSettings';
 
 export enum WidgetsActionTypes {
   GET_WEATHER_SETTTINGS = '[WIDGETS] GET_WEATHER_SETTTINGS',
@@ -45,6 +46,9 @@ export enum WidgetsActionTypes {
 
   LOAD_ALL_WIDGET_SETTINGS = '[WIDGETS] LOAD_ALL_WIDGET_SETTINGS',
   LOAD_ALL_WIDGET_SETTINGS_DONE = '[WIDGETS] LOAD_ALL_WIDGET_SETTINGS_DONE',
+
+  SET_PTT_SETTINGS = '[WIDGETS] SET_PTT_SETTINGS',
+  SET_PTT_SETTINGS_DONE = '[WIDGETS] SET_PTT_SETTINGS_DONE',
 
   DONE = '[WIDGETS] DONE',
 }
@@ -184,6 +188,16 @@ export class SetNotesSettingsDone implements Action {
   constructor(public settings: NotesWidgetSettings) {}
 }
 
+export class SetPTTSettings implements Action {
+  readonly type = WidgetsActionTypes.SET_PTT_SETTINGS;
+  constructor(public settings: PTTWidgetSettings) {}
+}
+
+export class SetPTTSettingsDone implements Action {
+  readonly type = WidgetsActionTypes.SET_PTT_SETTINGS_DONE;
+  constructor(public settings: PTTWidgetSettings) {}
+}
+
 export class LoadAllWidgetSettings implements Action {
   readonly type = WidgetsActionTypes.LOAD_ALL_WIDGET_SETTINGS;
   constructor() {}
@@ -193,7 +207,8 @@ export class LoadAllWidgetSettingsDone implements Action {
   readonly type = WidgetsActionTypes.LOAD_ALL_WIDGET_SETTINGS_DONE;
   constructor(public weatherWidgetSettings: WeatherWidgetSettings, public personnelWidgetSettings: PersonnelWidgetSettings, 
     public callsWidgetSettings: CallsWidgetSettings, public unitsWidgetSettings: UnitsWidgetSettings, 
-    public notesWidgetSettings: NotesWidgetSettings, public mapWidgetSettings: MapWidgetSettings) {}
+    public notesWidgetSettings: NotesWidgetSettings, public mapWidgetSettings: MapWidgetSettings,
+    public pttWidgetSettings: PTTWidgetSettings) {}
 }
 
 export class Done implements Action {
@@ -231,5 +246,7 @@ export type WidgetsActionsUnion =
   | SetCallsSettingsDone
   | SetNotesSettings
   | SetNotesSettingsDone
+  | SetPTTSettings
+  | SetPTTSettingsDone
   | Done
   ;

@@ -18,6 +18,9 @@
     <ion-segment-button value="notes">
       <ion-label>Notes</ion-label>
     </ion-segment-button>
+    <ion-segment-button value="ptt">
+      <ion-label>PTT</ion-label>
+    </ion-segment-button>
   </ion-segment>
   <div [ngSwitch]="tabType" style="overflow-y: auto;">
     <div *ngSwitchCase="'personnel'" style="overflow-y: auto;">
@@ -186,6 +189,14 @@
               <ion-toggle [(ngModel)]="mapWidgetSettings.ShowAllMarkers"></ion-toggle>
             </ion-item>
           </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label>Hide Labels</ion-label>
+              <ion-toggle [(ngModel)]="mapWidgetSettings.HideLabels"></ion-toggle>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row wrap>
           <ion-col>
             <ion-item>
               <ion-label>Show Call Pins</ion-label>
@@ -519,6 +530,38 @@
               color="primary"
               (click)="saveNoteWidgetSettings()" end>
               Save Note Widget Settings
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+    <div *ngSwitchCase="'ptt'" style="overflow-y: auto;">
+      <h6>Configure PTT Widget</h6>
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <h4 class="name">Options</h4>
+          </ion-col>
+        </ion-row>
+        <ion-row wrap>
+          <ion-col>
+            <ion-item>
+              <ion-label>Channel</ion-label>
+              <ion-select [(ngModel)]="channel">
+                <ion-select-option *ngFor="let channel of channels" [value]="channel">{{channel}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col width-70>
+          </ion-col>
+          <ion-col width-30 style="text-align: right;">
+            <ion-button
+              fill="solid"
+              color="primary"
+              (click)="savePTTWidgetSettings()" end>
+              Save PTT Widget Settings
             </ion-button>
           </ion-col>
         </ion-row>

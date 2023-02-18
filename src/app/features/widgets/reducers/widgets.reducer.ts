@@ -11,6 +11,7 @@ import { UnitsWidgetSettings } from 'src/app/models/unitsWidgetSettings';
 import { WeatherWidgetSettings } from 'src/app/models/weatherWidgetSettings';
 import { MapWidgetSettings } from 'src/app/models/mapWidgetSettings';
 import { PersonnelWidgetSettings } from 'src/app/models/personnelWidgetSettings';
+import { PTTWidgetSettings } from 'src/app/models/pttWidgetSettings';
 
 export function reducer(
   state: WidgetsState = initialState,
@@ -130,6 +131,19 @@ export function reducer(
         ...state,
         notesWidgetSettings: noteWidgetSettings,
       };
+    case WidgetsActionTypes.SET_PTT_SETTINGS_DONE:
+      let pttWidgetSettings: PTTWidgetSettings;
+
+      if (action.settings) {
+        pttWidgetSettings = action.settings;
+      } else {
+        pttWidgetSettings = new PTTWidgetSettings();
+      }
+
+      return {
+        ...state,
+        pttWidgetSettings: pttWidgetSettings,
+      };
     case WidgetsActionTypes.LOAD_ALL_WIDGET_SETTINGS_DONE:
       let weatherWidgetSettingsAll: WeatherWidgetSettings;
       let personnelWidgetSettingsAll: PersonnelWidgetSettings;
@@ -137,6 +151,7 @@ export function reducer(
       let unitsWidgetSettingsAll: UnitsWidgetSettings;
       let notesWidgetSettingsAll: NotesWidgetSettings;
       let mapWidgetSettingsAll: MapWidgetSettings;
+      let pttWidgetSettingsAll: PTTWidgetSettings;
 
       if (action.weatherWidgetSettings) {
         weatherWidgetSettingsAll = action.weatherWidgetSettings;
@@ -174,6 +189,12 @@ export function reducer(
         mapWidgetSettingsAll = new MapWidgetSettings();
       }
 
+      if (action.pttWidgetSettings) {
+        pttWidgetSettingsAll = action.pttWidgetSettings;
+      } else {
+        pttWidgetSettingsAll = new PTTWidgetSettings();
+      }
+
       return {
         ...state,
         weatherWidgetSettings: weatherWidgetSettingsAll,
@@ -182,6 +203,7 @@ export function reducer(
         unitsWidgetSettings: unitsWidgetSettingsAll,
         notesWidgetSettings: notesWidgetSettingsAll,
         mapWidgetSettings: mapWidgetSettingsAll,
+        pttWidgetSettings: pttWidgetSettingsAll,
       };
     default:
       return state;
@@ -200,5 +222,7 @@ export const getNotesWidgetSettings = (state: WidgetsState) =>
   state.notesWidgetSettings;
 export const getMapWidgetSettings = (state: WidgetsState) =>
   state.mapWidgetSettings;
+  export const getPTTWidgetSettings = (state: WidgetsState) =>
+  state.pttWidgetSettings;
 export const getMapWidgetData = (state: WidgetsState) => state.mapData;
 export const getWeatherWidgetLocation = (state: WidgetsState) => state.location;

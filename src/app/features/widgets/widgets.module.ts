@@ -25,6 +25,7 @@ import { TemperatureComponent } from './components/temperature/temperature.compo
 import { ForcastComponent } from './components/forcast/forcast.component';
 import { ForcastDayComponent } from './components/forcast-day/forcast-day.component';
 import { WeatherProvider } from './providers/weather';
+import { VoiceModule } from '../voice/voice.module';
 
 @NgModule({
     declarations: [
@@ -52,7 +53,8 @@ import { WeatherProvider } from './providers/weather';
         EffectsModule.forFeature([WidgetsEffects]),
         HammerModule,
         PipesModule,
-        AngularSvgIconModule.forRoot()
+        AngularSvgIconModule.forRoot(),
+        VoiceModule
     ],
     providers: [WeatherProvider],
     exports: [
