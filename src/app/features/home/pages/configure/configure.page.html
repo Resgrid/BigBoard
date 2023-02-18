@@ -1,77 +1,77 @@
 <ion-content [fullscreen]="true" class="ion-padding-horizontal">
   <ion-segment [(ngModel)]="tabType" scrollable="true">
     <ion-segment-button value="personnel">
-      <ion-label>Personnel</ion-label>
+      <ion-label>{{'configurePage.personnelSegmentLabel' | translate}}</ion-label>
     </ion-segment-button>
     <ion-segment-button value="map">
-      <ion-label>Map</ion-label>
+      <ion-label>{{'configurePage.mapSegmentLabel' | translate}}</ion-label>
     </ion-segment-button>
     <ion-segment-button value="weather">
-      <ion-label>Weather</ion-label>
+      <ion-label>{{'configurePage.weatherSegmentLabel' | translate}}</ion-label>
     </ion-segment-button>
     <ion-segment-button value="units">
-      <ion-label>Units</ion-label>
+      <ion-label>{{'configurePage.unitsSegmentLabel' | translate}}</ion-label>
     </ion-segment-button>
     <ion-segment-button value="calls">
-      <ion-label>Calls</ion-label>
+      <ion-label>{{'configurePage.callsSegmentLabel' | translate}}</ion-label>
     </ion-segment-button>
     <ion-segment-button value="notes">
-      <ion-label>Notes</ion-label>
+      <ion-label>{{'configurePage.notesSegmentLabel' | translate}}</ion-label>
     </ion-segment-button>
     <ion-segment-button value="ptt">
-      <ion-label>PTT</ion-label>
+      <ion-label>{{'configurePage.pttSegmentLabel' | translate}}</ion-label>
     </ion-segment-button>
   </ion-segment>
   <div [ngSwitch]="tabType" style="overflow-y: auto;">
     <div *ngSwitchCase="'personnel'" style="overflow-y: auto;">
-      <h6>Configure Personnel Widget</h6>
+      <h6>{{'configurePage.personnelWidget.title' | translate}}</h6>
       <ion-grid>
         <ion-row>
           <ion-col>
-            <h3 class="name">Visible Columns</h3>
+            <h3 class="name">{{'configurePage.personnelWidget.columns' | translate}}</h3>
           </ion-col>
         </ion-row>
         <ion-row wrap>
           <ion-col>
             <ion-item>
-              <ion-label>Group</ion-label>
+              <ion-label>{{'configurePage.personnelWidget.groupColumn' | translate}}</ion-label>
               <ion-toggle [(ngModel)]="personnelWidgetSettings.ShowGroup"></ion-toggle>
             </ion-item>
           </ion-col>
           <ion-col>
             <ion-item>
-              <ion-label>Staffing</ion-label>
+              <ion-label>{{'configurePage.personnelWidget.staffingColumn' | translate}}</ion-label>
               <ion-toggle [(ngModel)]="personnelWidgetSettings.ShowStaffing"></ion-toggle>
             </ion-item>
           </ion-col>
           <ion-col>
             <ion-item>
-              <ion-label>Status</ion-label>
+              <ion-label>{{'configurePage.personnelWidget.statusColumn' | translate}}</ion-label>
               <ion-toggle [(ngModel)]="personnelWidgetSettings.ShowStatus"></ion-toggle>
             </ion-item>
           </ion-col>
           <ion-col>
             <ion-item>
-              <ion-label>Roles</ion-label>
+              <ion-label>{{'configurePage.personnelWidget.rolesColumn' | translate}}</ion-label>
               <ion-toggle [(ngModel)]="personnelWidgetSettings.ShowRoles"></ion-toggle>
             </ion-item>
           </ion-col>
           <ion-col>
             <ion-item>
-              <ion-label>Timestamp</ion-label>
+              <ion-label>{{'configurePage.personnelWidget.timestampColumn' | translate}}</ion-label>
               <ion-toggle [(ngModel)]="personnelWidgetSettings.ShowTimestamp"></ion-toggle>
             </ion-item>
           </ion-col>
         </ion-row>
         <ion-row>
           <ion-col>
-            <h3 class="name">Options</h3>
+            <h3 class="name">{{'configurePage.personnelWidget.optionsLabel' | translate}}</h3>
           </ion-col>
         </ion-row>
         <ion-row>
           <ion-col>
             <ion-item>
-              <ion-label>Sort Responding To Top</ion-label>
+              <ion-label>{{'configurePage.personnelWidget.sortRespondingLabel' | translate}}</ion-label>
               <ion-toggle [(ngModel)]="personnelWidgetSettings.SortRespondingToTop"></ion-toggle>
             </ion-item>
           </ion-col>
@@ -84,7 +84,7 @@
         <ion-row>
           <ion-col>
             <ion-item>
-              <ion-label>Hide Not Responding</ion-label>
+              <ion-label>{{'configurePage.personnelWidget.hideNotRespondingLabel' | translate}}</ion-label>
               <ion-toggle [(ngModel)]="personnelWidgetSettings.HideNotResponding"></ion-toggle>
             </ion-item>
           </ion-col>
@@ -97,7 +97,7 @@
         <ion-row>
           <ion-col>
             <ion-item>
-              <ion-label>Hide Unavailable</ion-label>
+              <ion-label>{{'configurePage.personnelWidget.hideUnavailable' | translate}}</ion-label>
               <ion-toggle [(ngModel)]="personnelWidgetSettings.HideUnavailable"></ion-toggle>
             </ion-item>
           </ion-col>
@@ -110,7 +110,7 @@
         <ion-row>
           <ion-col>
             <ion-list-header>
-              Adjust Text Size
+              {{'configurePage.personnelWidget.adjustTextSizeLabel' | translate}}
             </ion-list-header>
             <ion-item>
               <ion-range min="4" step="1" max="30" snaps="true" [(ngModel)]="personnelWidgetSettings.FontSize">
@@ -122,7 +122,7 @@
         </ion-row>
         <ion-row>
           <ion-col>
-            <h3 class="name">Order Groups</h3>
+            <h3 class="name">{{'configurePage.personnelWidget.orderGroupsLabel' | translate}}</h3>
           </ion-col>
         </ion-row>
         <ion-row *ngFor="let group of (homeState$ | async)?.groups">
@@ -139,7 +139,7 @@
         </ion-row>
         <ion-row>
           <ion-col>
-            <h3 class="name">Hide Groups</h3>
+            <h3 class="name">{{'configurePage.personnelWidget.hideGroupsLabel' | translate}}</h3>
           </ion-col>
         </ion-row>
         <ion-row *ngFor="let group of (homeState$ | async)?.groups">
@@ -162,36 +162,36 @@
               fill="solid"
               color="primary"
               (click)="savePersonnelWidgetSettings()" end>
-              Save Personnel Widget Settings
+              {{'configurePage.personnelWidget.saveButton' | translate}}
             </ion-button>
           </ion-col>
         </ion-row>
       </ion-grid>
     </div>
     <div *ngSwitchCase="'map'" style="overflow-y: auto;">
-      <h6>Configure Map Widget</h6>
+      <h6>{{'configurePage.mapWidget.title' | translate}}</h6>
       <ion-grid>
         <ion-row>
           <ion-col>
-            <h4 class="name">Options</h4>
+            <h4 class="name">{{'configurePage.mapWidget.optionsLabel' | translate}}</h4>
           </ion-col>
         </ion-row>
         <ion-row wrap>
           <ion-col>
             <ion-item>
-              <ion-label>Map Zoom Level</ion-label>
+              <ion-label>{{'configurePage.mapWidget.mapZoomLevelLabel' | translate}}</ion-label>
               <ion-input type="number" [(ngModel)]="mapWidgetSettings.ZoomLevel"></ion-input>
             </ion-item>
           </ion-col>
           <ion-col>
             <ion-item>
-              <ion-label>Zoom Out To Show All Pins</ion-label>
+              <ion-label>{{'configurePage.mapWidget.zoomOutPinsLabel' | translate}}</ion-label>
               <ion-toggle [(ngModel)]="mapWidgetSettings.ShowAllMarkers"></ion-toggle>
             </ion-item>
           </ion-col>
           <ion-col>
             <ion-item>
-              <ion-label>Hide Labels</ion-label>
+              <ion-label>{{'configurePage.mapWidget.hideLabels' | translate}}</ion-label>
               <ion-toggle [(ngModel)]="mapWidgetSettings.HideLabels"></ion-toggle>
             </ion-item>
           </ion-col>
@@ -199,31 +199,31 @@
         <ion-row wrap>
           <ion-col>
             <ion-item>
-              <ion-label>Show Call Pins</ion-label>
+              <ion-label>{{'configurePage.mapWidget.showCallPins' | translate}}</ion-label>
               <ion-toggle [(ngModel)]="mapWidgetSettings.ShowCalls"></ion-toggle>
             </ion-item>
           </ion-col>
           <ion-col>
             <ion-item>
-              <ion-label>Show Linked Call Pins</ion-label>
+              <ion-label>{{'configurePage.mapWidget.showLinkedCallPins' | translate}}</ion-label>
               <ion-toggle [(ngModel)]="mapWidgetSettings.ShowLinkedCalls"></ion-toggle>
             </ion-item>
           </ion-col>
           <ion-col>
             <ion-item>
-              <ion-label>Show Station Pins</ion-label>
+              <ion-label>{{'configurePage.mapWidget.showStationPins' | translate}}</ion-label>
               <ion-toggle [(ngModel)]="mapWidgetSettings.ShowStations"></ion-toggle>
             </ion-item>
           </ion-col>
           <ion-col>
             <ion-item>
-              <ion-label>Show Unit Pins</ion-label>
+              <ion-label>{{'configurePage.mapWidget.showUnitsPins' | translate}}</ion-label>
               <ion-toggle [(ngModel)]="mapWidgetSettings.ShowUnits"></ion-toggle>
             </ion-item>
           </ion-col>
           <ion-col>
             <ion-item>
-              <ion-label>Show Personnel Pins</ion-label>
+              <ion-label>{{'configurePage.mapWidget.showPersonnelPins' | translate}}</ion-label>
               <ion-toggle [(ngModel)]="mapWidgetSettings.ShowPersonnel"></ion-toggle>
             </ion-item>
           </ion-col>
@@ -231,7 +231,7 @@
         <ion-row>
           <ion-col>
             <ion-list-header>
-              Map Center Latitude
+              {{'configurePage.mapWidget.mapCenterLatLabel' | translate}}
             </ion-list-header>
             <ion-item>
                <ion-input type="number" [(ngModel)]="mapWidgetSettings.Latitude"></ion-input>
@@ -241,7 +241,7 @@
         <ion-row>
           <ion-col>
             <ion-list-header>
-               Map Center Longitude
+              {{'configurePage.mapWidget.mapCenterLonLabel' | translate}}
             </ion-list-header>
             <ion-item>
                <ion-input type="number" [(ngModel)]="mapWidgetSettings.Longitude"></ion-input>
@@ -256,24 +256,24 @@
               fill="solid"
               color="primary"
               (click)="saveMapWidgetSettings()" end>
-              Save Map Widget Settings
+              {{'configurePage.mapWidget.saveButton' | translate}}
             </ion-button>
           </ion-col>
         </ion-row>
       </ion-grid>
     </div>
     <div *ngSwitchCase="'weather'" style="overflow-y: auto;">
-      <h6>Configure Weather Widget</h6>
+      <h6>{{'configurePage.weatherWidget.title' | translate}}</h6>
       <ion-grid>
         <ion-row>
           <ion-col>
-            <h4 class="name">Options</h4>
+            <h4 class="name">{{'configurePage.weatherWidget.optionsLabel' | translate}}</h4>
           </ion-col>
         </ion-row>
         <ion-row wrap>
           <ion-col>
             <ion-item>
-              <ion-label>Units</ion-label>
+              <ion-label>{{'configurePage.weatherWidget.unitsLabel' | translate}}</ion-label>
               <ion-select [(ngModel)]="weatherWidgetSettings.Units">
                 <ion-select-option *ngFor="let unit of weatherUnits" [value]="unit">{{unit}}</ion-select-option>
               </ion-select>
@@ -283,7 +283,7 @@
         <ion-row>
           <ion-col>
             <ion-list-header>
-              Latitude
+              {{'configurePage.weatherWidget.latitudeLabel' | translate}}
             </ion-list-header>
             <ion-item>
                <ion-input type="number" [(ngModel)]="weatherWidgetSettings.Latitude"></ion-input>
@@ -293,7 +293,7 @@
         <ion-row>
           <ion-col>
             <ion-list-header>
-              Longitude
+              {{'configurePage.weatherWidget.longitudeLabel' | translate}}
             </ion-list-header>
             <ion-item>
                <ion-input type="number" [(ngModel)]="weatherWidgetSettings.Longitude"></ion-input>
@@ -308,42 +308,42 @@
               fill="solid"
               color="primary"
               (click)="saveWeatherWidgetSettings()" end>
-              Save Weather Widget Settings
+              {{'configurePage.weatherWidget.saveButton' | translate}}
             </ion-button>
           </ion-col>
         </ion-row>
       </ion-grid>
     </div>
     <div *ngSwitchCase="'units'" style="overflow-y: auto;">
-      <h6>Configure Units Widget</h6>
+      <h6>{{'configurePage.unitsWidget.title' | translate}}</h6>
       <ion-grid>
         <ion-row>
           <ion-col>
-            <h4 class="name">Visible Columns</h4>
+            <h4 class="name">{{'configurePage.unitsWidget.visibleColumnsLabel' | translate}}</h4>
           </ion-col>
         </ion-row>
         <ion-row wrap>
           <ion-col>
             <ion-item>
-              <ion-label>Station</ion-label>
+              <ion-label>{{'configurePage.unitsWidget.stationLabel' | translate}}</ion-label>
               <ion-toggle [(ngModel)]="unitsWidgetSettings.ShowStation"></ion-toggle>
             </ion-item>
           </ion-col>
           <ion-col>
             <ion-item>
-              <ion-label>Type</ion-label>
+              <ion-label>{{'configurePage.unitsWidget.typeLabel' | translate}}</ion-label>
               <ion-toggle [(ngModel)]="unitsWidgetSettings.ShowType"></ion-toggle>
             </ion-item>
           </ion-col>
           <ion-col>
             <ion-item>
-              <ion-label>State</ion-label>
+              <ion-label>{{'configurePage.unitsWidget.stateLabel' | translate}}</ion-label>
               <ion-toggle [(ngModel)]="unitsWidgetSettings.ShowState"></ion-toggle>
             </ion-item>
           </ion-col>
           <ion-col>
             <ion-item>
-              <ion-label>Timestamp</ion-label>
+              <ion-label>{{'configurePage.unitsWidget.timestampLabel' | translate}}</ion-label>
               <ion-toggle [(ngModel)]="unitsWidgetSettings.ShowTimestamp"></ion-toggle>
             </ion-item>
           </ion-col>
@@ -351,7 +351,7 @@
         <ion-row>
           <ion-col>
             <ion-list-header>
-              Adjust Text Size
+              {{'configurePage.unitsWidget.adjustTextSizeLabel' | translate}}
             </ion-list-header>
             <ion-item>
               <ion-range min="4" step="1" max="30" snaps="true" [(ngModel)]="unitsWidgetSettings.FontSize">
@@ -363,7 +363,7 @@
         </ion-row>
         <ion-row>
           <ion-col>
-            <h3 class="name">Order Groups</h3>
+            <h3 class="name">{{'configurePage.unitsWidget.orderGroupsLabel' | translate}}</h3>
           </ion-col>
         </ion-row>
         <ion-row *ngFor="let group of (homeState$ | async)?.groups">
@@ -380,7 +380,7 @@
         </ion-row>
         <ion-row>
           <ion-col>
-            <h3 class="name">Hide Groups</h3>
+            <h3 class="name">{{'configurePage.unitsWidget.hideGroupsLabel' | translate}}</h3>
           </ion-col>
         </ion-row>
         <ion-row *ngFor="let group of (homeState$ | async)?.groups">
@@ -403,67 +403,67 @@
               fill="solid"
               color="primary"
               (click)="saveUnitWidgetSettings()" end>
-              Save Unit Widget Settings
+              {{'configurePage.unitsWidget.saveButton' | translate}}
             </ion-button>
           </ion-col>
         </ion-row>
       </ion-grid>
     </div>
     <div *ngSwitchCase="'calls'" style="overflow-y: auto;">
-      <h6>Configure Calls Widget</h6>
+      <h6>{{'configurePage.callsWidget.title' | translate}}</h6>
       <ion-grid>
         <ion-row>
           <ion-col>
-            <h4 class="name">Visible Columns</h4>
+            <h4 class="name">{{'configurePage.callsWidget.visibleColumnsLabel' | translate}}</h4>
           </ion-col>
         </ion-row>
         <ion-row wrap>
           <ion-col>
             <ion-item>
-              <ion-label>Id</ion-label>
+              <ion-label>{{'configurePage.callsWidget.idColumn' | translate}}</ion-label>
               <ion-toggle [(ngModel)]="callsWidgetSettings.ShowId"></ion-toggle>
             </ion-item>
           </ion-col>
           <ion-col>
             <ion-item>
-              <ion-label>Name</ion-label>
+              <ion-label>{{'configurePage.callsWidget.nameColumn' | translate}}</ion-label>
               <ion-toggle [(ngModel)]="callsWidgetSettings.ShowName"></ion-toggle>
             </ion-item>
           </ion-col>
           <ion-col>
             <ion-item>
-              <ion-label>Timestamp</ion-label>
+              <ion-label>{{'configurePage.callsWidget.timestampColumn' | translate}}</ion-label>
               <ion-toggle [(ngModel)]="callsWidgetSettings.ShowTimestamp"></ion-toggle>
             </ion-item>
           </ion-col>
           <ion-col>
             <ion-item>
-              <ion-label>Logged By</ion-label>
+              <ion-label>{{'configurePage.callsWidget.loggedByColumn' | translate}}</ion-label>
               <ion-toggle [(ngModel)]="callsWidgetSettings.ShowUser"></ion-toggle>
             </ion-item>
           </ion-col>
           <ion-col>
             <ion-item>
-              <ion-label>Priority</ion-label>
+              <ion-label>{{'configurePage.callsWidget.priorityColumn' | translate}}</ion-label>
               <ion-toggle [(ngModel)]="callsWidgetSettings.ShowPriority"></ion-toggle>
             </ion-item>
           </ion-col>
           <ion-col>
             <ion-item>
-              <ion-label>Address</ion-label>
+              <ion-label>{{'configurePage.callsWidget.addressColumn' | translate}}</ion-label>
               <ion-toggle [(ngModel)]="callsWidgetSettings.ShowAddress"></ion-toggle>
             </ion-item>
           </ion-col>
         </ion-row>
         <ion-row>
           <ion-col>
-            <h4 class="name">Options</h4>
+            <h4 class="name">{{'configurePage.callsWidget.optionsLabel' | translate}}</h4>
           </ion-col>
         </ion-row>
         <ion-row wrap>
           <ion-col>
             <ion-item>
-              <ion-label>Show Linked Calls</ion-label>
+              <ion-label>{{'configurePage.callsWidget.showLinkedCallsLabel' | translate}}</ion-label>
               <ion-toggle [(ngModel)]="callsWidgetSettings.ShowLinkedCalls"></ion-toggle>
             </ion-item>
           </ion-col>
@@ -471,7 +471,7 @@
         <ion-row>
           <ion-col>
             <ion-list-header>
-              Adjust Text Size
+              {{'configurePage.callsWidget.adjustTextSizeLabel' | translate}}
             </ion-list-header>
             <ion-item>
               <ion-range min="4" step="1" max="30" snaps="true" [(ngModel)]="callsWidgetSettings.FontSize">
@@ -489,24 +489,24 @@
               fill="solid"
               color="primary"
               (click)="saveCallWidgetSettings()" end>
-              Save Call Widget Settings
+              {{'configurePage.callsWidget.saveButton' | translate}}
             </ion-button>
           </ion-col>
         </ion-row>
       </ion-grid>
     </div>
     <div *ngSwitchCase="'notes'" style="overflow-y: auto;">
-      <h6>Configure Notes Widget</h6>
+      <h6>{{'configurePage.notesWidget.title' | translate}}</h6>
       <ion-grid>
         <ion-row>
           <ion-col>
-            <h4 class="name">Options</h4>
+            <h4 class="name">{{'configurePage.notesWidget.optionsLabel' | translate}}</h4>
           </ion-col>
         </ion-row>
         <ion-row wrap>
           <ion-col>
             <ion-item>
-              <ion-label>Note Category</ion-label>
+              <ion-label>{{'configurePage.notesWidget.noteCategoryLabel' | translate}}</ion-label>
               <ion-select [(ngModel)]="notesWidgetSettings.Category">
                 <ion-select-option *ngFor="let category of noteCategories" [value]="category">{{category}}</ion-select-option>
               </ion-select>
@@ -516,7 +516,7 @@
         <ion-row wrap>
           <ion-col>
             <ion-item>
-              <ion-label>Include UnCategorized Notes</ion-label>
+              <ion-label>{{'configurePage.notesWidget.includeUnCatorizedLabel' | translate}}</ion-label>
               <ion-toggle [(ngModel)]="notesWidgetSettings.IncludeUnCategorized"></ion-toggle>
             </ion-item>
           </ion-col>
@@ -529,24 +529,24 @@
               fill="solid"
               color="primary"
               (click)="saveNoteWidgetSettings()" end>
-              Save Note Widget Settings
+              {{'configurePage.notesWidget.saveButton' | translate}}
             </ion-button>
           </ion-col>
         </ion-row>
       </ion-grid>
     </div>
     <div *ngSwitchCase="'ptt'" style="overflow-y: auto;">
-      <h6>Configure PTT Widget</h6>
+      <h6>{{'configurePage.pttWidget.title' | translate}}</h6>
       <ion-grid>
         <ion-row>
           <ion-col>
-            <h4 class="name">Options</h4>
+            <h4 class="name">{{'configurePage.pttWidget.optionsLabel' | translate}}</h4>
           </ion-col>
         </ion-row>
         <ion-row wrap>
           <ion-col>
             <ion-item>
-              <ion-label>Channel</ion-label>
+              <ion-label>{{'configurePage.pttWidget.channelLabel' | translate}}</ion-label>
               <ion-select [(ngModel)]="channel">
                 <ion-select-option *ngFor="let channel of channels" [value]="channel">{{channel}}</ion-select-option>
               </ion-select>
@@ -561,7 +561,7 @@
               fill="solid"
               color="primary"
               (click)="savePTTWidgetSettings()" end>
-              Save PTT Widget Settings
+              {{'configurePage.pttWidget.saveButton' | translate}}
             </ion-button>
           </ion-col>
         </ion-row>

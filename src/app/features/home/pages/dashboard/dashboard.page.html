@@ -14,6 +14,7 @@
                   <app-widgets-calls *ngIf="item.type === 5"></app-widgets-calls>
                   <app-widgets-notes *ngIf="item.type === 8"></app-widgets-notes>
                   <app-widgets-ptt *ngIf="item.type === 9"></app-widgets-ptt>
+                  <app-widgets-clock *ngIf="item.type === 10"></app-widgets-clock>
                 </div>
 
                 <div class="grid-item-remove-handle" *ngIf="!disableRemove" (mousedown)="stopEventPropagation($event)" (click)="removeItem(item.id)">
@@ -52,6 +53,9 @@
             </ion-fab-button>
             <ion-fab-button (click)="addWidget(9)" [hidden]="isWidgetActive(9) | async">
                 <ion-icon color="primary" name="mic"></ion-icon>
+            </ion-fab-button>
+            <ion-fab-button (click)="addWidget(10)" [hidden]="isWidgetActive(10) | async">
+                <ion-icon color="primary" name="time-outline"></ion-icon>
             </ion-fab-button>
         </ion-fab-list>
     </ion-fab>

@@ -1,19 +1,19 @@
 <ion-grid id="callsFullTable" [style.font-size]="getFontSize((widgetsState$ | async)?.callsWidgetSettings)+'px'">
     <ion-row>
       <ion-col [hidden]="!(widgetsState$ | async)?.callsWidgetSettings?.ShowId">
-        <ion-text color="tertiary"><strong>Id</strong></ion-text>
+        <ion-text color="tertiary"><strong>{{'callsWidget.idColumn' | translate}}</strong></ion-text>
       </ion-col>
       <ion-col [hidden]="!(widgetsState$ | async)?.callsWidgetSettings?.ShowName">
-        <ion-text color="tertiary"><strong>Name</strong></ion-text>
+        <ion-text color="tertiary"><strong>{{'callsWidget.nameColumn' | translate}}</strong></ion-text>
       </ion-col>
       <ion-col [hidden]="!(widgetsState$ | async)?.callsWidgetSettings?.ShowAddress">
-        <ion-text color="tertiary"><strong>Address</strong></ion-text>
+        <ion-text color="tertiary"><strong>{{'callsWidget.addressColumn' | translate}}</strong></ion-text>
       </ion-col>
       <ion-col [hidden]="!(widgetsState$ | async)?.callsWidgetSettings?.ShowTimestamp">
-        <ion-text color="tertiary"><strong>Timestamp</strong></ion-text>
+        <ion-text color="tertiary"><strong>{{'callsWidget.timestampColumn' | translate}}</strong></ion-text>
       </ion-col>
       <ion-col [hidden]="!(widgetsState$ | async)?.callsWidgetSettings?.ShowPriority">
-        <ion-text color="tertiary"><strong>Priority</strong></ion-text>
+        <ion-text color="tertiary"><strong>{{'callsWidget.priorityColumn' | translate}}</strong></ion-text>
       </ion-col>
     </ion-row>
     

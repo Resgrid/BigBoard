@@ -263,6 +263,18 @@ export class DashboardPage {
         };
         this.store.dispatch(new HomeActions.AddWidget(pttWidget));
         break;
+      case 10: // Clock
+        const clockWidget = {
+          x: 0,
+          y: 0,
+          w: 3,
+          h: 3,
+          id: this.utilsService.generateUUID(),
+          type: type,
+          name: 'Clock',
+        };
+        this.store.dispatch(new HomeActions.AddWidget(clockWidget));
+        break;
     }
   }
 

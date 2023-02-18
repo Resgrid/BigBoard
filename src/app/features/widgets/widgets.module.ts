@@ -26,6 +26,7 @@ import { ForcastComponent } from './components/forcast/forcast.component';
 import { ForcastDayComponent } from './components/forcast-day/forcast-day.component';
 import { WeatherProvider } from './providers/weather';
 import { VoiceModule } from '../voice/voice.module';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
     declarations: [
@@ -41,7 +42,8 @@ import { VoiceModule } from '../voice/voice.module';
         WeatherIconComponent,
         TemperatureComponent,
         ForcastDayComponent,
-        ForcastComponent
+        ForcastComponent,
+        ClockWidgetComponent
     ],
     imports: [
         IonicModule,
@@ -53,6 +55,7 @@ import { VoiceModule } from '../voice/voice.module';
         EffectsModule.forFeature([WidgetsEffects]),
         HammerModule,
         PipesModule,
+        TranslateModule,
         AngularSvgIconModule.forRoot(),
         VoiceModule
     ],
@@ -70,7 +73,8 @@ import { VoiceModule } from '../voice/voice.module';
         WeatherIconComponent,
         TemperatureComponent,
         ForcastDayComponent,
-        ForcastComponent
+        ForcastComponent,
+        ClockWidgetComponent
     ]
 })
 export class WidgetsModule { }

@@ -2,23 +2,23 @@
     <ion-row>
       <ion-col>
         <ion-text color="tertiary">
-          <strong>Name</strong>
+          <strong>{{'personnelWidget.nameColumn' | translate}}</strong>
         </ion-text>
       </ion-col>
       <ion-col [hidden]="!(widgetsState$ | async)?.personnelWidgetSettings?.ShowGroup">
-        <ion-text color="tertiary"><strong>Group</strong></ion-text>
+        <ion-text color="tertiary"><strong>{{'personnelWidget.groupColumn' | translate}}</strong></ion-text>
       </ion-col>
       <ion-col [hidden]="!(widgetsState$ | async)?.personnelWidgetSettings?.ShowStaffing">
-        <ion-text color="tertiary"><strong>Staffing</strong></ion-text>
+        <ion-text color="tertiary"><strong>{{'personnelWidget.staffingColumn' | translate}}</strong></ion-text>
       </ion-col>
       <ion-col [hidden]="!(widgetsState$ | async)?.personnelWidgetSettings?.ShowStatus">
-        <ion-text color="tertiary"><strong>Status</strong></ion-text>
+        <ion-text color="tertiary"><strong>{{'personnelWidget.statusColumn' | translate}}</strong></ion-text>
       </ion-col>
       <ion-col [hidden]="!(widgetsState$ | async)?.personnelWidgetSettings?.ShowRoles">
-        <ion-text color="tertiary"><strong>Roles</strong></ion-text>
+        <ion-text color="tertiary"><strong>{{'personnelWidget.rolesColumn' | translate}}</strong></ion-text>
       </ion-col>
       <ion-col [hidden]="!(widgetsState$ | async)?.personnelWidgetSettings?.ShowTimestamp">
-        <ion-text color="tertiary"><strong>Timestamp</strong></ion-text>
+        <ion-text color="tertiary"><strong>{{'personnelWidget.timestampColumn' | translate}}</strong></ion-text>
       </ion-col>
     </ion-row>
     <ion-row class="strippedRows" *ngFor="let status of (widgetsState$ | async)?.personnel" [hidden]="(isPersonOrGroupHidden(status) | async)">
