@@ -25,7 +25,7 @@ import { SafePipe } from './pipes/safe';
 import { PipesModule } from './pipes/pipes.module';
 
 export function createTranslateLoader(http: HttpClient): any {
-  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+  return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
 }
 
 let getBaseUrl = (): string => {
