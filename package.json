@@ -101,7 +101,7 @@
     "@angular/compiler": "^15.0.0",
     "@angular/compiler-cli": "^15.0.0",
     "@angular/language-service": "^15.0.0",
-    "@capacitor/cli": "4.6.2",
+    "@capacitor/cli": "4.8.0",
     "@ionic/angular-toolkit": "^6.0.0",
     "@types/geojson": "^7946.0.10",
     "@types/googlemaps": "^3.43.3",
