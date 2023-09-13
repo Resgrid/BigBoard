@@ -1,12 +1,27 @@
-<div class="container voice-header" [hidden]="!(voiceState$ | async)?.isVoiceEnabled">
+<div
+  class="container voice-header"
+  [hidden]="!(voiceState$ | async)?.isVoiceEnabled"
+>
   <ion-grid>
     <ion-row>
       <ion-col>
-        <ov-video [streamManager]="sub" *ngFor="let sub of openViduService.subscribers"></ov-video>
+        <ov-video
+          [streamManager]="sub"
+          *ngFor="let sub of openViduService.subscribers"
+        ></ov-video>
       </ion-col>
       <ion-col>
-        <ion-select placeholder="Off" [(ngModel)]="selectedChannel" (ngModelChange)="onChannelChange($event)" interface="action-sheet">
-          <ion-select-option *ngFor="let channel of (voiceState$ | async)?.channels;" [value]="channel">{{channel.Name}}</ion-select-option>
+        <ion-select
+          placeholder="Off"
+          [(ngModel)]="selectedChannel"
+          (ngModelChange)="onChannelChange($event)"
+          interface="action-sheet"
+        >
+          <ion-select-option
+            *ngFor="let channel of (voiceState$ | async)?.channels"
+            [value]="channel"
+            >{{ channel.Name }}</ion-select-option
+          >
         </ion-select>
       </ion-col>
     </ion-row>

@@ -1,7 +1,14 @@
 import { Action } from '@ngrx/store';
 import { PersonnelWidgetSettings } from 'src/app/models/personnelWidgetSettings';
 import { WeatherWidgetSettings } from 'src/app/models/weatherWidgetSettings';
-import { PersonnelInfoResultData, CallResultData, UnitInfoResultData, NoteResultData, MapDataAndMarkersData, GpsLocation } from "@resgrid/ngx-resgridlib";
+import {
+  PersonnelInfoResultData,
+  CallResultData,
+  UnitInfoResultData,
+  NoteResultData,
+  MapDataAndMarkersData,
+  GpsLocation,
+} from '@resgrid/ngx-resgridlib';
 import { CallsWidgetSettings } from 'src/app/models/callsWidgetSettings';
 import { UnitsWidgetSettings } from 'src/app/models/unitsWidgetSettings';
 import { MapWidgetSettings } from 'src/app/models/mapWidgetSettings';
@@ -205,10 +212,15 @@ export class LoadAllWidgetSettings implements Action {
 
 export class LoadAllWidgetSettingsDone implements Action {
   readonly type = WidgetsActionTypes.LOAD_ALL_WIDGET_SETTINGS_DONE;
-  constructor(public weatherWidgetSettings: WeatherWidgetSettings, public personnelWidgetSettings: PersonnelWidgetSettings, 
-    public callsWidgetSettings: CallsWidgetSettings, public unitsWidgetSettings: UnitsWidgetSettings, 
-    public notesWidgetSettings: NotesWidgetSettings, public mapWidgetSettings: MapWidgetSettings,
-    public pttWidgetSettings: PTTWidgetSettings) {}
+  constructor(
+    public weatherWidgetSettings: WeatherWidgetSettings,
+    public personnelWidgetSettings: PersonnelWidgetSettings,
+    public callsWidgetSettings: CallsWidgetSettings,
+    public unitsWidgetSettings: UnitsWidgetSettings,
+    public notesWidgetSettings: NotesWidgetSettings,
+    public mapWidgetSettings: MapWidgetSettings,
+    public pttWidgetSettings: PTTWidgetSettings,
+  ) {}
 }
 
 export class Done implements Action {
@@ -248,5 +260,4 @@ export type WidgetsActionsUnion =
   | SetNotesSettingsDone
   | SetPTTSettings
   | SetPTTSettingsDone
-  | Done
-  ;
+  | Done;

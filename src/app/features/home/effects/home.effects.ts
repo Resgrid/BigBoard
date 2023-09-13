@@ -1,11 +1,6 @@
 import * as homeAction from '../actions/home.actions';
 import { Action, Store } from '@ngrx/store';
-import {
-  Actions,
-  concatLatestFrom,
-  createEffect,
-  ofType,
-} from '@ngrx/effects';
+import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
 import {
   catchError,
   exhaustMap,
@@ -45,9 +40,9 @@ export class HomeEffects {
         ofType(homeAction.HomeActionTypes.START_SIGNALR),
         tap((action) => {
           this.homeProvider.startSignalR();
-        })
+        }),
       ),
-    { dispatch: false }
+    { dispatch: false },
   );
 
   stopSignalR$ = createEffect(
@@ -56,54 +51,57 @@ export class HomeEffects {
         ofType(homeAction.HomeActionTypes.STOP_SIGNALR),
         tap((action) => {
           this.homeProvider.stopSignalR();
-        })
+        }),
       ),
-    { dispatch: false }
+    { dispatch: false },
   );
 
-  saveWidgetLayout$ = createEffect(() =>
-		this.actions$.pipe(
-			ofType<homeAction.SaveWidgetLayout>(homeAction.HomeActionTypes.SAVE_WIDGET_LAYOUT),
-			concatLatestFrom(() => [this.store.select(selectHomeState)]),
-			switchMap(([action, homeState], index) => {
-				return this.storageProvider.saveLayout(homeState.widgets);
-			})
-		),
-    { dispatch: false }
-	);
+  saveWidgetLayout$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType<homeAction.SaveWidgetLayout>(
+          homeAction.HomeActionTypes.SAVE_WIDGET_LAYOUT,
+        ),
+        concatLatestFrom(() => [this.store.select(selectHomeState)]),
+        switchMap(([action, homeState], index) => {
+          return this.storageProvider.saveLayout(homeState.widgets);
+        }),
+      ),
+    { dispatch: false },
+  );
 
-  widgetLayoutUpdated$ = createEffect(
-		() =>
-			this.actions$.pipe(
-				ofType(homeAction.HomeActionTypes.UPDATE_WIDGET_LAYOUT),
-				map((data) => ({
-					type: homeAction.HomeActionTypes.SAVE_WIDGET_LAYOUT,
-				}))
-			)
-	);
+  widgetLayoutUpdated$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(homeAction.HomeActionTypes.UPDATE_WIDGET_LAYOUT),
+      map((data) => ({
+        type: homeAction.HomeActionTypes.SAVE_WIDGET_LAYOUT,
+      })),
+    ),
+  );
 
-  removeWidget$ = createEffect(
-		() =>
-			this.actions$.pipe(
-				ofType(homeAction.HomeActionTypes.REMOVE_WIDGET),
-				map((data) => ({
-					type: homeAction.HomeActionTypes.SAVE_WIDGET_LAYOUT,
-				}))
-			)
-	);
+  removeWidget$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(homeAction.HomeActionTypes.REMOVE_WIDGET),
+      map((data) => ({
+        type: homeAction.HomeActionTypes.SAVE_WIDGET_LAYOUT,
+      })),
+    ),
+  );
 
   loadWidgetLayout$ = createEffect(() =>
     this.actions$.pipe(
-      ofType<homeAction.LoadWidgetLayout>(homeAction.HomeActionTypes.LOAD_WIDGET_LAYOUT),
+      ofType<homeAction.LoadWidgetLayout>(
+        homeAction.HomeActionTypes.LOAD_WIDGET_LAYOUT,
+      ),
       switchMap((action) =>
         from(this.storageProvider.loadLayout()).pipe(
           map((data) => ({
             type: homeAction.HomeActionTypes.LOAD_WIDGET_LAYOUT_DONE,
             widgets: data,
-          }))
-        )
-      )
-    )
+          })),
+        ),
+      ),
+    ),
   );
 
   getGroups$ = createEffect(() =>
@@ -114,19 +112,19 @@ export class HomeEffects {
           map((data) => ({
             type: homeAction.HomeActionTypes.GET_GROUPS_DONE,
             groups: data.Data,
-          }))
-        )
-      )
-    )
+          })),
+        ),
+      ),
+    ),
   );
 
   closeModal$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(homeAction.HomeActionTypes.CLOSE_MODAL),
-        switchMap((action) => this.modalProvider.closeModal(null))
+        switchMap((action) => this.modalProvider.closeModal(null)),
       ),
-    { dispatch: false }
+    { dispatch: false },
   );
 
   constructor(
@@ -137,5 +135,4 @@ export class HomeEffects {
     private storageProvider: StorageProvider,
     private groupsService: GroupsService,
   ) {}
-
 }

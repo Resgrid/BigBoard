@@ -1,22 +1,26 @@
 import * as voiceAction from '../actions/voice.actions';
 import { Action, Store } from '@ngrx/store';
+import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
 import {
-  Actions,
-  concatLatestFrom,
-  createEffect,
-  ofType,
-} from '@ngrx/effects';
-import { catchError, concatMap, exhaustMap, map, mergeMap, switchMap, tap } from 'rxjs/operators';
+  catchError,
+  concatMap,
+  exhaustMap,
+  map,
+  mergeMap,
+  switchMap,
+  tap,
+} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { from, Observable, of } from 'rxjs';
 import { VoiceState } from '../store/voice.store';
-import {
-  KazooVoiceService,
-  VoiceService,
-} from '@resgrid/ngx-resgridlib';
+import { KazooVoiceService, VoiceService } from '@resgrid/ngx-resgridlib';
 import { OpenViduService } from 'src/app/providers/openvidu';
 import { HomeState } from '../../home/store/home.store';
-import { selectHomeState, selectSettingsState, selectVoiceState } from 'src/app/store';
+import {
+  selectHomeState,
+  selectSettingsState,
+  selectVoiceState,
+} from 'src/app/store';
 import { SettingsState } from '../../settings/store/settings.store';
 import { AudioProvider } from 'src/app/providers/audio';
 import { MenuController, ToastController } from '@ionic/angular';
@@ -26,9 +30,13 @@ export class VoiceEffects {
   getVoipInfo$ = createEffect(() =>
     this.actions$.pipe(
       ofType<voiceAction.GetVoipInfo>(
-        voiceAction.VoiceActionTypes.GET_VOIPINFO
+        voiceAction.VoiceActionTypes.GET_VOIPINFO,
       ),
-      concatLatestFrom(() => [this.store.select(selectVoiceState), this.homeStore.select(selectHomeState), this.settingsStore.select(selectSettingsState)]),
+      concatLatestFrom(() => [
+        this.store.select(selectVoiceState),
+        this.homeStore.select(selectHomeState),
+        this.settingsStore.select(selectSettingsState),
+      ]),
       mergeMap(([action, voiceState, homeState, settingsState], index) =>
         this.voiceService.getDepartmentVoiceSettings().pipe(
           tap((data) => {
@@ -36,8 +44,11 @@ export class VoiceEffects {
               //await this.audioProvider.requestMicrophonePermissions();
               this.openViduService.mute();
 
-              if (voiceState.currentActiveVoipChannel && voiceState.currentActiveVoipChannel.Id !== '') {
-                  this.openViduService.leaveSession();
+              if (
+                voiceState.currentActiveVoipChannel &&
+                voiceState.currentActiveVoipChannel.Id !== ''
+              ) {
+                this.openViduService.leaveSession();
               }
             }
           }),
@@ -49,133 +60,146 @@ export class VoiceEffects {
           tap((data) => {}),
           // If request fails, dispatch failed action
           catchError(() =>
-            of({ type: voiceAction.VoiceActionTypes.GET_VOIPINFO_FAIL })
-          )
-        )
-      )
-    )
+            of({ type: voiceAction.VoiceActionTypes.GET_VOIPINFO_FAIL }),
+          ),
+        ),
+      ),
+    ),
   );
 
-  getVoipInfoSuccess$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType<voiceAction.GetVoipInfoSuccess>(
-          voiceAction.VoiceActionTypes.GET_VOIPINFO_SUCCESS
-        ),
-        map((data) => ({
-          type: voiceAction.VoiceActionTypes.START_VOIP_SERVICES,
-          payload: data.payload,
-        }))
-      )
+  getVoipInfoSuccess$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType<voiceAction.GetVoipInfoSuccess>(
+        voiceAction.VoiceActionTypes.GET_VOIPINFO_SUCCESS,
+      ),
+      map((data) => ({
+        type: voiceAction.VoiceActionTypes.START_VOIP_SERVICES,
+        payload: data.payload,
+      })),
+    ),
   );
 
   startVoipServices$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType<voiceAction.StartVoipServices>(
-          voiceAction.VoiceActionTypes.START_VOIP_SERVICES
+          voiceAction.VoiceActionTypes.START_VOIP_SERVICES,
         ),
         tap((action) => {
           //this.voiceProvider.startVoipServices(action.payload);
-        })
+        }),
       ),
-    { dispatch: false }
+    { dispatch: false },
   );
 
-  setNoChannel$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType<voiceAction.SetNoChannel>(
-        voiceAction.VoiceActionTypes.SET_NOCHANNEL
+  setNoChannel$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType<voiceAction.SetNoChannel>(
+          voiceAction.VoiceActionTypes.SET_NOCHANNEL,
+        ),
+        tap((data) => {
+          this.openViduService.leaveSession();
+        }),
       ),
-      tap((data) => {
-        this.openViduService.leaveSession();
-      })
-    ),
-    { dispatch: false }
+    { dispatch: false },
   );
 
-  setActiveChannel$ = createEffect(() => this.actions$.pipe(
-    ofType<voiceAction.SetActiveChannel>(voiceAction.VoiceActionTypes.SET_ACTIVECHANNEL),
-    concatLatestFrom(() => [
-      this.homeStore.select(selectHomeState),
-      this.settingsStore.select(selectSettingsState),
-    ]),
-    mergeMap(([action, homeState, settingsState], index) =>
-      of(action).pipe(
-          map((data) => {
-            if (data && data.channel) {
-              if (data.channel.Id === '') {
-                this.openViduService.leaveSession();
-              } else {
-                if (settingsState && settingsState.user && settingsState.user.fullName) {
-                  let name = settingsState.user.fullName;
-
-                  return this.openViduService.joinChannel(data.channel, name);
+  setActiveChannel$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType<voiceAction.SetActiveChannel>(
+          voiceAction.VoiceActionTypes.SET_ACTIVECHANNEL,
+        ),
+        concatLatestFrom(() => [
+          this.homeStore.select(selectHomeState),
+          this.settingsStore.select(selectSettingsState),
+        ]),
+        mergeMap(([action, homeState, settingsState], index) =>
+          of(action).pipe(
+            map((data) => {
+              if (data && data.channel) {
+                if (data.channel.Id === '') {
+                  this.openViduService.leaveSession();
                 } else {
-                  return this.showToast('You must login to join a voip channel');
+                  if (
+                    settingsState &&
+                    settingsState.user &&
+                    settingsState.user.fullName
+                  ) {
+                    let name = settingsState.user.fullName;
+
+                    return this.openViduService.joinChannel(data.channel, name);
+                  } else {
+                    return this.showToast(
+                      'You must login to join a voip channel',
+                    );
+                  }
                 }
               }
-            }
 
-            return of(true);
-          })
-      )
-    )),
-    { dispatch: false }
+              return of(true);
+            }),
+          ),
+        ),
+      ),
+    { dispatch: false },
   );
 
-  voipCallStartTransmitting$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType<voiceAction.StartTransmitting>(
-        voiceAction.VoiceActionTypes.START_TRANSMITTING
+  voipCallStartTransmitting$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType<voiceAction.StartTransmitting>(
+          voiceAction.VoiceActionTypes.START_TRANSMITTING,
+        ),
+        tap((data) => {
+          this.openViduService.unmute();
+        }),
       ),
-      tap((data) => {
-        this.openViduService.unmute();
-      })
-    ),
-    { dispatch: false }
+    { dispatch: false },
   );
 
-  voipCallStopTransmitting$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType<voiceAction.StopTransmitting>(
-        voiceAction.VoiceActionTypes.STOP_TRANSMITTING
+  voipCallStopTransmitting$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType<voiceAction.StopTransmitting>(
+          voiceAction.VoiceActionTypes.STOP_TRANSMITTING,
+        ),
+        tap((data) => {
+          this.openViduService.mute();
+        }),
       ),
-      tap((data) => {
-        this.openViduService.mute();
-      })
-    ),
-    { dispatch: false }
+    { dispatch: false },
   );
 
   addOpenViduStream$ = createEffect(() =>
     this.actions$.pipe(
       ofType<voiceAction.AddOpenViduStream>(
-        voiceAction.VoiceActionTypes.ADD_OPENVIDU_STREAM
+        voiceAction.VoiceActionTypes.ADD_OPENVIDU_STREAM,
       ),
       map((data) => ({
         type: voiceAction.VoiceActionTypes.DONE,
-      }))
-    )
+      })),
+    ),
   );
 
   removeOpenViduStream$ = createEffect(() =>
     this.actions$.pipe(
       ofType<voiceAction.RemoveOpenViduStream>(
-        voiceAction.VoiceActionTypes.REMOVE_OPENVIDU_STREAM
+        voiceAction.VoiceActionTypes.REMOVE_OPENVIDU_STREAM,
       ),
       map((data) => ({
         type: voiceAction.VoiceActionTypes.DONE,
-      }))
-    )
+      })),
+    ),
   );
 
   done$ = createEffect(
     () =>
       this.actions$.pipe(
-        ofType<voiceAction.Done>(voiceAction.VoiceActionTypes.DONE)
+        ofType<voiceAction.Done>(voiceAction.VoiceActionTypes.DONE),
       ),
-    { dispatch: false }
+    { dispatch: false },
   );
 
   constructor(
@@ -188,7 +212,7 @@ export class VoiceEffects {
     private settingsStore: Store<SettingsState>,
     private audioProvider: AudioProvider,
     private toastController: ToastController,
-    private menuCtrl: MenuController
+    private menuCtrl: MenuController,
   ) {}
 
   runModal = async (component, size) => {

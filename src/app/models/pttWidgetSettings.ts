@@ -1,3 +1,3 @@
-export class PTTWidgetSettings  {
-    public Channel: string = "";
+export class PTTWidgetSettings {
+  public Channel: string = '';
 }

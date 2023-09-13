@@ -17,14 +17,14 @@ import { WidgetsModule } from 'src/app/features/widgets/widgets.module';
     RouterModule.forChild([
       {
         path: '',
-        component: DashboardPage
-      }
+        component: DashboardPage,
+      },
     ]),
     NgxResgridLibModule,
     TranslateModule,
     KtdGridModule,
-    WidgetsModule
+    WidgetsModule,
   ],
-  declarations: [DashboardPage]
+  declarations: [DashboardPage],
 })
 export class DashboardPageModule {}

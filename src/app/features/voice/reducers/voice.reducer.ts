@@ -6,7 +6,7 @@ import { DepartmentVoiceChannelResultData } from '@resgrid/ngx-resgridlib';
 
 export function reducer(
   state: VoiceState = initialState,
-  action: VoiceActionsUnion
+  action: VoiceActionsUnion,
 ): VoiceState {
   switch (action.type) {
     case VoiceActionTypes.GET_VOIPINFO_SUCCESS:

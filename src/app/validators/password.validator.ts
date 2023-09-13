@@ -1,7 +1,6 @@
 import { AbstractControl } from '@angular/forms';
 
 export function passwordValidator(control: AbstractControl) {
-
   if (control && control.value !== null && control.value !== undefined) {
     const value = control.value as string;
     if (value.length < 6) {

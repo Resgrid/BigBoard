@@ -7,10 +7,12 @@ import { StorageProvider } from './storage';
   providedIn: 'root',
 })
 export class SleepProvider {
-  constructor(private storageProvider: StorageProvider, public platform: Platform) {}
+  constructor(
+    private storageProvider: StorageProvider,
+    public platform: Platform,
+  ) {}
 
   public async init(): Promise<boolean> {
-
     if (this.platform.is('mobile')) {
       let keepAlive = await this.storageProvider.getKeepAlive();
       if (keepAlive) {

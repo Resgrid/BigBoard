@@ -9,28 +9,37 @@ const routes: Routes = [
     children: [
       {
         path: 'dashboard',
-        loadChildren: () => import('../dashboard/dashboard.module').then(m => m.DashboardPageModule)
+        loadChildren: () =>
+          import('../dashboard/dashboard.module').then(
+            (m) => m.DashboardPageModule,
+          ),
       },
       {
         path: 'settings',
-        loadChildren: () => import('../settings/settings.module').then(m => m.SettingsPageModule)
+        loadChildren: () =>
+          import('../settings/settings.module').then(
+            (m) => m.SettingsPageModule,
+          ),
       },
       {
         path: 'configure',
-        loadChildren: () => import('../configure/configure.module').then(m => m.ConfigurePageModule)
+        loadChildren: () =>
+          import('../configure/configure.module').then(
+            (m) => m.ConfigurePageModule,
+          ),
       },
       {
         path: '',
         redirectTo: '/home/tabs/dashboard',
-        pathMatch: 'full'
-      }
-    ]
+        pathMatch: 'full',
+      },
+    ],
   },
   {
     path: '',
     redirectTo: '/home/tabs/dashboard',
-    pathMatch: 'full'
-  }
+    pathMatch: 'full',
+  },
 ];
 
 @NgModule({

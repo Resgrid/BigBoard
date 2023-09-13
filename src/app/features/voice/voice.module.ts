@@ -14,26 +14,22 @@ import { UserVideoComponent } from './shared/video-component/user-video.componen
 import { HammerModule, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 
 @NgModule({
-    declarations: [
-        VoiceFooterComponent,
-        UserVideoComponent,
-        OpenViduVideoComponent
-    ],
-    imports: [
-        IonicModule,
-        CommonModule,
-        FormsModule,
-        ReactiveFormsModule,
-        VoiceRoutingModule,
-        StoreModule.forFeature('voiceModule', reducer),
-        EffectsModule.forFeature([VoiceEffects]),
-        HammerModule
-    ],
-    providers: [],
-    exports: [
-        VoiceFooterComponent,
-        UserVideoComponent,
-        OpenViduVideoComponent
-    ]
+  declarations: [
+    VoiceFooterComponent,
+    UserVideoComponent,
+    OpenViduVideoComponent,
+  ],
+  imports: [
+    IonicModule,
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    VoiceRoutingModule,
+    StoreModule.forFeature('voiceModule', reducer),
+    EffectsModule.forFeature([VoiceEffects]),
+    HammerModule,
+  ],
+  providers: [],
+  exports: [VoiceFooterComponent, UserVideoComponent, OpenViduVideoComponent],
 })
-export class VoiceModule { }
+export class VoiceModule {}

@@ -10,96 +10,98 @@ import { VoiceState } from '../features/voice/store/voice.store';
 import { WidgetsState } from '../features/widgets/store/widgets.store';
 
 export interface State extends fromRoot.State {
-    settings: SettingsState;
-    home: HomeState;
-    widgets: WidgetsState;
+  settings: SettingsState;
+  home: HomeState;
+  widgets: WidgetsState;
 }
 
-export const selectSettingsState = createFeatureSelector<SettingsState>('settingsModule');
+export const selectSettingsState =
+  createFeatureSelector<SettingsState>('settingsModule');
 
 export const selectIsLoggedInState = createSelector(
   selectSettingsState,
-  settingsReducers.getIsLoggedInState
+  settingsReducers.getIsLoggedInState,
 );
 
 export const selectKeepAliveState = createSelector(
   selectSettingsState,
-  settingsReducers.getKeepAliveState
+  settingsReducers.getKeepAliveState,
 );
 
 export const selectIsAppActive = createSelector(
   selectSettingsState,
-  settingsReducers.getIsAppActiveState
+  settingsReducers.getIsAppActiveState,
 );
 
 export const selectAppSettingsState = createSelector(
   selectSettingsState,
-  settingsReducers.getAppSettingsState
+  settingsReducers.getAppSettingsState,
 );
 
 export const selectHomeState = createFeatureSelector<HomeState>('homeModule');
 
 export const selectHomeWidgetsState = createSelector(
   selectHomeState,
-  homeReducers.getWidgets
+  homeReducers.getWidgets,
 );
 
-
-export const selectVoiceState = createFeatureSelector<VoiceState>('voiceModule');
+export const selectVoiceState =
+  createFeatureSelector<VoiceState>('voiceModule');
 
 export const selectAvailableChannelsState = createSelector(
   selectVoiceState,
-  voiceReducers.getAvailableChannels
+  voiceReducers.getAvailableChannels,
 );
 
-export const selectWidgetsState = createFeatureSelector<WidgetsState>('widgetsModule');
+export const selectWidgetsState =
+  createFeatureSelector<WidgetsState>('widgetsModule');
 
 export const selectWeatherWidgetSettingsState = createSelector(
   selectWidgetsState,
-  widgetsReducers.getWeatherWidgetSettings
+  widgetsReducers.getWeatherWidgetSettings,
 );
 
 export const selectPersonnelWidgetSettingsState = createSelector(
   selectWidgetsState,
-  widgetsReducers.getPersonnelWidgetSettings
+  widgetsReducers.getPersonnelWidgetSettings,
 );
 
 export const selectCallsWidgetSettingsState = createSelector(
   selectWidgetsState,
-  widgetsReducers.getCallsWidgetSettings
+  widgetsReducers.getCallsWidgetSettings,
 );
 
 export const selectUnitsWidgetSettingsState = createSelector(
   selectWidgetsState,
-  widgetsReducers.getUnitsWidgetSettings
+  widgetsReducers.getUnitsWidgetSettings,
 );
 
 export const selectNotesWidgetSettingsState = createSelector(
   selectWidgetsState,
-  widgetsReducers.getNotesWidgetSettings
+  widgetsReducers.getNotesWidgetSettings,
 );
 
 export const selectMapWidgetSettingsState = createSelector(
   selectWidgetsState,
-  widgetsReducers.getMapWidgetSettings
+  widgetsReducers.getMapWidgetSettings,
 );
 
 export const selectPTTWidgetSettingsState = createSelector(
   selectWidgetsState,
-  widgetsReducers.getPTTWidgetSettings
+  widgetsReducers.getPTTWidgetSettings,
 );
 
 export const selectMapWidgetDataState = createSelector(
   selectWidgetsState,
-  widgetsReducers.getMapWidgetData
+  widgetsReducers.getMapWidgetData,
 );
 
 export const selectWeatherWidgetLocationState = createSelector(
   selectWidgetsState,
-  widgetsReducers.getWeatherWidgetLocation
+  widgetsReducers.getWeatherWidgetLocation,
 );
 
 export const selectThemePreferenceState = createSelector(
   selectSettingsState,
-  settingsReducers.getThemePreferenceState
+  settingsReducers.getThemePreferenceState,
 );

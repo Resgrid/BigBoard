@@ -105,7 +105,7 @@ export class DashboardPage {
     @Inject(DOCUMENT) public document: Document,
     private homeProvider: HomeProvider,
     private store: Store<HomeState>,
-    private utilsService: UtilsService
+    private utilsService: UtilsService,
   ) {
     this.widgetsState$ = this.store.select(selectHomeWidgetsState);
   }
@@ -113,11 +113,11 @@ export class DashboardPage {
   ionViewDidEnter() {
     this.resizeSubscription = merge(
       fromEvent(window, 'resize'),
-      fromEvent(window, 'orientationchange')
+      fromEvent(window, 'orientationchange'),
     )
       .pipe(
         debounceTime(50),
-        filter(() => this.autoResize)
+        filter(() => this.autoResize),
       )
       .subscribe(() => {
         this.grid.resize();
@@ -288,7 +288,7 @@ export class DashboardPage {
         }
 
         return false;
-      })
+      }),
     );
   }
 }

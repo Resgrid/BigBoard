@@ -6,20 +6,9 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
   styleUrls: ['./links.component.scss'],
 })
 export class LinksWidgetComponent implements OnInit, OnDestroy {
- 
+  constructor() {}
 
-  constructor(
+  ngOnInit(): void {}
 
-  ) {
-  
-  }
-  
-  ngOnInit(): void {
-
-  }
-
-  ngOnDestroy(): void {
-
-  }
-
+  ngOnDestroy(): void {}
 }

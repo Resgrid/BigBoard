@@ -4,52 +4,80 @@
 */
 :root {
   /** facebook **/
-  --ion-color-is-facebook: #3B5998;
-  --ion-color-is-facebook-rgb: 59,89,152;
+  --ion-color-is-facebook: #3b5998;
+  --ion-color-is-facebook-rgb: 59, 89, 152;
   --ion-color-is-facebook-contrast: var(--ion-color-is-facebook-contrast-theme);
-  --ion-color-is-facebook-contrast-rgb: var(--ion-color-is-facebook-contrast-rgb-theme);
+  --ion-color-is-facebook-contrast-rgb: var(
+    --ion-color-is-facebook-contrast-rgb-theme
+  );
   --ion-color-is-facebook-shade: #344e86;
   --ion-color-is-facebook-tint: #4f6aa2;
 
   /** twitter **/
-  --ion-color-is-twitter: #55ACEE;
-  --ion-color-is-twitter-rgb: 85,172,238;
+  --ion-color-is-twitter: #55acee;
+  --ion-color-is-twitter-rgb: 85, 172, 238;
   --ion-color-is-twitter-contrast: var(--ion-color-is-twitter-contrast-theme);
-  --ion-color-is-twitter-contrast-rgb: var(--ion-color-is-twitter-contrast-rgb-theme);
+  --ion-color-is-twitter-contrast-rgb: var(
+    --ion-color-is-twitter-contrast-rgb-theme
+  );
   --ion-color-is-twitter-shade: #4b97d1;
   --ion-color-is-twitter-tint: #66b4f0;
 
   /** linkedin **/
-  --ion-color-is-linkedin: #0073B0;
-  --ion-color-is-linkedin-rgb: 0,115,176;
+  --ion-color-is-linkedin: #0073b0;
+  --ion-color-is-linkedin-rgb: 0, 115, 176;
   --ion-color-is-linkedin-contrast: var(--ion-color-is-linkedin-contrast-theme);
-  --ion-color-is-linkedin-contrast-rgb: var(--ion-color-is-linkedin-contrast-rgb-theme);
+  --ion-color-is-linkedin-contrast-rgb: var(
+    --ion-color-is-linkedin-contrast-rgb-theme
+  );
   --ion-color-is-linkedin-shade: #00659b;
   --ion-color-is-linkedin-tint: #1a81b8;
 
   /** facebook icon **/
   --ion-color-is-facebook-icon: var(--ion-color-is-facebook-icon-theme);
   --ion-color-is-facebook-icon-rgb: var(--ion-color-is-facebook-icon-rgb-theme);
-  --ion-color-is-facebook-icon-contrast: var(--ion-color-is-facebook-icon-contrast-theme);
-  --ion-color-is-facebook-icon-contrast-rgb: var(--ion-color-is-facebook-icon-contrast-rgb-theme);
-  --ion-color-is-facebook-icon-shade: var(--ion-color-is-facebook-icon-shade-theme);
-  --ion-color-is-facebook-icon-tint: var(--ion-color-is-facebook-icon-tint-theme);
+  --ion-color-is-facebook-icon-contrast: var(
+    --ion-color-is-facebook-icon-contrast-theme
+  );
+  --ion-color-is-facebook-icon-contrast-rgb: var(
+    --ion-color-is-facebook-icon-contrast-rgb-theme
+  );
+  --ion-color-is-facebook-icon-shade: var(
+    --ion-color-is-facebook-icon-shade-theme
+  );
+  --ion-color-is-facebook-icon-tint: var(
+    --ion-color-is-facebook-icon-tint-theme
+  );
 
   /** twitter icon **/
   --ion-color-is-twitter-icon: var(--ion-color-is-twitter-icon-theme);
   --ion-color-is-twitter-icon-rgb: var(--ion-color-is-twitter-icon-rgb-theme);
-  --ion-color-is-twitter-icon-contrast: var(--ion-color-is-twitter-icon-contrast-theme);
-  --ion-color-is-twitter-icon-contrast-rgb: var(--ion-color-is-twitter-icon-contrast-rgb-theme);
-  --ion-color-is-twitter-icon-shade: var(--ion-color-is-twitter-icon-shade-theme);
+  --ion-color-is-twitter-icon-contrast: var(
+    --ion-color-is-twitter-icon-contrast-theme
+  );
+  --ion-color-is-twitter-icon-contrast-rgb: var(
+    --ion-color-is-twitter-icon-contrast-rgb-theme
+  );
+  --ion-color-is-twitter-icon-shade: var(
+    --ion-color-is-twitter-icon-shade-theme
+  );
   --ion-color-is-twitter-icon-tint: var(--ion-color-is-twitter-icon-tint-theme);
 
   /** linkedin icon **/
   --ion-color-is-linkedin-icon: var(--ion-color-is-linkedin-icon-theme);
   --ion-color-is-linkedin-icon-rgb: var(--ion-color-is-linkedin-icon-rgb-theme);
-  --ion-color-is-linkedin-icon-contrast: var(--ion-color-is-linkedin-icon-contrast-theme);
-  --ion-color-is-linkedin-icon-contrast-rgb: var(--ion-color-is-linkedin-icon-contrast-rgb-theme);
-  --ion-color-is-linkedin-icon-shade: var(--ion-color-is-linkedin-icon-shade-theme);
-  --ion-color-is-linkedin-icon-tint: var(--ion-color-is-linkedin-icon-tint-theme);
+  --ion-color-is-linkedin-icon-contrast: var(
+    --ion-color-is-linkedin-icon-contrast-theme
+  );
+  --ion-color-is-linkedin-icon-contrast-rgb: var(
+    --ion-color-is-linkedin-icon-contrast-rgb-theme
+  );
+  --ion-color-is-linkedin-icon-shade: var(
+    --ion-color-is-linkedin-icon-shade-theme
+  );
+  --ion-color-is-linkedin-icon-tint: var(
+    --ion-color-is-linkedin-icon-tint-theme
+  );
 
   --is-login-element-dark-contrast: #ffffff;
   --ion-color-is-mute-normal: var(--ion-color-is-mute-normal-theme);
@@ -59,8 +87,12 @@
   /** mute light **/
   --ion-color-is-mute-light: var(--ion-color-is-mute-light-theme);
   --ion-color-is-mute-light-rgb: var(--ion-color-is-mute-light-rgb-theme);
-  --ion-color-is-mute-light-contrast: var(--ion-color-is-mute-light-contrast-theme);
-  --ion-color-is-mute-light-contrast-rgb: var(--ion-color-is-mute-light-contrast-rgb-theme);
+  --ion-color-is-mute-light-contrast: var(
+    --ion-color-is-mute-light-contrast-theme
+  );
+  --ion-color-is-mute-light-contrast-rgb: var(
+    --ion-color-is-mute-light-contrast-rgb-theme
+  );
   --ion-color-is-mute-light-shade: var(--ion-color-is-mute-light-shade-theme);
   --ion-color-is-mute-light-tint: var(--ion-color-is-mute-light-tint-theme);
 
@@ -75,13 +107,21 @@
   --ion-text-color: var(--ion-text-color-theme);
   --ion-item-color: var(--ion-item-color-theme);
   --is-link-color: var(--is-link-color-theme);
-  --is-ion-select-action-sheet-ios-selected-opacity: var(--is-ion-select-action-sheet-ios-selected-opacity-theme);
-  --is-list-buttons-detail-icon-opacity: var(--is-list-buttons-detail-icon-opacity-theme);
+  --is-ion-select-action-sheet-ios-selected-opacity: var(
+    --is-ion-select-action-sheet-ios-selected-opacity-theme
+  );
+  --is-list-buttons-detail-icon-opacity: var(
+    --is-list-buttons-detail-icon-opacity-theme
+  );
   --is-item-divider-background: var(--is-item-divider-background-theme);
-  --is-item-divider-background-active: var(--is-item-divider-background-active-theme);
+  --is-item-divider-background-active: var(
+    --is-item-divider-background-active-theme
+  );
   --is-ion-card-background: var(--is-ion-card-background-theme);
   --is-item-in-ion-card-background: var(--is-item-in-ion-card-background-theme);
-  --is-ion-popover-ion-backdrop-background: var(--is-ion-popover-ion-backdrop-background-theme);
+  --is-ion-popover-ion-backdrop-background: var(
+    --is-ion-popover-ion-backdrop-background-theme
+  );
   --is-handle-background: var(--is-handle-background-theme);
   --is-segment-color: var(--is-segment-color-theme);
   --is-segment-checked-color: var(--is-segment-checked-color-theme);

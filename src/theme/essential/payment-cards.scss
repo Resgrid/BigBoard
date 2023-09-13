@@ -20,7 +20,9 @@
     ion-card {
       width: 100%;
       --background: var(--is-ion-card-background);
-      box-shadow: 8px 8px 20px 2px rgba(0, 0, 0, 0.07), -8px -8px 20px 2px rgba(0, 0, 0, 0.07);
+      box-shadow:
+        8px 8px 20px 2px rgba(0, 0, 0, 0.07),
+        -8px -8px 20px 2px rgba(0, 0, 0, 0.07);
 
       ion-item {
         --border-style: none;
@@ -32,7 +34,7 @@
         object-fit: contain;
       }
 
-      div[slot=end] {
+      div[slot="end"] {
         margin-top: 8px;
         ion-icon {
           color: var(--ion-color-is-mute-normal);

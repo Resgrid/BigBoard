@@ -1,14 +1,13 @@
-import { Injectable } from "@angular/core";
-import { Platform } from "@ionic/angular";
-import { StorageService } from "@resgrid/ngx-resgridlib";
-import { Device, OpenVidu } from "openvidu-browser";
-import { CameraType, IDevice } from "../models/deviceType";
+import { Injectable } from '@angular/core';
+import { Platform } from '@ionic/angular';
+import { StorageService } from '@resgrid/ngx-resgridlib';
+import { Device, OpenVidu } from 'openvidu-browser';
+import { CameraType, IDevice } from '../models/deviceType';
 
-declare var cordova:any;
-
+declare var cordova: any;
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class OpenViduDevicesService {
   private OV: OpenVidu | null = null;
@@ -20,13 +19,18 @@ export class OpenViduDevicesService {
   private videoDevicesDisabled: boolean;
   private audioDevicesDisabled: boolean;
 
-  constructor(private storageSrv: StorageService, private platform: Platform) {
+  constructor(
+    private storageSrv: StorageService,
+    private platform: Platform,
+  ) {
     this.OV = new OpenVidu();
   }
 
   public async initDevices(): Promise<void> {
     await this.initOpenViduDevices();
-    this.devices.length > 0 ? console.log("Devices found: ", this.devices) : console.log("No devices found!");
+    this.devices.length > 0
+      ? console.log('Devices found: ', this.devices)
+      : console.log('No devices found!');
     this.resetDevicesArray();
     if (this.hasAudioDeviceAvailable()) {
       this.initAudioDevices();
@@ -34,7 +38,9 @@ export class OpenViduDevicesService {
     }
     if (this.hasVideoDeviceAvailable()) {
       this.initVideoDevices();
-      this.camSelected = this.cameras.find((device) => device.type === CameraType.FRONT);
+      this.camSelected = this.cameras.find(
+        (device) => device.type === CameraType.FRONT,
+      );
     }
   }
   private async initOpenViduDevices() {
@@ -49,7 +55,9 @@ export class OpenViduDevicesService {
   }
 
   private initAudioDevices() {
-    const audioDevices = this.devices.filter((device) => device.kind === "audioinput");
+    const audioDevices = this.devices.filter(
+      (device) => device.kind === 'audioinput',
+    );
     audioDevices.forEach((device: Device) => {
       this.microphones.push({ label: device.label, device: device.deviceId });
     });
@@ -57,7 +65,9 @@ export class OpenViduDevicesService {
 
   private initVideoDevices() {
     const FIRST_POSITION = 0;
-    const videoDevices = this.devices.filter((device) => device.kind === "videoinput");
+    const videoDevices = this.devices.filter(
+      (device) => device.kind === 'videoinput',
+    );
     videoDevices.forEach((device: Device, index: number) => {
       const myDevice: IDevice = {
         label: device.label,
@@ -71,12 +81,12 @@ export class OpenViduDevicesService {
 
       this.cameras.push(myDevice);
     });
-    console.log("Camera selected", this.camSelected);
+    console.log('Camera selected', this.camSelected);
   }
 
   getCamSelected(): IDevice | undefined {
     if (this.cameras.length === 0) {
-      console.log("No video devices found!");
+      console.log('No video devices found!');
       return undefined;
     }
     const storageDevice = this.getCamFromStorage();
@@ -96,7 +106,7 @@ export class OpenViduDevicesService {
 
   getMicSelected(): IDevice | undefined {
     if (this.microphones.length === 0) {
-      console.log("No audio devices found!");
+      console.log('No audio devices found!');
       return undefined;
     }
     //const storageDevice = this.getMicFromStogare();
@@ -144,11 +154,17 @@ export class OpenViduDevicesService {
   }
 
   hasVideoDeviceAvailable(): boolean {
-    return !this.videoDevicesDisabled && !!this.devices?.find((device) => device.kind === "videoinput");
+    return (
+      !this.videoDevicesDisabled &&
+      !!this.devices?.find((device) => device.kind === 'videoinput')
+    );
   }
 
   hasAudioDeviceAvailable(): boolean {
-    return !this.audioDevicesDisabled && !!this.devices?.find((device) => device.kind === "audioinput");
+    return (
+      !this.audioDevicesDisabled &&
+      !!this.devices?.find((device) => device.kind === 'audioinput')
+    );
   }
 
   cameraNeedsMirror(deviceField: string): boolean {
@@ -156,7 +172,10 @@ export class OpenViduDevicesService {
   }
 
   areEmptyLabels(): boolean {
-    return !!this.cameras.find((device) => device.label === "") || !!this.microphones.find((device) => device.label === "");
+    return (
+      !!this.cameras.find((device) => device.label === '') ||
+      !!this.microphones.find((device) => device.label === '')
+    );
   }
 
   disableVideoDevices() {
@@ -179,15 +198,19 @@ export class OpenViduDevicesService {
   }
 
   private getCameraByDeviceField(deviceField: any): IDevice | undefined {
-    return this.cameras.find((opt: IDevice) => opt.device === deviceField || opt.label === deviceField);
+    return this.cameras.find(
+      (opt: IDevice) => opt.device === deviceField || opt.label === deviceField,
+    );
   }
 
   private getMicrophoneByDeviceField(deviceField: any): IDevice | undefined {
-    return this.microphones.find((opt: IDevice) => opt.device === deviceField || opt.label === deviceField);
+    return this.microphones.find(
+      (opt: IDevice) => opt.device === deviceField || opt.label === deviceField,
+    );
   }
 
   private resetDevicesArray() {
-    this.cameras = [{ label: "Default", device: "", type: null }];
-    this.microphones = [{ label: "Default", device: "", type: null }];
+    this.cameras = [{ label: 'Default', device: '', type: null }];
+    this.microphones = [{ label: 'Default', device: '', type: null }];
   }
 }

@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 
 export function reducer(
   state: HomeState = initialState,
-  action: HomeActionsUnion
+  action: HomeActionsUnion,
 ): HomeState {
   switch (action.type) {
     case HomeActionTypes.UPDATE_SIGNALR_STATE:
