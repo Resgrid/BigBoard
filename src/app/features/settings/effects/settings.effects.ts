@@ -1,11 +1,6 @@
 import * as settingsAction from '../actions/settings.actions';
 import { Action, Store } from '@ngrx/store';
-import {
-  Actions,
-  concatLatestFrom,
-  createEffect,
-  ofType,
-} from '@ngrx/effects';
+import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
 import {
   catchError,
   concatMap,
@@ -32,7 +27,7 @@ import * as homeActions from '../../../features/home/actions/home.actions';
 import { SleepProvider } from 'src/app/providers/sleep';
 import { ModalConfirmLogoutPage } from '../modals/confirmLogout/modal-confirmLogout.page';
 import { ModalAboutPage } from '../modals/about/modal-about.page';
-import * as Sentry from "@sentry/angular";
+import * as Sentry from '@sentry/angular';
 import * as WidgetActions from '../../widgets/actions/widgets.actions';
 import { ConfigService } from '@resgrid/ngx-resgridlib';
 import { environment } from 'src/environments/environment';
@@ -45,9 +40,9 @@ export class SettingsEffects {
     () =>
       this.actions$.pipe(
         ofType(settingsAction.SettingActionTypes.SHOW_LOGIN_MODAL),
-        exhaustMap((data) => this.runModal(ModalLoginPage, null, null))
+        exhaustMap((data) => this.runModal(ModalLoginPage, null, null)),
       ),
-    { dispatch: false }
+    { dispatch: false },
   );
 
   login$ = createEffect(() =>
@@ -62,13 +57,14 @@ export class SettingsEffects {
                 //filter((data) => !!data),
                 map((data) => {
                   if (data && data.Rights) {
-                    Sentry.setUser({ 
-											username: data.sub, 
-											email: data.Rights.EmailAddress,
-											name: data.Rights.FullName,
-											departmentId: data.Rights.DepartmentId,
-											departmentName: data.Rights.DepartmentName });
-                    
+                    Sentry.setUser({
+                      username: data.sub,
+                      email: data.Rights.EmailAddress,
+                      name: data.Rights.FullName,
+                      departmentId: data.Rights.DepartmentId,
+                      departmentName: data.Rights.DepartmentName,
+                    });
+
                     return {
                       type: settingsAction.SettingActionTypes
                         .SET_LOGINDATA_NAV_HOME,
@@ -90,13 +86,13 @@ export class SettingsEffects {
                   this.authProvider.startTrackingRefreshToken();
                 }),
                 catchError(() =>
-                  of({ type: settingsAction.SettingActionTypes.LOGIN_FAIL })
-                )
-              )
-            )
-          )
-      )
-    )
+                  of({ type: settingsAction.SettingActionTypes.LOGIN_FAIL }),
+                ),
+              ),
+            ),
+          ),
+      ),
+    ),
   );
 
   loginSuccess$ = createEffect(
@@ -104,18 +100,18 @@ export class SettingsEffects {
       this.actions$.pipe(
         ofType(settingsAction.SettingActionTypes.LOGIN_SUCCESS),
         switchMap(() => this.loadingProvider.hide()),
-        switchMap(() => this.router.navigate(['/home']))
+        switchMap(() => this.router.navigate(['/home'])),
       ),
-    { dispatch: false }
+    { dispatch: false },
   );
 
   loginDone$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(settingsAction.SettingActionTypes.LOGIN_DONE),
-        switchMap(() => this.loadingProvider.hide())
+        switchMap(() => this.loadingProvider.hide()),
       ),
-    { dispatch: false }
+    { dispatch: false },
   );
 
   loginFail$ = createEffect(
@@ -127,26 +123,26 @@ export class SettingsEffects {
           this.alertProvider.showErrorAlert(
             'Login Error',
             '',
-            'There was an issue trying to log you in, please check your username and password and try again.'
-          )
-        )
+            'There was an issue trying to log you in, please check your username and password and try again.',
+          ),
+        ),
       ),
-    { dispatch: false }
+    { dispatch: false },
   );
 
   loggingIn$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(settingsAction.SettingActionTypes.IS_LOGIN),
-        switchMap(() => this.loadingProvider.show())
+        switchMap(() => this.loadingProvider.show()),
       ),
-    { dispatch: false }
+    { dispatch: false },
   );
 
   primeSettings$ = createEffect(() =>
     this.actions$.pipe(
       ofType<settingsAction.PrimeSettings>(
-        settingsAction.SettingActionTypes.PRIME_SETTINGS
+        settingsAction.SettingActionTypes.PRIME_SETTINGS,
       ),
       exhaustMap((action) =>
         forkJoin([
@@ -155,18 +151,21 @@ export class SettingsEffects {
         ]).pipe(
           map((data) => {
             try {
-              if (data &&
+              if (
+                data &&
                 data[0] &&
                 data[0].loginData &&
-                data[0].loginData.Rights) {
-                  try {
-                    Sentry.setUser({ 
-                      username: data[0].loginData.sub, 
-                      email: data[0].loginData.Rights.EmailAddress,
-                      name: data[0].loginData.Rights.FullName,
-                      departmentId: data[0].loginData.Rights.DepartmentId,
-                      departmentName: data[0].loginData.Rights.DepartmentName });
-                  } catch {}
+                data[0].loginData.Rights
+              ) {
+                try {
+                  Sentry.setUser({
+                    username: data[0].loginData.sub,
+                    email: data[0].loginData.Rights.EmailAddress,
+                    name: data[0].loginData.Rights.FullName,
+                    departmentId: data[0].loginData.Rights.DepartmentId,
+                    departmentName: data[0].loginData.Rights.DepartmentName,
+                  });
+                } catch {}
 
                 return {
                   type: settingsAction.SettingActionTypes
@@ -194,11 +193,11 @@ export class SettingsEffects {
             }
           }),
           catchError(() =>
-            of({ type: settingsAction.SettingActionTypes.NAV_SETTINGS })
-          )
-        )
-      )
-    )
+            of({ type: settingsAction.SettingActionTypes.NAV_SETTINGS }),
+          ),
+        ),
+      ),
+    ),
   );
 
   setLoginDataNavHome$ = createEffect(
@@ -216,100 +215,99 @@ export class SettingsEffects {
         }),
         switchMap(() => this.loadingProvider.hide()),
         switchMap(() => this.closeModal()),
-        switchMap(() => this.router.navigate(['/home']))
+        switchMap(() => this.router.navigate(['/home'])),
       ),
-    { dispatch: false }
+    { dispatch: false },
   );
 
   navToSettings$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(settingsAction.SettingActionTypes.NAV_SETTINGS),
-        switchMap(() => this.router.navigate(['/home/tabs/settings']))
+        switchMap(() => this.router.navigate(['/home/tabs/settings'])),
       ),
-    { dispatch: false }
+    { dispatch: false },
   );
 
   setServerAddress$ = createEffect(() =>
     this.actions$.pipe(
       ofType<settingsAction.SetServerAddress>(
-        settingsAction.SettingActionTypes.SET_SERVERADDRESS
+        settingsAction.SettingActionTypes.SET_SERVERADDRESS,
       ),
       switchMap((action) =>
-        this.storageProvider.setServerAddress(action.serverAddress)
+        this.storageProvider.setServerAddress(action.serverAddress),
       ),
       map((data) => {
         return {
           type: settingsAction.SettingActionTypes.SET_SERVERADDRESS_DONE,
         };
-      })
-    )
+      }),
+    ),
   );
 
   setServerAddressDone$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(settingsAction.SettingActionTypes.SET_SERVERADDRESS_DONE),
-        switchMap((action) =>
-          this.closeModal()
-        ),
+        switchMap((action) => this.closeModal()),
         switchMap((action) =>
           this.alertProvider.showOkAlert(
             'Resgrid Api',
             'Server Address Set',
-            'The server address has been saved. You will need to quit the application completely and re-open for this to take effect.'
-          )
-        )
+            'The server address has been saved. You will need to quit the application completely and re-open for this to take effect.',
+          ),
+        ),
       ),
-    { dispatch: false }
+    { dispatch: false },
   );
 
   showSetServerAddressModal$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(settingsAction.SettingActionTypes.SHOW_SETSERVER_MODAL),
-        switchMap((data) => this.runModal(ModalServerInfoPage, null, null))
+        switchMap((data) => this.runModal(ModalServerInfoPage, null, null)),
       ),
-    { dispatch: false }
+    { dispatch: false },
   );
 
   savePerferDarkModeSetting$ = createEffect(() =>
     this.actions$.pipe(
       ofType<settingsAction.SavePerferDarkModeSetting>(
-        settingsAction.SettingActionTypes.SAVE_PERFER_DARKMODE_SETTING
+        settingsAction.SettingActionTypes.SAVE_PERFER_DARKMODE_SETTING,
       ),
       switchMap((action) =>
-        this.storageProvider.setPerferDarkMode(action.themePreference)
+        this.storageProvider.setPerferDarkMode(action.themePreference),
       ),
       map((data) => {
         return {
-          type: settingsAction.SettingActionTypes.SAVE_PERFER_DARKMODE_SETTING_DONE,
-          themePreference: data
+          type: settingsAction.SettingActionTypes
+            .SAVE_PERFER_DARKMODE_SETTING_DONE,
+          themePreference: data,
         };
-      })
-    )
+      }),
+    ),
   );
 
   saveKeepAliveSetting$ = createEffect(() =>
     this.actions$.pipe(
       ofType<settingsAction.SaveKeepAliveSetting>(
-        settingsAction.SettingActionTypes.SAVE_KEEP_ALIVE_SETTING
+        settingsAction.SettingActionTypes.SAVE_KEEP_ALIVE_SETTING,
       ),
       switchMap(async (action) =>
-        this.storageProvider.setKeepAlive(action.keepAlive)
+        this.storageProvider.setKeepAlive(action.keepAlive),
       ),
       map((data) => {
         return {
           type: settingsAction.SettingActionTypes.DONE,
         };
-      })
-    )
+      }),
+    ),
   );
 
   getApplicationSettings$ = createEffect(() =>
     this.actions$.pipe(
       ofType<settingsAction.GetApplicationSettings>(
-        settingsAction.SettingActionTypes.GET_APP_SETTINGS
+        settingsAction.SettingActionTypes.GET_APP_SETTINGS,
       ),
       exhaustMap((action) =>
         forkJoin([
@@ -320,10 +318,10 @@ export class SettingsEffects {
             type: settingsAction.SettingActionTypes.SET_APP_SETTINGS,
             keepAlive: result[0],
             perferDarkMode: result[1],
-          }))
-        )
-      )
-    )
+          })),
+        ),
+      ),
+    ),
   );
 
   showConfirmLogoff$ = createEffect(
@@ -334,10 +332,10 @@ export class SettingsEffects {
           this.runModal(ModalConfirmLogoutPage, null, null, {
             breakpoints: [0, 0.2, 0.5, 1],
             initialBreakpoint: 0.2,
-          })
-        )
+          }),
+        ),
       ),
-    { dispatch: false }
+    { dispatch: false },
   );
 
   logoff$ = createEffect(() =>
@@ -352,68 +350,68 @@ export class SettingsEffects {
         return {
           type: settingsAction.SettingActionTypes.DONE,
         };
-      })
-    )
+      }),
+    ),
   );
 
   showAboutModal$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(settingsAction.SettingActionTypes.SHOW_ABOUT_MODAL),
-        exhaustMap((data) => this.runModal(ModalAboutPage, null, null))
+        exhaustMap((data) => this.runModal(ModalAboutPage, null, null)),
       ),
-    { dispatch: false }
+    { dispatch: false },
   );
 
   setIsAppActive$ = createEffect(() =>
     this.actions$.pipe(
       ofType<settingsAction.SetIsAppActive>(
-        settingsAction.SettingActionTypes.SET_IS_APP_ACTIVE
+        settingsAction.SettingActionTypes.SET_IS_APP_ACTIVE,
       ),
       tap((action) => {
         if (!action.isActive) {
-
         } else {
-
-				}
+        }
       }),
       map((data) => {
         return {
           type: settingsAction.SettingActionTypes.DONE,
         };
-      })
-    )
+      }),
+    ),
   );
 
   getAppSettingsFromServer$ = createEffect(() =>
     this.actions$.pipe(
-      ofType<settingsAction.GetAppSettingsFromServer>(settingsAction.SettingActionTypes.GET_APP_SETTINGS_FROM_SERVER),
+      ofType<settingsAction.GetAppSettingsFromServer>(
+        settingsAction.SettingActionTypes.GET_APP_SETTINGS_FROM_SERVER,
+      ),
       exhaustMap((action) =>
-        this.configService.getConfig(environment.apiSettingsConfigKey)
-          .pipe(
-            map((data) => {
-              return {
-                type: settingsAction.SettingActionTypes.GET_APP_SETTINGS_FROM_SERVER_DONE,
-                appSettings: data.Data
-              };
-            })
-          )
-      )
-    )
+        this.configService.getConfig(environment.apiSettingsConfigKey).pipe(
+          map((data) => {
+            return {
+              type: settingsAction.SettingActionTypes
+                .GET_APP_SETTINGS_FROM_SERVER_DONE,
+              appSettings: data.Data,
+            };
+          }),
+        ),
+      ),
+    ),
   );
 
   done$ = createEffect(
     () => this.actions$.pipe(ofType(settingsAction.SettingActionTypes.DONE)),
-    { dispatch: false }
+    { dispatch: false },
   );
 
   dismissModal$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(settingsAction.SettingActionTypes.DISMISS_MODAL),
-        switchMap(() => this.closeModal())
+        switchMap(() => this.closeModal()),
       ),
-    { dispatch: false }
+    { dispatch: false },
   );
 
   constructor(
@@ -428,7 +426,7 @@ export class SettingsEffects {
     private homeStore: Store<HomeState>,
     private menuCtrl: MenuController,
     private platform: Platform,
-    private configService: ConfigService
+    private configService: ConfigService,
   ) {}
 
   runModal = async (component, cssClass, properties, opts = {}) => {

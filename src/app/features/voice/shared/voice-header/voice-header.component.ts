@@ -25,11 +25,11 @@ export class VoiceFooterComponent implements OnInit, OnDestroy {
     private store: Store<VoiceState>,
     public openViduService: OpenViduService,
     private audioProvider: AudioProvider,
-    private ref: ChangeDetectorRef
+    private ref: ChangeDetectorRef,
   ) {
     this.voiceState$ = this.store.select(selectVoiceState);
   }
-  
+
   ngOnInit(): void {
     this.voiceSubscription = this.voiceState$.subscribe((state) => {
       if (state) {

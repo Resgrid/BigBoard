@@ -23,6 +23,7 @@
 
 body.dark {
   @import "./theme-dark";
-} else {
+}
+else {
   @import "./theme-light";
 }

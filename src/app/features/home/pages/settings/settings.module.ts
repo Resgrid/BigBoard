@@ -17,11 +17,11 @@ import { TranslateModule } from '@ngx-translate/core';
     RouterModule.forChild([
       {
         path: '',
-        component: SettingsPage
-      }
+        component: SettingsPage,
+      },
     ]),
-    TranslateModule
+    TranslateModule,
   ],
-  declarations: [SettingsPage]
+  declarations: [SettingsPage],
 })
 export class SettingsPageModule {}

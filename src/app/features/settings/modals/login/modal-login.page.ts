@@ -4,7 +4,7 @@ import { ModalController } from '@ionic/angular';
 import { Store } from '@ngrx/store';
 import { passwordValidator } from 'src/app/validators/password.validator';
 import { SettingsState } from '../../store/settings.store';
-import * as SettingsActions from "../../actions/settings.actions";
+import * as SettingsActions from '../../actions/settings.actions';
 
 @Component({
   selector: 'app-modal-login',
@@ -14,17 +14,18 @@ import * as SettingsActions from "../../actions/settings.actions";
 export class ModalLoginPage implements OnInit {
   public loginForm: FormGroup;
 
-  constructor(private modal: ModalController, private formBuilder: FormBuilder,
-    private store: Store<SettingsState>) {
-      this.loginForm = this.formBuilder.group({
-        username: [null, [Validators.required]],
-        password: [null, [Validators.required, passwordValidator]]
-      });
-     }
-
-  ngOnInit() {
-
+  constructor(
+    private modal: ModalController,
+    private formBuilder: FormBuilder,
+    private store: Store<SettingsState>,
+  ) {
+    this.loginForm = this.formBuilder.group({
+      username: [null, [Validators.required]],
+      password: [null, [Validators.required, passwordValidator]],
+    });
   }
+
+  ngOnInit() {}
 
   dismissModal() {
     this.modal.dismiss();
@@ -34,12 +35,12 @@ export class ModalLoginPage implements OnInit {
     if (this.loginForm.valid) {
       this.store.dispatch(new SettingsActions.IsLogin());
 
-    const authData = {
-      username: this.f.username.value.trim(),
-      password: this.f.password.value.trim(),
-    };
+      const authData = {
+        username: this.f.username.value.trim(),
+        password: this.f.password.value.trim(),
+      };
 
-    this.store.dispatch(new SettingsActions.Login(authData));
+      this.store.dispatch(new SettingsActions.Login(authData));
     } else {
       console.log('invalid');
     }
@@ -48,5 +49,4 @@ export class ModalLoginPage implements OnInit {
   get f() {
     return this.loginForm.controls;
   }
-
 }

@@ -16,8 +16,8 @@ import { TranslateModule } from '@ngx-translate/core';
     FormsModule,
     TabsPageRoutingModule,
     VoiceModule,
-    TranslateModule
+    TranslateModule,
   ],
-  declarations: [TabsPage]
+  declarations: [TabsPage],
 })
 export class TabsPageModule {}

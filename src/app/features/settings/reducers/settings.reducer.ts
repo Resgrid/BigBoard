@@ -7,7 +7,7 @@ import {
 
 export function reducer(
   state: SettingsState = initialState,
-  action: SettingsActionsUnion
+  action: SettingsActionsUnion,
 ): SettingsState {
   switch (action.type) {
     case SettingActionTypes.IS_LOGIN:

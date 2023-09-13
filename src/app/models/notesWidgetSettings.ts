@@ -1,4 +1,4 @@
-export class NotesWidgetSettings  {
-    public Category: string = "";
-    public IncludeUnCategorized: boolean = false;
+export class NotesWidgetSettings {
+  public Category: string = '';
+  public IncludeUnCategorized: boolean = false;
 }

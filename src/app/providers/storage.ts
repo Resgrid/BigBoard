@@ -65,7 +65,7 @@ export class StorageProvider {
   public async setLoginData(loginData: LoginResult): Promise<any> {
     await this.set('RGBBLoginData', JSON.stringify(loginData));
 
-    return loginData
+    return loginData;
   }
 
   public async getLoginData(): Promise<LoginResult> {
@@ -94,7 +94,7 @@ export class StorageProvider {
   public async getKeepAlive(): Promise<boolean> {
     let data = await this.get('RGBBKeepAlive');
     if (data) {
-      let isSet = (data === 'true');
+      let isSet = data === 'true';
       return isSet;
     }
 
@@ -113,20 +113,24 @@ export class StorageProvider {
     };
   }
 
-  public async saveGroupSorting(weights: Array<GroupSorting>): Promise<Array<GroupSorting>> {
+  public async saveGroupSorting(
+    weights: Array<GroupSorting>,
+  ): Promise<Array<GroupSorting>> {
     return await this.set('RGBBgroupWeights', weights.toString());
   }
 
   public async loadGroupSorting(): Promise<Array<GroupSorting>> {
-    return await this.get("RGBBgroupWeights");
+    return await this.get('RGBBgroupWeights');
   }
 
-  public async saveGroupHiding(groupHides: Array<number>): Promise<Array<number>> {
+  public async saveGroupHiding(
+    groupHides: Array<number>,
+  ): Promise<Array<number>> {
     return await this.set('RGBBgroupHides', JSON.stringify(groupHides));
   }
 
   public async loadGroupHiding(): Promise<Array<number>> {
-    return await this.get("RGBBgroupHides");
+    return await this.get('RGBBgroupHides');
   }
 
   public async saveLayout(widgets: Array<Widget>): Promise<Array<Widget>> {
@@ -134,7 +138,7 @@ export class StorageProvider {
   }
 
   public async loadLayout(): Promise<Array<Widget>> {
-    const widgets = await this.get("RGBBwidgets");
+    const widgets = await this.get('RGBBwidgets');
 
     if (widgets) {
       return JSON.parse(widgets);
@@ -144,16 +148,21 @@ export class StorageProvider {
   }
 
   public async clearLayout(): Promise<any> {
-    return await this.set("RGBBwidgets", '');
+    return await this.set('RGBBwidgets', '');
   }
 
-  public async saveCallWidgetSettings(callWidgetSettings: CallsWidgetSettings): Promise<CallsWidgetSettings> {
-    await this.set('RGBBcallWidgetSettings', JSON.stringify(callWidgetSettings));
+  public async saveCallWidgetSettings(
+    callWidgetSettings: CallsWidgetSettings,
+  ): Promise<CallsWidgetSettings> {
+    await this.set(
+      'RGBBcallWidgetSettings',
+      JSON.stringify(callWidgetSettings),
+    );
     return callWidgetSettings;
   }
 
   public async loadCallWidgetSettings(): Promise<CallsWidgetSettings | null> {
-    const result = await this.get("RGBBcallWidgetSettings");
+    const result = await this.get('RGBBcallWidgetSettings');
 
     if (result) {
       return JSON.parse(result);
@@ -162,13 +171,15 @@ export class StorageProvider {
     return null;
   }
 
-  public async savePTTWidgetSettings(pttWidgetSettings: PTTWidgetSettings): Promise<PTTWidgetSettings> {
+  public async savePTTWidgetSettings(
+    pttWidgetSettings: PTTWidgetSettings,
+  ): Promise<PTTWidgetSettings> {
     await this.set('RGBBpttWidgetSettings', JSON.stringify(pttWidgetSettings));
     return pttWidgetSettings;
   }
 
   public async loadPTTWidgetSettings(): Promise<PTTWidgetSettings | null> {
-    const result = await this.get("RGBBpttWidgetSettings");
+    const result = await this.get('RGBBpttWidgetSettings');
 
     if (result) {
       return JSON.parse(result);
@@ -177,14 +188,19 @@ export class StorageProvider {
     return null;
   }
 
-  public async savePersonnelWidgetSettings(personnelWidgetSettings: PersonnelWidgetSettings): Promise<PersonnelWidgetSettings> {
-    await this.set('RGBBpersonnelWidgetSettings', JSON.stringify(personnelWidgetSettings));
+  public async savePersonnelWidgetSettings(
+    personnelWidgetSettings: PersonnelWidgetSettings,
+  ): Promise<PersonnelWidgetSettings> {
+    await this.set(
+      'RGBBpersonnelWidgetSettings',
+      JSON.stringify(personnelWidgetSettings),
+    );
 
     return personnelWidgetSettings;
   }
 
   public async loadPersonnelWidgetSettings(): Promise<PersonnelWidgetSettings | null> {
-    const result = await this.get("RGBBpersonnelWidgetSettings");
+    const result = await this.get('RGBBpersonnelWidgetSettings');
 
     if (result) {
       return JSON.parse(result);
@@ -193,37 +209,51 @@ export class StorageProvider {
     return null;
   }
 
-  public async saveUnitsWidgetSettings(unitsWidgetSettings: UnitsWidgetSettings): Promise<UnitsWidgetSettings> {
-    return await this.set('RGBBunitsWidgetSettings', JSON.stringify(unitsWidgetSettings));
+  public async saveUnitsWidgetSettings(
+    unitsWidgetSettings: UnitsWidgetSettings,
+  ): Promise<UnitsWidgetSettings> {
+    return await this.set(
+      'RGBBunitsWidgetSettings',
+      JSON.stringify(unitsWidgetSettings),
+    );
   }
 
   public async loadUnitsWidgetSettings(): Promise<UnitsWidgetSettings> {
-    return await this.get("RGBBunitsWidgetSettings");
+    return await this.get('RGBBunitsWidgetSettings');
   }
 
-  public async saveUnitGroupSorting(weights: Array<GroupSorting>): Promise<Array<GroupSorting>> {
+  public async saveUnitGroupSorting(
+    weights: Array<GroupSorting>,
+  ): Promise<Array<GroupSorting>> {
     return await this.set('RGBBunitGroupWeights', JSON.stringify(weights));
   }
 
   public async loadUnitGroupSorting(): Promise<Array<GroupSorting>> {
-    return await this.get("RGBBunitGroupWeights");
+    return await this.get('RGBBunitGroupWeights');
   }
 
-  public async saveUnitGroupHiding(groupHides: Array<number>): Promise<Array<number>> {
+  public async saveUnitGroupHiding(
+    groupHides: Array<number>,
+  ): Promise<Array<number>> {
     return await this.set('RGBBunitGroupHides', JSON.stringify(groupHides));
   }
 
   public async loadUnitGroupHiding(): Promise<Array<number>> {
-    return await this.get("RGBBunitGroupHides");
+    return await this.get('RGBBunitGroupHides');
   }
 
-  public async saveWeatherWidgetSettings(weatherWidgetSettings: WeatherWidgetSettings): Promise<WeatherWidgetSettings> {
-    await this.set('RGBBweatherWidgetSettings', JSON.stringify(weatherWidgetSettings));
+  public async saveWeatherWidgetSettings(
+    weatherWidgetSettings: WeatherWidgetSettings,
+  ): Promise<WeatherWidgetSettings> {
+    await this.set(
+      'RGBBweatherWidgetSettings',
+      JSON.stringify(weatherWidgetSettings),
+    );
     return weatherWidgetSettings;
   }
 
   public async loadWeatherWidgetSettings(): Promise<WeatherWidgetSettings | null> {
-    const result = await this.get("RGBBweatherWidgetSettings");
+    const result = await this.get('RGBBweatherWidgetSettings');
 
     if (result) {
       return JSON.parse(result);
@@ -232,21 +262,28 @@ export class StorageProvider {
     return null;
   }
 
-  public async saveNotesWidgetSettings(notesWidgetSettings: NotesWidgetSettings): Promise<NotesWidgetSettings> {
-    return await this.set('RGBBnotesWidgetSettings', JSON.stringify(notesWidgetSettings));
+  public async saveNotesWidgetSettings(
+    notesWidgetSettings: NotesWidgetSettings,
+  ): Promise<NotesWidgetSettings> {
+    return await this.set(
+      'RGBBnotesWidgetSettings',
+      JSON.stringify(notesWidgetSettings),
+    );
   }
 
   public async loadNotesWidgetSettings(): Promise<NotesWidgetSettings> {
-    return await this.get("RGBBnotesWidgetSettings");
+    return await this.get('RGBBnotesWidgetSettings');
   }
 
-  public async saveMapWidgetSettings(mapWidgetSettings: MapWidgetSettings): Promise<MapWidgetSettings> {
+  public async saveMapWidgetSettings(
+    mapWidgetSettings: MapWidgetSettings,
+  ): Promise<MapWidgetSettings> {
     await this.set('RGBBmapWidgetSettings', JSON.stringify(mapWidgetSettings));
     return mapWidgetSettings;
   }
 
   public async loadMapWidgetSettings(): Promise<MapWidgetSettings | null> {
-    const result = await this.get("RGBBmapWidgetSettings");
+    const result = await this.get('RGBBmapWidgetSettings');
 
     if (result) {
       return JSON.parse(result);

@@ -1,29 +1,29 @@
-import { Injectable, Inject } from "@angular/core";
-import { combineLatest, concat, Observable, of, Subscription } from "rxjs";
+import { Injectable, Inject } from '@angular/core';
+import { combineLatest, concat, Observable, of, Subscription } from 'rxjs';
 import {
   AuthService,
   ProfileModel,
   SecurityService,
 } from '@resgrid/ngx-resgridlib';
-import { map, mergeMap } from "rxjs/operators";
-import { LoginResult } from "src/app/models/loginResult";
+import { map, mergeMap } from 'rxjs/operators';
+import { LoginResult } from 'src/app/models/loginResult';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class AuthProvider {
   private refreshTokenSub: Subscription;
 
   constructor(
     private authProvider: AuthService,
-    private securityService: SecurityService
+    private securityService: SecurityService,
   ) {}
 
   public login(username: string, password: string): Observable<LoginResult> {
     const login = this.authProvider.login({
       username: username,
       password: password,
-      refresh_token: "",
+      refresh_token: '',
     });
     const getDepartmentRights = this.securityService.applySecurityRights();
 
@@ -36,12 +36,12 @@ export class AuthProvider {
         result.Rights = rightsResult.Data;
 
         return result;
-      })
+      }),
     );
   }
 
   public startTrackingRefreshToken(): void {
-    this.refreshTokenSub = this.authProvider.init().subscribe(result => {
+    this.refreshTokenSub = this.authProvider.init().subscribe((result) => {
       //console.log(JSON.stringify(result));
     });
   }

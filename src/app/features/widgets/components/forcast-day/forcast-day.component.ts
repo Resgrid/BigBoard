@@ -1,5 +1,9 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { CallPriorityResultData, CallResultData, UtilsService } from '@resgrid/ngx-resgridlib';
+import {
+  CallPriorityResultData,
+  CallResultData,
+  UtilsService,
+} from '@resgrid/ngx-resgridlib';
 import { Daily } from '../../models/weather';
 
 @Component({

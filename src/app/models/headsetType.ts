@@ -1,4 +1,4 @@
-export class HeadsetType  {
-    id: number = -1;
-    name: string = 'None';
+export class HeadsetType {
+  id: number = -1;
+  name: string = 'None';
 }

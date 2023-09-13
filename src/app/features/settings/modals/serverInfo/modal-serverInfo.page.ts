@@ -19,15 +19,18 @@ export class ModalServerInfoPage implements OnInit {
     private modal: ModalController,
     private formBuilder: FormBuilder,
     private store: Store<SettingsState>,
-    private storageService: StorageProvider
+    private storageService: StorageProvider,
   ) {
     this.serverForm = this.formBuilder.group({
-      serverAddress: ['https://api.resgrid.com', [Validators.required, urlValidator]],
+      serverAddress: [
+        'https://api.resgrid.com',
+        [Validators.required, urlValidator],
+      ],
     });
   }
 
   ngOnInit() {
-    this.storageService.getServerAddress().then(serverAddress => { 
+    this.storageService.getServerAddress().then((serverAddress) => {
       if (serverAddress) {
         this.serverForm.controls['serverAddress'].setValue(serverAddress);
         this.serverForm.controls['serverAddress'].patchValue(serverAddress);
@@ -42,7 +45,7 @@ export class ModalServerInfoPage implements OnInit {
   save() {
     if (this.serverForm.valid) {
       this.store.dispatch(
-        new SettingsActions.SetServerAddress(this.f.serverAddress.value.trim())
+        new SettingsActions.SetServerAddress(this.f.serverAddress.value.trim()),
       );
     } else {
       console.log('invalid');

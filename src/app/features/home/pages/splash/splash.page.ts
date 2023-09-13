@@ -7,12 +7,9 @@ import { MenuController } from '@ionic/angular';
   styleUrls: ['./splash.page.scss'],
 })
 export class SplashPage implements OnInit {
+  constructor(public menuCtrl: MenuController) {}
 
-  constructor(public menuCtrl: MenuController) { }
-
-  ngOnInit() {
-    
-  }
+  ngOnInit() {}
 
   ionViewWillEnter() {
     this.menuCtrl.enable(false);

@@ -4,7 +4,7 @@ import { ModalController } from '@ionic/angular';
 import { Store } from '@ngrx/store';
 import { passwordValidator } from 'src/app/validators/password.validator';
 import { SettingsState } from '../../store/settings.store';
-import * as SettingsActions from "../../actions/settings.actions";
+import * as SettingsActions from '../../actions/settings.actions';
 
 @Component({
   selector: 'app-modal-confirmLogout',
@@ -12,12 +12,12 @@ import * as SettingsActions from "../../actions/settings.actions";
   styleUrls: ['./modal-confirmLogout.page.scss'],
 })
 export class ModalConfirmLogoutPage implements OnInit {
+  constructor(
+    private modal: ModalController,
+    private store: Store<SettingsState>,
+  ) {}
 
-  constructor(private modal: ModalController, private store: Store<SettingsState>) { }
-
-  ngOnInit() {
- 
-  }
+  ngOnInit() {}
 
   dismissModal() {
     this.modal.dismiss();
@@ -26,5 +26,4 @@ export class ModalConfirmLogoutPage implements OnInit {
   logout() {
     this.store.dispatch(new SettingsActions.Logout());
   }
-
 }

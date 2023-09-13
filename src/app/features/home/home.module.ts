@@ -12,17 +12,17 @@ import { TranslateModule } from '@ngx-translate/core';
 import { WidgetsModule } from '../widgets/widgets.module';
 
 @NgModule({
-    imports: [
-        IonicModule,
-        CommonModule,
-        FormsModule,
-        ReactiveFormsModule,
-        StoreModule.forFeature('homeModule', reducer),
-        EffectsModule.forFeature([HomeEffects]),
-        HomeRoutingModule,
-        NgxResgridLibModule,
-        TranslateModule
-    ],
-    declarations: []
+  imports: [
+    IonicModule,
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    StoreModule.forFeature('homeModule', reducer),
+    EffectsModule.forFeature([HomeEffects]),
+    HomeRoutingModule,
+    NgxResgridLibModule,
+    TranslateModule,
+  ],
+  declarations: [],
 })
 export class HomeModule {}

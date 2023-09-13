@@ -5,32 +5,43 @@ const routes: Routes = [
   {
     path: '',
     redirectTo: 'tabs/dashboard',
-    pathMatch: 'full'
+    pathMatch: 'full',
   },
   {
     path: 'tabs',
-    loadChildren: () => import('./pages/tabs/tabs.module').then(m => m.TabsPageModule)
+    loadChildren: () =>
+      import('./pages/tabs/tabs.module').then((m) => m.TabsPageModule),
   },
   {
     path: 'dashboard',
-    loadChildren: () => import('./pages/dashboard/dashboard.module').then(m => m.DashboardPageModule)
+    loadChildren: () =>
+      import('./pages/dashboard/dashboard.module').then(
+        (m) => m.DashboardPageModule,
+      ),
   },
   {
     path: 'settings',
-    loadChildren: () => import('./pages/settings/settings.module').then(m => m.SettingsPageModule)
+    loadChildren: () =>
+      import('./pages/settings/settings.module').then(
+        (m) => m.SettingsPageModule,
+      ),
   },
   {
     path: 'splash',
-    loadChildren: () => import('./pages/splash/splash.module').then(m => m.SplashPageModule)
+    loadChildren: () =>
+      import('./pages/splash/splash.module').then((m) => m.SplashPageModule),
   },
   {
     path: 'configure',
-    loadChildren: () => import('./pages/configure/configure.module').then(m => m.ConfigurePageModule)
+    loadChildren: () =>
+      import('./pages/configure/configure.module').then(
+        (m) => m.ConfigurePageModule,
+      ),
   },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
 export class HomeRoutingModule {}

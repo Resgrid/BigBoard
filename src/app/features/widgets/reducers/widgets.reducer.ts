@@ -15,7 +15,7 @@ import { PTTWidgetSettings } from 'src/app/models/pttWidgetSettings';
 
 export function reducer(
   state: WidgetsState = initialState,
-  action: WidgetsActionsUnion
+  action: WidgetsActionsUnion,
 ): WidgetsState {
   switch (action.type) {
     case WidgetsActionTypes.GET_WEATHER_SETTTINGS_DONE:
@@ -222,7 +222,7 @@ export const getNotesWidgetSettings = (state: WidgetsState) =>
   state.notesWidgetSettings;
 export const getMapWidgetSettings = (state: WidgetsState) =>
   state.mapWidgetSettings;
-  export const getPTTWidgetSettings = (state: WidgetsState) =>
+export const getPTTWidgetSettings = (state: WidgetsState) =>
   state.pttWidgetSettings;
 export const getMapWidgetData = (state: WidgetsState) => state.mapData;
 export const getWeatherWidgetLocation = (state: WidgetsState) => state.location;
