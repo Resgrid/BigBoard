@@ -1,4 +1,8 @@
-import { APP_INITIALIZER, CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import {
+  APP_INITIALIZER,
+  CUSTOM_ELEMENTS_SCHEMA,
+  NgModule,
+} from '@angular/core';
 import { BrowserModule, HammerModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
@@ -40,56 +44,56 @@ let getBaseUrl = (): string => {
 const cacheProvider = new CacheProvider();
 
 @NgModule({
-    declarations: [AppComponent],
-    imports: [
-        BrowserModule,
-        CommonModule,
-        HttpClientModule,
-        NgxResgridLibModule.forRoot({
-            baseApiUrl: getBaseUrl,
-            apiVersion: 'v4',
-            clientId: 'RgBigBoardApp',
-            googleApiKey: '',
-            channelUrl: environment.channelUrl,
-            channelHubName: environment.channelHubName,
-            realtimeGeolocationHubName: environment.realtimeGeolocationHubName,
-            logLevel: environment.logLevel,
-            isMobileApp: true,
-            cacheProvider: cacheProvider
-        }),
-        StoreModule.forRoot(reducers, { metaReducers }),
-        EffectsModule.forRoot([]),
-        StoreRouterConnectingModule.forRoot(),
-        StoreDevtoolsModule.instrument({
-            maxAge: 10,
-            name: 'Resgrid BigBoard',
-            logOnly: environment.production,
-        }),
-        IonicStorageModule.forRoot({
-            name: '__RGBigB',
-            driverOrder: [Drivers.IndexedDB, Drivers.LocalStorage],
-        }),
-        TranslateModule.forRoot({
-            loader: {
-                provide: TranslateLoader,
-                useFactory: createTranslateLoader,
-                deps: [HttpClient],
-            },
-        }),
-        IonicModule.forRoot({
-            mode: 'md'
-        }),
-        AppRoutingModule,
-        HammerModule,
-        SettingsModule,
-        HomeModule,
-        WidgetsModule,
-        PipesModule
-    ],
-    providers: [
-        { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-        { provide: CacheProvider, useValue: cacheProvider }
-    ],
-    bootstrap: [AppComponent]
+  declarations: [AppComponent],
+  imports: [
+    BrowserModule,
+    CommonModule,
+    HttpClientModule,
+    NgxResgridLibModule.forRoot({
+      baseApiUrl: getBaseUrl,
+      apiVersion: 'v4',
+      clientId: 'RgBigBoardApp',
+      googleApiKey: '',
+      channelUrl: environment.channelUrl,
+      channelHubName: environment.channelHubName,
+      realtimeGeolocationHubName: environment.realtimeGeolocationHubName,
+      logLevel: environment.logLevel,
+      isMobileApp: true,
+      cacheProvider: cacheProvider,
+    }),
+    StoreModule.forRoot(reducers, { metaReducers }),
+    EffectsModule.forRoot([]),
+    StoreRouterConnectingModule.forRoot(),
+    StoreDevtoolsModule.instrument({
+      maxAge: 10,
+      name: 'Resgrid BigBoard',
+      logOnly: environment.production,
+    }),
+    IonicStorageModule.forRoot({
+      name: '__RGBigB',
+      driverOrder: [Drivers.IndexedDB, Drivers.LocalStorage],
+    }),
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: createTranslateLoader,
+        deps: [HttpClient],
+      },
+    }),
+    IonicModule.forRoot({
+      mode: 'md',
+    }),
+    AppRoutingModule,
+    HammerModule,
+    SettingsModule,
+    HomeModule,
+    WidgetsModule,
+    PipesModule,
+  ],
+  providers: [
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    { provide: CacheProvider, useValue: cacheProvider },
+  ],
+  bootstrap: [AppComponent],
 })
 export class AppModule {}
