@@ -65,7 +65,7 @@ export class MapWidgetComponent implements OnInit, OnDestroy {
     private mapProvider: MappingService,
     private realtimeGeolocationService: RealtimeGeolocationService,
     private events: EventsService,
-    private consts: Consts
+    private consts: Consts,
   ) {
     this.widgetsState$ = this.store.select(selectWidgetsState);
     this.widgetSettingsState$ = this.store.select(selectMapWidgetSettingsState);
@@ -153,7 +153,7 @@ export class MapWidgetComponent implements OnInit, OnDestroy {
               }); //.addData(json);//.addTo(this.map);
               this.layerControl.addOverlay(
                 myLayer,
-                json.features[0].properties.name
+                json.features[0].properties.name,
               );
 
               this.layers.push(myLayer);
@@ -166,15 +166,17 @@ export class MapWidgetComponent implements OnInit, OnDestroy {
 
   private processMapData(data: MapDataAndMarkersData) {
     this.settingsState$.pipe(take(1)).subscribe((settings) => {
-      if (data && settings && settings.appSettings && settings.appSettings.MapUrl) {
+      if (
+        data &&
+        settings &&
+        settings.appSettings &&
+        settings.appSettings.MapUrl
+      ) {
         if (!this.map && this.mapContainer && this.mapContainer.nativeElement) {
-          var osm = L.tileLayer(
-            settings?.appSettings.MapUrl,
-            {
-              crossOrigin: true,
-            }
-          )
-          
+          var osm = L.tileLayer(settings?.appSettings.MapUrl, {
+            crossOrigin: true,
+          });
+
           this.baseMaps = {
             OpenStreetMap: osm,
           };
@@ -220,7 +222,7 @@ export class MapWidgetComponent implements OnInit, OnDestroy {
               if (
                 this.filterText === '' ||
                 markerInfo.Title.toLowerCase().indexOf(
-                  this.filterText.toLowerCase()
+                  this.filterText.toLowerCase(),
                 ) >= 0
               ) {
                 let markerTitle = '';
@@ -230,7 +232,8 @@ export class MapWidgetComponent implements OnInit, OnDestroy {
                 if (
                   (markerInfo.Type == 0 && this.showCalls) ||
                   (markerInfo.Type == 1 && this.showUnits) ||
-                  (markerInfo.Type == 2 && this.showStations)
+                  (markerInfo.Type == 2 && this.showStations) ||
+                  (markerInfo.Type == 3 && this.showPersonnel)
                 ) {
                   if (!this.hideLabels) {
                     marker = L.marker(
@@ -238,13 +241,15 @@ export class MapWidgetComponent implements OnInit, OnDestroy {
                       {
                         icon: L.icon({
                           iconUrl:
-                            '/assets/images/mapping/' + markerInfo.ImagePath + '.png',
+                            '/assets/images/mapping/' +
+                            markerInfo.ImagePath +
+                            '.png',
                           iconSize: [32, 37],
                           iconAnchor: [16, 37],
                         }),
                         draggable: false,
                         title: markerTitle,
-                      }
+                      },
                     )
                       .bindTooltip(markerTitle, {
                         permanent: true,
@@ -259,13 +264,15 @@ export class MapWidgetComponent implements OnInit, OnDestroy {
                       {
                         icon: L.icon({
                           iconUrl:
-                            '/assets/images/mapping/' + markerInfo.ImagePath + '.png',
+                            '/assets/images/mapping/' +
+                            markerInfo.ImagePath +
+                            '.png',
                           iconSize: [32, 37],
                           iconAnchor: [16, 37],
                         }),
                         draggable: false,
                         title: markerTitle,
-                      }
+                      },
                     ).addTo(this.map);
 
                     marker.elementId = markerInfo.Id;
@@ -298,7 +305,7 @@ export class MapWidgetComponent implements OnInit, OnDestroy {
           if (state === ConnectionState.Disconnected) {
             //this.realtimeGeolocationService.restart(this.departmentId);
           }
-        }
+        },
       );
 
       this.signalrInit();
@@ -331,7 +338,7 @@ export class MapWidgetComponent implements OnInit, OnDestroy {
             personMarker.setLatLng([data.latitude, data.longitude]);
           }
         }
-      }
+      },
     );
     this.events.subscribe(
       this.consts.SIGNALR_EVENTS.UNIT_LOCATION_UPDATED,
@@ -350,7 +357,7 @@ export class MapWidgetComponent implements OnInit, OnDestroy {
             unitMarker.setLatLng([data.latitude, data.longitude]);
           }
         }
-      }
+      },
     );
   }
 }
