@@ -16,6 +16,7 @@ export function reducer(
         Name: 'Off',
         ConferenceNumber: 0,
         IsDefault: false,
+        Token: ''
       });
 
       if (action && action.payload && action.payload.Channels) {

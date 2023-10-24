@@ -230,7 +230,8 @@ export class MapWidgetComponent implements OnInit, OnDestroy {
                 if (
                   (markerInfo.Type == 0 && this.showCalls) ||
                   (markerInfo.Type == 1 && this.showUnits) ||
-                  (markerInfo.Type == 2 && this.showStations)
+                  (markerInfo.Type == 2 && this.showStations) ||
+                  (markerInfo.Type == 3 && this.showPersonnel)
                 ) {
                   if (!this.hideLabels) {
                     marker = L.marker(

@@ -73,7 +73,7 @@
     "@ngrx/store-devtools": "^15.1.0",
     "@ngx-translate/core": "^14.0.0",
     "@ngx-translate/http-loader": "^7.0.0",
-    "@resgrid/ngx-resgridlib": "^1.3.21",
+    "@resgrid/ngx-resgridlib": "^1.3.29",
     "@sentry/angular": "^7.31.1",
     "@sentry/tracing": "^7.31.1",
     "angular-svg-icon": "^15.0.0",

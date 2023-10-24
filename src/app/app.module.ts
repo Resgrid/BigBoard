@@ -32,7 +32,7 @@ let getBaseUrl = (): string => {
   const storedValue = localStorage.getItem(`RgUnitApp.serverAddress`);
 
   if (storedValue) {
-    return JSON.parse(storedValue).trim();
+    return storedValue.trim();
   }
   return environment.baseApiUrl;
 };
