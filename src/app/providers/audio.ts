@@ -5,7 +5,6 @@ import { Howl, Howler } from 'howler';
   providedIn: 'root',
 })
 export class AudioProvider {
-
   constructor() {}
 
   public playTransmitStart() {
@@ -16,7 +15,7 @@ export class AudioProvider {
       autoplay: true,
       loop: false,
       volume: 1.0,
-      html5: true
+      html5: true,
     });
   }
 
@@ -28,8 +27,7 @@ export class AudioProvider {
       autoplay: true,
       loop: false,
       volume: 1.0,
-      html5: true
+      html5: true,
     });
   }
-
 }

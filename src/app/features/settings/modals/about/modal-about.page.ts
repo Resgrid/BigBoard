@@ -18,13 +18,11 @@ export class ModalAboutPage implements OnInit {
   constructor(
     private modal: ModalController,
     private store: Store<SettingsState>,
-    private storageService: StorageProvider
-  ) {
-    
-  }
+    private storageService: StorageProvider,
+  ) {}
 
   ngOnInit() {
-    this.storageService.getServerAddress().then(serverAddress => { 
+    this.storageService.getServerAddress().then((serverAddress) => {
       if (serverAddress) {
         this.serverAddress = serverAddress;
       } else {
@@ -38,5 +36,4 @@ export class ModalAboutPage implements OnInit {
   dismissModal() {
     this.modal.dismiss();
   }
-
 }

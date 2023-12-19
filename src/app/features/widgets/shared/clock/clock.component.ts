@@ -70,10 +70,9 @@ export class ClockWidgetComponent implements OnInit, OnDestroy {
    */
   public ngOnInit(): void {
     this.subscriptions.push(
-      timer(0, 1000)
-        .subscribe((t) => {
-          this._init();
-        })
+      timer(0, 1000).subscribe((t) => {
+        this._init();
+      }),
     );
   }
 
@@ -90,7 +89,7 @@ export class ClockWidgetComponent implements OnInit, OnDestroy {
     if (Array.isArray(t) && t[0]) {
       let digits: any = t[0]
         .split(':')
-        .map(v => this.util.to2Digit(v))
+        .map((v) => this.util.to2Digit(v))
         .join(':')
         .split('');
 
@@ -111,9 +110,7 @@ export class ClockWidgetComponent implements OnInit, OnDestroy {
    * the calendar.
    */
   private _run(_meridian: string): void {
-    const d: string[] = (new Date())
-      .toDateString()
-      .split(' ');
+    const d: string[] = new Date().toDateString().split(' ');
 
     // toggles the dots
     this.displayDots = !this.displayDots;

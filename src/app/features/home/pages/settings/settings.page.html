@@ -4,7 +4,9 @@
       <ion-col>
         <ion-list>
           <ion-list-header>
-            <ion-label>{{'settingsPage.accountSettingsSection' | translate}}</ion-label>
+            <ion-label
+              >{{'settingsPage.accountSettingsSection' | translate}}</ion-label
+            >
           </ion-list-header>
           <ion-item lines="none" (click)="showSetServerAddressModal()">
             <ion-avatar slot="start" class="green-bg">
@@ -24,7 +26,11 @@
               <p>{{'settingsPage.loginInfoText' | translate}}</p>
             </ion-label>
           </ion-item>
-          <ion-item lines="none" [hidden]="!(settingsState$ | async)?.loggedIn" (click)="logOut()">
+          <ion-item
+            lines="none"
+            [hidden]="!(settingsState$ | async)?.loggedIn"
+            (click)="logOut()"
+          >
             <ion-avatar slot="start" class="red-bg">
               <ion-icon name="log-out-outline"></ion-icon>
             </ion-avatar>
@@ -40,7 +46,9 @@
       <ion-col>
         <ion-list>
           <ion-list-header>
-            <ion-label>{{'settingsPage.applicationSection' | translate}}</ion-label>
+            <ion-label
+              >{{'settingsPage.applicationSection' | translate}}</ion-label
+            >
           </ion-list-header>
           <ion-item lines="none">
             <ion-avatar slot="start" class="navy-bg">
@@ -50,7 +58,12 @@
               <h2>{{'settingsPage.darkThemeLabel' | translate}}</h2>
               <p>{{'settingsPage.darkThemeText' | translate}}</p>
             </ion-label>
-            <ion-select item-end placeholder="Default" (ngModelChange)="setPerferDarkMode($event)" [(ngModel)]="themePreference">
+            <ion-select
+              item-end
+              placeholder="Default"
+              (ngModelChange)="setPerferDarkMode($event)"
+              [(ngModel)]="themePreference"
+            >
               <ion-select-option value="-1">Default</ion-select-option>
               <ion-select-option value="0">Light</ion-select-option>
               <ion-select-option value="1">Dark</ion-select-option>
@@ -64,7 +77,12 @@
               <h2>{{'settingsPage.keepActiveLabel' | translate}}</h2>
               <p>{{'settingsPage.keepActiveText' | translate}}</p>
             </ion-label>
-            <ion-toggle item-end color="primary" [checked]="keepAlive$ | async" (ionChange)="setKeepAlive($event)"></ion-toggle>
+            <ion-toggle
+              item-end
+              color="primary"
+              [checked]="keepAlive$ | async"
+              (ionChange)="setKeepAlive($event)"
+            ></ion-toggle>
           </ion-item>
         </ion-list>
       </ion-col>
@@ -97,5 +115,4 @@
       </ion-col>
     </ion-row>
   </ion-grid>
-
 </ion-content>

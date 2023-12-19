@@ -1,6 +1,5 @@
 .essential-theme {
   .is-list-square {
-
     ion-item-divider {
       --is-item-divider-wrapper-display: block;
       --is-item-divider-wrapper-text-align: center;
@@ -33,7 +32,8 @@
       --is-item-inner-border-top: 1px;
     }
 
-    ion-item:not(.is-list-square-has-square) + ion-item.is-list-square-has-square {
+    ion-item:not(.is-list-square-has-square)
+      + ion-item.is-list-square-has-square {
       --is-item-inner-border-top: 0px;
     }
 

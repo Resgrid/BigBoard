@@ -42,7 +42,7 @@ export class HomeProvider {
     private homeStore: Store<HomeState>,
     private signalRProvider: SignalRService,
     private events: EventsService,
-    private consts: Consts
+    private consts: Consts,
   ) {
     this.isLoggedInState$ = this.settingsStore.select(selectIsLoggedInState);
 
@@ -60,40 +60,52 @@ export class HomeProvider {
     this.homeStore.dispatch(new HomeActions.UpdateSignalrState(1));
 
     if (!this.signalRConnectionStateSub$) {
-      this.signalRConnectionStateSub$ = this.signalRProvider.connectionState$.subscribe(
-        (state: ConnectionState) => {
-          this.settingsStore
-            .select(selectSettingsState)
-            .pipe(take(1))
-            .subscribe((settings) => {
-              if (state === ConnectionState.Disconnected) {
-                if (settings && settings.user) {
-                  this.homeStore.dispatch(new HomeActions.UpdateSignalrState(0));
-                  this.signalRProvider.restart(settings.user.departmentId);
-                  this.homeStore.dispatch(new HomeActions.UpdateSignalrState(1));
+      this.signalRConnectionStateSub$ =
+        this.signalRProvider.connectionState$.subscribe(
+          (state: ConnectionState) => {
+            this.settingsStore
+              .select(selectSettingsState)
+              .pipe(take(1))
+              .subscribe((settings) => {
+                if (state === ConnectionState.Disconnected) {
+                  if (settings && settings.user) {
+                    this.homeStore.dispatch(
+                      new HomeActions.UpdateSignalrState(0),
+                    );
+                    this.signalRProvider.restart(settings.user.departmentId);
+                    this.homeStore.dispatch(
+                      new HomeActions.UpdateSignalrState(1),
+                    );
+                  }
+                } else if (state === ConnectionState.Connected) {
+                  if (settings && settings.user) {
+                    this.homeStore.dispatch(
+                      new HomeActions.UpdateSignalrState(2),
+                    );
+                  }
                 }
-              } else if (state === ConnectionState.Connected) {
-                if (settings && settings.user) {
-                  this.homeStore.dispatch(new HomeActions.UpdateSignalrState(2));
-                }
-              }
-            });
-        }
-      );
+              });
+          },
+        );
     }
 
     if (!this.settingStateSub$) {
       this.settingStateSub$ = this.settingsStore
         .select(selectSettingsState)
         .subscribe((settings) => {
-          if (settings && settings.user && settings.user.departmentId && !this.isStarted) {
+          if (
+            settings &&
+            settings.user &&
+            settings.user.departmentId &&
+            !this.isStarted
+          ) {
             this.signalRProvider.start(settings.user.departmentId);
             this.init();
 
             this.isStarted = true;
           }
         });
-      }
+    }
   }
 
   public stopSignalR() {
@@ -117,28 +129,28 @@ export class HomeProvider {
       (data: any) => {
         this.widgetsStore.dispatch(new WidgetsActions.GetPersonnelStatuses());
         this.widgetsStore.dispatch(new WidgetsActions.GetMapData());
-      }
+      },
     );
     this.events.subscribe(
       this.consts.SIGNALR_EVENTS.PERSONNEL_STAFFING_UPDATED,
       (data: any) => {
         this.widgetsStore.dispatch(new WidgetsActions.GetPersonnelStatuses());
         this.widgetsStore.dispatch(new WidgetsActions.GetMapData());
-      }
+      },
     );
     this.events.subscribe(
       this.consts.SIGNALR_EVENTS.UNIT_STATUS_UPDATED,
       (data: any) => {
         this.widgetsStore.dispatch(new WidgetsActions.GetUnits());
         this.widgetsStore.dispatch(new WidgetsActions.GetMapData());
-      }
+      },
     );
     this.events.subscribe(
       this.consts.SIGNALR_EVENTS.CALLS_UPDATED,
       (data: any) => {
         this.widgetsStore.dispatch(new WidgetsActions.GetCalls());
         this.widgetsStore.dispatch(new WidgetsActions.GetMapData());
-      }
+      },
     );
   }
 }

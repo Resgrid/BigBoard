@@ -20,7 +20,14 @@ import {
 import { VoiceState } from '../features/voice/store/voice.store';
 import { Store } from '@ngrx/store';
 import * as VoiceActions from '../features/voice/actions/voice.actions';
-import { BehaviorSubject, concat, from, Observable, of, Subscription } from 'rxjs';
+import {
+  BehaviorSubject,
+  concat,
+  from,
+  Observable,
+  of,
+  Subscription,
+} from 'rxjs';
 import { concatMap, delay, switchMap, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { AudioUser } from '../models/audioUser';
@@ -53,22 +60,24 @@ export class OpenViduService {
     private voiceService: VoiceService,
     private toastController: ToastController,
     private devicesService: OpenViduDevicesService,
-    private platform: Platform
+    private platform: Platform,
   ) {
     if (!this.isAppActiveSub || this.isAppActiveSub.closed) {
-      this.isAppActiveSub = this.settingsStore.select(selectIsAppActive).subscribe(data => {
-        if (typeof data !== 'undefined') {
-          if (!data) {
-            this.swtichMicrophone();
+      this.isAppActiveSub = this.settingsStore
+        .select(selectIsAppActive)
+        .subscribe((data) => {
+          if (typeof data !== 'undefined') {
+            if (!data) {
+              this.swtichMicrophone();
+            }
           }
-        }
-      });
+        });
     }
   }
 
   public joinChannel(
     channel: DepartmentVoiceChannelResultData,
-    name: string
+    name: string,
   ): Observable<any> {
     this.OV = new OpenVidu();
     this.session = this.OV.initSession();
@@ -97,7 +106,7 @@ export class OpenViduService {
       }),
       concatMap(async (data) => {
         return this.initPublisher();
-      })
+      }),
     );
   }
 
@@ -111,16 +120,19 @@ export class OpenViduService {
 
     // Init a publisher passing undefined as targetElement (we don't want OpenVidu to insert a video
     // element: we will manage it on our own) and with the desired properties
-    const publisher: Publisher = await this.OV!.initPublisherAsync('' /*undefined*/, {
-      audioSource: this.audioSource,//undefined,//audioSource, //this.audioInputDeviceId, // The source of audio. If undefined default microphone
-      videoSource: false, // The source of video. If undefined default webcam
-      publishAudio: false, // Whether you want to start publishing with your audio unmuted or not
-      publishVideo: false, // Whether you want to start publishing with your video enabled or not
-      resolution: '640x480', // The resolution of your video
-      frameRate: 1, // The frame rate of your video
-      insertMode: 'APPEND', // How the video is inserted in the target element 'video-container'
-      mirror: false, // Whether to mirror your local video or not
-    });
+    const publisher: Publisher = await this.OV!.initPublisherAsync(
+      '' /*undefined*/,
+      {
+        audioSource: this.audioSource, //undefined,//audioSource, //this.audioInputDeviceId, // The source of audio. If undefined default microphone
+        videoSource: false, // The source of video. If undefined default webcam
+        publishAudio: false, // Whether you want to start publishing with your audio unmuted or not
+        publishVideo: false, // Whether you want to start publishing with your video enabled or not
+        resolution: '640x480', // The resolution of your video
+        frameRate: 1, // The frame rate of your video
+        insertMode: 'APPEND', // How the video is inserted in the target element 'video-container'
+        mirror: false, // Whether to mirror your local video or not
+      },
+    );
 
     // --- 6) Publish your stream ---
 
@@ -167,8 +179,7 @@ export class OpenViduService {
   }
 
   private swtichMicrophone() {
-    if (this.publisher && this.session)
-    {
+    if (this.publisher && this.session) {
       this.mute();
       this.session.disconnect();
       this.subscribers = [];
@@ -176,8 +187,9 @@ export class OpenViduService {
       delete this.session;
       delete this.OV;
 
-      this.joinChannel(this.channel, this.connectedName).subscribe(data => {
-      });
+      this.joinChannel(this.channel, this.connectedName).subscribe(
+        (data) => {},
+      );
     }
   }
 
@@ -214,8 +226,8 @@ export class OpenViduService {
       // so OpenVidu doesn't create an HTML video on its own
       const subscriber: Subscriber = this.session!.subscribe(
         event.stream,
-        '',//undefined,
-        properties
+        '', //undefined,
+        properties,
       );
 
       this.subscribers.push(subscriber);
@@ -249,19 +261,19 @@ export class OpenViduService {
           console.log('Publisher ' + metadata.clientData + ' start speaking');
         } else {
           console.log(
-            'Publisher ' + event.connection.connectionId + ' start speaking'
+            'Publisher ' + event.connection.connectionId + ' start speaking',
           );
         }
-      }
+      },
     );
 
     this.session?.on(
       'publisherStopSpeaking',
       (event: any /*PublisherSpeakingEvent*/) => {
         console.log(
-          'Publisher ' + event.connection.connectionId + ' stop speaking'
+          'Publisher ' + event.connection.connectionId + ' stop speaking',
         );
-      }
+      },
     );
   }
 
@@ -293,51 +305,59 @@ export class OpenViduService {
 
           this.leaveSession();
         }
-      }
+      },
     );
   }
 
   private subscribeToConnectionCreatedAndDestroyed() {
-    this.session?.on('connectionCreated', async (event: any /*ConnectionEvent*/) => {
-      if (this.isMyOwnConnection(event.connection.connectionId)) {
-        this.store.dispatch(new VoiceActions.SetCurrentVoiceState('Connected'));
+    this.session?.on(
+      'connectionCreated',
+      async (event: any /*ConnectionEvent*/) => {
+        if (this.isMyOwnConnection(event.connection.connectionId)) {
+          this.store.dispatch(
+            new VoiceActions.SetCurrentVoiceState('Connected'),
+          );
 
-        if (this.channel) {
-          const toast = await this.toastController.create({
-            message: 'Connected to channel ' + this.channel.Name,
-            duration: 3000,
-          });
-          toast.present();
+          if (this.channel) {
+            const toast = await this.toastController.create({
+              message: 'Connected to channel ' + this.channel.Name,
+              duration: 3000,
+            });
+            toast.present();
+          }
         }
-      }
 
-      //const nickname: string = this.utilsSrv.getNicknameFromConnectionData(
-      //  event.connection.data
-      //);
-      //this.remoteUsersService.addUserName(event);
+        //const nickname: string = this.utilsSrv.getNicknameFromConnectionData(
+        //  event.connection.data
+        //);
+        //this.remoteUsersService.addUserName(event);
 
-      // Adding participant when connection is created
-      //if (!nickname?.includes('_' + VideoType.SCREEN)) {
-      //  this.remoteUsersService.add(event, null);
-      //  this.openViduWebRTCService.sendNicknameSignal(event.connection);
-      //}
-    });
+        // Adding participant when connection is created
+        //if (!nickname?.includes('_' + VideoType.SCREEN)) {
+        //  this.remoteUsersService.add(event, null);
+        //  this.openViduWebRTCService.sendNicknameSignal(event.connection);
+        //}
+      },
+    );
 
-    this.session?.on('connectionDestroyed', (event: any /*ConnectionEvent*/) => {
-      if (this.isMyOwnConnection(event.connection.connectionId)) {
-        return;
-      }
+    this.session?.on(
+      'connectionDestroyed',
+      (event: any /*ConnectionEvent*/) => {
+        if (this.isMyOwnConnection(event.connection.connectionId)) {
+          return;
+        }
 
-      //this.remoteUsersService.deleteUserName(event);
-      //const nickname: string = this.utilsSrv.getNicknameFromConnectionData(
-      //  event.connection.data
-      //);
-      // Deleting participant when connection is destroyed
-      //if (!nickname?.includes('_' + VideoType.SCREEN)) {
-      //  this.remoteUsersService.removeUserByConnectionId(
-      //    event.connection.connectionId
-      //  );
-      //}
-    });
+        //this.remoteUsersService.deleteUserName(event);
+        //const nickname: string = this.utilsSrv.getNicknameFromConnectionData(
+        //  event.connection.data
+        //);
+        // Deleting participant when connection is destroyed
+        //if (!nickname?.includes('_' + VideoType.SCREEN)) {
+        //  this.remoteUsersService.removeUserByConnectionId(
+        //    event.connection.connectionId
+        //  );
+        //}
+      },
+    );
   }
 }

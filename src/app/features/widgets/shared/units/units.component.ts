@@ -3,10 +3,13 @@ import { Store } from '@ngrx/store';
 import { UtilsService } from '@resgrid/ngx-resgridlib';
 import { Observable } from 'rxjs';
 import { PersonnelWidgetSettings } from 'src/app/models/personnelWidgetSettings';
-import { selectUnitsWidgetSettingsState, selectWidgetsState } from 'src/app/store';
+import {
+  selectUnitsWidgetSettingsState,
+  selectWidgetsState,
+} from 'src/app/store';
 import { SubSink } from 'subsink';
 import { WidgetsState } from '../../store/widgets.store';
-import * as WidgetsActions from "../../actions/widgets.actions"; 
+import * as WidgetsActions from '../../actions/widgets.actions';
 import { UnitsWidgetSettings } from 'src/app/models/unitsWidgetSettings';
 
 @Component({
@@ -19,9 +22,14 @@ export class UnitsWidgetComponent implements OnInit, OnDestroy {
   public widgetSettingsState$: Observable<UnitsWidgetSettings | null>;
   private subs = new SubSink();
 
-  constructor(private store: Store<WidgetsState>, private utilsProvider: UtilsService) {
+  constructor(
+    private store: Store<WidgetsState>,
+    private utilsProvider: UtilsService,
+  ) {
     this.widgetsState$ = this.store.select(selectWidgetsState);
-    this.widgetSettingsState$ = this.store.select(selectUnitsWidgetSettingsState);
+    this.widgetSettingsState$ = this.store.select(
+      selectUnitsWidgetSettingsState,
+    );
   }
 
   ngOnInit(): void {
@@ -32,19 +40,19 @@ export class UnitsWidgetComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     if (this.subs) {
-			this.subs.unsubscribe();
-		}
+      this.subs.unsubscribe();
+    }
   }
 
   public getTimeago(date) {
-		const timeText = this.utilsProvider.getTimeAgo(date);
+    const timeText = this.utilsProvider.getTimeAgo(date);
 
     if (timeText.indexOf('seconds') > -1) {
       return '1 minute ago';
     }
 
     return timeText;
-	}
+  }
 
   public getFontSize(settings: UnitsWidgetSettings | null | undefined): number {
     if (settings?.FontSize) {

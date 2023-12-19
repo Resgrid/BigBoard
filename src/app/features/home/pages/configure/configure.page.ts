@@ -43,11 +43,13 @@ export class ConfigurePage implements OnInit {
   private subs = new SubSink();
   public tabType: string = 'personnel';
 
-  public personnelWidgetSettings: PersonnelWidgetSettings = new PersonnelWidgetSettings();
+  public personnelWidgetSettings: PersonnelWidgetSettings =
+    new PersonnelWidgetSettings();
 
   public mapWidgetSettings: MapWidgetSettings = new MapWidgetSettings();
 
-  public weatherWidgetSettings: WeatherWidgetSettings = new WeatherWidgetSettings();
+  public weatherWidgetSettings: WeatherWidgetSettings =
+    new WeatherWidgetSettings();
   public weatherUnits: string[];
 
   public unitsWidgetSettings: UnitsWidgetSettings = new UnitsWidgetSettings();
@@ -68,7 +70,7 @@ export class ConfigurePage implements OnInit {
     private sleepProvider: SleepProvider,
     private platform: Platform,
     private deviceService: OpenViduDevicesService,
-    private voiceStore: Store<VoiceState>
+    private voiceStore: Store<VoiceState>,
   ) {
     this.homeState$ = this.homeStore.select(selectHomeState);
     this.widgetsState$ = this.widgetsStore.select(selectWidgetsState);
@@ -84,7 +86,9 @@ export class ConfigurePage implements OnInit {
     this.subs.sink = this.widgetsState$.subscribe((widgetSettings) => {
       if (widgetSettings) {
         if (widgetSettings.personnelWidgetSettings) {
-          this.personnelWidgetSettings = _.cloneDeep(widgetSettings.personnelWidgetSettings);
+          this.personnelWidgetSettings = _.cloneDeep(
+            widgetSettings.personnelWidgetSettings,
+          );
 
           if (this.personnelWidgetSettings.SortOrders == null) {
             this.personnelWidgetSettings.SortOrders = new Array<GroupSorting>();
@@ -96,27 +100,39 @@ export class ConfigurePage implements OnInit {
         }
 
         if (widgetSettings.mapWidgetSettings) {
-          this.mapWidgetSettings = _.cloneDeep(widgetSettings.mapWidgetSettings);
+          this.mapWidgetSettings = _.cloneDeep(
+            widgetSettings.mapWidgetSettings,
+          );
         }
 
         if (widgetSettings.weatherWidgetSettings) {
-          this.weatherWidgetSettings = _.cloneDeep(widgetSettings.weatherWidgetSettings);
+          this.weatherWidgetSettings = _.cloneDeep(
+            widgetSettings.weatherWidgetSettings,
+          );
         }
 
         if (widgetSettings.unitsWidgetSettings) {
-          this.unitsWidgetSettings = _.cloneDeep(widgetSettings.unitsWidgetSettings);
+          this.unitsWidgetSettings = _.cloneDeep(
+            widgetSettings.unitsWidgetSettings,
+          );
         }
 
         if (widgetSettings.callsWidgetSettings) {
-          this.callsWidgetSettings = _.cloneDeep(widgetSettings.callsWidgetSettings);
+          this.callsWidgetSettings = _.cloneDeep(
+            widgetSettings.callsWidgetSettings,
+          );
         }
 
         if (widgetSettings.notesWidgetSettings) {
-          this.notesWidgetSettings = _.cloneDeep(widgetSettings.notesWidgetSettings);
+          this.notesWidgetSettings = _.cloneDeep(
+            widgetSettings.notesWidgetSettings,
+          );
         }
 
         if (widgetSettings.pttWidgetSettings) {
-          this.pttWidgetSettings = _.cloneDeep(widgetSettings.pttWidgetSettings);
+          this.pttWidgetSettings = _.cloneDeep(
+            widgetSettings.pttWidgetSettings,
+          );
           this.channel = this.pttWidgetSettings.Channel;
         }
       }
@@ -125,7 +141,7 @@ export class ConfigurePage implements OnInit {
     this.subs.sink = this.voiceState$.subscribe((voiceState) => {
       if (voiceState && voiceState.channels) {
         this.channels = new Array<string>();
-        voiceState.channels.forEach(channel => {
+        voiceState.channels.forEach((channel) => {
           this.channels.push(channel.Name);
         });
       }
@@ -143,7 +159,10 @@ export class ConfigurePage implements OnInit {
   }
 
   public getSortWeightForGroup(groupId: string): number {
-    if (this.personnelWidgetSettings && this.personnelWidgetSettings.SortOrders) {
+    if (
+      this.personnelWidgetSettings &&
+      this.personnelWidgetSettings.SortOrders
+    ) {
       for (let group of this.personnelWidgetSettings.SortOrders) {
         if (group.GroupId == groupId) {
           return group.Weight;
@@ -174,7 +193,10 @@ export class ConfigurePage implements OnInit {
   }
 
   public getIsHiddenForGroup(groupId: string): boolean {
-    if (this.personnelWidgetSettings && this.personnelWidgetSettings.HideGroups) {
+    if (
+      this.personnelWidgetSettings &&
+      this.personnelWidgetSettings.HideGroups
+    ) {
       for (let group of this.personnelWidgetSettings.HideGroups) {
         if (group == groupId) {
           return true;
@@ -251,31 +273,45 @@ export class ConfigurePage implements OnInit {
   }
 
   public savePersonnelWidgetSettings() {
-    this.widgetsStore.dispatch(new WidgetActions.SetPersonnelSettings(this.personnelWidgetSettings));
+    this.widgetsStore.dispatch(
+      new WidgetActions.SetPersonnelSettings(this.personnelWidgetSettings),
+    );
   }
 
   public saveMapWidgetSettings() {
-    this.widgetsStore.dispatch(new WidgetActions.SetMapSettings(this.mapWidgetSettings));
+    this.widgetsStore.dispatch(
+      new WidgetActions.SetMapSettings(this.mapWidgetSettings),
+    );
   }
 
   public saveWeatherWidgetSettings() {
-    this.widgetsStore.dispatch(new WidgetActions.SetWeatherSettings(this.weatherWidgetSettings));
+    this.widgetsStore.dispatch(
+      new WidgetActions.SetWeatherSettings(this.weatherWidgetSettings),
+    );
   }
 
   public saveUnitWidgetSettings() {
-    this.widgetsStore.dispatch(new WidgetActions.SetUnitSettings(this.unitsWidgetSettings));
+    this.widgetsStore.dispatch(
+      new WidgetActions.SetUnitSettings(this.unitsWidgetSettings),
+    );
   }
 
   public saveCallWidgetSettings() {
-    this.widgetsStore.dispatch(new WidgetActions.SetCallsSettings(this.callsWidgetSettings));
+    this.widgetsStore.dispatch(
+      new WidgetActions.SetCallsSettings(this.callsWidgetSettings),
+    );
   }
 
   public saveNoteWidgetSettings() {
-    this.widgetsStore.dispatch(new WidgetActions.SetNotesSettings(this.notesWidgetSettings));
+    this.widgetsStore.dispatch(
+      new WidgetActions.SetNotesSettings(this.notesWidgetSettings),
+    );
   }
 
   public savePTTWidgetSettings() {
     this.pttWidgetSettings.Channel = this.channel;
-    this.widgetsStore.dispatch(new WidgetActions.SetPTTSettings(this.pttWidgetSettings));
+    this.widgetsStore.dispatch(
+      new WidgetActions.SetPTTSettings(this.pttWidgetSettings),
+    );
   }
 }

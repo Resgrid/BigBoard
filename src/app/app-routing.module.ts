@@ -5,21 +5,25 @@ const routes: Routes = [
   {
     path: '',
     redirectTo: 'home/splash',
-    pathMatch: 'full'
+    pathMatch: 'full',
   },
   {
     path: 'settings',
-    loadChildren: () => import('./features/settings/settings.module').then(m => m.SettingsModule)
+    loadChildren: () =>
+      import('./features/settings/settings.module').then(
+        (m) => m.SettingsModule,
+      ),
   },
   {
     path: 'home',
-    loadChildren: () => import('./features/home/home.module').then(m => m.HomeModule)
-  }
+    loadChildren: () =>
+      import('./features/home/home.module').then((m) => m.HomeModule),
+  },
 ];
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })
+    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules }),
   ],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
 export class AppRoutingModule {}

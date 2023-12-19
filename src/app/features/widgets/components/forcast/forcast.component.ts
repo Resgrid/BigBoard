@@ -41,10 +41,10 @@ export class ForcastComponent implements OnInit, OnDestroy {
 
   constructor(
     private weatherProvider: WeatherProvider,
-    private store: Store<WidgetsState>
+    private store: Store<WidgetsState>,
   ) {
     this.widgetWeatherLocationState$ = this.store.select(
-      selectWeatherWidgetLocationState
+      selectWeatherWidgetLocationState,
     );
     this.appConfigDataState$ = this.store.select(selectAppSettingsState);
   }
@@ -79,7 +79,7 @@ export class ForcastComponent implements OnInit, OnDestroy {
               this.location.Latitude,
               this.location.Longitude,
               this.units,
-              this.lang
+              this.lang,
             )
             .subscribe((data: Weather) => {
               if (data) {

@@ -1,10 +1,10 @@
 export interface IDevice {
-	label: string;
-	device: string;
-	type?: CameraType | null;
+  label: string;
+  device: string;
+  type?: CameraType | null;
 }
 
 export enum CameraType {
-	FRONT = 'FRONT',
-	BACK = 'BACK'
+  FRONT = 'FRONT',
+  BACK = 'BACK',
 }

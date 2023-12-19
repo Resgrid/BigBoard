@@ -1,7 +1,6 @@
 .essential-theme {
   .is-collapsible-list-with-divider {
     ion-item-divider {
-
       h2 {
         font-size: 0.8rem;
 
@@ -10,17 +9,16 @@
         }
       }
 
-        span {
-          font-size: 0.9rem;
-          font-weight: 400;
-          color: var(--ion-color-is-text-dark);
-        }
+      span {
+        font-size: 0.9rem;
+        font-weight: 400;
+        color: var(--ion-color-is-text-dark);
+      }
 
-        span:first-child {
-          font-weight: 300;
-          color: var(--ion-color-is-mute-normal);
-        }
-
+      span:first-child {
+        font-weight: 300;
+        color: var(--ion-color-is-mute-normal);
+      }
 
       ion-col:not(:first-child) {
         margin-right: 8px;
@@ -41,7 +39,7 @@
       }
 
       ion-note {
-        font-size: 1.0rem;
+        font-size: 1rem;
         font-weight: 300;
         margin-top: 11px;
         color: var(--ion-color-is-mute-dark);
