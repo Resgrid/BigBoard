@@ -37,7 +37,7 @@ export class CloseModal implements Action {
 
 export class UpdateSignalrState implements Action {
   readonly type = HomeActionTypes.UPDATE_SIGNALR_STATE;
-  constructor(public state: number) {}  // 0 = disconnected, 1 = connecting, 2 = connected
+  constructor(public state: number) {} // 0 = disconnected, 1 = connecting, 2 = connected
 }
 
 export class AddWidget implements Action {
@@ -98,5 +98,4 @@ export type HomeActionsUnion =
   | LoadWidgetLayoutDone
   | GetGroups
   | GetGroupsDone
-  | RemoveWidgetDone
-  ;
+  | RemoveWidgetDone;

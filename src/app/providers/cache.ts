@@ -62,7 +62,7 @@ export class CacheProvider implements ICacheProvider {
         if (retCC && isConn) {
           db = await this.sqliteConnection.retrieveConnection(
             this.db_name,
-            false
+            false,
           );
         } else {
           db = await this.sqliteConnection.createConnection(
@@ -70,7 +70,7 @@ export class CacheProvider implements ICacheProvider {
             false,
             'no-encryption',
             1,
-            false
+            false,
           );
         }
 
@@ -94,7 +94,7 @@ export class CacheProvider implements ICacheProvider {
         });
       } catch (err) {
         console.log(
-          `database.service initialize Error: ${JSON.stringify(err)}`
+          `database.service initialize Error: ${JSON.stringify(err)}`,
         );
       }
     } else {
@@ -122,7 +122,7 @@ export class CacheProvider implements ICacheProvider {
         false,
         'no-encryption',
         1,
-        false
+        false,
       );
     }
 
@@ -136,7 +136,7 @@ export class CacheProvider implements ICacheProvider {
         //await this._db.open();
         //await this._db.execute(`PRAGMA journal_mode=WAL;`, false);
         await db.execute(
-          `CREATE TABLE IF NOT EXISTS ${this.cache_table}(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, cacheKey TEXT, expiresOn TEXT, data TEXT);`
+          `CREATE TABLE IF NOT EXISTS ${this.cache_table}(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, cacheKey TEXT, expiresOn TEXT, data TEXT);`,
         );
         console.log(`$$$ ensureTablesExist successful`);
       } else {
@@ -144,7 +144,7 @@ export class CacheProvider implements ICacheProvider {
       }
     } catch (err) {
       console.log(
-        `database.service ensureTablesExist Error: ${JSON.stringify(err)}`
+        `database.service ensureTablesExist Error: ${JSON.stringify(err)}`,
       );
     }
   }
@@ -155,7 +155,7 @@ export class CacheProvider implements ICacheProvider {
 
       let ret = await db?.query(
         `SELECT * FROM ${this.cache_table} WHERE cacheKey = ?;`,
-        [key]
+        [key],
       );
       if (ret && ret.values && ret.values.length > 0) {
         const now = new Date();
@@ -205,7 +205,7 @@ export class CacheProvider implements ICacheProvider {
       const db = await this.getConnection();
 
       let res = await db?.execute(
-        `DELETE FROM ${this.cache_table} WHERE cacheKey = '${key}';`
+        `DELETE FROM ${this.cache_table} WHERE cacheKey = '${key}';`,
       );
     } catch (err) {
       console.log(`cache.service delete Error: ${JSON.stringify(err)}`);

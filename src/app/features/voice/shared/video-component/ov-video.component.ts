@@ -14,7 +14,8 @@ declare var cordova;
   selector: 'ov-video',
   template: `
     <video #videoElement style="width: 1px; height: 1px;">
-        [attr.id]="_streamManager && _streamManager.stream ? 'video-' + _streamManager.stream.streamId : 'video-undefined'">
+      [attr.id]="_streamManager && _streamManager.stream ? 'video-' +
+      _streamManager.stream.streamId : 'video-undefined'">
     </video>
   `,
 })

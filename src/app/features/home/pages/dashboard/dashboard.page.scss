@@ -33,11 +33,11 @@ ktd-grid {
   right: 0;
 
   &::after {
-      content: 'x';
-      color: gray;
-      font-size: 16px;
-      font-weight: 300;
-      font-family: Arial, sans-serif;
+    content: "x";
+    color: gray;
+    font-size: 16px;
+    font-weight: 300;
+    font-family: Arial, sans-serif;
   }
 }
 
@@ -50,11 +50,12 @@ ktd-grid-item {
   cursor: grab;
 
   &.ktd-grid-item-dragging {
-      cursor: grabbing;
+    cursor: grabbing;
   }
 }
 
-mat-chip-list, mat-chip {
+mat-chip-list,
+mat-chip {
   pointer-events: none;
   user-select: none;
 }

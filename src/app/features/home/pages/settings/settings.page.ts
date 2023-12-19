@@ -46,7 +46,7 @@ export class SettingsPage implements OnInit {
     private sleepProvider: SleepProvider,
     private platform: Platform,
     private deviceService: OpenViduDevicesService,
-    private changeDetection: ChangeDetectorRef
+    private changeDetection: ChangeDetectorRef,
   ) {
     this.homeState$ = this.homeStore.select(selectHomeState);
     this.settingsState$ = this.store.select(selectSettingsState);
@@ -96,13 +96,13 @@ export class SettingsPage implements OnInit {
 
   public setPerferDarkMode(event) {
     this.store.dispatch(
-      new SettingsActions.SavePerferDarkModeSetting(parseInt(event))
+      new SettingsActions.SavePerferDarkModeSetting(parseInt(event)),
     );
   }
 
   public setKeepAlive(event) {
     this.store.dispatch(
-      new SettingsActions.SaveKeepAliveSetting(event.detail.checked)
+      new SettingsActions.SaveKeepAliveSetting(event.detail.checked),
     );
 
     if (event.detail.checked) {

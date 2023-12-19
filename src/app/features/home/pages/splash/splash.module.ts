@@ -15,10 +15,10 @@ import { SplashPage } from './splash.page';
     RouterModule.forChild([
       {
         path: '',
-        component: SplashPage
-      }
-    ])
+        component: SplashPage,
+      },
+    ]),
   ],
-  declarations: [SplashPage]
+  declarations: [SplashPage],
 })
 export class SplashPageModule {}

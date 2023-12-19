@@ -13,5 +13,5 @@ export class ToastProvider {
       duration: 3000,
     });
     toast.present();
-  };
+  }
 }

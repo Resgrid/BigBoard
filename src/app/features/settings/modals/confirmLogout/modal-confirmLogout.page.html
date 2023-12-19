@@ -1,29 +1,25 @@
 <ion-content>
   <ion-fab vertical="top" horizontal="end" slot="fixed">
-    <ion-fab-button
-      size="small"
-      color="light"
-      (click)="dismissModal()">
+    <ion-fab-button size="small" color="light" (click)="dismissModal()">
       <ion-icon name="close-outline"></ion-icon>
     </ion-fab-button>
   </ion-fab>
   <div class="container ion-padding">
-    <ion-grid style="margin-left: 10px; margin-right: 10px;">
+    <ion-grid style="margin-left: 10px; margin-right: 10px">
       <ion-row class="ion-padding-top">
-        <ion-col>
-          {{'logoutModal.confirmLogoutText' | translate}}
-        </ion-col>
+        <ion-col> {{'logoutModal.confirmLogoutText' | translate}} </ion-col>
       </ion-row>
       <ion-row class="ion-padding-top">
         <ion-col>
-            <ion-button
-              class="action-button"
-              expand="block"
-              fill="solid"
-              color="primary"
-              (click)="logout()">
-              <span>Yes</span>
-            </ion-button>
+          <ion-button
+            class="action-button"
+            expand="block"
+            fill="solid"
+            color="primary"
+            (click)="logout()"
+          >
+            <span>Yes</span>
+          </ion-button>
         </ion-col>
         <ion-col>
           <ion-button
@@ -31,7 +27,8 @@
             expand="block"
             fill="solid"
             color="secondary"
-            (click)="dismissModal()">
+            (click)="dismissModal()"
+          >
             <span>No</span>
           </ion-button>
         </ion-col>

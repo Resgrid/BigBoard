@@ -10,11 +10,12 @@ const config: CapacitorConfig = {
       iosDatabaseLocation: 'Library/CapacitorDatabase',
       iosIsEncryption: false,
       androidIsEncryption: false,
-      electronWindowsLocation: "C:\\ProgramData\\CapacitorDatabases",
-      electronMacLocation: "/Volumes/Development_Lacie/Development/CapacitorDatabases",
-      electronLinuxLocation: "Databases"
-    }
-  }
+      electronWindowsLocation: 'C:\\ProgramData\\CapacitorDatabases',
+      electronMacLocation:
+        '/Volumes/Development_Lacie/Development/CapacitorDatabases',
+      electronLinuxLocation: 'Databases',
+    },
+  },
 };
 
 export default config;

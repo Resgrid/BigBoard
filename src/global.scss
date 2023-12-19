@@ -29,12 +29,12 @@
 
 @import "./theme/essential/theme";
 
-.bg_image{
-    background-position: center;
-    background-size: cover;
-    background-repeat: no-repeat;
+.bg_image {
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 
-[has-header]{
-    --padding-top: 50px;
+[has-header] {
+  --padding-top: 50px;
 }

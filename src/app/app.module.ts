@@ -33,7 +33,9 @@ export function createTranslateLoader(http: HttpClient): any {
 }
 
 let getBaseUrl = (): string => {
-  const storedValue = localStorage.getItem('CapacitorStorage.RGBBserverAddress');
+  const storedValue = localStorage.getItem(
+    'CapacitorStorage.RGBBserverAddress',
+  );
 
   if (storedValue) {
     return storedValue.trim();

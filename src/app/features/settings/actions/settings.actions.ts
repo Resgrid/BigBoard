@@ -1,5 +1,11 @@
 import { Action } from '@ngrx/store';
-import { CallPriorityResultData, CallResultData, GetConfigResultData, UnitResultData, UnitTypeStatusResultData } from '@resgrid/ngx-resgridlib';
+import {
+  CallPriorityResultData,
+  CallResultData,
+  GetConfigResultData,
+  UnitResultData,
+  UnitTypeStatusResultData,
+} from '@resgrid/ngx-resgridlib';
 import { UserInfo } from 'src/app/models/userInfo';
 import { LoginPayload } from '../models/loginPayload';
 
@@ -75,9 +81,14 @@ export class NavigateToHome implements Action {
 
 export class SetLoginDataAndNavigateToHome implements Action {
   readonly type = SettingActionTypes.SET_LOGINDATA_NAV_HOME;
-  constructor(public user: UserInfo, public enablePushNotifications: boolean,
-    public themePreference: number, public keepAlive: boolean, public headsetType: number,
-    public backgroundGeolocationEnabled: boolean) {}
+  constructor(
+    public user: UserInfo,
+    public enablePushNotifications: boolean,
+    public themePreference: number,
+    public keepAlive: boolean,
+    public headsetType: number,
+    public backgroundGeolocationEnabled: boolean,
+  ) {}
 }
 
 export class SetServerAddress implements Action {
@@ -117,8 +128,13 @@ export class GetApplicationSettings implements Action {
 
 export class SetApplicationSettings implements Action {
   readonly type = SettingActionTypes.SET_APP_SETTINGS;
-  constructor(public enablePushNotifications: boolean, public themePreference: number, public keepAlive: boolean,
-    public headsetType: number, public selectedMic: string) {}
+  constructor(
+    public enablePushNotifications: boolean,
+    public themePreference: number,
+    public keepAlive: boolean,
+    public headsetType: number,
+    public selectedMic: string,
+  ) {}
 }
 
 export class ShowPromptForLogout implements Action {
@@ -187,5 +203,4 @@ export type SettingsActionsUnion =
   | GetAppSettingsFromServer
   | GetAppSettingsFromServerDone
   | DismissModal
-  | SavePerferDarkModeSettingDone
-  ;
+  | SavePerferDarkModeSettingDone;

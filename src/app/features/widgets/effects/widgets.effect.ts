@@ -21,142 +21,142 @@ export class WidgetsEffects {
   setWeatherSettings$ = createEffect(() =>
     this.actions$.pipe(
       ofType<widgetsAction.SetWeatherSettings>(
-        widgetsAction.WidgetsActionTypes.SET_WEATHER_SETTINGS
+        widgetsAction.WidgetsActionTypes.SET_WEATHER_SETTINGS,
       ),
       switchMap((action) =>
-        this.storageProvider.saveWeatherWidgetSettings(action.settings)
+        this.storageProvider.saveWeatherWidgetSettings(action.settings),
       ),
       map((data) => {
         return {
           type: widgetsAction.WidgetsActionTypes.SET_WEATHER_SETTINGS_DONE,
-          settings: data
+          settings: data,
         };
-      })
-    )
+      }),
+    ),
   );
 
   setPersonnelSettings$ = createEffect(() =>
     this.actions$.pipe(
       ofType<widgetsAction.SetPersonnelSettings>(
-        widgetsAction.WidgetsActionTypes.SET_PERSONNEL_SETTINGS
+        widgetsAction.WidgetsActionTypes.SET_PERSONNEL_SETTINGS,
       ),
       switchMap((action) =>
-        this.storageProvider.savePersonnelWidgetSettings(action.settings)
+        this.storageProvider.savePersonnelWidgetSettings(action.settings),
       ),
       map((data) => {
         return {
           type: widgetsAction.WidgetsActionTypes.SET_PERSONNEL_SETTINGS_DONE,
-          settings: data
+          settings: data,
         };
-      })
-    )
+      }),
+    ),
   );
 
   setUnitSettings$ = createEffect(() =>
     this.actions$.pipe(
       ofType<widgetsAction.SetUnitSettings>(
-        widgetsAction.WidgetsActionTypes.SET_UNITS_SETTINGS
+        widgetsAction.WidgetsActionTypes.SET_UNITS_SETTINGS,
       ),
       switchMap((action) =>
-        this.storageProvider.saveUnitsWidgetSettings(action.settings)
+        this.storageProvider.saveUnitsWidgetSettings(action.settings),
       ),
       map((data) => {
         return {
           type: widgetsAction.WidgetsActionTypes.SET_UNITS_SETTINGS_DONE,
-          settings: data
+          settings: data,
         };
-      })
-    )
+      }),
+    ),
   );
 
   setCallsSettings$ = createEffect(() =>
     this.actions$.pipe(
       ofType<widgetsAction.SetCallsSettings>(
-        widgetsAction.WidgetsActionTypes.SET_CALLS_SETTINGS
+        widgetsAction.WidgetsActionTypes.SET_CALLS_SETTINGS,
       ),
       switchMap((action) =>
-        this.storageProvider.saveCallWidgetSettings(action.settings)
+        this.storageProvider.saveCallWidgetSettings(action.settings),
       ),
       map((data) => {
         return {
           type: widgetsAction.WidgetsActionTypes.SET_CALLS_SETTINGS_DONE,
-          settings: data
+          settings: data,
         };
-      })
-    )
+      }),
+    ),
   );
 
   setNotesSettings$ = createEffect(() =>
     this.actions$.pipe(
       ofType<widgetsAction.SetNotesSettings>(
-        widgetsAction.WidgetsActionTypes.SET_NOTES_SETTINGS
+        widgetsAction.WidgetsActionTypes.SET_NOTES_SETTINGS,
       ),
       switchMap((action) =>
-        this.storageProvider.saveNotesWidgetSettings(action.settings)
+        this.storageProvider.saveNotesWidgetSettings(action.settings),
       ),
       map((data) => {
         return {
           type: widgetsAction.WidgetsActionTypes.SET_NOTES_SETTINGS_DONE,
-          settings: data
+          settings: data,
         };
-      })
-    )
+      }),
+    ),
   );
 
   setMapSettings$ = createEffect(() =>
     this.actions$.pipe(
       ofType<widgetsAction.SetMapSettings>(
-        widgetsAction.WidgetsActionTypes.SET_MAP_SETTINGS
+        widgetsAction.WidgetsActionTypes.SET_MAP_SETTINGS,
       ),
       switchMap((action) =>
-        this.storageProvider.saveMapWidgetSettings(action.settings)
+        this.storageProvider.saveMapWidgetSettings(action.settings),
       ),
       map((data) => {
         return {
           type: widgetsAction.WidgetsActionTypes.SET_MAP_SETTINGS_DONE,
-          settings: data
+          settings: data,
         };
-      })
-    )
+      }),
+    ),
   );
 
   getWeatherSettings$ = createEffect(() =>
     this.actions$.pipe(
       ofType<widgetsAction.GetWeatherSettings>(
-        widgetsAction.WidgetsActionTypes.GET_WEATHER_SETTTINGS
+        widgetsAction.WidgetsActionTypes.GET_WEATHER_SETTTINGS,
       ),
       mergeMap((action) =>
         from(this.storageProvider.loadWeatherWidgetSettings()).pipe(
           map((data) => ({
             type: widgetsAction.WidgetsActionTypes.GET_WEATHER_SETTTINGS_DONE,
             settings: data,
-          }))
-        )
-      )
-    )
+          })),
+        ),
+      ),
+    ),
   );
 
   setPTTSettings$ = createEffect(() =>
     this.actions$.pipe(
       ofType<widgetsAction.SetPTTSettings>(
-        widgetsAction.WidgetsActionTypes.SET_PTT_SETTINGS
+        widgetsAction.WidgetsActionTypes.SET_PTT_SETTINGS,
       ),
       switchMap((action) =>
-        this.storageProvider.savePTTWidgetSettings(action.settings)
+        this.storageProvider.savePTTWidgetSettings(action.settings),
       ),
       map((data) => {
         return {
           type: widgetsAction.WidgetsActionTypes.SET_PTT_SETTINGS_DONE,
-          settings: data
+          settings: data,
         };
-      })
-    )
+      }),
+    ),
   );
 
   getPersonnelList$ = createEffect(() =>
     this.actions$.pipe(
       ofType<widgetsAction.GetPersonnelStatuses>(
-        widgetsAction.WidgetsActionTypes.GET_PERSONNEL_STATUSES
+        widgetsAction.WidgetsActionTypes.GET_PERSONNEL_STATUSES,
       ),
       mergeMap((action) =>
         this.personnelService.getAllPersonnelInfos('').pipe(
@@ -167,17 +167,17 @@ export class WidgetsEffects {
           catchError(() =>
             of({
               type: widgetsAction.WidgetsActionTypes.DONE,
-            })
-          )
-        )
-      )
-    )
+            }),
+          ),
+        ),
+      ),
+    ),
   );
 
   getCalls$ = createEffect(() =>
     this.actions$.pipe(
       ofType<widgetsAction.GetCalls>(
-        widgetsAction.WidgetsActionTypes.GET_CALLS
+        widgetsAction.WidgetsActionTypes.GET_CALLS,
       ),
       mergeMap((action) =>
         this.callsService.getActiveCalls().pipe(
@@ -188,17 +188,17 @@ export class WidgetsEffects {
           catchError(() =>
             of({
               type: widgetsAction.WidgetsActionTypes.DONE,
-            })
-          )
-        )
-      )
-    )
+            }),
+          ),
+        ),
+      ),
+    ),
   );
 
   getUnits$ = createEffect(() =>
     this.actions$.pipe(
       ofType<widgetsAction.GetUnits>(
-        widgetsAction.WidgetsActionTypes.GET_UNITS
+        widgetsAction.WidgetsActionTypes.GET_UNITS,
       ),
       mergeMap((action) =>
         this.unitsService.getAllUnitsInfos('').pipe(
@@ -209,17 +209,17 @@ export class WidgetsEffects {
           catchError(() =>
             of({
               type: widgetsAction.WidgetsActionTypes.DONE,
-            })
-          )
-        )
-      )
-    )
+            }),
+          ),
+        ),
+      ),
+    ),
   );
 
   getNotes$ = createEffect(() =>
     this.actions$.pipe(
       ofType<widgetsAction.GetNotes>(
-        widgetsAction.WidgetsActionTypes.GET_NOTES
+        widgetsAction.WidgetsActionTypes.GET_NOTES,
       ),
       mergeMap((action) =>
         this.notesService.getDispatchNote().pipe(
@@ -230,17 +230,17 @@ export class WidgetsEffects {
           catchError(() =>
             of({
               type: widgetsAction.WidgetsActionTypes.DONE,
-            })
-          )
-        )
-      )
-    )
+            }),
+          ),
+        ),
+      ),
+    ),
   );
 
   loadMapData$ = createEffect(() =>
     this.actions$.pipe(
       ofType<widgetsAction.GetMapData>(
-        widgetsAction.WidgetsActionTypes.GET_MAPDATA
+        widgetsAction.WidgetsActionTypes.GET_MAPDATA,
       ),
       mergeMap((action) =>
         this.mapProvider.getMapDataAndMarkers().pipe(
@@ -251,49 +251,50 @@ export class WidgetsEffects {
           catchError(() =>
             of({
               type: widgetsAction.WidgetsActionTypes.DONE,
-            })
-          )
-        )
-      )
-    )
+            }),
+          ),
+        ),
+      ),
+    ),
   );
 
   loadAllWidgetSettings$ = createEffect(() =>
-		this.actions$.pipe(
-			ofType<widgetsAction.LoadAllWidgetSettings>(
-				widgetsAction.WidgetsActionTypes.LOAD_ALL_WIDGET_SETTINGS
-			),
-			switchMap((action) =>
-				forkJoin([
-					from(this.storageProvider.loadWeatherWidgetSettings()),
-					from(this.storageProvider.loadPersonnelWidgetSettings()),
-					from(this.storageProvider.loadCallWidgetSettings()),
-					from(this.storageProvider.loadUnitsWidgetSettings()),
-					from(this.storageProvider.loadNotesWidgetSettings()),
+    this.actions$.pipe(
+      ofType<widgetsAction.LoadAllWidgetSettings>(
+        widgetsAction.WidgetsActionTypes.LOAD_ALL_WIDGET_SETTINGS,
+      ),
+      switchMap((action) =>
+        forkJoin([
+          from(this.storageProvider.loadWeatherWidgetSettings()),
+          from(this.storageProvider.loadPersonnelWidgetSettings()),
+          from(this.storageProvider.loadCallWidgetSettings()),
+          from(this.storageProvider.loadUnitsWidgetSettings()),
+          from(this.storageProvider.loadNotesWidgetSettings()),
           from(this.storageProvider.loadMapWidgetSettings()),
           from(this.storageProvider.loadPTTWidgetSettings()),
-				]).pipe(
-					map((result) => ({
-						type: widgetsAction.WidgetsActionTypes.LOAD_ALL_WIDGET_SETTINGS_DONE,
-						weatherWidgetSettings: result[0],
-						personnelWidgetSettings: result[1],
-						callsWidgetSettings: result[2],
-						unitsWidgetSettings: result[3],
-						notesWidgetSettings: result[4],
+        ]).pipe(
+          map((result) => ({
+            type: widgetsAction.WidgetsActionTypes
+              .LOAD_ALL_WIDGET_SETTINGS_DONE,
+            weatherWidgetSettings: result[0],
+            personnelWidgetSettings: result[1],
+            callsWidgetSettings: result[2],
+            unitsWidgetSettings: result[3],
+            notesWidgetSettings: result[4],
             mapWidgetSettings: result[5],
             pttWidgetSettings: result[6],
-					}))
-				)
-			)
-		)
-	);
+          })),
+        ),
+      ),
+    ),
+  );
 
   done$ = createEffect(
     () =>
       this.actions$.pipe(
-        ofType<widgetsAction.Done>(widgetsAction.WidgetsActionTypes.DONE)
+        ofType<widgetsAction.Done>(widgetsAction.WidgetsActionTypes.DONE),
       ),
-    { dispatch: false }
+    { dispatch: false },
   );
 
   constructor(
@@ -305,6 +306,6 @@ export class WidgetsEffects {
     private callsService: CallsService,
     private unitsService: UnitsService,
     private notesService: NotesService,
-	private mapProvider: MappingService,
+    private mapProvider: MappingService,
   ) {}
 }

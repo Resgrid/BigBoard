@@ -12,7 +12,8 @@
     }
   }
 
-  ion-list, ion-item-group {
+  ion-list,
+  ion-item-group {
     ion-item-divider {
       font-size: 0.8rem;
       font-weight: 300;
@@ -29,7 +30,8 @@
       color: var(--ion-color-is-mute-normal);
     }
 
-    ion-list-header, ion-list-header.list-header-ios {
+    ion-list-header,
+    ion-list-header.list-header-ios {
       border-top: none;
       border-bottom: none;
       color: var(--ion-color-is-mute-normal);
@@ -37,12 +39,13 @@
       font-weight: 400;
     }
 
-    ion-list-header + button.item, ion-list-header + ion-item {
+    ion-list-header + button.item,
+    ion-list-header + ion-item {
       border-top: 1px solid var(--ion-color-is-mute-light);
     }
 
-    button.item, ion-item {
-
+    button.item,
+    ion-item {
       --inner-border-width: 0px;
       --border-width: 0;
 
@@ -105,7 +108,7 @@
         }
       }
 
-      ion-button[fill=outline][shape=round] {
+      ion-button[fill="outline"][shape="round"] {
         color: var(--ion-color-is-mute-dark);
         --border-color: var(--ion-color-is-mute-light);
         border-radius: 15px;
@@ -124,7 +127,8 @@
       }
     }
 
-    button.item.item-block .item-inner, ion-item.item-block .item-inner {
+    button.item.item-block .item-inner,
+    ion-item.item-block .item-inner {
       border: none;
     }
 
@@ -180,7 +184,7 @@
         border-left: 1px solid var(--ion-color-is-mute-light);
       }
 
-      div[slot=end] h3{
+      div[slot="end"] h3 {
         font-size: 0.9rem;
         font-weight: normal;
       }
@@ -191,22 +195,28 @@
     }
   }
 
-  ion-list:not([lines="none"]), ion-item-group:not(.is-no-lines) {
-    button.item:not(.is-no-lines):last-child, ion-item:not([lines="none"]):last-child {
+  ion-list:not([lines="none"]),
+  ion-item-group:not(.is-no-lines) {
+    button.item:not(.is-no-lines):last-child,
+    ion-item:not([lines="none"]):last-child {
       border-bottom: 1px solid var(--ion-color-is-mute-light);
     }
 
-    button.item:not(.is-no-lines):first-child, ion-item:not([lines="none"]):first-child {
+    button.item:not(.is-no-lines):first-child,
+    ion-item:not([lines="none"]):first-child {
       border-top: 1px solid var(--ion-color-is-mute-light);
     }
 
-    button.item:not(.is-no-lines), ion-item:not([lines="none"]) {
+    button.item:not(.is-no-lines),
+    ion-item:not([lines="none"]) {
       border-bottom: 1px solid var(--ion-color-is-mute-light);
     }
   }
 
-  ion-list.ion-padding, ion-list[inset] {
-    ion-item, button.item {
+  ion-list.ion-padding,
+  ion-list[inset] {
+    ion-item,
+    button.item {
       border-left: 1px solid var(--ion-color-is-mute-light);
       border-right: 1px solid var(--ion-color-is-mute-light);
       &[button] {
@@ -274,19 +284,23 @@
     }
   }
 
-  ion-list.ion-padding, .list-inset {
-    ion-list-header + ion-item, ion-list-header + button.item {
+  ion-list.ion-padding,
+  .list-inset {
+    ion-list-header + ion-item,
+    ion-list-header + button.item {
       border-top-right-radius: 5px;
       border-top-left-radius: 5px;
     }
 
-    button.item:first-child, ion-item:first-child {
+    button.item:first-child,
+    ion-item:first-child {
       border-top-right-radius: 5px;
       border-top-left-radius: 5px;
       overflow: hidden;
     }
 
-    button.item:last-child, ion-item:last-child {
+    button.item:last-child,
+    ion-item:last-child {
       border-bottom-right-radius: 5px;
       border-bottom-left-radius: 5px;
       overflow: hidden;
@@ -310,7 +324,8 @@
   }
 
   ion-list.list-lines-none {
-    ion-item, ion-item.in-list.item-label {
+    ion-item,
+    ion-item.in-list.item-label {
       border: none;
     }
   }
@@ -339,7 +354,8 @@
     }
   }
 
-  .list-ios:not(.list-inset):not(.list-ios-lines-none) .item:last-child, .list-ios.list-inset ion-item {
+  .list-ios:not(.list-inset):not(.list-ios-lines-none) .item:last-child,
+  .list-ios.list-inset ion-item {
     --border-width: 0px;
   }
 }

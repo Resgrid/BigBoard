@@ -1,8 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  MenuController,
-  ModalController,
-} from '@ionic/angular';
+import { MenuController, ModalController } from '@ionic/angular';
 
 @Injectable({
   providedIn: 'root',
@@ -10,10 +7,16 @@ import {
 export class ModalProvider {
   constructor(
     private menuCtrl: MenuController,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
   ) {}
 
-  public async runModal(component, cssClass, properties,id, opts = {}): Promise<void> {
+  public async runModal(
+    component,
+    cssClass,
+    properties,
+    id,
+    opts = {},
+  ): Promise<void> {
     await this.menuCtrl.close();
 
     if (!cssClass) {
@@ -36,16 +39,16 @@ export class ModalProvider {
   }
 
   public async closeModal(id) {
-		if (!id) {
-			id = 'ModalProviderModal';
-		}
+    if (!id) {
+      id = 'ModalProviderModal';
+    }
 
-		try {
-			var activeModal = await this.modalCtrl.getTop();
+    try {
+      var activeModal = await this.modalCtrl.getTop();
 
-			if (activeModal) {
-				await this.modalCtrl.dismiss(null, undefined, id);
-			}
-		} catch (error) {}
-	};
+      if (activeModal) {
+        await this.modalCtrl.dismiss(null, undefined, id);
+      }
+    } catch (error) {}
+  }
 }
