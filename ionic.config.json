@@ -1,7 +1,0 @@
-{
-  "name": "BigBoard",
-  "integrations": {
-    "capacitor": {}
-  },
-  "type": "angular"
-}
