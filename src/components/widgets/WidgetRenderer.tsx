@@ -24,7 +24,7 @@ interface WidgetRendererProps {
 }
 
 export const WidgetRenderer: React.FC<WidgetRendererProps> = ({ widget, onRemove, isEditMode, containerWidth, containerHeight }) => {
-  const { w, h } = widget;
+  const { w, h, data } = widget;
 
   switch (widget.type) {
     case WidgetType.TIME:
@@ -38,7 +38,7 @@ export const WidgetRenderer: React.FC<WidgetRendererProps> = ({ widget, onRemove
     case WidgetType.MAP:
       return <MapWidget onRemove={onRemove} isEditMode={isEditMode} width={w} height={h} containerWidth={containerWidth} containerHeight={containerHeight} />;
     case WidgetType.WEATHER:
-      return <WeatherWidget onRemove={onRemove} isEditMode={isEditMode} width={w} height={h} containerWidth={containerWidth} containerHeight={containerHeight} />;
+      return <WeatherWidget onRemove={onRemove} isEditMode={isEditMode} width={w} height={h} containerWidth={containerWidth} containerHeight={containerHeight} metadata={data} />;
     case WidgetType.NOTES:
       return <NotesWidget onRemove={onRemove} isEditMode={isEditMode} width={w} height={h} containerWidth={containerWidth} containerHeight={containerHeight} />;
     default:

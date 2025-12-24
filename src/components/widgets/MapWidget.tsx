@@ -12,6 +12,7 @@ import { logger } from '@/lib/logging';
 import { type MapMakerInfoData } from '@/models/v4/mapping/getMapDataAndMarkersData';
 import { useCoreStore } from '@/stores/app/core-store';
 import useAuthStore from '@/stores/auth/store';
+import { useMapStore } from '@/stores/mapping/map-store';
 
 import MapPins from '../maps/map-pins';
 import { WidgetContainer } from './WidgetContainer';
@@ -45,6 +46,9 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ onRemove, isEditMode, widt
   const accessToken = useAuthStore((state) => state.accessToken);
   const isInitialized = useCoreStore((state) => state.isInitialized);
   const isAuthenticated = !!accessToken;
+  
+  // Get map store
+  const { setMapData } = useMapStore();
 
   // Use SignalR updates to refresh map pins
   useMapSignalRUpdates(setMapPins);
@@ -71,6 +75,10 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ onRemove, isEditMode, widt
             context: { markerCount: mapDataResult.Data.MapMakerInfos.length },
           });
           setMapPins(mapDataResult.Data.MapMakerInfos);
+          
+          // Store map data in the map store for other widgets to access
+          setMapData(mapDataResult.Data);
+          
           setHasLoadedInitialData(true);
         }
 
@@ -90,7 +98,7 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ onRemove, isEditMode, widt
     };
 
     loadInitialData();
-  }, [isMapReady, isAuthenticated, isInitialized, hasLoadedInitialData]);
+  }, [isMapReady, isAuthenticated, isInitialized, hasLoadedInitialData, setMapData]);
 
   // Center on first pin if available
   useEffect(() => {

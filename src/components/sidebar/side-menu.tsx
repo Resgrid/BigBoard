@@ -37,8 +37,21 @@ export const SideMenu: React.FC<SideMenuProps> = React.memo(({ onNavigate }) => 
   const { colorScheme } = useColorScheme();
   const router = useRouter();
   const { logout } = useAuthStore();
-  const { isUpdateHubConnected, lastUpdateTimestamp, reconnectUpdateHub } = useSignalRStore();
+  const { isUpdateHubConnected, lastUpdateTimestamp, reconnectUpdateHub, checkConnectionState } = useSignalRStore();
   const [isReconnecting, setIsReconnecting] = React.useState(false);
+
+  // Poll connection state every 2 seconds to ensure UI stays in sync
+  React.useEffect(() => {
+    // Check immediately on mount
+    checkConnectionState();
+
+    // Set up polling interval
+    const interval = setInterval(() => {
+      checkConnectionState();
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [checkConnectionState]);
 
   // All hooks must be called before any early returns
   const handleNavigation = useCallback(

@@ -614,6 +614,22 @@ class SignalRService {
   private emit(event: string, data: unknown): void {
     this.eventListeners.get(event)?.forEach((callback) => callback(data));
   }
+
+  /**
+   * Get the actual connection state of a hub
+   */
+  public getHubConnectionState(hubName: string): HubConnectionState | null {
+    const connection = this.connections.get(hubName);
+    return connection ? connection.state : null;
+  }
+
+  /**
+   * Check if a hub is currently connected
+   */
+  public isHubConnected(hubName: string): boolean {
+    const connection = this.connections.get(hubName);
+    return connection?.state === HubConnectionState.Connected;
+  }
 }
 
 export const signalRService = SignalRService.getInstance();

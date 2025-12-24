@@ -16,6 +16,7 @@ interface SignalRState {
   connectUpdateHub: () => Promise<void>;
   disconnectUpdateHub: () => Promise<void>;
   reconnectUpdateHub: () => Promise<void>;
+  checkConnectionState: () => boolean;
 }
 
 export const useSignalRStore = create<SignalRState>((set, get) => ({
@@ -110,6 +111,35 @@ export const useSignalRStore = create<SignalRState>((set, get) => ({
         });
         set({ isUpdateHubConnected: true, error: null });
       });
+
+      // Set up connection state monitoring using the actual SignalR connection
+      // This ensures we properly track disconnections and reconnections
+      const hubConnection = (signalRService as any).connections?.get(Env.CHANNEL_HUB_NAME);
+      if (hubConnection) {
+        // Handle connection close
+        hubConnection.onclose(() => {
+          logger.info({
+            message: 'Update SignalR hub connection closed',
+          });
+          set({ isUpdateHubConnected: false });
+        });
+
+        // Handle reconnecting state
+        hubConnection.onreconnecting(() => {
+          logger.info({
+            message: 'Update SignalR hub reconnecting',
+          });
+          set({ isUpdateHubConnected: false });
+        });
+
+        // Handle reconnected state
+        hubConnection.onreconnected(() => {
+          logger.info({
+            message: 'Update SignalR hub reconnected',
+          });
+          set({ isUpdateHubConnected: true, error: null });
+        });
+      }
     } catch (error) {
       const err = error instanceof Error ? error : new Error('Unknown error occurred');
       logger.error({
@@ -159,5 +189,21 @@ export const useSignalRStore = create<SignalRState>((set, get) => ({
       set({ error: err });
       throw err;
     }
+  },
+  checkConnectionState: () => {
+    // Check the actual connection state from the service
+    const isActuallyConnected = signalRService.isHubConnected(Env.CHANNEL_HUB_NAME);
+    const currentState = get().isUpdateHubConnected;
+    
+    // If the states don't match, update the store
+    if (isActuallyConnected !== currentState) {
+      logger.info({
+        message: 'Connection state mismatch detected, updating store',
+        context: { isActuallyConnected, currentState },
+      });
+      set({ isUpdateHubConnected: isActuallyConnected });
+    }
+    
+    return isActuallyConnected;
   },
 }));
