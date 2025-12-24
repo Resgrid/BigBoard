@@ -75,6 +75,30 @@ export interface TimeWidgetSettings {
   showSeconds: boolean;
 }
 
+export interface PersonnelStatusSummarySettings {
+  fontSize: number;
+  showColors: boolean;
+}
+
+export interface PersonnelStaffingSummarySettings {
+  fontSize: number;
+  showColors: boolean;
+}
+
+export interface UnitsSummarySettings {
+  fontSize: number;
+  showAvailable: boolean;
+  showResponding: boolean;
+  showOnScene: boolean;
+}
+
+export interface CallsSummarySettings {
+  fontSize: number;
+  showRecentCall: boolean;
+  showPriorityCounts: boolean;
+  maxPrioritiesToShow: number;
+}
+
 interface WidgetSettingsState {
   personnel: PersonnelWidgetSettings;
   map: MapWidgetSettings;
@@ -83,6 +107,10 @@ interface WidgetSettingsState {
   calls: CallsWidgetSettings;
   notes: NotesWidgetSettings;
   time: TimeWidgetSettings;
+  personnelStatusSummary: PersonnelStatusSummarySettings;
+  personnelStaffingSummary: PersonnelStaffingSummarySettings;
+  unitsSummary: UnitsSummarySettings;
+  callsSummary: CallsSummarySettings;
 
   // Actions
   updatePersonnelSettings: (settings: Partial<PersonnelWidgetSettings>) => void;
@@ -92,6 +120,10 @@ interface WidgetSettingsState {
   updateCallsSettings: (settings: Partial<CallsWidgetSettings>) => void;
   updateNotesSettings: (settings: Partial<NotesWidgetSettings>) => void;
   updateTimeSettings: (settings: Partial<TimeWidgetSettings>) => void;
+  updatePersonnelStatusSummarySettings: (settings: Partial<PersonnelStatusSummarySettings>) => void;
+  updatePersonnelStaffingSummarySettings: (settings: Partial<PersonnelStaffingSummarySettings>) => void;
+  updateUnitsSummarySettings: (settings: Partial<UnitsSummarySettings>) => void;
+  updateCallsSummarySettings: (settings: Partial<CallsSummarySettings>) => void;
   resetAllSettings: () => void;
 }
 
@@ -163,6 +195,30 @@ const defaultTimeSettings: TimeWidgetSettings = {
   showSeconds: true,
 };
 
+const defaultPersonnelStatusSummarySettings: PersonnelStatusSummarySettings = {
+  fontSize: 14,
+  showColors: true,
+};
+
+const defaultPersonnelStaffingSummarySettings: PersonnelStaffingSummarySettings = {
+  fontSize: 14,
+  showColors: true,
+};
+
+const defaultUnitsSummarySettings: UnitsSummarySettings = {
+  fontSize: 14,
+  showAvailable: true,
+  showResponding: true,
+  showOnScene: true,
+};
+
+const defaultCallsSummarySettings: CallsSummarySettings = {
+  fontSize: 14,
+  showRecentCall: true,
+  showPriorityCounts: true,
+  maxPrioritiesToShow: 3,
+};
+
 const STORAGE_KEY = 'widget-settings';
 
 // Create MMKV storage instance
@@ -192,6 +248,10 @@ export const useWidgetSettingsStore = create<WidgetSettingsState>()(
       calls: defaultCallsSettings,
       notes: defaultNotesSettings,
       time: defaultTimeSettings,
+      personnelStatusSummary: defaultPersonnelStatusSummarySettings,
+      personnelStaffingSummary: defaultPersonnelStaffingSummarySettings,
+      unitsSummary: defaultUnitsSummarySettings,
+      callsSummary: defaultCallsSummarySettings,
 
       updatePersonnelSettings: (settings) =>
         set((state) => ({
@@ -228,6 +288,26 @@ export const useWidgetSettingsStore = create<WidgetSettingsState>()(
           time: { ...state.time, ...settings },
         })),
 
+      updatePersonnelStatusSummarySettings: (settings) =>
+        set((state) => ({
+          personnelStatusSummary: { ...state.personnelStatusSummary, ...settings },
+        })),
+
+      updatePersonnelStaffingSummarySettings: (settings) =>
+        set((state) => ({
+          personnelStaffingSummary: { ...state.personnelStaffingSummary, ...settings },
+        })),
+
+      updateUnitsSummarySettings: (settings) =>
+        set((state) => ({
+          unitsSummary: { ...state.unitsSummary, ...settings },
+        })),
+
+      updateCallsSummarySettings: (settings) =>
+        set((state) => ({
+          callsSummary: { ...state.callsSummary, ...settings },
+        })),
+
       resetAllSettings: () =>
         set({
           personnel: defaultPersonnelSettings,
@@ -237,6 +317,10 @@ export const useWidgetSettingsStore = create<WidgetSettingsState>()(
           calls: defaultCallsSettings,
           notes: defaultNotesSettings,
           time: defaultTimeSettings,
+          personnelStatusSummary: defaultPersonnelStatusSummarySettings,
+          personnelStaffingSummary: defaultPersonnelStaffingSummarySettings,
+          unitsSummary: defaultUnitsSummarySettings,
+          callsSummary: defaultCallsSummarySettings,
         }),
     }),
     {

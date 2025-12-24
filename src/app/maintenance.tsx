@@ -17,12 +17,12 @@ export default function Maintenance() {
   const router = useRouter();
 
   useEffect(() => {
-    // Check if maintenance mode is disabled, redirect to login
+    // Check if maintenance mode is disabled, redirect to home
     if (!Env.MAINTENANCE_MODE) {
       logger.info({
-        message: 'Maintenance mode disabled, redirecting to login',
+        message: 'Maintenance mode disabled, redirecting to home',
       });
-      router.replace('/login');
+      router.replace('/home');
     }
   }, [router]);
 

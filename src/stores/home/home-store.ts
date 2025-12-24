@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 import { getPersonnelInfo } from '@/api/personnel/personnel';
-import { getAllPersonnelStatuses } from '@/api/satuses';
+import { getAllPersonnelStaffings, getAllPersonnelStatuses } from '@/api/satuses';
 import { type PersonnelInfoResultData } from '@/models/v4/personnel/personnelInfoResultData';
 import { type GetCurrentStaffingResultData } from '@/models/v4/personnelStaffing/getCurrentStaffingResultData';
 import { type GetCurrentStatusResultData } from '@/models/v4/personnelStatuses/getCurrentStatusResultData';
@@ -38,6 +38,7 @@ interface HomeState {
   // Actions
   fetchDepartmentStats: () => Promise<void>;
   fetchCurrentUserInfo: () => Promise<void>;
+  fetchStatusOptions: () => Promise<void>;
   refreshAll: () => Promise<void>;
 
   // Errors
@@ -117,9 +118,31 @@ export const useHomeStore = create<HomeState>((set, get) => ({
     }
   },
 
+  // Fetch available status and staffing options
+  fetchStatusOptions: async () => {
+    set({ isLoadingOptions: true, error: null });
+    try {
+      const [statusesResponse, staffingsResponse] = await Promise.all([
+        getAllPersonnelStatuses() as Promise<ApiResponse<StatusesResultData[]>>,
+        getAllPersonnelStaffings() as Promise<ApiResponse<StatusesResultData[]>>,
+      ]);
+
+      set({
+        availableStatuses: statusesResponse.Data || [],
+        availableStaffings: staffingsResponse.Data || [],
+        isLoadingOptions: false,
+      });
+    } catch (error) {
+      set({
+        error: 'Failed to fetch status options',
+        isLoadingOptions: false,
+      });
+    }
+  },
+
   // Refresh all data
   refreshAll: async () => {
-    const { fetchDepartmentStats, fetchCurrentUserInfo } = get();
-    await Promise.all([fetchDepartmentStats(), fetchCurrentUserInfo()]);
+    const { fetchDepartmentStats, fetchCurrentUserInfo, fetchStatusOptions } = get();
+    await Promise.all([fetchDepartmentStats(), fetchCurrentUserInfo(), fetchStatusOptions()]);
   },
 }));

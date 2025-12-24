@@ -7,6 +7,7 @@ import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
 import { useCallsSignalRUpdates } from '@/hooks/use-calls-signalr-updates';
 import { useCallsStore } from '@/stores/calls/store';
+import { useWidgetSettingsStore } from '@/stores/widget-settings/store';
 
 import { WidgetContainer } from './WidgetContainer';
 
@@ -21,6 +22,7 @@ export const CallsSummaryWidget: React.FC<CallsWidgetProps> = ({ onRemove, isEdi
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
   const { calls, callPriorities, isLoading, error, init } = useCallsStore();
+  const { callsSummary } = useWidgetSettingsStore();
 
   // Enable real-time updates via SignalR
   useCallsSignalRUpdates();
@@ -73,25 +75,34 @@ export const CallsSummaryWidget: React.FC<CallsWidgetProps> = ({ onRemove, isEdi
     <WidgetContainer title="Calls" onRemove={onRemove} isEditMode={isEditMode} testID="calls-widget">
       <VStack space="md" className="w-full">
         <Box className="flex-row items-center justify-between">
-          <Text className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Active</Text>
-          <Text className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>{callsData.total}</Text>
+          <Text className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`} style={{ fontSize: callsSummary.fontSize }}>
+            Active
+          </Text>
+          <Text className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`} style={{ fontSize: callsSummary.fontSize * 2 }}>
+            {callsData.total}
+          </Text>
         </Box>
-        {callsData.recentCall && (
+        {callsSummary.showRecentCall && callsData.recentCall && (
           <Box className={`rounded-lg p-3 ${isDark ? 'bg-gray-700' : 'bg-gray-100'}`}>
-            <Text className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`} numberOfLines={1}>
+            <Text className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`} numberOfLines={1} style={{ fontSize: callsSummary.fontSize }}>
               {callsData.recentCall.Name}
             </Text>
-            <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`} numberOfLines={1}>
+            <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`} numberOfLines={1} style={{ fontSize: callsSummary.fontSize * 0.85 }}>
               {callsData.recentCall.Address || 'No address'}
             </Text>
           </Box>
         )}
-        {callPriorities.slice(0, 3).map((priority) => (
-          <Box key={priority.Id} className="flex-row items-center justify-between">
-            <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{priority.Name}</Text>
-            <Text className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>{callsData.priorityCounts[priority.Name] || 0}</Text>
-          </Box>
-        ))}
+        {callsSummary.showPriorityCounts &&
+          callPriorities.slice(0, callsSummary.maxPrioritiesToShow).map((priority) => (
+            <Box key={priority.Id} className="flex-row items-center justify-between">
+              <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`} style={{ fontSize: callsSummary.fontSize * 0.85 }}>
+                {priority.Name}
+              </Text>
+              <Text className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`} style={{ fontSize: callsSummary.fontSize }}>
+                {callsData.priorityCounts[priority.Name] || 0}
+              </Text>
+            </Box>
+          ))}
       </VStack>
     </WidgetContainer>
   );

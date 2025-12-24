@@ -23,18 +23,18 @@ type OnboardingItemProps = {
 
 const onboardingData: OnboardingItemProps[] = [
   {
-    title: 'Resgrid Unit',
-    description: "Track your unit's location and status in real-time with our advanced mapping and AVL system",
+    title: 'Resgrid BigBoard',
+    description: "Dispay real-time status of your department's units and calls on a centralized dashboard for enhanced situational awareness",
     icon: <MapPin size={80} color="#FF7B1A" />,
   },
   {
     title: 'Instant Notifications',
-    description: 'Receive immediate alerts for emergencies and important updates from your department',
+    description: 'Receive immediate alerts for important updates from your department',
     icon: <Bell size={80} color="#FF7B1A" />,
   },
   {
-    title: 'Interact with Calls',
-    description: 'Seamlessly view call information and interact with your team members for efficient emergency response',
+    title: 'Data at a Glance',
+    description: 'Display critical information about your departments resources and personnel quickly and easily',
     icon: <Users size={80} color="#FF7B1A" />,
   },
 ];

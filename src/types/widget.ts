@@ -7,6 +7,10 @@ export enum WidgetType {
   WEATHER = 'weather',
   NOTES = 'notes',
   TIME = 'time',
+  PERSONNEL_STATUS_SUMMARY = 'personnel_status_summary',
+  PERSONNEL_STAFFING_SUMMARY = 'personnel_staffing_summary',
+  UNITS_SUMMARY = 'units_summary',
+  CALLS_SUMMARY = 'calls_summary',
 }
 
 export interface WidgetLayout {
@@ -35,6 +39,10 @@ export const DEFAULT_WIDGET_SIZES: Record<WidgetType, { w: number; h: number }> 
   [WidgetType.WEATHER]: { w: 1, h: 1 },
   [WidgetType.NOTES]: { w: 1, h: 1 },
   [WidgetType.TIME]: { w: 1, h: 1 },
+  [WidgetType.PERSONNEL_STATUS_SUMMARY]: { w: 1, h: 1 },
+  [WidgetType.PERSONNEL_STAFFING_SUMMARY]: { w: 1, h: 1 },
+  [WidgetType.UNITS_SUMMARY]: { w: 1, h: 1 },
+  [WidgetType.CALLS_SUMMARY]: { w: 1, h: 1 },
 };
 
 export const WIDGET_LABELS: Record<WidgetType, string> = {
@@ -45,4 +53,8 @@ export const WIDGET_LABELS: Record<WidgetType, string> = {
   [WidgetType.WEATHER]: 'Weather',
   [WidgetType.NOTES]: 'Notes',
   [WidgetType.TIME]: 'Time',
+  [WidgetType.PERSONNEL_STATUS_SUMMARY]: 'Personnel Status Summary',
+  [WidgetType.PERSONNEL_STAFFING_SUMMARY]: 'Personnel Staffing Summary',
+  [WidgetType.UNITS_SUMMARY]: 'Units Summary',
+  [WidgetType.CALLS_SUMMARY]: 'Calls Summary',
 };

@@ -10,10 +10,10 @@ import { PersonnelWidget } from './PersonnelWidget';
 import { TimeWidget } from './TimeWidget';
 import { UnitsWidget } from './UnitsWidget';
 import { WeatherWidget } from './WeatherWidget';
-// Summary widgets are available but not used by default
-// import { PersonnelSummaryWidget } from './PersonnelSummaryWidget';
-// import { UnitsSummaryWidget } from './UnitsSummaryWidget';
-// import { CallsSummaryWidget } from './CallsSummaryWidget';
+import { PersonnelStatusSummaryWidget } from './PersonnelStatusSummaryWidget';
+import { PersonnelStaffingSummaryWidget } from './PersonnelStaffingSummaryWidget';
+import { UnitsSummaryWidget } from './UnitsSummaryWidget';
+import { CallsSummaryWidget } from './CallsSummaryWidget';
 
 interface WidgetRendererProps {
   widget: Widget;
@@ -41,6 +41,14 @@ export const WidgetRenderer: React.FC<WidgetRendererProps> = ({ widget, onRemove
       return <WeatherWidget onRemove={onRemove} isEditMode={isEditMode} width={w} height={h} containerWidth={containerWidth} containerHeight={containerHeight} metadata={data} />;
     case WidgetType.NOTES:
       return <NotesWidget onRemove={onRemove} isEditMode={isEditMode} width={w} height={h} containerWidth={containerWidth} containerHeight={containerHeight} />;
+    case WidgetType.PERSONNEL_STATUS_SUMMARY:
+      return <PersonnelStatusSummaryWidget onRemove={onRemove} isEditMode={isEditMode} width={w} height={h} />;
+    case WidgetType.PERSONNEL_STAFFING_SUMMARY:
+      return <PersonnelStaffingSummaryWidget onRemove={onRemove} isEditMode={isEditMode} width={w} height={h} />;
+    case WidgetType.UNITS_SUMMARY:
+      return <UnitsSummaryWidget onRemove={onRemove} isEditMode={isEditMode} width={w} height={h} />;
+    case WidgetType.CALLS_SUMMARY:
+      return <CallsSummaryWidget onRemove={onRemove} isEditMode={isEditMode} width={w} height={h} />;
     default:
       return null;
   }
