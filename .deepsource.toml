@@ -4,10 +4,5 @@ version = 1
 name = "javascript"
 enabled = true
 
-[analyzers.meta]
-environment = ["browser"]
-plugins = ["angular"]
-
-[[transformers]]
-name = "prettier"
-enabled = true
+  [analyzers.meta]
+  plugins = ["react"]

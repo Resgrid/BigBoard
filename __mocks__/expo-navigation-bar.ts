@@ -1,0 +1,10 @@
+export const setVisibilityAsync = jest.fn().mockResolvedValue(undefined);
+export const getVisibilityAsync = jest.fn().mockResolvedValue('visible');
+export const setBackgroundColorAsync = jest.fn().mockResolvedValue(undefined);
+export const getBackgroundColorAsync = jest.fn().mockResolvedValue('#000000');
+export const setBehaviorAsync = jest.fn().mockResolvedValue(undefined);
+export const getBehaviorAsync = jest.fn().mockResolvedValue('overlay-swipe');
+export const setButtonStyleAsync = jest.fn().mockResolvedValue(undefined);
+export const getButtonStyleAsync = jest.fn().mockResolvedValue('light');
+export const setPositionAsync = jest.fn().mockResolvedValue(undefined);
+export const getPositionAsync = jest.fn().mockResolvedValue('bottom');
