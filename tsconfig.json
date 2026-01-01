@@ -1,36 +1,33 @@
-/* To learn more about this file see: https://angular.io/config/tsconfig. */
 {
-  "compileOnSave": false,
+  "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "baseUrl": "./",
-    "outDir": "./dist/out-tsc",
-    "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "noImplicitOverride": true,
-    "noPropertyAccessFromIndexSignature": false,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "sourceMap": true,
-    "declaration": false,
-    "downlevelIteration": true,
-    "noImplicitAny": false,
+    "allowSyntheticDefaultImports": true,
+    "types": ["jest"],
     "experimentalDecorators": true,
-    "suppressImplicitAnyIndexErrors": true,
-    "strictPropertyInitialization": false,
-    "moduleResolution": "node",
-    "importHelpers": true,
-    "target": "es2015",
-    "module": "es2020",
-    "lib": [
-      "es2018", 
-      "dom"
-    ],
-    "useDefineForClassFields": false
+    "jsx": "react-native",
+    "module": "es2015",
+    "sourceMap": true,
+    "target": "esnext",
+    "lib": ["esnext", "dom"],
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@env": ["./src/lib/env.js"],
+      "@assets/*": ["./assets/*"],
+      "tailwind.config": ["./tailwind.config.js"]
+    },
+    "esModuleInterop": true,
+    "checkJs": true,
+    "typeRoots": ["./node_modules/@types", "./types"]
   },
-  "angularCompilerOptions": {
-    "enableI18nLegacyMessageIdFormat": false,
-    "strictInjectionParameters": true,
-    "strictInputAccessModifiers": true,
-    "strictTemplates": true
-  }
+  "ts-node": {
+    "compilerOptions": {
+      "module": "commonjs"
+    }
+  },
+  "exclude": ["docs", "cli", "android", "lib", "ios", "node_modules", "storybookDocsComponents"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts", "nativewind-env.d.ts", "__mocks__/**/*.ts", "app.config.ts", "jest-setup.ts", "jest-platform-setup.ts", "__tests__/**/*.ts", "__tests__/**/*.tsx", "types/**/*.ts"]
 }
