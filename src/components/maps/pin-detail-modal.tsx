@@ -2,8 +2,8 @@ import { useRouter } from 'expo-router';
 import { MapPinIcon, PhoneIcon, RouteIcon, XIcon } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
 import React from 'react';
-import { Platform } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { Platform } from 'react-native';
 
 import { CustomBottomSheet } from '@/components/ui/bottom-sheet';
 import { Box } from '@/components/ui/box';

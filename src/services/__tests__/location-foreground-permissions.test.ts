@@ -186,7 +186,7 @@ describe('LocationService - Foreground-Only Permissions', () => {
     mockTaskManager.isTaskRegisteredAsync.mockResolvedValue(false);
 
     // Setup storage mock
-    mockLoadBackgroundGeolocationState.mockResolvedValue(false);
+    mockLoadBackgroundGeolocationState.mockResolvedValue({ isEnabled: false, lastPosition: null });
 
     // Setup API mock
     mockSetUnitLocation.mockResolvedValue(mockApiResponse);
@@ -256,7 +256,7 @@ describe('LocationService - Foreground-Only Permissions', () => {
 
     it('should work with background setting enabled but permissions denied', async () => {
       // User has background geolocation enabled in settings but system permissions denied
-      mockLoadBackgroundGeolocationState.mockResolvedValue(true);
+      mockLoadBackgroundGeolocationState.mockResolvedValue({ isEnabled: true, lastPosition: null });
       
       await locationService.startLocationUpdates();
       
@@ -380,7 +380,7 @@ describe('LocationService - Foreground-Only Permissions', () => {
 
   describe('Background Task Management', () => {
     it('should not register background task when background permissions denied', async () => {
-      mockLoadBackgroundGeolocationState.mockResolvedValue(true); // Setting enabled
+      mockLoadBackgroundGeolocationState.mockResolvedValue({ isEnabled: true, lastPosition: null }); // Setting enabled
       
       await locationService.startLocationUpdates();
       
@@ -390,7 +390,7 @@ describe('LocationService - Foreground-Only Permissions', () => {
 
     it('should register background task when both setting and permissions are enabled', async () => {
       // Enable background in settings
-      mockLoadBackgroundGeolocationState.mockResolvedValue(true);
+      mockLoadBackgroundGeolocationState.mockResolvedValue({ isEnabled: true, lastPosition: null });
       
       // Grant background permissions
       mockLocation.getBackgroundPermissionsAsync.mockResolvedValue({

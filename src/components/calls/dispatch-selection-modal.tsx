@@ -27,7 +27,7 @@ export const DispatchSelectionModal: React.FC<DispatchSelectionModalProps> = ({ 
   const { data, selection, isLoading, error, searchQuery, fetchDispatchData, setSelection, toggleEveryone, toggleUser, toggleGroup, toggleRole, toggleUnit, setSearchQuery, clearSelection, getFilteredData } =
     useDispatchStore();
 
-  const filteredData = useMemo(() => getFilteredData(), [data, searchQuery]);
+  const filteredData = useMemo(() => getFilteredData(), [getFilteredData]);
 
   useEffect(() => {
     if (isVisible) {

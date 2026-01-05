@@ -177,7 +177,7 @@ describe('LocationService', () => {
     mockTaskManager.isTaskRegisteredAsync.mockResolvedValue(false);
 
     // Setup storage mock
-    mockLoadBackgroundGeolocationState.mockResolvedValue(false);
+    mockLoadBackgroundGeolocationState.mockResolvedValue({ isEnabled: false, lastPosition: null });
 
     // Setup API mock
     mockSetUnitLocation.mockResolvedValue(mockApiResponse);
@@ -320,7 +320,7 @@ describe('LocationService', () => {
     });
 
     it('should warn when background geolocation is enabled but permissions denied', async () => {
-      mockLoadBackgroundGeolocationState.mockResolvedValue(true);
+      mockLoadBackgroundGeolocationState.mockResolvedValue({ isEnabled: true, lastPosition: null });
       mockLocation.getBackgroundPermissionsAsync.mockResolvedValue({
         status: 'denied' as any,
         expires: 'never',
@@ -351,7 +351,7 @@ describe('LocationService', () => {
     });
 
     it('should register background task if background geolocation is enabled and permissions granted', async () => {
-      mockLoadBackgroundGeolocationState.mockResolvedValue(true);
+      mockLoadBackgroundGeolocationState.mockResolvedValue({ isEnabled: true, lastPosition: null });
 
       await locationService.startLocationUpdates();
 
@@ -376,7 +376,7 @@ describe('LocationService', () => {
     });
 
     it('should not register background task if background permissions are denied', async () => {
-      mockLoadBackgroundGeolocationState.mockResolvedValue(true);
+      mockLoadBackgroundGeolocationState.mockResolvedValue({ isEnabled: true, lastPosition: null });
       mockLocation.getBackgroundPermissionsAsync.mockResolvedValue({
         status: 'denied' as any,
         expires: 'never',
@@ -390,7 +390,7 @@ describe('LocationService', () => {
     });
 
     it('should not register background task if already registered', async () => {
-      mockLoadBackgroundGeolocationState.mockResolvedValue(true);
+      mockLoadBackgroundGeolocationState.mockResolvedValue({ isEnabled: true, lastPosition: null });
       mockTaskManager.isTaskRegisteredAsync.mockResolvedValue(true);
 
       await locationService.startLocationUpdates();
@@ -714,7 +714,7 @@ describe('LocationService', () => {
     });
 
     it('should start foreground updates and warn about background limitations', async () => {
-      mockLoadBackgroundGeolocationState.mockResolvedValue(true); // User wants background but can't have it
+      mockLoadBackgroundGeolocationState.mockResolvedValue({ isEnabled: true, lastPosition: null }); // User wants background but can't have it
 
       await locationService.startLocationUpdates();
 
@@ -761,7 +761,7 @@ describe('LocationService', () => {
     it('should handle background task registration errors', async () => {
       const error = new Error('Task registration failed');
       mockLocation.startLocationUpdatesAsync.mockRejectedValue(error);
-      mockLoadBackgroundGeolocationState.mockResolvedValue(true);
+      mockLoadBackgroundGeolocationState.mockResolvedValue({ isEnabled: true, lastPosition: null });
 
       await expect(locationService.startLocationUpdates()).rejects.toThrow('Task registration failed');
     });

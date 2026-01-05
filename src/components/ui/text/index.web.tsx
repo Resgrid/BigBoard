@@ -3,7 +3,7 @@ import React from 'react';
 
 import { textStyle } from './styles';
 
-type ITextProps = React.ComponentProps<'span'> & 
+type ITextProps = React.ComponentProps<'span'> &
   VariantProps<typeof textStyle> & {
     numberOfLines?: number;
   };

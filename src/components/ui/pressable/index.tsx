@@ -21,7 +21,7 @@ cssInterop(UIPressable, { className: 'style' });
 type IPressableProps = Omit<React.ComponentProps<typeof UIPressable>, 'context'> & VariantProps<typeof pressableStyle>;
 const Pressable = React.forwardRef<React.ElementRef<typeof UIPressable>, IPressableProps>(({ className, testID, ...props }, ref) => {
   const testProps = Platform.OS === 'web' && testID ? { 'data-testid': testID } : testID ? { testID } : {};
-  
+
   return (
     <UIPressable
       {...testProps}

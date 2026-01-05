@@ -4,7 +4,7 @@ import { Check, CircleX, Eye, MapPin } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, Pressable, ScrollView } from 'react-native';
+import { Alert, Platform, Pressable, ScrollView } from 'react-native';
 
 import { CustomBottomSheet } from '@/components/ui/bottom-sheet';
 import { Text } from '@/components/ui/text';
@@ -25,6 +25,13 @@ export const SidebarCallCard = () => {
     activePriority: state.activePriority,
     setActiveCall: state.setActiveCall,
   }));
+
+  const { callPriorities } = useCallsStore((state) => ({
+    callPriorities: state.callPriorities,
+  }));
+
+  // Find the full priority data from the calls store
+  const priorityData = callPriorities.find((p) => p.Id === activePriority);
 
   const [isBottomSheetOpen, setIsBottomSheetOpen] = React.useState(false);
   const { t } = useTranslation();
@@ -98,8 +105,8 @@ export const SidebarCallCard = () => {
   return (
     <>
       <Pressable onPress={() => setIsBottomSheetOpen(true)} className="w-full" {...(Platform.OS === 'web' ? { 'data-testid': 'call-selection-trigger' } : { testID: 'call-selection-trigger' })}>
-        {activeCall && activePriority ? (
-          <CallCard call={activeCall} priority={activePriority} />
+        {activeCall && priorityData ? (
+          <CallCard call={activeCall} priority={priorityData} />
         ) : (
           <Card className="w-full bg-background-50">
             <Text className="font-medium">{t('calls.no_call_selected')}</Text>

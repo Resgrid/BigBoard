@@ -1,7 +1,7 @@
 import { useColorScheme } from 'nativewind';
 import * as React from 'react';
-import { Platform } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { Platform } from 'react-native';
 
 import { CustomBottomSheet } from '@/components/ui/bottom-sheet';
 import { Spinner } from '@/components/ui/spinner';

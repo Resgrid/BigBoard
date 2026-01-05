@@ -164,7 +164,7 @@ export const useStatusesStore = create<StatusesState>((set) => ({
       if (activeUnit) {
         const refreshPromise = useCoreStore.getState().setActiveUnitWithFetch(activeUnit.UnitId);
         if (refreshPromise && typeof refreshPromise.catch === 'function') {
-          refreshPromise.catch((error) => {
+          refreshPromise.catch((error: Error) => {
             logger.error({
               message: 'Failed to refresh unit data after status save',
               context: { unitId: activeUnit.UnitId, error },

@@ -399,7 +399,7 @@ const LayoutContent = ({ t, insets, isLandscape, coreIsInitialized, rights, pare
         <Drawer isOpen={isOpen} onClose={closeDrawer}>
           <DrawerBackdrop onPress={closeDrawer} />
           <DrawerContent className={`${isLandscape ? 'w-1/3' : 'w-4/5'} bg-white p-0 dark:bg-gray-900`}>
-            <DrawerBody className="m-0 mt-0 mb-0">{coreIsInitialized ? <SideMenu onNavigate={handleNavigate} /> : null}</DrawerBody>
+            <DrawerBody className="m-0">{coreIsInitialized ? <SideMenu onNavigate={handleNavigate} /> : null}</DrawerBody>
             <DrawerFooter className="px-4 pb-4">
               <Button onPress={closeDrawer} className="w-full bg-primary-600">
                 <ButtonText>Close</ButtonText>

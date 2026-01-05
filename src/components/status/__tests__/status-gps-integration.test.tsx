@@ -22,9 +22,16 @@ jest.mock('@/stores/app/location-store', () => ({
   useLocationStore: jest.fn(),
 }));
 
+jest.mock('@/services/offline-event-manager.service', () => ({
+  offlineEventManager: {
+    queueUnitStatusEvent: jest.fn(),
+  },
+}));
+
 const mockUseLocationStore = useLocationStore as jest.MockedFunction<any>;
 const mockUseCoreStore = require('@/stores/app/core-store').useCoreStore as jest.MockedFunction<any>;
 const mockSaveUnitStatus = require('@/api/units/unitStatuses').saveUnitStatus as jest.MockedFunction<any>;
+const mockOfflineEventManager = require('@/services/offline-event-manager.service').offlineEventManager;
 
 describe('Status GPS Integration', () => {
   let mockLocationStore: any;
@@ -61,7 +68,8 @@ describe('Status GPS Integration', () => {
     (mockUseCoreStore as any).getState = jest.fn().mockReturnValue(mockCoreStore);
   });
 
-  describe('GPS Coordinate Integration', () => {lable during successful submission', async () => {
+  describe('GPS Coordinate Integration', () => {
+    it('should include GPS coordinates and metadata in payload during successful submission', async () => {
       const { result } = renderHook(() => useStatusesStore());
 
       // Set up location data
@@ -342,14 +350,41 @@ describe('Status GPS Integration', () => {
       input.Type = '5';
       input.Note = 'Complex status with GPS';
       input.RespondingTo = 'call123';
-      input.Roles = [{
-        Id: '1',
-        EventId: '',
-        UserId: 'user1',
-        RoleId: 'role1',
-        Name: 'Driver',
-      }];
+      input.Roles = [
+        {
+          Id: '1',
+          EventId: '',
+          UserId: 'user1',
+          RoleId: 'role1',
+          Name: 'Driver',
+        },
+      ];
 
       await act(async () => {
+        await result.current.saveUnitStatus(input);
+      });
+
+      expect(mockOfflineEventManager.queueUnitStatusEvent).toHaveBeenCalledWith(
+        'unit1',
+        '5',
+        'Complex status with GPS',
+        'call123',
+        expect.arrayContaining([
+          expect.objectContaining({
+            RoleId: 'role1',
+            UserId: 'user1',
+          }),
+        ]),
+        {
+          latitude: '51.5074',
+          longitude: '-0.1278',
+          accuracy: '8',
+          altitude: '',
+          altitudeAccuracy: '',
+          speed: '30',
+          heading: '',
+        }
+      );
+    });
   });
 });

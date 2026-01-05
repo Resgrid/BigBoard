@@ -4,11 +4,23 @@ import { Platform } from 'react-native';
 import { create } from 'zustand';
 
 import { getConfig } from '@/api/config';
+import { getUnits } from '@/api/units/units';
 import { logger } from '@/lib/logging';
-import { GetConfigResultData } from '@/models/v4/configs/getConfigResultData';
+import { type CallResultData } from '@/models/v4/calls/callResultData';
+import { type GetConfigResultData } from '@/models/v4/configs/getConfigResultData';
+import { type CustomStatusesResult } from '@/models/v4/customStatuses/customStatusesResult';
+import { type UnitInfoResultData } from '@/models/v4/units/unitInfoResultData';
 
 interface CoreState {
   config: GetConfigResultData | null;
+  activeUnitId: string | null;
+  activeUnit: UnitInfoResultData | null;
+  activeUnitStatus: string | null;
+  activeUnitStatusType: string | null;
+  activeStatuses: CustomStatusesResult | null;
+  activeCallId: string | null;
+  activeCall: CallResultData | null;
+  activePriority: number | null;
 
   isLoading: boolean;
   isInitialized: boolean;
@@ -16,15 +28,25 @@ interface CoreState {
   error: string | null;
   init: () => Promise<void>;
   fetchConfig: () => Promise<void>;
+  setActiveUnit: (unitId: string | null) => void;
+  setActiveUnitWithFetch: (unitId: string) => Promise<void>;
+  setActiveCall: (callId: string | null) => void;
 }
 
 export const useCoreStore = create<CoreState>()((set, get) => ({
   config: null,
+  activeUnitId: null,
+  activeUnit: null,
+  activeUnitStatus: null,
+  activeUnitStatusType: null,
+  activeStatuses: null,
+  activeCallId: null,
+  activeCall: null,
+  activePriority: null,
   isLoading: false,
   isInitialized: false,
   isInitializing: false,
   error: null,
-  activeStatuses: null,
   init: async () => {
     const state = get();
 
@@ -121,5 +143,30 @@ export const useCoreStore = create<CoreState>()((set, get) => ({
       });
       throw error; // Re-throw to allow calling code to handle
     }
+  },
+  setActiveUnit: (unitId: string | null) => {
+    set({ activeUnitId: unitId });
+  },
+  setActiveUnitWithFetch: async (unitId: string) => {
+    try {
+      // For now, just set the unit ID without fetching
+      // In the future, implement actual unit fetch
+      set({
+        activeUnitId: unitId,
+      });
+      logger.info({
+        message: 'Active unit set (without fetch)',
+        context: { unitId },
+      });
+    } catch (error) {
+      logger.error({
+        message: `Failed to set active unit ${unitId}`,
+        context: { error },
+      });
+      throw error;
+    }
+  },
+  setActiveCall: (callId: string | null) => {
+    set({ activeCallId: callId });
   },
 }));

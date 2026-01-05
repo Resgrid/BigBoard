@@ -79,7 +79,7 @@ export const WeatherWidget: React.FC<WeatherWidgetProps> = ({ onRemove, isEditMo
         try {
           console.log('WeatherWidget - Requesting location permissions...');
           const { status } = await Location.requestForegroundPermissionsAsync();
-          
+
           if (status !== 'granted') {
             // Try to fetch map data as fallback
             if (!mapData) {
@@ -96,7 +96,7 @@ export const WeatherWidget: React.FC<WeatherWidgetProps> = ({ onRemove, isEditMo
                 }
               }
             }
-            
+
             if (!lat || !lon) {
               setIsLoading(false);
               setError('Location permission denied');
@@ -107,7 +107,7 @@ export const WeatherWidget: React.FC<WeatherWidgetProps> = ({ onRemove, isEditMo
             const location = await Location.getCurrentPositionAsync({
               accuracy: Location.Accuracy.Balanced,
             });
-            
+
             setLocation(location);
             lat = location.coords.latitude;
             lon = location.coords.longitude;
@@ -134,7 +134,7 @@ export const WeatherWidget: React.FC<WeatherWidgetProps> = ({ onRemove, isEditMo
               console.error('WeatherWidget - Error fetching map data:', mapErr);
             }
           }
-          
+
           if (!lat || !lon) {
             setIsLoading(false);
             setError('Unable to get location');
@@ -243,13 +243,13 @@ export const WeatherWidget: React.FC<WeatherWidgetProps> = ({ onRemove, isEditMo
           {/* 5-Day Forecast */}
           <VStack space="xs">
             <Text className={`text-sm font-semibold ${isDark ? 'text-gray-400' : 'text-gray-600'} mb-1`}>5-Day Forecast</Text>
-            
+
             {useHorizontalLayout ? (
               // Horizontal layout for wider screens
               <ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-2 px-2">
                 <HStack space="xs">
                   {weatherData.forecast.map((day, index) => (
-                    <Box key={index} className={`rounded-lg p-2 w-20 ${isDark ? 'bg-gray-800' : 'bg-gray-100'}`}>
+                    <Box key={index} className={`w-20 rounded-lg p-2 ${isDark ? 'bg-gray-800' : 'bg-gray-100'}`}>
                       <VStack space="xs" className="items-center">
                         <Text className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-gray-900'} text-center`}>{day.dayName}</Text>
                         {getWeatherIcon(day.condition, 32)}
@@ -257,7 +257,9 @@ export const WeatherWidget: React.FC<WeatherWidgetProps> = ({ onRemove, isEditMo
                           <Text className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>{day.tempHigh}°</Text>
                           <Text className={`text-sm font-semibold ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{day.tempLow}°</Text>
                         </VStack>
-                        <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'} text-center`} numberOfLines={2}>{day.condition}</Text>
+                        <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'} text-center`} numberOfLines={2}>
+                          {day.condition}
+                        </Text>
                       </VStack>
                     </Box>
                   ))}

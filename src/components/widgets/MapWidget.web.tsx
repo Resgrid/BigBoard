@@ -149,4 +149,3 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ onRemove, isEditMode, widt
     </WidgetContainer>
   );
 };
-      

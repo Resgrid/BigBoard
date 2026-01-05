@@ -269,7 +269,7 @@ type IActionsheetIconProps = VariantProps<typeof actionsheetIconStyle> &
 
 const Actionsheet = React.forwardRef<React.ElementRef<typeof UIActionsheet>, IActionsheetProps>(({ className, testID, ...props }, ref) => {
   const testProps = Platform.OS === 'web' && testID ? { 'data-testid': testID } : testID ? { testID } : {};
-  
+
   return (
     <UIActionsheet
       className={actionsheetStyle({
@@ -296,7 +296,7 @@ const ActionsheetContent = React.forwardRef<React.ElementRef<typeof UIActionshee
 
 const ActionsheetItem = React.forwardRef<React.ElementRef<typeof UIActionsheet.Item>, IActionsheetItemProps>(({ className, testID, ...props }, ref) => {
   const testProps = Platform.OS === 'web' && testID ? { 'data-testid': testID } : testID ? { testID } : {};
-  
+
   return (
     <UIActionsheet.Item
       className={actionsheetItemStyle({

@@ -54,7 +54,7 @@ export const usePersonnelStore = create<PersonnelState>((set, get) => ({
       set({ isLoading: true, error: null });
       const { selectedFilters } = get();
       const filterString = selectedFilters.length > 0 ? selectedFilters.join(',') : '';
-      const response = (await getAllPersonnelInfos(filterString)) as ApiResponse<PersonnelInfoResultData[]>;
+      const response = await getAllPersonnelInfos(filterString);
       set({ personnel: response.Data || [], isLoading: false });
     } catch (error) {
       set({

@@ -60,7 +60,7 @@ describe('TabLayout - Auth Guard Integration', () => {
 
   it('should redirect to maintenance page when maintenance mode is enabled', () => {
     (Env as any).MAINTENANCE_MODE = true;
-    (useAuthStore as jest.Mock).mockReturnValue({
+    (useAuthStore as unknown as jest.Mock).mockReturnValue({
       status: 'signedIn',
       userId: 'test-user',
     });
@@ -75,7 +75,7 @@ describe('TabLayout - Auth Guard Integration', () => {
     const { useIsFirstTime } = require('@/lib/storage');
     useIsFirstTime.mockReturnValue([true, jest.fn()]);
 
-    (useAuthStore as jest.Mock).mockReturnValue({
+    (useAuthStore as unknown as jest.Mock).mockReturnValue({
       status: 'signedOut',
       userId: null,
     });
@@ -90,7 +90,7 @@ describe('TabLayout - Auth Guard Integration', () => {
     const { useIsFirstTime } = require('@/lib/storage');
     useIsFirstTime.mockReturnValue([false, jest.fn()]);
 
-    (useAuthStore as jest.Mock).mockReturnValue({
+    (useAuthStore as unknown as jest.Mock).mockReturnValue({
       status: 'signedOut',
       userId: null,
     });
@@ -105,7 +105,7 @@ describe('TabLayout - Auth Guard Integration', () => {
     const { useIsFirstTime } = require('@/lib/storage');
     useIsFirstTime.mockReturnValue([false, jest.fn()]);
 
-    (useAuthStore as jest.Mock).mockReturnValue({
+    (useAuthStore as unknown as jest.Mock).mockReturnValue({
       status: 'signedIn',
       userId: 'test-user',
     });
@@ -120,7 +120,7 @@ describe('TabLayout - Auth Guard Integration', () => {
     const { useIsFirstTime } = require('@/lib/storage');
     useIsFirstTime.mockReturnValue([false, jest.fn()]);
 
-    (useAuthStore as jest.Mock).mockReturnValue({
+    (useAuthStore as unknown as jest.Mock).mockReturnValue({
       status: 'signedIn',
       userId: 'test-user',
     });

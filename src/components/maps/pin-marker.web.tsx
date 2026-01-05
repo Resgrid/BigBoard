@@ -17,15 +17,17 @@ const PinMarker: React.FC<PinMarkerProps> = ({ imagePath, title, size = 32, onPr
   // Remove any path separators and file extensions
   let iconName = 'call';
   if (imagePath) {
-    iconName = imagePath
-      .toLowerCase()
-      .replace(/\\/g, '/') // normalize path separators
-      .split('/').pop() || 'call'; // get filename only
+    iconName =
+      imagePath
+        .toLowerCase()
+        .replace(/\\/g, '/') // normalize path separators
+        .split('/')
+        .pop() || 'call'; // get filename only
     iconName = iconName.replace(/\.png$/i, ''); // remove .png extension if present
   }
-  
+
   const icon = MAP_ICONS[iconName as keyof typeof MAP_ICONS] || MAP_ICONS['call'];
-  
+
   // On web, the uri can be an object with nested uri property or a string
   let iconUrl: string;
   if (typeof icon?.uri === 'string') {

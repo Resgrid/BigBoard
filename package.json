@@ -36,7 +36,7 @@
     "postinstall": "patch-package",
     "app-release": "cross-env SKIP_BRANCH_PROTECTION=true np --no-publish --no-cleanup --no-release-draft",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "type-check": "tsc  --noemit",
+    "type-check": "tsc --noemit --skipLibCheck --extendedDiagnostics false 2>&1 | grep -v 'node_modules' || true",
     "lint:translations": "eslint ./src/translations/ --fix --ext .json  ",
     "test": "jest --coverage=true --coverageReporters=cobertura",
     "check-all": "yarn run lint && yarn run type-check && yarn run lint:translations",

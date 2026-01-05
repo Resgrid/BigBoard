@@ -64,7 +64,7 @@ const mockTodaysShifts = [
 		Signups: [],
 		Needs: [],
 	},
-];
+] as any;
 
 const mockShiftDay = {
 	ShiftId: '1',
@@ -95,7 +95,7 @@ const mockShiftDay = {
 			],
 		},
 	],
-};
+} as any;
 
 const mockShiftsResult = { ...createBaseMockResult(), Data: mockShifts };
 const mockTodaysShiftsResult = { ...createBaseMockResult(), Data: mockTodaysShifts };

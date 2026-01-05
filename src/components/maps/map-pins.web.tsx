@@ -30,7 +30,7 @@ const MapPins: React.FC<MapPinsProps> = ({ map, pins, onPinPress, isMapReady }) 
     pins.forEach((pin) => {
       // Create a container div for the React component
       const markerElement = document.createElement('div');
-      
+
       // Create a React root and render the PinMarker component
       const root = createRoot(markerElement);
       root.render(<PinMarker imagePath={pin.ImagePath as MapIconKey} title={pin.Title} size={32} onPress={() => onPinPress?.(pin)} />);

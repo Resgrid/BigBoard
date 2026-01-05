@@ -6,6 +6,8 @@ import { ScrollView, TouchableOpacity } from 'react-native';
 
 import { invertColor } from '@/lib/utils';
 import { type CustomStatusResultData } from '@/models/v4/customStatuses/customStatusResultData';
+import { SaveUnitStatusInput, SaveUnitStatusRoleInput } from '@/models/v4/unitStatus/saveUnitStatusInput';
+import { useCoreStore } from '@/stores/app/core-store';
 import { useLocationStore } from '@/stores/app/location-store';
 import { useRolesStore } from '@/stores/roles/store';
 import { useStatusBottomSheetStore, useStatusesStore } from '@/stores/status/store';
@@ -146,8 +148,8 @@ export const StatusBottomSheet = () => {
   };
 
   const handleStatusSelect = (statusId: string) => {
-    if (activeStatuses?.Statuses) {
-      const status = activeStatuses.Statuses.find((s) => s.Id.toString() === statusId);
+    if (activeStatuses?.Data) {
+      const status = activeStatuses.Data.find((s: CustomStatusResultData) => s.Id.toString() === statusId);
       if (status) {
         setSelectedStatus(status);
       }
@@ -362,9 +364,9 @@ export const StatusBottomSheet = () => {
       } else {
         // Conservative estimate when no status is selected yet
         // Look at available statuses to determine potential steps
-        if (activeStatuses?.Statuses && activeStatuses.Statuses.length > 0) {
-          const hasAnyDestination = activeStatuses.Statuses.some((s) => s.Detail > 0);
-          const hasAnyNote = activeStatuses.Statuses.some((s) => s.Note > 0);
+        if (activeStatuses?.Data && activeStatuses.Data.length > 0) {
+          const hasAnyDestination = activeStatuses.Data.some((s: CustomStatusResultData) => s.Detail > 0);
+          const hasAnyNote = activeStatuses.Data.some((s: CustomStatusResultData) => s.Note > 0);
 
           if (hasAnyDestination) totalSteps++;
           if (hasAnyNote) totalSteps++;
@@ -458,8 +460,8 @@ export const StatusBottomSheet = () => {
 
               <ScrollView className="max-h-[400px]">
                 <VStack space="sm">
-                  {activeStatuses?.Statuses && activeStatuses.Statuses.length > 0 ? (
-                    activeStatuses.Statuses.map((status) => (
+                  {activeStatuses?.Data && activeStatuses.Data.length > 0 ? (
+                    activeStatuses.Data.map((status: CustomStatusResultData) => (
                       <TouchableOpacity
                         key={status.Id}
                         onPress={() => handleStatusSelect(status.Id.toString())}

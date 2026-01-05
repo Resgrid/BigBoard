@@ -448,18 +448,33 @@
       "message": "Por favor, comprueba tu nombre de usuario y contraseña e inténtalo de nuevo.",
       "title": "Inicio de sesión fallido"
     },
+    "footer_text": "Creado con ❤️ en Lake Tahoe",
     "login": "Iniciar sesión",
     "login_button": "Iniciar sesión",
     "login_button_description": "Inicia sesión en tu cuenta para continuar",
     "login_button_error": "Error al iniciar sesión",
     "login_button_loading": "Iniciando sesión...",
     "login_button_success": "Sesión iniciada con éxito",
+    "no_account": "¿No tienes una cuenta?",
+    "page_subtitle": "Introduce la información a continuación para iniciar sesión en la aplicación Resgrid Dispatch.",
+    "page_title": "Resgrid Dispatch",
     "password": "Contraseña",
     "password_incorrect": "La contraseña era incorrecta",
     "password_placeholder": "Introduce tu contraseña",
+    "register": "Registrarse",
     "title": "Iniciar sesión",
     "username": "Nombre de usuario",
     "username_placeholder": "Introduce tu nombre de usuario"
+  },
+  "maintenance": {
+    "downtime_message": "Estamos trabajando arduamente para completar el mantenimiento lo antes posible. Por favor, vuelve a consultar pronto.",
+    "downtime_title": "¿Cuál es el tiempo de inactividad?",
+    "message": "Por favor, vuelve a consultar en algún momento.",
+    "support_message": "Si necesitas asistencia, por favor contáctanos en",
+    "support_title": "¿Necesitas soporte?",
+    "title": "Sitio bajo mantenimiento",
+    "why_down_message": "Estamos realizando actualizaciones planificadas para mejorar el rendimiento y la seguridad del sistema.",
+    "why_down_title": "¿Por qué está inactivo?"
   },
   "map": {
     "call_set_as_current": "Llamada establecida como llamada actual",
@@ -634,8 +649,8 @@
     "status_saved_successfully": "¡Estado guardado exitosamente!"
   },
   "tabs": {
-    "calls": "Llamadas",
     "calendar": "Calendario",
+    "calls": "Llamadas",
     "contacts": "Contactos",
     "home": "Inicio",
     "map": "Mapa",

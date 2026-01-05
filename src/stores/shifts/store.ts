@@ -11,7 +11,7 @@ export type ShiftViewMode = 'today' | 'all';
 interface ShiftsState {
   // Data
   shifts: ShiftResultData[];
-  todaysShiftDays: ShiftDaysResultData[];
+  todaysShiftDays: ShiftResultData[];
   selectedShift: ShiftResultData | null;
   selectedShiftDay: ShiftDaysResultData | null;
   selectedShiftDays: ShiftDaysResultData[];
@@ -105,11 +105,11 @@ export const useShiftsStore = create<ShiftsState>((set, get) => ({
     try {
       await Promise.all([
         getAllShifts().then((response) => {
-          const typedResponse = response as ApiResponse<ShiftResultData[]>;
+          const typedResponse = response;
           set((state) => ({ ...state, shifts: typedResponse.Data }));
         }),
         getTodaysShifts().then((response) => {
-          const typedResponse = response as ApiResponse<ShiftDaysResultData[]>;
+          const typedResponse = response;
           set((state) => ({ ...state, todaysShiftDays: typedResponse.Data }));
         }),
       ]);
@@ -155,7 +155,7 @@ export const useShiftsStore = create<ShiftsState>((set, get) => ({
   fetchTodaysShifts: async () => {
     set({ isTodaysLoading: true, error: null });
     try {
-      const response = (await getTodaysShifts()) as ApiResponse<ShiftDaysResultData[]>;
+      const response = await getTodaysShifts();
       set({
         todaysShiftDays: response.Data,
         isTodaysLoading: false,
@@ -175,7 +175,7 @@ export const useShiftsStore = create<ShiftsState>((set, get) => ({
   fetchShift: async (shiftId: string) => {
     set({ isShiftLoading: true, error: null });
     try {
-      const response = (await getShift(shiftId)) as ApiResponse<ShiftResultData>;
+      const response = await getShift(shiftId);
       set({
         selectedShift: response.Data,
         isShiftLoading: false,
@@ -195,7 +195,7 @@ export const useShiftsStore = create<ShiftsState>((set, get) => ({
   fetchShiftDay: async (shiftDayId: string) => {
     set({ isShiftDayLoading: true, error: null });
     try {
-      const response = (await getShiftDay(shiftDayId)) as ApiResponse<ShiftDaysResultData>;
+      const response = await getShiftDay(shiftDayId);
       set({
         selectedShiftDay: response.Data,
         isShiftDayLoading: false,
