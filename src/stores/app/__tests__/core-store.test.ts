@@ -60,12 +60,9 @@ jest.mock('@/lib/storage', () => ({
 
 // Import after mocks
 import { useCoreStore } from '../core-store';
-import { getActiveUnitId, getActiveCallId } from '@/lib/storage/app';
 import { getConfig } from '@/api/config';
 import { GetConfigResultData } from '@/models/v4/configs/getConfigResultData';
 
-const mockGetActiveUnitId = getActiveUnitId as jest.MockedFunction<typeof getActiveUnitId>;
-const mockGetActiveCallId = getActiveCallId as jest.MockedFunction<typeof getActiveCallId>;
 const mockGetConfig = getConfig as jest.MockedFunction<typeof getConfig>;
 
 describe('Core Store', () => {
@@ -93,8 +90,6 @@ describe('Core Store', () => {
 
   describe('Initialization', () => {
     it('should prevent multiple simultaneous initializations', async () => {
-      mockGetActiveUnitId.mockReturnValue(null);
-      mockGetActiveCallId.mockReturnValue(null);
       mockGetConfig.mockResolvedValue({
         Data: {
           EventingUrl: 'https://eventing.example.com/',
@@ -125,8 +120,6 @@ describe('Core Store', () => {
     });
 
     it('should skip initialization if already initialized', async () => {
-      mockGetActiveUnitId.mockReturnValue(null);
-      mockGetActiveCallId.mockReturnValue(null);
       mockGetConfig.mockResolvedValue({
         Data: {
           EventingUrl: 'https://eventing.example.com/',
@@ -156,8 +149,6 @@ describe('Core Store', () => {
     });
 
     it('should handle initialization with no active unit or call', async () => {
-      mockGetActiveUnitId.mockReturnValue(null);
-      mockGetActiveCallId.mockReturnValue(null);
       mockGetConfig.mockResolvedValue({
         Data: {
           EventingUrl: 'https://eventing.example.com/',
@@ -180,8 +171,6 @@ describe('Core Store', () => {
     });
 
     it('should fetch config first during initialization', async () => {
-      mockGetActiveUnitId.mockReturnValue(null);
-      mockGetActiveCallId.mockReturnValue(null);
       
       const mockConfigData = {
         EventingUrl: 'https://eventing.example.com/',
@@ -206,8 +195,6 @@ describe('Core Store', () => {
     });
 
     it('should handle config fetch errors during initialization', async () => {
-      mockGetActiveUnitId.mockReturnValue(null);
-      mockGetActiveCallId.mockReturnValue(null);
       
       const configError = new Error('Failed to fetch config');
       mockGetConfig.mockRejectedValue(configError);

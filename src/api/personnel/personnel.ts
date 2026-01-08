@@ -33,7 +33,9 @@ export const getAllPersonnelInfos = async (filter: string) => {
   return response.data;
 };
 
-export const getUnitsFilterOptions = async () => {
+export const getPersonnelFilterOptions = async () => {
   const response = await ugetPersonnelFilterOptionsApi.get<GetPersonnelFilterOptionsResult>();
   return response.data;
 };
+
+export const getUnitsFilterOptions = getPersonnelFilterOptions;

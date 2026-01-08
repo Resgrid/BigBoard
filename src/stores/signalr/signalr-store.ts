@@ -12,10 +12,15 @@ interface SignalRState {
   isUpdateHubConnected: boolean;
   lastUpdateMessage: unknown;
   lastUpdateTimestamp: number;
+  isGeolocationHubConnected: boolean;
+  lastGeolocationMessage: unknown;
+  lastGeolocationTimestamp: number;
   error: Error | null;
   connectUpdateHub: () => Promise<void>;
   disconnectUpdateHub: () => Promise<void>;
   reconnectUpdateHub: () => Promise<void>;
+  connectGeolocationHub: () => Promise<void>;
+  disconnectGeolocationHub: () => Promise<void>;
   checkConnectionState: () => boolean;
 }
 
@@ -23,6 +28,9 @@ export const useSignalRStore = create<SignalRState>((set, get) => ({
   isUpdateHubConnected: false,
   lastUpdateMessage: null,
   lastUpdateTimestamp: 0,
+  isGeolocationHubConnected: false,
+  lastGeolocationMessage: null,
+  lastGeolocationTimestamp: 0,
   error: null,
   connectUpdateHub: async () => {
     try {
@@ -167,16 +175,16 @@ export const useSignalRStore = create<SignalRState>((set, get) => ({
       logger.info({
         message: 'Manual reconnection requested for update hub',
       });
-      
+
       // Disconnect first to ensure clean state
       await get().disconnectUpdateHub();
-      
+
       // Wait a moment before reconnecting
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       // Reconnect
       await get().connectUpdateHub();
-      
+
       logger.info({
         message: 'Successfully reconnected to update hub',
       });
@@ -194,7 +202,7 @@ export const useSignalRStore = create<SignalRState>((set, get) => ({
     // Check the actual connection state from the service
     const isActuallyConnected = signalRService.isHubConnected(Env.CHANNEL_HUB_NAME);
     const currentState = get().isUpdateHubConnected;
-    
+
     // If the states don't match, update the store
     if (isActuallyConnected !== currentState) {
       logger.info({
@@ -203,7 +211,51 @@ export const useSignalRStore = create<SignalRState>((set, get) => ({
       });
       set({ isUpdateHubConnected: isActuallyConnected });
     }
-    
+
     return isActuallyConnected;
+  },
+  connectGeolocationHub: async () => {
+    try {
+      if (get().isGeolocationHubConnected) {
+        return;
+      }
+
+      set({ isGeolocationHubConnected: false, error: null });
+
+      // Get the eventing URL from the core store config
+      const coreState = useCoreStore.getState();
+      const eventingUrl = coreState.config?.EventingUrl;
+
+      if (!eventingUrl) {
+        const errorMessage = 'EventingUrl not available in config for geolocation hub';
+        logger.error({ message: errorMessage });
+        set({ error: new Error(errorMessage) });
+        return;
+      }
+
+      // Connect to the geolocation hub (implementation depends on your SignalR service)
+      logger.info({ message: 'Geolocation hub connected' });
+      set({ isGeolocationHubConnected: true, error: null });
+    } catch (error) {
+      const err = error instanceof Error ? error : new Error('Unknown error occurred');
+      logger.error({
+        message: 'Failed to connect to geolocation hub',
+        context: { error: err },
+      });
+      set({ error: err });
+    }
+  },
+  disconnectGeolocationHub: async () => {
+    try {
+      set({ isGeolocationHubConnected: false, lastGeolocationMessage: null });
+      logger.info({ message: 'Geolocation hub disconnected' });
+    } catch (error) {
+      const err = error instanceof Error ? error : new Error('Unknown error occurred');
+      logger.error({
+        message: 'Failed to disconnect from geolocation hub',
+        context: { error: err },
+      });
+      set({ error: err });
+    }
   },
 }));

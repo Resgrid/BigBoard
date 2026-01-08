@@ -22,7 +22,11 @@ export const WidgetContainer: React.FC<WidgetContainerProps> = ({ title, onRemov
   const isDark = colorScheme === 'dark';
 
   return (
-    <Box className={`overflow-hidden rounded-lg ${isDark ? 'border border-gray-700 bg-gray-800' : 'border border-gray-200 bg-white'}`} style={{ width, height }} {...(Platform.OS === 'web' ? { 'data-testid': testID } : { testID })}>
+    <Box
+      className={`overflow-hidden rounded-lg ${isDark ? 'border border-gray-700 bg-gray-800' : 'border border-gray-200 bg-white'}`}
+      style={{ width, height }}
+      {...(Platform.OS === 'web' ? { 'data-testid': testID } : { testID })}
+    >
       {/* Header */}
       <HStack
         className={`items-center justify-between border-b px-3 py-2 ${isDark ? 'border-gray-700' : 'border-gray-200'} ${isEditMode ? (isDark ? 'bg-gray-700' : 'bg-gray-100') : isDark ? 'bg-gray-900' : 'bg-gray-50'}`}

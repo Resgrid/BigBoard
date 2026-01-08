@@ -104,7 +104,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
       }
 
       // Fetch user info, status, and staffing in parallel
-      const [userInfo] = await Promise.all([getPersonnelInfo(userId) as Promise<ApiResponse<PersonnelInfoResultData>>]);
+      const [userInfo] = await Promise.all([getPersonnelInfo(userId)]);
 
       set({
         currentUser: userInfo.Data,
@@ -122,10 +122,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
   fetchStatusOptions: async () => {
     set({ isLoadingOptions: true, error: null });
     try {
-      const [statusesResponse, staffingsResponse] = await Promise.all([
-        getAllPersonnelStatuses() as Promise<ApiResponse<StatusesResultData[]>>,
-        getAllPersonnelStaffings() as Promise<ApiResponse<StatusesResultData[]>>,
-      ]);
+      const [statusesResponse, staffingsResponse] = await Promise.all([getAllPersonnelStatuses(), getAllPersonnelStaffings()]);
 
       set({
         availableStatuses: statusesResponse.Data || [],

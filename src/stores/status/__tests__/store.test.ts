@@ -238,7 +238,7 @@ describe('StatusesStore', () => {
     const { result } = renderHook(() => useStatusesStore());
 
     mockSaveUnitStatus.mockRejectedValue(new Error('Network error'));
-    mockOfflineEventManager.queueUnitStatusEvent.mockReturnValue('queued-event-id');
+    mockOfflineEventManager.queueUnitStatusEvent.mockResolvedValue(undefined);
     mockUseCoreStore.mockReturnValue({
       activeUnit: { UnitId: 'unit1' },
       setActiveUnitWithFetch: jest.fn(),
@@ -305,7 +305,7 @@ describe('StatusesStore', () => {
     const { result } = renderHook(() => useStatusesStore());
 
     mockSaveUnitStatus.mockRejectedValue(new Error('Network error'));
-    mockOfflineEventManager.queueUnitStatusEvent.mockReturnValue('queued-event-id');
+    mockOfflineEventManager.queueUnitStatusEvent.mockResolvedValue(undefined);
     mockUseCoreStore.mockReturnValue({
       activeUnit: { UnitId: 'unit1' },
       setActiveUnitWithFetch: jest.fn(),

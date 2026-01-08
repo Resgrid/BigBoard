@@ -23,4 +23,9 @@ export class UnitInfoResultData {
   public Longitude: string = '';
   public Note: string = '';
   public Roles: UnitRoleData[] = [];
+
+  // State property based on TypeId (0=Available, 2=Responding, 3=EnRoute, 4=OnScene)
+  public get State(): number {
+    return this.TypeId;
+  }
 }

@@ -248,23 +248,23 @@ export default function Map() {
 
   // Fetch map data when conditions are met
   useEffect(() => {
-    console.log('🔄 Map data fetch useEffect triggered', { 
-      isMapReady, 
-      isAuthenticated, 
-      isInitialized, 
+    console.log('🔄 Map data fetch useEffect triggered', {
+      isMapReady,
+      isAuthenticated,
+      isInitialized,
       isActive,
       hasUserMovedMap,
-      isMapLocked: location.isMapLocked
+      isMapLocked: location.isMapLocked,
     });
     logger.debug({
       message: 'Map data fetch useEffect triggered',
-      context: { 
-        isMapReady, 
-        isAuthenticated, 
-        isInitialized, 
+      context: {
+        isMapReady,
+        isAuthenticated,
+        isInitialized,
         isActive,
         hasUserMovedMap,
-        isMapLocked: location.isMapLocked
+        isMapLocked: location.isMapLocked,
       },
     });
 

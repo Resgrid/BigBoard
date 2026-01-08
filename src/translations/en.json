@@ -649,8 +649,8 @@
     "status_saved_successfully": "Status saved successfully!"
   },
   "tabs": {
-    "calls": "Calls",
     "calendar": "Calendar",
+    "calls": "Calls",
     "contacts": "Contacts",
     "home": "Home",
     "map": "Map",

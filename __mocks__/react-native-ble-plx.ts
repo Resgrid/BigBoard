@@ -47,8 +47,6 @@ export class BleManager {
   private static mockDevices: Device[] = [];
   private static stateListener: ((state: State) => void) | null = null;
 
-  constructor() {}
-
   static setMockState(state: State) {
     this.mockState = state;
     if (this.stateListener) {

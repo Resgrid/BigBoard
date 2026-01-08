@@ -51,13 +51,7 @@ export const Loading: React.FC<LoadingProps> = ({ text, fullscreen = false, size
         return (
           <HStack space="sm" className="items-center">
             {[1, 2, 3].map((i) => (
-              <Box
-                key={i}
-                className={`bg-primary rounded-full ${size === 'small' ? 'size-2' : size === 'large' ? 'size-3' : 'size-4'} animate-pulse`}
-                style={{
-                  animationDelay: `${i * 0.15}s`,
-                }}
-              />
+              <Box key={i} className={`bg-primary rounded-full ${size === 'small' ? 'size-2' : size === 'large' ? 'size-3' : 'size-4'} animate-pulse`} />
             ))}
           </HStack>
         );

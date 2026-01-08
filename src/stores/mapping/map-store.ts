@@ -7,7 +7,7 @@ interface MapState {
   mapData: MapDataAndMarkersData | null;
   isLoading: boolean;
   error: string | null;
-  
+
   // Actions
   fetchMapData: () => Promise<void>;
   setMapData: (data: MapDataAndMarkersData) => void;

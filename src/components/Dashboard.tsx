@@ -209,7 +209,7 @@ export const Dashboard: React.FC = () => {
 
   const handleReorder = (draggedWidget: Widget, newPosition: { x: number; y: number }) => {
     const currentPosition = gridPositions.get(draggedWidget.id);
-    
+
     // Only update if position actually changed
     if (!currentPosition || currentPosition.x !== newPosition.x || currentPosition.y !== newPosition.y) {
       const w = Math.min(draggedWidget.w || 1, NUM_COLUMNS);

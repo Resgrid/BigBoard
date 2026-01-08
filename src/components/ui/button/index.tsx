@@ -247,7 +247,7 @@ type IButtonProps = Omit<React.ComponentPropsWithoutRef<typeof UIButton>, 'conte
 
 const Button = React.forwardRef<React.ComponentRef<typeof UIButton>, IButtonProps>(function Button({ className, variant = 'solid', size = 'md', action = 'primary', testID, ...props }, ref) {
   const testProps = Platform.OS === 'web' && testID ? { 'data-testid': testID } : testID ? { testID } : {};
-  
+
   return <UIButton ref={ref} {...testProps} {...props} className={buttonStyle({ variant, size, action, class: className })} context={{ variant, size, action }} />;
 });
 

@@ -8,7 +8,7 @@ type IHStackProps = ViewProps & VariantProps<typeof hstackStyle>;
 
 const HStack = React.forwardRef<React.ElementRef<typeof View>, IHStackProps>(({ className, space, reversed, testID, ...props }, ref) => {
   const testProps = Platform.OS === 'web' && testID ? { 'data-testid': testID } : testID ? { testID } : {};
-  
+
   return <View className={hstackStyle({ space, reversed, class: className })} {...testProps} {...props} ref={ref} />;
 });
 

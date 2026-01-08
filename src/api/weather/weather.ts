@@ -80,11 +80,11 @@ export const getWeatherOutlook = async (apiKey: string, lat: number, lon: number
 
     // Process forecast - group by day and get daily highs/lows
     const dailyForecasts = new Map<string, any[]>();
-    
+
     forecastData.list.forEach((item: any) => {
       const date = new Date(item.dt * 1000);
       const dateKey = date.toDateString();
-      
+
       if (!dailyForecasts.has(dateKey)) {
         dailyForecasts.set(dateKey, []);
       }
@@ -95,16 +95,16 @@ export const getWeatherOutlook = async (apiKey: string, lat: number, lon: number
     const forecast: ForecastDay[] = Array.from(dailyForecasts.entries())
       .slice(0, 5)
       .map(([dateKey, items]) => {
-        const temps = items.map(i => i.main.temp);
+        const temps = items.map((i) => i.main.temp);
         const tempHigh = Math.round(Math.max(...temps));
         const tempLow = Math.round(Math.min(...temps));
-        
+
         // Use midday forecast for conditions (around noon)
         const middayItem = items[Math.floor(items.length / 2)] || items[0];
-        
+
         const date = new Date(dateKey);
         const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
-        
+
         return {
           date: dateKey,
           dayName,

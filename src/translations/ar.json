@@ -649,8 +649,8 @@
     "status_saved_successfully": "تم حفظ الحالة بنجاح!"
   },
   "tabs": {
-    "calls": "المكالمات",
     "calendar": "التقويم",
+    "calls": "المكالمات",
     "contacts": "جهات الاتصال",
     "home": "الرئيسية",
     "map": "الخريطة",

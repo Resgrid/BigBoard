@@ -8,7 +8,7 @@ type ITextProps = React.ComponentProps<typeof RNText> & VariantProps<typeof text
 
 const Text = React.forwardRef<React.ElementRef<typeof RNText>, ITextProps>(({ className, isTruncated, bold, underline, strikeThrough, size = 'md', sub, italic, highlight, testID, ...props }, ref) => {
   const testProps = Platform.OS === 'web' && testID ? { 'data-testid': testID } : testID ? { testID } : {};
-  
+
   return (
     <RNText
       className={textStyle({

@@ -68,7 +68,7 @@ export const SideMenu: React.FC<SideMenuProps> = React.memo(({ onNavigate }) => 
 
   const handleReconnect = useCallback(async () => {
     if (isReconnecting) return;
-    
+
     setIsReconnecting(true);
     try {
       await reconnectUpdateHub();
@@ -130,15 +130,25 @@ export const SideMenu: React.FC<SideMenuProps> = React.memo(({ onNavigate }) => 
             <Divider className={isDark ? 'bg-gray-700' : 'bg-gray-200'} />
 
             {/* SignalR Status Block */}
-            <Box className={`rounded-xl p-3 ${isDark ? 'border border-gray-700 bg-gray-800' : 'border border-gray-200 bg-gray-50'}`} {...(Platform.OS === 'web' ? { 'data-testid': 'side-menu-signalr-status' } : { testID: 'side-menu-signalr-status' })}>
+            <Box
+              className={`rounded-xl p-3 ${isDark ? 'border border-gray-700 bg-gray-800' : 'border border-gray-200 bg-gray-50'}`}
+              {...(Platform.OS === 'web' ? { 'data-testid': 'side-menu-signalr-status' } : { testID: 'side-menu-signalr-status' })}
+            >
               <VStack space="sm">
                 <HStack space="md" className="items-center">
                   {isUpdateHubConnected ? <Wifi size={20} color="#10B981" /> : <WifiOff size={20} color="#EF4444" />}
                   <VStack space="xs" className="flex-1">
-                    <Text className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`} {...(Platform.OS === 'web' ? { 'data-testid': 'side-menu-signalr-status-text' } : { testID: 'side-menu-signalr-status-text' })}>
+                    <Text
+                      className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}
+                      {...(Platform.OS === 'web' ? { 'data-testid': 'side-menu-signalr-status-text' } : { testID: 'side-menu-signalr-status-text' })}
+                    >
                       {getConnectionStatus()}
                     </Text>
-                    <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`} {...(Platform.OS === 'web' ? { 'data-testid': 'side-menu-signalr-last-update' } : { testID: 'side-menu-signalr-last-update' })} numberOfLines={1}>
+                    <Text
+                      className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}
+                      {...(Platform.OS === 'web' ? { 'data-testid': 'side-menu-signalr-last-update' } : { testID: 'side-menu-signalr-last-update' })}
+                      numberOfLines={1}
+                    >
                       {t('common.last_update', 'Last Update')}: {formatLastUpdate()}
                     </Text>
                   </VStack>
@@ -184,7 +194,11 @@ export const SideMenu: React.FC<SideMenuProps> = React.memo(({ onNavigate }) => 
             <Divider className={`my-4 ${isDark ? 'bg-gray-700' : 'bg-gray-200'}`} />
 
             {/* Logout Button */}
-            <Pressable onPress={handleLogout} {...(Platform.OS === 'web' ? { 'data-testid': 'side-menu-logout' } : { testID: 'side-menu-logout' })} className={`flex-row items-center rounded-lg p-3 ${isDark ? 'hover:bg-gray-800' : 'hover:bg-gray-100'}`}>
+            <Pressable
+              onPress={handleLogout}
+              {...(Platform.OS === 'web' ? { 'data-testid': 'side-menu-logout' } : { testID: 'side-menu-logout' })}
+              className={`flex-row items-center rounded-lg p-3 ${isDark ? 'hover:bg-gray-800' : 'hover:bg-gray-100'}`}
+            >
               <LogOut size={20} color={isDark ? '#9CA3AF' : '#4B5563'} />
               <Text className={`ml-3 text-base ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>{t('settings.logout')}</Text>
             </Pressable>

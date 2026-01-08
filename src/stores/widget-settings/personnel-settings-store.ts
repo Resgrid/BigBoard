@@ -1,6 +1,6 @@
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
 export interface PersonnelWidgetSettings {
   showGroup: boolean;
@@ -16,7 +16,7 @@ export interface PersonnelWidgetSettings {
   notRespondingText: string;
   unavailableText: string;
   fontSize: number;
-  sortOrders: Array<{ groupId: string; weight: number }>;
+  sortOrders: { groupId: string; weight: number }[];
   hideGroups: string[];
 }
 

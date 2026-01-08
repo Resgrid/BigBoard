@@ -3,17 +3,17 @@ import React from 'react';
 import type { Widget } from '@/types/widget';
 import { WidgetType } from '@/types/widget';
 
+import { CallsSummaryWidget } from './CallsSummaryWidget';
 import { CallsWidget } from './CallsWidget';
 import { MapWidget } from './MapWidget';
 import { NotesWidget } from './NotesWidget';
+import { PersonnelStaffingSummaryWidget } from './PersonnelStaffingSummaryWidget';
+import { PersonnelStatusSummaryWidget } from './PersonnelStatusSummaryWidget';
 import { PersonnelWidget } from './PersonnelWidget';
 import { TimeWidget } from './TimeWidget';
+import { UnitsSummaryWidget } from './UnitsSummaryWidget';
 import { UnitsWidget } from './UnitsWidget';
 import { WeatherWidget } from './WeatherWidget';
-import { PersonnelStatusSummaryWidget } from './PersonnelStatusSummaryWidget';
-import { PersonnelStaffingSummaryWidget } from './PersonnelStaffingSummaryWidget';
-import { UnitsSummaryWidget } from './UnitsSummaryWidget';
-import { CallsSummaryWidget } from './CallsSummaryWidget';
 
 interface WidgetRendererProps {
   widget: Widget;

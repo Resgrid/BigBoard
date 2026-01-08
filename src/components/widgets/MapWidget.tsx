@@ -46,7 +46,7 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ onRemove, isEditMode, widt
   const accessToken = useAuthStore((state) => state.accessToken);
   const isInitialized = useCoreStore((state) => state.isInitialized);
   const isAuthenticated = !!accessToken;
-  
+
   // Get map store
   const { setMapData } = useMapStore();
 
@@ -75,10 +75,10 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ onRemove, isEditMode, widt
             context: { markerCount: mapDataResult.Data.MapMakerInfos.length },
           });
           setMapPins(mapDataResult.Data.MapMakerInfos);
-          
+
           // Store map data in the map store for other widgets to access
           setMapData(mapDataResult.Data);
-          
+
           setHasLoadedInitialData(true);
         }
 
