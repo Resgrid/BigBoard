@@ -138,7 +138,6 @@ jobs:
           sudo rm -rf /usr/share/swift
           sudo rm -rf /usr/local/.ghcup
           sudo rm -rf /usr/lib/jvm/temurin-11-jdk-amd64
-          sudo rm -rf /usr/lib/jvm/temurin-17-jdk-amd64
           
           # Remove Docker images
           docker system prune -af || true
