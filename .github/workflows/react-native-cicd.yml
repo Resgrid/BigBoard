@@ -213,14 +213,7 @@ jobs:
         run: |
           echo $RESPOND_IOS_CERT | base64 -d > AuthKey_HRBP5FNJN6.p8
 
-      - name: � Sync iOS Credentials from Expo
-        if: matrix.platform == 'ios'
-        run: |
-          # Pull existing iOS credentials from Expo servers for local build
-          # This ensures certificates and provisioning profiles are available before building
-          eas credentials --platform ios --non-interactive
-
-      - name: �📋 Restore gradle.properties
+      - name: 📋 Restore gradle.properties
         if: matrix.platform == 'android'
         env:
           GRADLE_PROPERTIES: ${{ secrets.GRADLE_PROPERTIES }}
@@ -228,13 +221,6 @@ jobs:
         run: |
           mkdir -p ~/.gradle/
           echo ${GRADLE_PROPERTIES} > ~/.gradle/gradle.properties
-
-      - name: 🔐 Sync Android Credentials from Expo
-        if: matrix.platform == 'android'
-        run: |
-          # Pull existing Android credentials from Expo servers for local build
-          # This ensures the keystore is available before building
-          eas credentials --platform android --non-interactive
 
       - name: 🌐 Build Web Export
         if: (matrix.platform == 'web' && (github.event.inputs.buildType == 'all' || github.event_name == 'push' || github.event.inputs.platform == 'web' || github.event.inputs.platform == 'all'))
