@@ -125,6 +125,36 @@ jobs:
       - name: 🏗 Checkout repository
         uses: actions/checkout@v4
 
+      - name: 🧹 Free up disk space (Android)
+        if: matrix.platform == 'android'
+        run: |
+          echo "Disk space before cleanup:"
+          df -h
+          
+          # Remove unnecessary large packages
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android/sdk/ndk
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /usr/local/share/boost
+          sudo rm -rf /usr/share/swift
+          sudo rm -rf /usr/local/.ghcup
+          sudo rm -rf /usr/lib/jvm/temurin-11-jdk-amd64
+          sudo rm -rf /usr/lib/jvm/temurin-17-jdk-amd64
+          
+          # Remove Docker images
+          docker system prune -af || true
+          
+          # Remove cached apt packages
+          sudo apt-get clean || true
+          sudo rm -rf /var/lib/apt/lists/*
+          
+          # Remove swap
+          sudo swapoff -a || true
+          sudo rm -f /swapfile || true
+          
+          echo "Disk space after cleanup:"
+          df -h
+
       - name: 🏗 Setup Node.js
         uses: actions/setup-node@v4
         with:
