@@ -29,6 +29,7 @@ on:
         options:
           - android
           - ios
+          - web
           - all
       release_notes:
         type: string
@@ -40,7 +41,6 @@ env:
   EXPO_APPLE_ID: ${{ secrets.EXPO_APPLE_ID }}
   EXPO_APPLE_PASSWORD: ${{ secrets.EXPO_APPLE_PASSWORD }}
   EXPO_TEAM_ID: ${{ secrets.EXPO_TEAM_ID }}
-  CREDENTIALS_JSON_BASE64: ${{ secrets.CREDENTIALS_JSON_BASE64 }}
   POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
   BIGBOARD_BASE_API_URL: ${{ secrets.BIGBOARD_BASE_API_URL }}
@@ -118,7 +118,7 @@ jobs:
     if: (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')) || github.event_name == 'workflow_dispatch'
     strategy:
       matrix:
-        platform: [android, ios]
+        platform: [android, ios, web]
     runs-on: ${{ matrix.platform == 'ios' && 'macos-15' || 'ubuntu-latest' }}
     environment: RNBuild
     steps:
@@ -160,7 +160,7 @@ jobs:
 
       - name: 📋 Create Google Json File
         run: |
-          echo $RESPOND_GOOGLE_SERVICES | base64 -d > google-services.json
+          echo $BIGBOARD_GOOGLE_SERVICES | base64 -d > google-services.json
 
       - name: 📋 Update package.json Versions
         run: |
@@ -178,7 +178,7 @@ jobs:
             fi
           fi
 
-          androidVersionCode=$((5080345 + ${{ github.run_number }}))
+          androidVersionCode=${{ github.run_number }}
           echo "Android Version Code: ${androidVersionCode}"
 
           # Fix the main entry in package.json
@@ -209,16 +209,35 @@ jobs:
           eas --version
 
       - name: 📋 Create iOS Cert
+        if: matrix.platform == 'ios'
         run: |
           echo $RESPOND_IOS_CERT | base64 -d > AuthKey_HRBP5FNJN6.p8
 
       - name: 📋 Restore gradle.properties
+        if: matrix.platform == 'android'
         env:
           GRADLE_PROPERTIES: ${{ secrets.GRADLE_PROPERTIES }}
         shell: bash
         run: |
           mkdir -p ~/.gradle/
           echo ${GRADLE_PROPERTIES} > ~/.gradle/gradle.properties
+
+      - name: 🌐 Build Web Export
+        if: (matrix.platform == 'web' && (github.event.inputs.buildType == 'all' || github.event_name == 'push' || github.event.inputs.platform == 'web' || github.event.inputs.platform == 'all'))
+        run: |
+          export NODE_OPTIONS="--openssl-legacy-provider --max_old_space_size=4096"
+          npx expo export --platform web
+        env:
+          NODE_ENV: production
+
+      - name: 📦 Zip Web Export
+        if: (matrix.platform == 'web' && (github.event.inputs.buildType == 'all' || github.event_name == 'push' || github.event.inputs.platform == 'web' || github.event.inputs.platform == 'all'))
+        run: |
+          cd dist
+          zip -r ../ResgridBigBoard-web.zip .
+          cd ..
+          echo "Web export zipped successfully"
+          ls -la ResgridBigBoard-web.zip
 
       - name: 📱 Build Development APK
         if: (matrix.platform == 'android' && (github.event.inputs.buildType == 'all' || github.event_name == 'push' || github.event.inputs.buildType == 'dev'))
@@ -280,9 +299,11 @@ jobs:
             ./ResgridBigBoard-ios-dev.ipa
             ./ResgridBigBoard-ios-adhoc.ipa
             ./ResgridBigBoard-ios-prod.ipa
+            ./ResgridBigBoard-web.zip
           retention-days: 7
 
       - name: 📦 Setup Firebase CLI
+        if: matrix.platform == 'android' || matrix.platform == 'ios'
         uses: w9jds/setup-firebase@main
         with:
           tools-version: 11.9.0
