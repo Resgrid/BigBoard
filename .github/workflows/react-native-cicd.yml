@@ -211,7 +211,7 @@ jobs:
       - name: 📋 Create iOS Cert
         if: matrix.platform == 'ios'
         run: |
-          echo $RESPOND_IOS_CERT | base64 -d > AuthKey_HRBP5FNJN6.p8
+          echo $BIGBOARD_IOS_CERT | base64 -d > AuthKey_HRBP5FNJN6.p8
 
       - name: 📋 Restore gradle.properties
         if: matrix.platform == 'android'
@@ -244,7 +244,7 @@ jobs:
         run: |
           # Build with increased memory limit
           export NODE_OPTIONS="--openssl-legacy-provider --max_old_space_size=4096"
-          eas build --platform android --profile development --local --non-interactive --output=./ResgridRespond-dev.apk
+          eas build --platform android --profile development --local --non-interactive --output=./ResgridBigBoard-dev.apk
         env:
           NODE_ENV: development
 
@@ -252,7 +252,7 @@ jobs:
         if: (matrix.platform == 'android' && (github.event.inputs.buildType == 'all' || github.event_name == 'push' || github.event.inputs.buildType == 'prod-apk'))
         run: |
           export NODE_OPTIONS="--openssl-legacy-provider --max_old_space_size=4096"
-          eas build --platform android --profile production-apk --local --non-interactive --output=./ResgridRespond-prod.apk
+          eas build --platform android --profile production-apk --local --non-interactive --output=./ResgridBigBoard-prod.apk
         env:
           NODE_ENV: production
 
@@ -260,7 +260,7 @@ jobs:
         if: (matrix.platform == 'android' && (github.event.inputs.buildType == 'all' || github.event_name == 'push' || github.event.inputs.buildType == 'prod-aab'))
         run: |
           export NODE_OPTIONS="--openssl-legacy-provider --max_old_space_size=4096"
-          eas build --platform android --profile production --local --non-interactive --output=./ResgridRespond-prod.aab
+          eas build --platform android --profile production --local --non-interactive --output=./ResgridBigBoard-prod.aab
         env:
           NODE_ENV: production
 
@@ -268,7 +268,7 @@ jobs:
         if: (matrix.platform == 'ios' && (github.event.inputs.buildType == 'all' || github.event_name == 'push' || github.event.inputs.buildType == 'ios-dev'))
         run: |
           export NODE_OPTIONS="--openssl-legacy-provider --max_old_space_size=4096"
-          eas build --platform ios --profile development --local --non-interactive --output=./ResgridRespond-ios-dev.ipa
+          eas build --platform ios --profile development --local --non-interactive --output=./ResgridBigBoard-ios-dev.ipa
         env:
           NODE_ENV: development
 
@@ -276,7 +276,7 @@ jobs:
         if: (matrix.platform == 'ios' && (github.event.inputs.buildType == 'all' || github.event_name == 'push' || github.event.inputs.buildType == 'ios-adhoc'))
         run: |
           export NODE_OPTIONS="--openssl-legacy-provider --max_old_space_size=4096"
-          eas build --platform ios --profile internal --local --non-interactive --output=./ResgridRespond-ios-adhoc.ipa
+          eas build --platform ios --profile internal --local --non-interactive --output=./ResgridBigBoard-ios-adhoc.ipa
         env:
           NODE_ENV: production
 
@@ -284,7 +284,7 @@ jobs:
         if: (matrix.platform == 'ios' && (github.event.inputs.buildType == 'all' || github.event_name == 'push' || github.event.inputs.buildType == 'ios-prod'))
         run: |
           export NODE_OPTIONS="--openssl-legacy-provider --max_old_space_size=4096"
-          eas build --platform ios --profile production --local --non-interactive --output=./ResgridRespond-ios-prod.ipa
+          eas build --platform ios --profile production --local --non-interactive --output=./ResgridBigBoard-ios-prod.ipa
         env:
           NODE_ENV: production
 
@@ -312,12 +312,12 @@ jobs:
       - name: 📦 Upload Android artifact to Firebase App Distribution
         if: (matrix.platform == 'android')
         run: |
-          firebase appdistribution:distribute ./ResgridBigBoard-prod.apk --app ${{ secrets.FIREBASE_RESP_ANDROID_APP_ID }} --groups "testers"
+          firebase appdistribution:distribute ./ResgridBigBoard-prod.apk --app ${{ secrets.FIREBASE_BIGBOARD_ANDROID_APP_ID }} --groups "testers"
 
       - name: 📦 Upload iOS artifact to Firebase App Distribution
         if: (matrix.platform == 'ios')
         run: |
-          firebase appdistribution:distribute ./ResgridBigBoard-ios-adhoc.ipa --app ${{ secrets.FIREBASE_RESP_IOS_APP_ID }} --groups "testers"
+          firebase appdistribution:distribute ./ResgridBigBoard-ios-adhoc.ipa --app ${{ secrets.FIREBASE_BIGBOARD_IOS_APP_ID }} --groups "testers"
 
       - name: 📋 Get PR information
         if: ${{ matrix.platform == 'android' && github.event_name == 'push' }}
@@ -385,6 +385,14 @@ jobs:
           cat RELEASE_NOTES.md >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
 
+      - name: 📦 Download Web Artifacts
+        if: ${{ matrix.platform == 'android' && (github.event.inputs.buildType == 'all' || github.event_name == 'push' || github.event.inputs.buildType == 'prod-apk') }}
+        uses: actions/download-artifact@v4
+        with:
+          name: app-builds-web
+          path: ./web-artifacts
+        continue-on-error: true
+
       - name: 📦 Create Release
         if: ${{ matrix.platform == 'android' && (github.event.inputs.buildType == 'all' || github.event_name == 'push' || github.event.inputs.buildType == 'prod-apk') }}
         uses: ncipollo/release-action@v1
@@ -394,7 +402,7 @@ jobs:
           makeLatest: true
           allowUpdates: true
           name: '1.${{ github.run_number }}'
-          artifacts: './ResgridBigBoard-prod.apk'
+          artifacts: './ResgridBigBoard-prod.apk,./web-artifacts/ResgridBigBoard-web.zip'
           bodyFile: 'RELEASE_NOTES.md'
 
       - name: 📡 Send Release Notes to Changerawr
