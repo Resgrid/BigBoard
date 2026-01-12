@@ -1,18 +1,18 @@
-### STAGE 1: Build ###
-FROM node:18.16.0-alpine AS build
-WORKDIR /usr/src/app
-COPY package.json package-lock.json ./
-RUN npm ci
-COPY . .
-RUN npm run build -- --configuration=production
+# Use nginx alpine image to serve the Expo web build
+FROM nginx:1.25-alpine
 
-### STAGE 2: Run ###
-FROM nginx:1.21.6-alpine
+# Copy custom nginx configuration
 COPY nginx.conf /etc/nginx/nginx.conf
-COPY --from=build /usr/src/app/www /usr/share/nginx/html
+
+# Copy the Expo web build (dist folder) to nginx html directory
+COPY dist /usr/share/nginx/html
 
 # Expose port 80
 EXPOSE 80
 
-# When the container starts, replace the env.js with values from environment variables
-CMD ["/bin/sh",  "-c",  "envsubst < /usr/share/nginx/html/assets/env.prod.js > /usr/share/nginx/html/assets/env.js && exec nginx -g 'daemon off;'"]
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost/health || exit 1
+
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]
