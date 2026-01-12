@@ -267,6 +267,10 @@ jobs:
           echo "Web export zipped successfully"
           ls -la ResgridBigBoard-web.zip
 
+      - name: 🐳 Set up QEMU
+        if: (matrix.platform == 'web' && (github.event.inputs.buildType == 'all' || github.event_name == 'push' || github.event.inputs.platform == 'web' || github.event.inputs.platform == 'all'))
+        uses: docker/setup-qemu-action@v3
+
       - name: 🐳 Set up Docker Buildx
         if: (matrix.platform == 'web' && (github.event.inputs.buildType == 'all' || github.event_name == 'push' || github.event.inputs.platform == 'web' || github.event.inputs.platform == 'all'))
         uses: docker/setup-buildx-action@v3
