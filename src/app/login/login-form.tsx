@@ -179,9 +179,6 @@ export const LoginForm = ({ onSubmit = () => {}, isLoading = false, error = unde
 
         {/* Footer */}
         <View className="mt-8 items-center">
-          <Text className="text-center text-sm text-gray-500 dark:text-gray-400">
-            {t('login.no_account')} <Text className="text-primary-600 underline">{t('login.register')}</Text>
-          </Text>
           <Text className="mt-4 text-center text-sm text-gray-500 dark:text-gray-400">
             © {new Date().getFullYear()} Resgrid, LLC. {t('login.footer_text')}
           </Text>

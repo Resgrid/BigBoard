@@ -85,7 +85,6 @@ export default function Settings() {
             <VStack space="sm">
               <Item text={t('settings.server')} value={getBaseApiUrl()} onPress={() => setShowServerUrl(true)} textStyle="text-info-600" />
               <Item text={t('settings.login_info')} onPress={() => setShowLoginInfo(true)} textStyle="text-info-600" />
-              <Item text={t('settings.active_unit')} value={activeUnitName} onPress={() => setShowUnitSelection(true)} textStyle="text-info-600" />
               <Item text={t('settings.logout')} onPress={signOut} textStyle="text-error-600" />
             </VStack>
           </Card>

@@ -24,17 +24,17 @@ type OnboardingItemProps = {
 const onboardingData: OnboardingItemProps[] = [
   {
     title: 'Resgrid BigBoard',
-    description: "Dispay real-time status of your department's units and calls on a centralized dashboard for enhanced situational awareness",
+    description: "Display real-time status of your department's units and calls on a centralized dashboard for enhanced situational awareness",
     icon: <MapPin size={80} color="#FF7B1A" />,
-  },
-  {
-    title: 'Instant Notifications',
-    description: 'Receive immediate alerts for important updates from your department',
-    icon: <Bell size={80} color="#FF7B1A" />,
   },
   {
     title: 'Data at a Glance',
     description: 'Display critical information about your departments resources and personnel quickly and easily',
+    icon: <Users size={80} color="#FF7B1A" />,
+  },
+  {
+    title: 'Single Pane of Glass',
+    description: 'Monitor all your department activities from one convenient location',
     icon: <Users size={80} color="#FF7B1A" />,
   },
 ];
