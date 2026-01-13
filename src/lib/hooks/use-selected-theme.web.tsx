@@ -24,14 +24,20 @@ export const useSelectedTheme = () => {
     [setColorScheme]
   );
 
-  const selectedTheme = (theme ?? 'system') as ColorSchemeType;
+  const selectedTheme = (theme ?? 'dark') as ColorSchemeType;
   return { selectedTheme, setSelectedTheme } as const;
 };
 
 export const loadSelectedTheme = () => {
   try {
-    console.log('Skipping theme loading on web platform - using system default');
-    return;
+    const storedTheme = localStorage.getItem(SELECTED_THEME);
+    if (storedTheme) {
+      console.log('Loading selected theme:', storedTheme);
+      colorScheme.set(storedTheme as ColorSchemeType);
+    } else {
+      console.log('No custom theme found, defaulting to dark mode');
+      colorScheme.set('dark');
+    }
   } catch (error) {
     console.error('Failed to load selected theme:', error);
   }

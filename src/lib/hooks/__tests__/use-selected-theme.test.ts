@@ -47,14 +47,14 @@ describe('loadSelectedTheme', () => {
     expect(console.log).toHaveBeenCalledWith('Loading selected theme:', 'dark');
   });
 
-  it('should handle no saved theme gracefully', () => {
+  it('should default to dark mode when no saved theme exists', () => {
     mockedStorage.getString.mockReturnValue(undefined);
 
     loadSelectedTheme();
 
     expect(mockedStorage.getString).toHaveBeenCalledWith('SELECTED_THEME');
-    expect(mockedColorScheme.set).not.toHaveBeenCalled();
-    expect(console.log).toHaveBeenCalledWith('No custom theme found, using system default');
+    expect(mockedColorScheme.set).toHaveBeenCalledWith('dark');
+    expect(console.log).toHaveBeenCalledWith('No custom theme found, defaulting to dark mode');
   });
 
   it('should handle storage errors gracefully', () => {
