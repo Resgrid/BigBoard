@@ -430,8 +430,12 @@ jobs:
             if [ -z "$NOTES" ]; then
               NOTES="$PR_BODY"
             fi
-            # Remove "Summary by CodeRabbit" line
-            NOTES="$(printf '%s\n' "$NOTES" | grep -v "Summary by CodeRabbit")"
+            # Remove CodeRabbit auto-generated lines
+            NOTES="$(printf '%s\n' "$NOTES" \
+              | grep -v "Summary by CodeRabbit" \
+              | grep -v "✏️ Tip: You can customize this high-level summary" \
+              | grep -v "<!-- This is an auto-generated comment: release notes by coderabbit.ai -->" \
+              | grep -v "<!-- end of auto-generated comment: release notes by coderabbit.ai -->")"
           else
             NOTES="$(git log -n 5 --pretty=format:'- %s')"
           fi
@@ -482,14 +486,14 @@ jobs:
           VERSION="1.${{ github.run_number }}"
           RELEASE_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
           
-          # Escape release notes for JSON
-          NOTES_JSON=$(cat RELEASE_NOTES.md | jq -Rs .)
+          # Read release notes content
+          NOTES_CONTENT=$(cat RELEASE_NOTES.md)
           
-          # Create JSON payload
+          # Create JSON payload using --arg for proper escaping
           PAYLOAD=$(jq -n \
             --arg version "$VERSION" \
             --arg date "$RELEASE_DATE" \
-            --argjson notes "$NOTES_JSON" \
+            --arg notes "$NOTES_CONTENT" \
             --arg repo "${{ github.repository }}" \
             --arg commit "${{ github.sha }}" \
             --arg actor "${{ github.actor }}" \
@@ -499,6 +503,10 @@ jobs:
               "title": ("Release v" + $version),
               "content": $notes
             }')
+          
+          # Debug: Print payload (without sensitive data)
+          echo "Payload preview:"
+          echo "$PAYLOAD" | jq '{version, title, content_length: (.content | length)}'
           
           # Send to Changerawr API
           HTTP_STATUS=$(curl -s -o /tmp/changerawr_response.json -w "%{http_code}" \
