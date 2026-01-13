@@ -254,7 +254,7 @@ jobs:
         if: (matrix.platform == 'web' && (github.event.inputs.buildType == 'all' || github.event_name == 'push' || github.event.inputs.platform == 'web' || github.event.inputs.platform == 'all'))
         run: |
           export NODE_OPTIONS="--openssl-legacy-provider --max_old_space_size=4096"
-          npx expo export --platform web
+          npx expo export --platform web --no-dev
         env:
           NODE_ENV: production
 
