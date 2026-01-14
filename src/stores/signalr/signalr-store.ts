@@ -41,16 +41,67 @@ export const useSignalRStore = create<SignalRState>((set, get) => ({
       set({ isUpdateHubConnected: false, error: null });
 
       // Get the eventing URL from the core store config
-      const coreState = useCoreStore.getState();
-      const eventingUrl = coreState.config?.EventingUrl;
+      let coreState = useCoreStore.getState();
+      let eventingUrl = coreState.config?.EventingUrl;
 
+      // If config is not loaded yet, wait for it to be fetched
       if (!eventingUrl) {
-        const errorMessage = 'EventingUrl not available in config. Please ensure config is loaded first.';
-        logger.error({
-          message: errorMessage,
+        logger.info({
+          message: 'EventingUrl not available, waiting for config to be fetched...',
         });
-        set({ error: new Error(errorMessage) });
-        return;
+
+        // Check if config is already being initialized
+        if (!coreState.isInitialized && !coreState.isInitializing) {
+          logger.info({
+            message: 'Config not initialized, fetching config before SignalR connection',
+          });
+          try {
+            await useCoreStore.getState().fetchConfig();
+          } catch (configError) {
+            const errorMessage = 'Failed to fetch config for SignalR connection';
+            logger.error({
+              message: errorMessage,
+              context: { error: configError },
+            });
+            set({ error: new Error(errorMessage) });
+            throw new Error(errorMessage);
+          }
+        } else if (coreState.isInitializing) {
+          // Wait for initialization to complete (poll with timeout)
+          logger.info({
+            message: 'Config is being initialized, waiting for completion...',
+          });
+          const maxWaitTime = 10000; // 10 seconds
+          const pollInterval = 100; // 100ms
+          let waitedTime = 0;
+
+          while (waitedTime < maxWaitTime) {
+            await new Promise((resolve) => setTimeout(resolve, pollInterval));
+            waitedTime += pollInterval;
+            coreState = useCoreStore.getState();
+            if (coreState.isInitialized && coreState.config?.EventingUrl) {
+              break;
+            }
+          }
+        }
+
+        // Re-check for eventingUrl after waiting
+        coreState = useCoreStore.getState();
+        eventingUrl = coreState.config?.EventingUrl;
+
+        if (!eventingUrl) {
+          const errorMessage = 'EventingUrl not available in config after waiting. Please ensure config is loaded first.';
+          logger.error({
+            message: errorMessage,
+          });
+          set({ error: new Error(errorMessage) });
+          throw new Error(errorMessage);
+        }
+
+        logger.info({
+          message: 'EventingUrl now available, proceeding with SignalR connection',
+          context: { eventingUrl },
+        });
       }
 
       // Connect to the eventing hub
@@ -223,14 +274,65 @@ export const useSignalRStore = create<SignalRState>((set, get) => ({
       set({ isGeolocationHubConnected: false, error: null });
 
       // Get the eventing URL from the core store config
-      const coreState = useCoreStore.getState();
-      const eventingUrl = coreState.config?.EventingUrl;
+      let coreState = useCoreStore.getState();
+      let eventingUrl = coreState.config?.EventingUrl;
 
+      // If config is not loaded yet, wait for it to be fetched
       if (!eventingUrl) {
-        const errorMessage = 'EventingUrl not available in config for geolocation hub';
-        logger.error({ message: errorMessage });
-        set({ error: new Error(errorMessage) });
-        return;
+        logger.info({
+          message: 'EventingUrl not available for geolocation hub, waiting for config to be fetched...',
+        });
+
+        // Check if config is already being initialized
+        if (!coreState.isInitialized && !coreState.isInitializing) {
+          logger.info({
+            message: 'Config not initialized, fetching config before geolocation hub connection',
+          });
+          try {
+            await useCoreStore.getState().fetchConfig();
+          } catch (configError) {
+            const errorMessage = 'Failed to fetch config for geolocation hub connection';
+            logger.error({
+              message: errorMessage,
+              context: { error: configError },
+            });
+            set({ error: new Error(errorMessage) });
+            throw new Error(errorMessage);
+          }
+        } else if (coreState.isInitializing) {
+          // Wait for initialization to complete (poll with timeout)
+          logger.info({
+            message: 'Config is being initialized, waiting for completion before geolocation hub connection...',
+          });
+          const maxWaitTime = 10000; // 10 seconds
+          const pollInterval = 100; // 100ms
+          let waitedTime = 0;
+
+          while (waitedTime < maxWaitTime) {
+            await new Promise((resolve) => setTimeout(resolve, pollInterval));
+            waitedTime += pollInterval;
+            coreState = useCoreStore.getState();
+            if (coreState.isInitialized && coreState.config?.EventingUrl) {
+              break;
+            }
+          }
+        }
+
+        // Re-check for eventingUrl after waiting
+        coreState = useCoreStore.getState();
+        eventingUrl = coreState.config?.EventingUrl;
+
+        if (!eventingUrl) {
+          const errorMessage = 'EventingUrl not available in config for geolocation hub after waiting';
+          logger.error({ message: errorMessage });
+          set({ error: new Error(errorMessage) });
+          throw new Error(errorMessage);
+        }
+
+        logger.info({
+          message: 'EventingUrl now available, proceeding with geolocation hub connection',
+          context: { eventingUrl },
+        });
       }
 
       // Connect to the geolocation hub (implementation depends on your SignalR service)
