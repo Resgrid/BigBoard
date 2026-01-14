@@ -68,3 +68,4 @@ scripts/
 !dist/
 !nginx.conf
 !Dockerfile
+!scripts/docker-entrypoint.sh
