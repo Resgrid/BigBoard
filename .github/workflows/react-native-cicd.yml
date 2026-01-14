@@ -257,6 +257,22 @@ jobs:
           npx expo export --platform web
         env:
           NODE_ENV: production
+          APP_ENV: production
+          # Unset BIGBOARD_* env vars for web build to use defaults from env.js
+          # Actual values will be injected at Docker container runtime via envsubst
+          BIGBOARD_BASE_API_URL: ''
+          BIGBOARD_API_VERSION: ''
+          BIGBOARD_RESGRID_API_URL: ''
+          BIGBOARD_CHANNEL_HUB_NAME: ''
+          BIGBOARD_REALTIME_GEO_HUB_NAME: ''
+          BIGBOARD_LOGGING_KEY: ''
+          BIGBOARD_APP_KEY: ''
+          BIGBOARD_MAPBOX_PUBKEY: ''
+          BIGBOARD_MAPBOX_DLKEY: ''
+          BIGBOARD_SENTRY_DSN: ''
+          BIGBOARD_COUNTLY_APP_KEY: ''
+          BIGBOARD_COUNTLY_SERVER_URL: ''
+          BIGBOARD_MAINTENANCE_MODE: ''
 
       - name: 📦 Zip Web Export
         if: (matrix.platform == 'web' && (github.event.inputs.buildType == 'all' || github.event_name == 'push' || github.event.inputs.platform == 'web' || github.event.inputs.platform == 'all'))
