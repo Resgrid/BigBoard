@@ -1423,27 +1423,29 @@ export default function Configure() {
 
   return (
     <Box className="flex-1" testID="configure-screen">
-      <VStack className="flex-1">
+      <VStack className="flex-1" space="none">
         {/* Tab Navigation */}
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} className={`border-b ${isDark ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-white'}`}>
-          <HStack space="xs" className="p-2">
-            {tabs.map((tab) => (
-              <Button
-                key={tab.key}
-                variant={activeTab === tab.key ? 'solid' : 'outline'}
-                size="sm"
-                onPress={() => setActiveTab(tab.key)}
-                className={`${activeTab === tab.key ? 'bg-primary-600' : ''} ${!hasWidget(tab.widgetType) ? 'opacity-50' : ''}`}
-                testID={`configure-tab-${tab.key}`}
-              >
-                <ButtonText className={activeTab === tab.key ? 'text-white' : ''}>{tab.label}</ButtonText>
-              </Button>
-            ))}
-          </HStack>
-        </ScrollView>
+        <Box className={`border-b ${isDark ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-white'}`}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ flexGrow: 0 }}>
+            <HStack space="xs" className="px-2 py-1">
+              {tabs.map((tab) => (
+                <Button
+                  key={tab.key}
+                  variant={activeTab === tab.key ? 'solid' : 'outline'}
+                  size="sm"
+                  onPress={() => setActiveTab(tab.key)}
+                  className={`${activeTab === tab.key ? 'bg-primary-600' : ''} ${!hasWidget(tab.widgetType) ? 'opacity-50' : ''}`}
+                  testID={`configure-tab-${tab.key}`}
+                >
+                  <ButtonText className={activeTab === tab.key ? 'text-white' : ''}>{tab.label}</ButtonText>
+                </Button>
+              ))}
+            </HStack>
+          </ScrollView>
+        </Box>
 
         {/* Tab Content */}
-        <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 80 }}>
+        <ScrollView className="flex-1" contentContainerStyle={{ flexGrow: 1, paddingBottom: 80 }}>
           {renderTabContent()}
         </ScrollView>
 

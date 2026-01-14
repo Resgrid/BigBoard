@@ -128,7 +128,7 @@ export default function Onboarding() {
 
       <Pagination currentIndex={currentIndex} length={onboardingData.length} />
 
-      <SafeAreaView className="mb-8 mt-4 px-8">
+      <SafeAreaView className="mb-8 mt-4 px-12">
         {currentIndex < onboardingData.length - 1 ? (
           <View className="flex-row items-center justify-between">
             <Pressable
