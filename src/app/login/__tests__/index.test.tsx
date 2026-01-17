@@ -5,11 +5,13 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import Login from '../index';
 
 const mockPush = jest.fn();
+const mockReplace = jest.fn();
 
 // Mock expo-router
 jest.mock('expo-router', () => ({
   useRouter: () => ({
     push: mockPush,
+    replace: mockReplace,
   }),
 }));
 
@@ -204,7 +206,7 @@ describe('Login', () => {
     render(<Login />);
 
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith('/(app)');
+      expect(mockReplace).toHaveBeenCalledWith('/(app)');
     });
   });
 

@@ -1,13 +1,13 @@
 /**
  * Runtime Environment Configuration for Web
- * 
+ *
  * This file is designed to be used with envsubst for Docker deployments.
  * The placeholder values (e.g., ${BIGBOARD_BASE_API_URL}) will be replaced
  * at container startup time with actual environment variable values.
- * 
+ *
  * Usage with envsubst:
  *   envsubst < /usr/share/nginx/html/env-config.template.js > /usr/share/nginx/html/env-config.js
- * 
+ *
  * For local development, these values will be replaced by the build-time values
  * if not substituted.
  */

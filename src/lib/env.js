@@ -3,7 +3,7 @@
  * If you import `Env` from `@env`, this is the file that will be loaded.
  * You can only access the client environment variables here.
  * NOTE: We use js file so we can load the client env types
- * 
+ *
  * For web platform, runtime environment variables can be injected via window.__ENV__
  * which is populated by env-config.js (substituted at container startup via envsubst).
  */

@@ -7,12 +7,12 @@
  * 2. Build-time variables: These variables are used in the build process (app.config.ts file).
  * Import this file into the `app.config.ts` file to use environment variables during the build process. The client variables can then be passed to the client-side using the extra field in the `app.config.ts` file.
  * To access the client environment variables in your `src` folder, you can import them from `@env`. For example: `import Env from '@env'`.
- * 
+ *
  * WEB RUNTIME ENVIRONMENT VARIABLES:
  * For the web platform deployed via Docker, environment variables can be injected at container
  * startup time using the docker-entrypoint.sh script. This allows for runtime configuration
  * without rebuilding the application.
- * 
+ *
  * The following environment variables are supported for runtime injection:
  *   - BIGBOARD_BASE_API_URL: Base URL for the API
  *   - BIGBOARD_API_VERSION: API version (e.g., 'v4')
@@ -26,7 +26,7 @@
  *   - BIGBOARD_COUNTLY_APP_KEY: Countly analytics app key
  *   - BIGBOARD_COUNTLY_SERVER_URL: Countly server URL
  *   - BIGBOARD_MAINTENANCE_MODE: Enable maintenance mode ('true' or 'false')
- * 
+ *
  * See scripts/docker-entrypoint.sh and public/env-config.js for implementation details.
  */
 /**

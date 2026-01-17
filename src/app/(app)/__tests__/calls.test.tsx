@@ -379,16 +379,15 @@ describe('CallsScreen', () => {
   });
 
   describe('analytics tracking', () => {
-    it('tracks view rendered event with correct parameters', () => {
+    it('tracks view event with correct parameters', () => {
       const mockCalls = [{ CallId: 'call-1', Nature: 'Test' }];
       mockCallsStore.calls = mockCalls;
       useCallsStore.mockReturnValue(mockCallsStore);
 
       render(<CallsScreen />);
 
-      expect(mockAnalytics.trackEvent).toHaveBeenCalledWith('calls_view_rendered', {
-        callsCount: 1,
-        hasSearchQuery: false,
+      expect(mockAnalytics.trackEvent).toHaveBeenCalledWith('calls_viewed', {
+        timestamp: expect.any(String),
       });
     });
   });

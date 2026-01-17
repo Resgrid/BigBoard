@@ -26,6 +26,7 @@ import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
 import { loadKeepAliveState } from '@/lib/hooks/use-keep-alive';
 import { loadSelectedTheme } from '@/lib/hooks/use-selected-theme';
 import { logger } from '@/lib/logging';
+import { sentryService } from '@/lib/sentry';
 import { getDeviceUuid, setDeviceUuid } from '@/lib/storage/app';
 import { uuidv4 } from '@/lib/utils';
 import { appInitializationService } from '@/services/app-initialization.service';
@@ -43,30 +44,36 @@ const navigationIntegration = Sentry.reactNavigationIntegration({
   enableTimeToInitialDisplay: false,
 });
 
+// Initialize Sentry for error tracking across all platforms (iOS, Android, Web)
 Sentry.init({
   dsn: Env.SENTRY_DSN,
   debug: __DEV__, // Only debug in development, not production
   tracesSampleRate: __DEV__ ? 1.0 : 0.2, // 100% in dev, 20% in production to reduce performance impact
   profilesSampleRate: __DEV__ ? 1.0 : 0.2, // 100% in dev, 20% in production to reduce performance impact
   sendDefaultPii: false,
+  environment: Env.APP_ENV,
+  release: `${Env.BUNDLE_ID}@${Env.VERSION}`,
   integrations: [
-    // Pass integration
+    // Pass navigation integration for tracking route changes
     navigationIntegration,
-    // Disable HTTP instrumentation on web platform due to hanging issues
+    // Platform-specific integrations
     ...(Platform.OS === 'web'
       ? []
       : [
-          // Add other integrations here for native platforms if needed
+          // Native-only integrations can be added here
         ]),
   ],
-  enableNativeFramesTracking: true, //!isRunningInExpoGo(), // Tracks slow and frozen frames in the application
+  enableNativeFramesTracking: Platform.OS !== 'web', // Only track native frames on iOS/Android
   // Disable auto-instrumentation on web to prevent fetch/xhr blocking
   ...(Platform.OS === 'web'
     ? {
         enableAutoPerformanceTracing: false,
-        enableAutoSessionTracking: false,
+        enableAutoSessionTracking: true, // Keep session tracking on web
       }
-    : {}),
+    : {
+        enableAutoPerformanceTracing: true,
+        enableAutoSessionTracking: true,
+      }),
   // Add additional options to prevent timing issues
   beforeSendTransaction(event: any) {
     // Filter out problematic navigation transactions that might cause timestamp errors
@@ -74,6 +81,30 @@ Sentry.init({
       return null;
     }
     return event;
+  },
+  beforeSend(event) {
+    // Add platform information to all events
+    if (event.tags) {
+      event.tags.platform = Platform.OS;
+    } else {
+      event.tags = { platform: Platform.OS };
+    }
+    return event;
+  },
+});
+
+// Mark Sentry as initialized for the service wrapper
+sentryService.setInitialized();
+
+// Set initial tags
+sentryService.setTag('app.version', Env.VERSION);
+sentryService.setTag('app.environment', Env.APP_ENV);
+
+logger.debug({
+  message: 'Sentry initialized successfully',
+  context: {
+    platform: Platform.OS,
+    dsn: Env.SENTRY_DSN ? 'configured' : 'not configured',
   },
 });
 
