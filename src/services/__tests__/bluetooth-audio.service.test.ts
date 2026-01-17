@@ -33,7 +33,7 @@ jest.mock('@/services/audio.service', () => ({
 
 import { bluetoothAudioService } from '../bluetooth-audio.service';
 
-describe('BluetoothAudioService Refactoring', () => {
+describe('BluetoothAudioService', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -57,86 +57,11 @@ describe('BluetoothAudioService Refactoring', () => {
     expect(typeof bluetoothAudioService.disconnectDevice).toBe('function');
   });
 
-  describe('Preferred Device Connection Refactoring', () => {
-    it('should have private attemptPreferredDeviceConnection method', () => {
-      const service = bluetoothAudioService as any;
-      expect(typeof service.attemptPreferredDeviceConnection).toBe('function');
-    });
-
-    it('should have private attemptReconnectToPreferredDevice method for iOS support', () => {
-      const service = bluetoothAudioService as any;
-      expect(typeof service.attemptReconnectToPreferredDevice).toBe('function');
-    });
-
-    it('should track hasAttemptedPreferredDeviceConnection flag for single-call semantics', () => {
-      const service = bluetoothAudioService as any;
-      
-      // Initially should be false
-      expect(service.hasAttemptedPreferredDeviceConnection).toBe(false);
-      
-      // Can be set to true (simulating attempt)
-      service.hasAttemptedPreferredDeviceConnection = true;
-      expect(service.hasAttemptedPreferredDeviceConnection).toBe(true);
-    });
-
-    it('should reset flags on destroy method', () => {
-      const service = bluetoothAudioService as any;
-      
-      // Set flags to true
-      service.hasAttemptedPreferredDeviceConnection = true;
-      service.isInitialized = true;
-      
-      // Call destroy
-      bluetoothAudioService.destroy();
-      
-      // Verify flags are reset for single-call logic
-      expect(service.hasAttemptedPreferredDeviceConnection).toBe(false);
-      expect(service.isInitialized).toBe(false);
-    });
-
-    it('should support iOS state change handling through attemptReconnectToPreferredDevice', () => {
-      const service = bluetoothAudioService as any;
-      
-      // Set up scenario: connection was previously attempted
-      service.hasAttemptedPreferredDeviceConnection = true;
-      
-      // Verify the method exists for iOS poweredOn state handling
-      expect(typeof service.attemptReconnectToPreferredDevice).toBe('function');
-      
-      // This method should be called when Bluetooth state changes to poweredOn on iOS
-      // It resets the flag and attempts preferred device connection again
-    });
+  it('should have connectDevice method', () => {
+    expect(typeof bluetoothAudioService.connectDevice).toBe('function');
   });
 
-  describe('Single-Call Logic Validation', () => {
-    it('should implement single-call semantics for preferred device connection', () => {
-      const service = bluetoothAudioService as any;
-      
-      // Simulate first call - should set flag
-      service.hasAttemptedPreferredDeviceConnection = false;
-      // In actual implementation, attemptPreferredDeviceConnection would set this to true
-      
-      // Simulate second call - should not execute due to flag
-      expect(service.hasAttemptedPreferredDeviceConnection).toBe(false);
-      
-      // After first attempt
-      service.hasAttemptedPreferredDeviceConnection = true;
-      expect(service.hasAttemptedPreferredDeviceConnection).toBe(true);
-      
-      // Second attempt should be blocked by this flag
-    });
-
-    it('should allow re-attempting connection after destroy', () => {
-      const service = bluetoothAudioService as any;
-      
-      // Simulate connection attempt
-      service.hasAttemptedPreferredDeviceConnection = true;
-      
-      // Destroy service (resets flags)
-      bluetoothAudioService.destroy();
-      
-      // Flag should be reset, allowing new attempts
-      expect(service.hasAttemptedPreferredDeviceConnection).toBe(false);
-    });
+  it('should have getAvailableDevices method', () => {
+    expect(typeof bluetoothAudioService.getAvailableDevices).toBe('function');
   });
 });

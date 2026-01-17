@@ -8,6 +8,10 @@
  */
 
 describe('Countly Platform Wrapper', () => {
+  beforeEach(() => {
+    jest.resetModules();
+  });
+
   it('should provide Countly interface with required methods', () => {
     const Countly = require('../countly').default;
 
@@ -42,10 +46,10 @@ describe('Countly Platform Wrapper', () => {
     // Should not throw when calling async methods
     const callAsync = async () => {
       if (Countly.init) {
-        await Countly.init({});
+        await Countly.init({ appKey: 'test', url: 'https://test.com' });
       }
       if (Countly.initWithConfig) {
-        await Countly.initWithConfig({});
+        await Countly.initWithConfig({ appKey: 'test', url: 'https://test.com' });
       }
       if (Countly.start) {
         await Countly.start();
@@ -59,3 +63,75 @@ describe('Countly Platform Wrapper', () => {
   });
 });
 
+describe('CountlyWebImplementation', () => {
+  beforeEach(() => {
+    jest.resetModules();
+    // Reset window.__ENV__ and window.Countly for web tests
+    if (typeof window !== 'undefined') {
+      delete (window as any).Countly;
+    }
+  });
+
+  it('should export CountlyWebImplementation class', () => {
+    const { CountlyWebImplementation } = require('../countly');
+    expect(CountlyWebImplementation).toBeDefined();
+  });
+
+  it('should create instance of CountlyWebImplementation', () => {
+    const { CountlyWebImplementation } = require('../countly');
+    const instance = new CountlyWebImplementation();
+    
+    expect(instance).toBeDefined();
+    expect(instance.events).toBeDefined();
+    expect(instance.events.recordEvent).toBeDefined();
+    expect(instance.initWithConfig).toBeDefined();
+    expect(instance.start).toBeDefined();
+    expect(instance.enableCrashReporting).toBeDefined();
+  });
+
+  it('should queue events before initialization', () => {
+    const { CountlyWebImplementation } = require('../countly');
+    const instance = new CountlyWebImplementation();
+    
+    // Should not throw and should queue the event
+    expect(() => {
+      instance.events.recordEvent('queued_event', { key: 'value' }, 1);
+    }).not.toThrow();
+  });
+
+  it('should initialize with config', async () => {
+    const { CountlyWebImplementation } = require('../countly');
+    const instance = new CountlyWebImplementation();
+    
+    await expect(
+      instance.initWithConfig({
+        appKey: 'test_app_key',
+        url: 'https://countly.example.com',
+      })
+    ).resolves.not.toThrow();
+  });
+
+  it('should skip initialization without appKey', async () => {
+    const { CountlyWebImplementation } = require('../countly');
+    const instance = new CountlyWebImplementation();
+    
+    // Should not throw but should skip initialization
+    await expect(
+      instance.initWithConfig({
+        url: 'https://countly.example.com',
+      })
+    ).resolves.not.toThrow();
+  });
+
+  it('should skip initialization without url', async () => {
+    const { CountlyWebImplementation } = require('../countly');
+    const instance = new CountlyWebImplementation();
+    
+    // Should not throw but should skip initialization
+    await expect(
+      instance.initWithConfig({
+        appKey: 'test_app_key',
+      })
+    ).resolves.not.toThrow();
+  });
+});

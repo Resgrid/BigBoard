@@ -1,26 +1,33 @@
 /**
  * Mock for react-native-mmkv on web platform
- * Uses localStorage as a fallback storage mechanism
+ * Uses an in-memory storage for tests
  */
 
 import { useState } from 'react';
 
+// In-memory storage for tests
+const inMemoryStorage: Record<string, Record<string, string>> = {};
+
 class MockMMKV {
-  private storage: Storage;
+  private storage: Record<string, string>;
   private prefix: string;
 
   constructor(config?: { id?: string; encryptionKey?: string }) {
-    this.storage = typeof window !== 'undefined' ? window.localStorage : ({} as Storage);
     this.prefix = config?.id || 'mmkv';
+    // Use in-memory storage for tests
+    if (!inMemoryStorage[this.prefix]) {
+      inMemoryStorage[this.prefix] = {};
+    }
+    this.storage = inMemoryStorage[this.prefix];
   }
 
   private getKey(key: string): string {
-    return `${this.prefix}:${key}`;
+    return key;
   }
 
   set(key: string, value: string | number | boolean): void {
     try {
-      this.storage.setItem(this.getKey(key), String(value));
+      this.storage[this.getKey(key)] = String(value);
     } catch (error) {
       console.error('MMKV Mock: Failed to set value', error);
     }
@@ -28,8 +35,8 @@ class MockMMKV {
 
   getString(key: string): string | undefined {
     try {
-      const value = this.storage.getItem(this.getKey(key));
-      return value !== null ? value : undefined;
+      const value = this.storage[this.getKey(key)];
+      return value !== undefined ? value : undefined;
     } catch (error) {
       console.error('MMKV Mock: Failed to get string', error);
       return undefined;
@@ -38,8 +45,8 @@ class MockMMKV {
 
   getNumber(key: string): number | undefined {
     try {
-      const value = this.storage.getItem(this.getKey(key));
-      if (value === null) return undefined;
+      const value = this.storage[this.getKey(key)];
+      if (value === undefined) return undefined;
       const num = Number(value);
       return isNaN(num) ? undefined : num;
     } catch (error) {
@@ -50,8 +57,8 @@ class MockMMKV {
 
   getBoolean(key: string): boolean | undefined {
     try {
-      const value = this.storage.getItem(this.getKey(key));
-      if (value === null) return undefined;
+      const value = this.storage[this.getKey(key)];
+      if (value === undefined) return undefined;
       return value === 'true';
     } catch (error) {
       console.error('MMKV Mock: Failed to get boolean', error);
@@ -61,7 +68,7 @@ class MockMMKV {
 
   delete(key: string): void {
     try {
-      this.storage.removeItem(this.getKey(key));
+      delete this.storage[this.getKey(key)];
     } catch (error) {
       console.error('MMKV Mock: Failed to delete', error);
     }
@@ -69,14 +76,7 @@ class MockMMKV {
 
   getAllKeys(): string[] {
     try {
-      const keys: string[] = [];
-      for (let i = 0; i < this.storage.length; i++) {
-        const key = this.storage.key(i);
-        if (key?.startsWith(`${this.prefix}:`)) {
-          keys.push(key.substring(this.prefix.length + 1));
-        }
-      }
-      return keys;
+      return Object.keys(this.storage);
     } catch (error) {
       console.error('MMKV Mock: Failed to get all keys', error);
       return [];
@@ -85,8 +85,7 @@ class MockMMKV {
 
   clearAll(): void {
     try {
-      const keysToDelete = this.getAllKeys();
-      keysToDelete.forEach((key) => this.delete(key));
+      Object.keys(this.storage).forEach((key) => delete this.storage[key]);
     } catch (error) {
       console.error('MMKV Mock: Failed to clear all', error);
     }
@@ -94,7 +93,7 @@ class MockMMKV {
 
   contains(key: string): boolean {
     try {
-      return this.storage.getItem(this.getKey(key)) !== null;
+      return this.storage[this.getKey(key)] !== undefined;
     } catch (error) {
       console.error('MMKV Mock: Failed to check contains', error);
       return false;

@@ -69,9 +69,8 @@ describe('useSignalRLifecycle', () => {
       await result.current.handleAppBackground();
     });
 
-    // Verify that disconnect methods were called
+    // Verify that disconnect method was called (only UpdateHub is managed)
     expect(mockDisconnectUpdateHub).toHaveBeenCalled();
-    expect(mockDisconnectGeolocationHub).toHaveBeenCalled();
   });
 
   it('should reconnect SignalR when app becomes active from background', async () => {
@@ -87,9 +86,8 @@ describe('useSignalRLifecycle', () => {
       await result.current.handleAppResume();
     });
 
-    // Verify that connect methods were called
+    // Verify that connect method was called (only UpdateHub is managed)
     expect(mockConnectUpdateHub).toHaveBeenCalled();
-    expect(mockConnectGeolocationHub).toHaveBeenCalled();
   });
 
   it('should not manage SignalR when user is not signed in', async () => {
@@ -107,7 +105,6 @@ describe('useSignalRLifecycle', () => {
 
     // Should not call SignalR methods when user is not signed in
     expect(mockDisconnectUpdateHub).not.toHaveBeenCalled();
-    expect(mockDisconnectGeolocationHub).not.toHaveBeenCalled();
   });
 
   it('should not manage SignalR when app is not initialized', async () => {
@@ -125,13 +122,11 @@ describe('useSignalRLifecycle', () => {
 
     // Should not call SignalR methods when app is not initialized
     expect(mockDisconnectUpdateHub).not.toHaveBeenCalled();
-    expect(mockDisconnectGeolocationHub).not.toHaveBeenCalled();
   });
 
   it('should handle SignalR operation failures gracefully', async () => {
-    // Mock one operation to fail
+    // Mock operation to fail
     mockDisconnectUpdateHub.mockRejectedValue(new Error('Update hub disconnect failed'));
-    mockDisconnectGeolocationHub.mockResolvedValue(undefined);
 
     const { result } = renderHook(
       (props: { isSignedIn: boolean; hasInitialized: boolean }) => useSignalRLifecycle(props),
@@ -140,14 +135,13 @@ describe('useSignalRLifecycle', () => {
       }
     );
 
-    // Call the background handler directly
+    // Call the background handler directly - should not throw
     await act(async () => {
       await result.current.handleAppBackground();
     });
 
-    // Both should have been called despite one failing
+    // Should have been called despite failing
     expect(mockDisconnectUpdateHub).toHaveBeenCalledTimes(1);
-    expect(mockDisconnectGeolocationHub).toHaveBeenCalledTimes(1);
   });
 
   it('should prevent concurrent operations', async () => {

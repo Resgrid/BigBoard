@@ -29,6 +29,11 @@ jest.mock('@/lib/env', () => ({
   },
 }));
 
+// Mock FocusAwareStatusBar to avoid navigation dependency
+jest.mock('@/components/ui/focus-aware-status-bar', () => ({
+  FocusAwareStatusBar: () => null,
+}));
+
 describe('Maintenance', () => {
   const mockReplace = jest.fn();
 
@@ -54,7 +59,8 @@ describe('Maintenance', () => {
 
     expect(screen.getByText('maintenance.why_down_message')).toBeTruthy();
     expect(screen.getByText('maintenance.downtime_message')).toBeTruthy();
-    expect(screen.getByText('maintenance.support_message')).toBeTruthy();
+    // The support_message text is combined with a space and email in the component
+    expect(screen.getByText(/maintenance\.support_message/)).toBeTruthy();
   });
 
   it('should display support email', () => {

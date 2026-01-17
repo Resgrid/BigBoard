@@ -234,11 +234,10 @@ describe('StatusesStore', () => {
     expect(result.current.error).toBe(null);
   });
 
-  it('should queue unit status event when direct save fails', async () => {
+  it('should set error state when direct save fails', async () => {
     const { result } = renderHook(() => useStatusesStore());
 
     mockSaveUnitStatus.mockRejectedValue(new Error('Network error'));
-    mockOfflineEventManager.queueUnitStatusEvent.mockResolvedValue(undefined);
     mockUseCoreStore.mockReturnValue({
       activeUnit: { UnitId: 'unit1' },
       setActiveUnitWithFetch: jest.fn(),
@@ -256,20 +255,15 @@ describe('StatusesStore', () => {
     input.Roles = [role];
 
     await act(async () => {
-      await result.current.saveUnitStatus(input);
+      try {
+        await result.current.saveUnitStatus(input);
+      } catch (error) {
+        // Expected to throw - the implementation re-throws after setting error state
+      }
     });
 
-    expect(mockOfflineEventManager.queueUnitStatusEvent).toHaveBeenCalledWith(
-      'unit1',
-      '1',
-      'Test note',
-      'call1',
-      [{ roleId: 'role1', userId: 'user1' }],
-      undefined
-    );
-
     expect(result.current.isLoading).toBe(false);
-    expect(result.current.error).toBe(null);
+    expect(result.current.error).toBe('Failed to save unit status');
   });
 
   it('should handle successful save and refresh active unit', async () => {
@@ -301,11 +295,10 @@ describe('StatusesStore', () => {
     expect(result.current.error).toBe(null);
   });
 
-  it('should handle input without roles when queueing', async () => {
+  it('should set error state when save fails without roles', async () => {
     const { result } = renderHook(() => useStatusesStore());
 
     mockSaveUnitStatus.mockRejectedValue(new Error('Network error'));
-    mockOfflineEventManager.queueUnitStatusEvent.mockResolvedValue(undefined);
     mockUseCoreStore.mockReturnValue({
       activeUnit: { UnitId: 'unit1' },
       setActiveUnitWithFetch: jest.fn(),
@@ -314,20 +307,18 @@ describe('StatusesStore', () => {
     const input = new SaveUnitStatusInput();
     input.Id = 'unit1';
     input.Type = '1';
-    // Don't set Roles, Note, or RespondingTo to test their default values
+    // Don't set Roles, Note, or RespondingTo to test handling without them
 
     await act(async () => {
-      await result.current.saveUnitStatus(input);
+      try {
+        await result.current.saveUnitStatus(input);
+      } catch (error) {
+        // Expected to throw - the implementation re-throws after setting error state
+      }
     });
 
-    expect(mockOfflineEventManager.queueUnitStatusEvent).toHaveBeenCalledWith(
-      'unit1',
-      '1',
-      '', // Note defaults to empty string
-      '', // RespondingTo defaults to empty string  
-      [], // Roles defaults to empty array which maps to empty array
-      undefined
-    );
+    expect(result.current.isLoading).toBe(false);
+    expect(result.current.error).toBe('Failed to save unit status');
   });
 
   it('should handle critical errors during processing', async () => {

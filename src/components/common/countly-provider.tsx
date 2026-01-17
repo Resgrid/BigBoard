@@ -1,5 +1,6 @@
 import { Env } from '@env';
 import React, { useRef } from 'react';
+import { Platform } from 'react-native';
 
 import Countly from '@/lib/countly';
 import { logger } from '@/lib/logging';
@@ -7,7 +8,7 @@ import { countlyService } from '@/services/analytics.service';
 
 // Conditionally import CountlyConfig only on native platforms
 let CountlyConfig: any;
-if (require('react-native').Platform.OS !== 'web') {
+if (Platform.OS !== 'web') {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   CountlyConfig = require('countly-sdk-react-native-bridge/CountlyConfig').default;
 }
@@ -37,14 +38,6 @@ export const CountlyProvider: React.FC<CountlyProviderProps> = ({ appKey, server
 
     const initializeCountly = async () => {
       try {
-        // Skip initialization for web platform
-        if (require('react-native').Platform.OS === 'web') {
-          logger.debug({
-            message: 'Countly initialization skipped - web platform',
-          });
-          return;
-        }
-
         // Initialize Countly with proper configuration
         const keyToUse = appKey || Env.COUNTLY_APP_KEY;
         const urlToUse = serverURL || Env.COUNTLY_SERVER_URL;
@@ -55,6 +48,7 @@ export const CountlyProvider: React.FC<CountlyProviderProps> = ({ appKey, server
             context: {
               hasAppKey: !!keyToUse,
               hasServerURL: !!urlToUse,
+              platform: Platform.OS,
             },
           });
           return;
@@ -65,22 +59,36 @@ export const CountlyProvider: React.FC<CountlyProviderProps> = ({ appKey, server
           context: {
             appKey: keyToUse.substring(0, 8) + '...',
             serverURL: urlToUse,
+            platform: Platform.OS,
           },
         });
 
-        // Initialize Countly with configuration object (modern approach)
-        const config = new CountlyConfig(urlToUse, keyToUse).enableCrashReporting().setRequiresConsent(false);
+        if (Platform.OS === 'web') {
+          // Web platform initialization
+          await Countly.initWithConfig?.({
+            appKey: keyToUse,
+            url: urlToUse,
+          });
 
-        await Countly.initWithConfig?.(config);
+          logger.debug({
+            message: 'Countly Web analytics initialized successfully',
+          });
+        } else {
+          // Native platform initialization (iOS/Android)
+          const config = new CountlyConfig(urlToUse, keyToUse).enableCrashReporting().setRequiresConsent(false);
 
-        logger.debug({
-          message: 'Countly analytics initialized successfully',
-        });
+          await Countly.initWithConfig?.(config);
+
+          logger.debug({
+            message: 'Countly Native analytics initialized successfully',
+          });
+        }
       } catch (error) {
         logger.error({
           message: 'Failed to initialize Countly analytics',
           context: {
             error: error instanceof Error ? error.message : String(error),
+            platform: Platform.OS,
           },
         });
 

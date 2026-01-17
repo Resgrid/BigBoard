@@ -6,7 +6,7 @@ jest.mock('@/api/config', () => ({
   getConfig: jest.fn(),
 }));
 
-jest.mock('@/api/satuses/statuses', () => ({
+jest.mock('@/api/satuses', () => ({
   getAllUnitStatuses: jest.fn(),
 }));
 
