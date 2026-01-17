@@ -51,6 +51,11 @@ class LogService {
   public static getInstance(options?: LogServiceOptions): LogService {
     if (!LogService.instance) {
       LogService.instance = new LogService(options);
+    } else if (__DEV__ && options !== undefined) {
+      console.warn(
+        '[LogService] Options were passed to getInstance() but are being ignored because the instance already exists. ' +
+        'Configure options on the first call to getInstance() only.'
+      );
     }
     return LogService.instance;
   }
@@ -70,6 +75,18 @@ class LogService {
     return levelPriority[level] >= levelPriority[this.sentryMinLevel];
   }
 
+  private serializeContextForSentry(context: Record<string, unknown>): Record<string, string | number | boolean | null | undefined> {
+    const sentryContext: Record<string, string | number | boolean | null | undefined> = {};
+    Object.entries(context).forEach(([key, value]) => {
+      if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean' || value === null) {
+        sentryContext[key] = value;
+      } else {
+        sentryContext[key] = JSON.stringify(value);
+      }
+    });
+    return sentryContext;
+  }
+
   private log(level: LogLevel, { message, context = {} }: LogEntry): void {
     const fullContext = {
       ...this.globalContext,
@@ -82,14 +99,7 @@ class LogService {
 
     // Send to Sentry based on level
     if (this.shouldSendToSentry(level)) {
-      const sentryContext: Record<string, string | number | boolean | null | undefined> = {};
-      Object.entries(fullContext).forEach(([key, value]) => {
-        if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean' || value === null) {
-          sentryContext[key] = value;
-        } else {
-          sentryContext[key] = JSON.stringify(value);
-        }
-      });
+      const sentryContext = this.serializeContextForSentry(fullContext);
 
       if (level === 'error') {
         // Check if context contains an error object
@@ -146,27 +156,20 @@ class LogService {
    * @param context Additional context
    */
   public captureError(error: Error | unknown, message: string, context: Record<string, unknown> = {}): void {
+    // Store the actual Error object so instanceof check in log() works
+    const errorContext = {
+      ...context,
+      error: error instanceof Error ? error : new Error(String(error)),
+      stack: error instanceof Error ? error.stack : undefined,
+    };
+
     this.log('error', {
       message,
-      context: {
-        ...context,
-        error: error instanceof Error ? error.message : String(error),
-        stack: error instanceof Error ? error.stack : undefined,
-      },
+      context: errorContext,
     });
 
-    // Directly capture the exception to Sentry
-    if (sentryService.getIsInitialized()) {
-      const sentryContext: Record<string, string | number | boolean | null | undefined> = { message };
-      Object.entries(context).forEach(([key, value]) => {
-        if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean' || value === null) {
-          sentryContext[key] = value;
-        } else {
-          sentryContext[key] = JSON.stringify(value);
-        }
-      });
-      captureException(error, sentryContext);
-    }
+    // Note: log() already handles captureException when error instanceof Error,
+    // so we don't need to call it again here to avoid double-reporting
   }
 }
 

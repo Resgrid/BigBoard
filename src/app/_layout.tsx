@@ -84,11 +84,10 @@ Sentry.init({
   },
   beforeSend(event) {
     // Add platform information to all events
-    if (event.tags) {
-      event.tags.platform = Platform.OS;
-    } else {
-      event.tags = { platform: Platform.OS };
-    }
+    event.tags = {
+      ...event.tags,
+      platform: Platform.OS,
+    };
     return event;
   },
 });
