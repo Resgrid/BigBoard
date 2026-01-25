@@ -52,10 +52,7 @@ class LogService {
     if (!LogService.instance) {
       LogService.instance = new LogService(options);
     } else if (__DEV__ && options !== undefined) {
-      console.warn(
-        '[LogService] Options were passed to getInstance() but are being ignored because the instance already exists. ' +
-        'Configure options on the first call to getInstance() only.'
-      );
+      console.warn('[LogService] Options were passed to getInstance() but are being ignored because the instance already exists. ' + 'Configure options on the first call to getInstance() only.');
     }
     return LogService.instance;
   }

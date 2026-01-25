@@ -48,7 +48,7 @@ export default function Calls() {
   };
 
   const handleNewCall = () => {
-    router.push('/call/new/');
+    router.push('/call/new' as any);
   };
 
   // Filter calls based on search query
@@ -68,7 +68,7 @@ export default function Calls() {
       <FlatList<CallResultData>
         data={filteredCalls}
         renderItem={({ item }: { item: CallResultData }) => (
-          <Pressable onPress={() => router.push(`/call/${item.CallId}`)}>
+          <Pressable onPress={() => router.push(`/call/${item.CallId}` as any)}>
             <CallCard call={item} priority={callPriorities.find((p: { Id: number }) => p.Id === item.Priority)} />
           </Pressable>
         )}

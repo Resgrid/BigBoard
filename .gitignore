@@ -17,11 +17,14 @@ yarn-error.log
 .DS_Store
 /android
 /ios
+/macos
+/windows
 /web
 /apps
 /fastlane
 /apps
 /build
+/electron-dist
 /automatic-build
 google-services.json
 credentials.json

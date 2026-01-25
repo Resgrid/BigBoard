@@ -22,7 +22,7 @@ module.exports = function (api) {
             '@tailwind.config': './tailwind.config.js',
             '@assets': './assets',
           },
-          extensions: ['.ios.ts', '.android.ts', '.ts', '.ios.tsx', '.android.tsx', '.tsx', '.jsx', '.js', '.json'],
+          extensions: ['.macos.ts', '.macos.tsx', '.windows.ts', '.windows.tsx', '.ios.ts', '.android.ts', '.ts', '.ios.tsx', '.android.tsx', '.tsx', '.jsx', '.js', '.json'],
         },
       ],
       'react-native-reanimated/plugin',

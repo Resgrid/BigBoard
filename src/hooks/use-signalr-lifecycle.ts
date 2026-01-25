@@ -162,7 +162,7 @@ export function useSignalRLifecycle({ isSignedIn, hasInitialized }: UseSignalRLi
       });
 
       // Use extended debounce (2 seconds) to prevent rapid navigation changes from triggering disconnects
-      backgroundTimer.current = setTimeout(() => {
+      backgroundTimer.current = (setTimeout(() => {
         // Re-check the current state values to ensure we're still in background
         if (!currentIsActive.current && (currentAppState.current === 'background' || currentAppState.current === 'inactive')) {
           logger.info({
@@ -176,7 +176,7 @@ export function useSignalRLifecycle({ isSignedIn, hasInitialized }: UseSignalRLi
             context: { appState: currentAppState.current, isActive: currentIsActive.current },
           });
         }
-      }, 2000); // 2 second delay
+      }, 2000) as unknown) as number; // 2 second delay
     }
 
     return clearTimers;
@@ -204,7 +204,7 @@ export function useSignalRLifecycle({ isSignedIn, hasInitialized }: UseSignalRLi
         });
 
         // Use shorter delay for resume to reconnect quickly
-        resumeTimer.current = setTimeout(() => {
+        resumeTimer.current = (setTimeout(() => {
           // Re-check the current state values
           if (currentIsActive.current && currentAppState.current === 'active') {
             logger.info({
@@ -218,7 +218,7 @@ export function useSignalRLifecycle({ isSignedIn, hasInitialized }: UseSignalRLi
               context: { appState: currentAppState.current, isActive: currentIsActive.current },
             });
           }
-        }, 1000); // 1 second delay for resume
+        }, 1000) as unknown) as number; // 1 second delay for resume
       }
     }
 

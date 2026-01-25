@@ -6,5 +6,5 @@ import React from 'react';
  * Redirects to the home page which serves as the main dashboard.
  */
 export default function AppIndex() {
-  return <Redirect href="/(app)/home" />;
+  return <Redirect href={"/(app)/home" as any} />;
 }

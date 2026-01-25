@@ -134,7 +134,7 @@ export default function Onboarding() {
             <Pressable
               onPress={() => {
                 setIsFirstTime(false);
-                router.replace('/login');
+                router.replace('/login' as any);
               }}
             >
               <Text className="text-gray-500">Skip</Text>
@@ -154,7 +154,7 @@ export default function Onboarding() {
               className="w-full bg-primary-500"
               onPress={() => {
                 setIsFirstTime(false);
-                router.replace('/login');
+                router.replace('/login' as any);
               }}
             >
               <ButtonText>Let's Get Started</ButtonText>

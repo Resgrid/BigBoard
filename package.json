@@ -3,13 +3,18 @@
   "version": "0.0.1",
   "versionCode": "1",
   "private": true,
-  "main": "expo-router/entry",
+  "main": "electron/main.js",
   "scripts": {
     "start": "cross-env EXPO_NO_DOTENV=1 expo start",
     "prebuild": "cross-env EXPO_NO_DOTENV=1 yarn expo prebuild",
     "android": "cross-env EXPO_NO_DOTENV=1 expo run:android",
     "ios": "cross-env EXPO_NO_DOTENV=1 expo run:ios --device",
     "web": "cross-env EXPO_NO_DOTENV=1 expo start --web",
+    "electron:dev": "concurrently \"cross-env BROWSER=none EXPO_NO_DOTENV=1 expo start --web\" \"wait-on http://localhost:8081 && electron .\"",
+    "electron:build": "cross-env EXPO_NO_DOTENV=1 expo export --platform web && electron-builder",
+    "electron:build:win": "cross-env EXPO_NO_DOTENV=1 expo export --platform web && electron-builder --win",
+    "electron:build:mac": "cross-env EXPO_NO_DOTENV=1 expo export --platform web && electron-builder --mac",
+    "electron:build:linux": "cross-env EXPO_NO_DOTENV=1 expo export --platform web && electron-builder --linux",
     "xcode": "xed -b ios",
     "doctor": "npx expo-doctor@latest",
     "start:staging": "cross-env APP_ENV=staging yarn run start",
@@ -168,6 +173,7 @@
     "react-native-svg": "15.11.2",
     "react-native-web": "^0.20.0",
     "react-native-webview": "~13.13.1",
+
     "react-query-kit": "~3.3.0",
     "tailwind-variants": "~0.2.1",
     "zod": "~3.23.8",
@@ -218,7 +224,11 @@
     "tailwindcss": "3.4.4",
     "ts-jest": "~29.1.2",
     "ts-node": "~10.9.2",
-    "typescript": "~5.8.3"
+    "typescript": "~5.8.3",
+    "electron": "^33.0.0",
+    "electron-builder": "^25.1.8",
+    "concurrently": "^9.1.0",
+    "wait-on": "^8.0.1"
   },
   "repository": {
     "type": "git",
@@ -252,5 +262,27 @@
   },
   "resolutions": {
     "form-data": "4.0.4"
+  },
+  "build": {
+    "appId": "com.resgrid.bigboard",
+    "productName": "BigBoard",
+    "directories": {
+      "output": "electron-dist"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*"
+    ],
+    "mac": {
+      "target": ["dmg", "zip"],
+      "category": "public.app-category.business"
+    },
+    "win": {
+      "target": ["nsis", "portable"]
+    },
+    "linux": {
+      "target": ["AppImage", "deb"],
+      "category": "Utility"
+    }
   }
 }

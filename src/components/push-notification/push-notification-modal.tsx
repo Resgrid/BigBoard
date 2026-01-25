@@ -63,7 +63,7 @@ export const PushNotificationModal: React.FC = () => {
       });
 
       hideNotificationModal();
-      router.push(`/call/${notification.id}`);
+      router.push(`/call/${notification.id}` as any);
     }
   };
 

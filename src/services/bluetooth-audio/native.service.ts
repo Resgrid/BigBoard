@@ -380,7 +380,7 @@ export class BluetoothAudioServiceNative extends BluetoothAudioServiceBase {
       });
 
       // Set timeout to update UI when scan completes
-      this.scanTimeout = setTimeout(() => {
+      this.scanTimeout = (setTimeout(() => {
         this.handleScanStopped();
 
         logger.info({
@@ -390,7 +390,7 @@ export class BluetoothAudioServiceNative extends BluetoothAudioServiceBase {
             devicesFound: useBluetoothAudioStore.getState().availableDevices.length,
           },
         });
-      }, durationMs);
+      }, durationMs) as unknown) as number;
     } catch (error) {
       logger.error({
         message: 'Failed to start Bluetooth scan',
@@ -432,7 +432,7 @@ export class BluetoothAudioServiceNative extends BluetoothAudioServiceBase {
       await BleManager.scan([], durationMs / 1000, true); // Allow duplicates for debugging
 
       // Set timeout to update UI when scan completes
-      this.scanTimeout = setTimeout(() => {
+      this.scanTimeout = (setTimeout(() => {
         this.handleScanStopped();
 
         logger.info({
@@ -442,7 +442,7 @@ export class BluetoothAudioServiceNative extends BluetoothAudioServiceBase {
             totalDevicesFound: useBluetoothAudioStore.getState().availableDevices.length,
           },
         });
-      }, durationMs);
+      }, durationMs) as unknown) as number;
     } catch (error) {
       logger.error({
         message: 'Failed to start DEBUG Bluetooth scan',

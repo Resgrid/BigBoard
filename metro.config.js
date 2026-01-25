@@ -22,18 +22,23 @@ const config = getSentryExpoConfig(__dirname, {
 //  '@assets': path.resolve(__dirname, 'assets'),
 //};
 
-// Add platform-specific resolutions for web
+// Add platform-specific resolutions for web and desktop platforms
+// Desktop platforms (macOS/Windows) use web implementations where appropriate
+const desktopPlatforms = ['macos', 'windows'];
+
 config.resolver.resolveRequest = (context, moduleName, platform) => {
-  // Redirect various native module imports to our mocks on web
-  if (platform === 'web') {
-    // LiveKit WebRTC mocks
+  // Check if this is a web-like platform (web, macos, or windows)
+  const isWebLikePlatform = platform === 'web' || desktopPlatforms.includes(platform);
+
+  if (isWebLikePlatform) {
+    // LiveKit WebRTC mocks - not needed on web/desktop (uses web WebRTC)
     if (moduleName === '@livekit/react-native-webrtc' || moduleName === '@livekit/react-native') {
       return {
         type: 'empty',
       };
     }
 
-    // MMKV storage mock for web
+    // MMKV storage mock for web/desktop
     if (moduleName === 'react-native-mmkv') {
       return {
         type: 'sourceFile',
@@ -41,11 +46,27 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
       };
     }
 
-    // expo-keep-awake mock for web
+    // expo-keep-awake mock for web/desktop
     if (moduleName === 'expo-keep-awake') {
       return {
         type: 'sourceFile',
         filePath: path.resolve(__dirname, '__mocks__/expo-keep-awake.ts'),
+      };
+    }
+
+    // Notifee - iOS/Android only, mock for web/desktop
+    if (moduleName === '@notifee/react-native') {
+      return {
+        type: 'sourceFile',
+        filePath: path.resolve(__dirname, '__mocks__/runtime/@notifee/react-native.ts'),
+      };
+    }
+
+    // CallKeep - iOS only, mock for web/desktop
+    if (moduleName === 'react-native-callkeep') {
+      return {
+        type: 'sourceFile',
+        filePath: path.resolve(__dirname, '__mocks__/runtime/react-native-callkeep.ts'),
       };
     }
   }

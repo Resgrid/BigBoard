@@ -22,7 +22,7 @@ export default function Maintenance() {
       logger.info({
         message: 'Maintenance mode disabled, redirecting to home',
       });
-      router.replace('/home');
+      router.replace('/home' as any);
     }
   }, [router]);
 

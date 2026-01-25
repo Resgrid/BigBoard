@@ -59,7 +59,7 @@ export const PinDetailModal: React.FC<PinDetailModalProps> = ({ pin, isOpen, onC
 
   const handleViewCallDetails = () => {
     if (isCallPin && pin.Id) {
-      router.push(`/call/${pin.Id}`);
+      router.push(`/call/${pin.Id}` as any);
       onClose();
     }
   };

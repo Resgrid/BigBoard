@@ -27,6 +27,7 @@ const getWebRuntimeEnv = () => {
   }
 
   // Filter out unsubstituted placeholders (values that still contain ${...})
+  /** @type {Record<string, any>} */
   const filteredEnv = {};
   for (const [key, value] of Object.entries(runtimeEnv)) {
     if (typeof value === 'string' && value.includes('${')) {
