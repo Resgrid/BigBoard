@@ -6,7 +6,7 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { logger } from '@/lib/logging';
 
-import { loginRequest, refreshTokenRequest, externalTokenRequest } from '../../lib/auth/api';
+import { externalTokenRequest, loginRequest, refreshTokenRequest } from '../../lib/auth/api';
 import type { AuthState, LoginCredentials, ProfileModel, SsoLoginCredentials } from '../../lib/auth/types';
 
 // Create MMKV storage instance for auth persistence

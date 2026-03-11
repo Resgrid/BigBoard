@@ -1,6 +1,6 @@
+import { Env } from '@env';
 import * as AuthSession from 'expo-auth-session';
 import * as WebBrowser from 'expo-web-browser';
-import { Env } from '@env';
 
 // Required for iOS to properly close the in-app browser after the redirect
 WebBrowser.maybeCompleteAuthSession();
@@ -13,10 +13,7 @@ export interface OidcLoginHook {
   discovery: AuthSession.DiscoveryDocument | null;
 }
 
-export function useOidcLogin(
-  authority: string | null,
-  clientId: string | null,
-): OidcLoginHook {
+export function useOidcLogin(authority: string | null, clientId: string | null): OidcLoginHook {
   const redirectUri = AuthSession.makeRedirectUri({
     scheme: Env.SCHEME,
     path: 'auth/callback',
@@ -33,7 +30,7 @@ export function useOidcLogin(
       responseType: AuthSession.ResponseType.Code,
     },
     // Pass null when authority is absent so the request is not created prematurely
-    authority ? discovery : null,
+    authority ? discovery : null
   );
 
   return {

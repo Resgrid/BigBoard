@@ -16,7 +16,7 @@ import { type RecipientsResultData } from '@/models/v4/messages/recipientsResult
 import { useCallsStore } from '@/stores/calls/store';
 import { usePersonnelStore } from '@/stores/personnel/store';
 import { useUnitsStore } from '@/stores/units/store';
-import { CALLS_COLUMN_LABELS, DEFAULT_CALLS_COLUMN_ORDER, type CallsColumnKey, useCallsSettingsStore } from '@/stores/widget-settings/calls-settings-store';
+import { CALLS_COLUMN_LABELS, type CallsColumnKey, DEFAULT_CALLS_COLUMN_ORDER, useCallsSettingsStore } from '@/stores/widget-settings/calls-settings-store';
 
 import { WidgetContainer } from './WidgetContainer';
 
@@ -213,12 +213,7 @@ export const CallsWidget: React.FC<CallsWidgetProps> = ({ onRemove, isEditMode, 
         }
         return (
           <Box key={col} style={{ flex: columnFlex[col] }}>
-            <AutoScrollingDispatches
-              dispatches={dispatches}
-              resolveDisplayName={resolveDispatchName}
-              scrollSpeed={settings.dispatchScrollSpeed ?? 40}
-              fontSize={fontSize}
-            />
+            <AutoScrollingDispatches dispatches={dispatches} resolveDisplayName={resolveDispatchName} scrollSpeed={settings.dispatchScrollSpeed ?? 40} fontSize={fontSize} />
           </Box>
         );
       }

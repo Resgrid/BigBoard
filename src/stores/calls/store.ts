@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 import { getCallPriorities } from '@/api/calls/callPriorities';
-import { getCalls, getCallExtraData } from '@/api/calls/calls';
+import { getCallExtraData, getCalls } from '@/api/calls/calls';
 import { getCallTypes } from '@/api/calls/callTypes';
 import { logger } from '@/lib/logging';
 import { type CallPriorityResultData } from '@/models/v4/callPriorities/callPriorityResultData';
@@ -47,9 +47,7 @@ export const useCallsStore = create<CallsState>((set, get) => ({
       // Fetch extra data for all calls in parallel (non-blocking)
       const calls = callsResponse.Data;
       if (calls && calls.length > 0) {
-        const extraDataResults = await Promise.allSettled(
-          calls.map((call) => getCallExtraData(call.CallId))
-        );
+        const extraDataResults = await Promise.allSettled(calls.map((call) => getCallExtraData(call.CallId)));
         const newExtraDataMap: Record<string, CallExtraDataResultData> = {};
         extraDataResults.forEach((result, index) => {
           if (result.status === 'fulfilled' && result.value?.Data) {
@@ -75,9 +73,7 @@ export const useCallsStore = create<CallsState>((set, get) => ({
       // Fetch extra data for all calls in parallel (non-blocking)
       const calls = response.Data;
       if (calls && calls.length > 0) {
-        const extraDataResults = await Promise.allSettled(
-          calls.map((call) => getCallExtraData(call.CallId))
-        );
+        const extraDataResults = await Promise.allSettled(calls.map((call) => getCallExtraData(call.CallId)));
         const newExtraDataMap: Record<string, CallExtraDataResultData> = {};
         extraDataResults.forEach((result, index) => {
           if (result.status === 'fulfilled' && result.value?.Data) {
@@ -118,9 +114,7 @@ export const useCallsStore = create<CallsState>((set, get) => ({
     const { calls } = get();
     if (!calls || calls.length === 0) return;
     try {
-      const extraDataResults = await Promise.allSettled(
-        calls.map((call) => getCallExtraData(call.CallId))
-      );
+      const extraDataResults = await Promise.allSettled(calls.map((call) => getCallExtraData(call.CallId)));
       const newExtraDataMap: Record<string, CallExtraDataResultData> = {};
       extraDataResults.forEach((result, index) => {
         if (result.status === 'fulfilled' && result.value?.Data) {

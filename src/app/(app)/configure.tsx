@@ -13,13 +13,100 @@ import { Switch } from '@/components/ui/switch';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
 import { useDashboardStore } from '@/stores/dashboard/store';
-import { DEFAULT_CALLS_COLUMN_ORDER, type CallsColumnKey, CALLS_COLUMN_LABELS, useCallsSettingsStore } from '@/stores/widget-settings/calls-settings-store';
-import { DEFAULT_PERSONNEL_COLUMN_ORDER, type PersonnelColumnKey, PERSONNEL_COLUMN_LABELS, usePersonnelSettingsStore } from '@/stores/widget-settings/personnel-settings-store';
-import { DEFAULT_UNITS_COLUMN_ORDER, type UnitsColumnKey, UNITS_COLUMN_LABELS, useUnitsSettingsStore } from '@/stores/widget-settings/units-settings-store';
+import { CALLS_COLUMN_LABELS, type CallsColumnKey, DEFAULT_CALLS_COLUMN_ORDER, useCallsSettingsStore } from '@/stores/widget-settings/calls-settings-store';
+import { DEFAULT_PERSONNEL_COLUMN_ORDER, PERSONNEL_COLUMN_LABELS, type PersonnelColumnKey, usePersonnelSettingsStore } from '@/stores/widget-settings/personnel-settings-store';
 import { useWidgetSettingsStore } from '@/stores/widget-settings/store';
+import { DEFAULT_UNITS_COLUMN_ORDER, UNITS_COLUMN_LABELS, type UnitsColumnKey, useUnitsSettingsStore } from '@/stores/widget-settings/units-settings-store';
 import { WidgetType } from '@/types/widget';
 
 type TabType = 'personnel' | 'map' | 'weather' | 'units' | 'calls' | 'notes' | 'time' | 'personnelStatusSummary' | 'personnelStaffingSummary' | 'unitsSummary' | 'callsSummary';
+
+interface WidgetSizeSectionProps {
+  widgetType: string;
+  defaultW?: number;
+  defaultH?: number;
+  isDark: boolean;
+}
+
+const WidgetSizeSection: React.FC<WidgetSizeSectionProps> = ({ widgetType, defaultW = 2, defaultH = 2, isDark }) => {
+  const { widgets } = useDashboardStore();
+  const widget = widgets.find((w) => w.type === widgetType);
+  const [localW, setLocalW] = useState(() => widget?.w ?? defaultW);
+  const [localH, setLocalH] = useState(() => widget?.h ?? defaultH);
+
+  return (
+    <VStack space="md">
+      <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Widget Size</Text>
+      <VStack space="sm">
+        <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Width (grid units): {localW}</Text>
+        <Slider
+          value={localW}
+          onChange={(value) => {
+            const rounded = Math.round(value);
+            setLocalW(rounded);
+            if (widget && rounded !== widget.w) {
+              useDashboardStore.getState().updateWidgetLayout(widget.id, { w: rounded });
+            }
+          }}
+          minValue={1}
+          maxValue={4}
+          step={1}
+          className="w-full"
+        >
+          <SliderTrack>
+            <SliderFilledTrack />
+          </SliderTrack>
+          <SliderThumb />
+        </Slider>
+      </VStack>
+      <VStack space="sm">
+        <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Height (grid units): {localH}</Text>
+        <Slider
+          value={localH}
+          onChange={(value) => {
+            const rounded = Math.round(value);
+            setLocalH(rounded);
+            if (widget && rounded !== widget.h) {
+              useDashboardStore.getState().updateWidgetLayout(widget.id, { h: rounded });
+            }
+          }}
+          minValue={1}
+          maxValue={5}
+          step={1}
+          className="w-full"
+        >
+          <SliderTrack>
+            <SliderFilledTrack />
+          </SliderTrack>
+          <SliderThumb />
+        </Slider>
+      </VStack>
+    </VStack>
+  );
+};
+
+interface FontSizeSectionProps {
+  value: number;
+  onChange: (value: number) => void;
+  onChangeEnd: (value: number) => void;
+  isDark: boolean;
+}
+
+const FontSizeSection: React.FC<FontSizeSectionProps> = ({ value, onChange, onChangeEnd, isDark }) => (
+  <VStack space="md">
+    <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Font Size: {value}pt</Text>
+    <Slider value={value} onChange={onChange} onChangeEnd={onChangeEnd} minValue={4} maxValue={30} step={1} className="w-full">
+      <SliderTrack>
+        <SliderFilledTrack />
+      </SliderTrack>
+      <SliderThumb />
+    </Slider>
+    <HStack className="justify-between">
+      <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>4pt</Text>
+      <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>30pt</Text>
+    </HStack>
+  </VStack>
+);
 
 export default function Configure() {
   const router = useRouter();
@@ -67,32 +154,16 @@ export default function Configure() {
     onUpdate(newOrder);
   };
 
-  const renderColumnOrderEditor = <T extends string>(
-    order: T[],
-    labels: Record<T, string>,
-    onUpdate: (newOrder: T[]) => void
-  ) => (
+  const renderColumnOrderEditor = <T extends string>(order: T[], labels: Record<T, string>, onUpdate: (newOrder: T[]) => void) => (
     <VStack space="sm">
       {order.map((col, index) => (
         <HStack key={col} className="items-center justify-between" space="sm">
           <Text className={`flex-1 text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>{labels[col]}</Text>
           <HStack space="xs">
-            <Button
-              size="sm"
-              variant="outline"
-              onPress={() => moveColumn(order, index, 'up', onUpdate)}
-              isDisabled={index === 0}
-              className="px-2"
-            >
+            <Button size="sm" variant="outline" onPress={() => moveColumn(order, index, 'up', onUpdate)} isDisabled={index === 0} className="px-2">
               <ChevronUp size={14} color={isDark ? '#9ca3af' : '#4b5563'} />
             </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              onPress={() => moveColumn(order, index, 'down', onUpdate)}
-              isDisabled={index === order.length - 1}
-              className="px-2"
-            >
+            <Button size="sm" variant="outline" onPress={() => moveColumn(order, index, 'down', onUpdate)} isDisabled={index === order.length - 1} className="px-2">
               <ChevronDown size={14} color={isDark ? '#9ca3af' : '#4b5563'} />
             </Button>
           </HStack>
@@ -102,9 +173,6 @@ export default function Configure() {
   );
 
   const [activeTab, setActiveTab] = useState<TabType>('personnel');
-
-  // Local state for slider values to prevent infinite loops
-  const [sliderValues, setSliderValues] = useState<Record<string, { w?: number; h?: number }>>({}); 
 
   // Local state for font size sliders to break the onChange -> store update -> re-render cycle
   const [fontSizes, setFontSizes] = useState({
@@ -220,94 +288,15 @@ export default function Configure() {
             </VStack>
 
             {/* Font Size */}
-            <VStack space="md">
-              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Font Size: {fontSizes.personnel}pt</Text>
-              <Slider value={fontSizes.personnel} onChange={(value) => setFontSizes((prev) => ({ ...prev, personnel: value }))} onChangeEnd={(value) => updatePersonnelSettings({ fontSize: value })} minValue={4} maxValue={30} step={1} className="w-full">
-                <SliderTrack>
-                  <SliderFilledTrack />
-                </SliderTrack>
-                <SliderThumb />
-              </Slider>
-              <HStack className="justify-between">
-                <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>4pt</Text>
-                <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>30pt</Text>
-              </HStack>
-            </VStack>
+            <FontSizeSection
+              value={fontSizes.personnel}
+              onChange={(value) => setFontSizes((prev) => ({ ...prev, personnel: value }))}
+              onChangeEnd={(value) => updatePersonnelSettings({ fontSize: value })}
+              isDark={isDark}
+            />
 
             {/* Widget Dimensions */}
-            <VStack space="md">
-              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Widget Size</Text>
-
-              <VStack space="sm">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>
-                  Width (grid units):{' '}
-                  {(() => {
-                    const widget = widgets.find((w) => w.type === 'personnel');
-                    return sliderValues[widget?.id || '']?.w ?? widget?.w ?? 2;
-                  })()}
-                </Text>
-                <Slider
-                  value={(() => {
-                    const widget = widgets.find((w) => w.type === 'personnel');
-                    return sliderValues[widget?.id || '']?.w ?? widget?.w ?? 2;
-                  })()}
-                  onChange={(value) => {
-                    const widget = widgets.find((w) => w.type === 'personnel');
-                    if (widget) {
-                      const roundedValue = Math.round(value);
-                      setSliderValues((prev) => ({ ...prev, [widget.id]: { ...prev[widget.id], w: roundedValue } }));
-                      if (roundedValue !== widget.w) {
-                        useDashboardStore.getState().updateWidgetLayout(widget.id, { w: roundedValue });
-                      }
-                    }
-                  }}
-                  minValue={1}
-                  maxValue={4}
-                  step={1}
-                  className="w-full"
-                >
-                  <SliderTrack>
-                    <SliderFilledTrack />
-                  </SliderTrack>
-                  <SliderThumb />
-                </Slider>
-              </VStack>
-
-              <VStack space="sm">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>
-                  Height (grid units):{' '}
-                  {(() => {
-                    const widget = widgets.find((w) => w.type === 'personnel');
-                    return sliderValues[widget?.id || '']?.h ?? widget?.h ?? 2;
-                  })()}
-                </Text>
-                <Slider
-                  value={(() => {
-                    const widget = widgets.find((w) => w.type === 'personnel');
-                    return sliderValues[widget?.id || '']?.h ?? widget?.h ?? 2;
-                  })()}
-                  onChange={(value) => {
-                    const widget = widgets.find((w) => w.type === 'personnel');
-                    if (widget) {
-                      const roundedValue = Math.round(value);
-                      setSliderValues((prev) => ({ ...prev, [widget.id]: { ...prev[widget.id], h: roundedValue } }));
-                      if (roundedValue !== widget.h) {
-                        useDashboardStore.getState().updateWidgetLayout(widget.id, { h: roundedValue });
-                      }
-                    }
-                  }}
-                  minValue={1}
-                  maxValue={5}
-                  step={1}
-                  className="w-full"
-                >
-                  <SliderTrack>
-                    <SliderFilledTrack />
-                  </SliderTrack>
-                  <SliderThumb />
-                </Slider>
-              </VStack>
-            </VStack>
+            <WidgetSizeSection widgetType="personnel" defaultW={2} defaultH={2} isDark={isDark} />
           </VStack>
         );
 
@@ -388,79 +377,7 @@ export default function Configure() {
             </VStack>
 
             {/* Widget Dimensions */}
-            <VStack space="md">
-              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Widget Size</Text>
-
-              <VStack space="sm">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>
-                  Width (grid units):{' '}
-                  {(() => {
-                    const widget = widgets.find((w) => w.type === 'map');
-                    return sliderValues[widget?.id || '']?.w ?? widget?.w ?? 2;
-                  })()}
-                </Text>
-                <Slider
-                  value={(() => {
-                    const widget = widgets.find((w) => w.type === 'map');
-                    return sliderValues[widget?.id || '']?.w ?? widget?.w ?? 2;
-                  })()}
-                  onChange={(value) => {
-                    const widget = widgets.find((w) => w.type === 'map');
-                    if (widget) {
-                      const roundedValue = Math.round(value);
-                      setSliderValues((prev) => ({ ...prev, [widget.id]: { ...prev[widget.id], w: roundedValue } }));
-                      if (roundedValue !== widget.w) {
-                        useDashboardStore.getState().updateWidgetLayout(widget.id, { w: roundedValue });
-                      }
-                    }
-                  }}
-                  minValue={1}
-                  maxValue={4}
-                  step={1}
-                  className="w-full"
-                >
-                  <SliderTrack>
-                    <SliderFilledTrack />
-                  </SliderTrack>
-                  <SliderThumb />
-                </Slider>
-              </VStack>
-
-              <VStack space="sm">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>
-                  Height (grid units):{' '}
-                  {(() => {
-                    const widget = widgets.find((w) => w.type === 'map');
-                    return sliderValues[widget?.id || '']?.h ?? widget?.h ?? 3;
-                  })()}
-                </Text>
-                <Slider
-                  value={(() => {
-                    const widget = widgets.find((w) => w.type === 'map');
-                    return sliderValues[widget?.id || '']?.h ?? widget?.h ?? 3;
-                  })()}
-                  onChange={(value) => {
-                    const widget = widgets.find((w) => w.type === 'map');
-                    if (widget) {
-                      const roundedValue = Math.round(value);
-                      setSliderValues((prev) => ({ ...prev, [widget.id]: { ...prev[widget.id], h: roundedValue } }));
-                      if (roundedValue !== widget.h) {
-                        useDashboardStore.getState().updateWidgetLayout(widget.id, { h: roundedValue });
-                      }
-                    }
-                  }}
-                  minValue={1}
-                  maxValue={5}
-                  step={1}
-                  className="w-full"
-                >
-                  <SliderTrack>
-                    <SliderFilledTrack />
-                  </SliderTrack>
-                  <SliderThumb />
-                </Slider>
-              </VStack>
-            </VStack>
+            <WidgetSizeSection widgetType="map" defaultW={2} defaultH={3} isDark={isDark} />
           </VStack>
         );
 
@@ -503,79 +420,7 @@ export default function Configure() {
             </VStack>
 
             {/* Widget Dimensions */}
-            <VStack space="md">
-              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Widget Size</Text>
-
-              <VStack space="sm">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>
-                  Width (grid units):{' '}
-                  {(() => {
-                    const widget = widgets.find((w) => w.type === 'weather');
-                    return sliderValues[widget?.id || '']?.w ?? widget?.w ?? 2;
-                  })()}
-                </Text>
-                <Slider
-                  value={(() => {
-                    const widget = widgets.find((w) => w.type === 'weather');
-                    return sliderValues[widget?.id || '']?.w ?? widget?.w ?? 2;
-                  })()}
-                  onChange={(value) => {
-                    const widget = widgets.find((w) => w.type === 'weather');
-                    if (widget) {
-                      const roundedValue = Math.round(value);
-                      setSliderValues((prev) => ({ ...prev, [widget.id]: { ...prev[widget.id], w: roundedValue } }));
-                      if (roundedValue !== widget.w) {
-                        useDashboardStore.getState().updateWidgetLayout(widget.id, { w: roundedValue });
-                      }
-                    }
-                  }}
-                  minValue={1}
-                  maxValue={4}
-                  step={1}
-                  className="w-full"
-                >
-                  <SliderTrack>
-                    <SliderFilledTrack />
-                  </SliderTrack>
-                  <SliderThumb />
-                </Slider>
-              </VStack>
-
-              <VStack space="sm">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>
-                  Height (grid units):{' '}
-                  {(() => {
-                    const widget = widgets.find((w) => w.type === 'weather');
-                    return sliderValues[widget?.id || '']?.h ?? widget?.h ?? 2;
-                  })()}
-                </Text>
-                <Slider
-                  value={(() => {
-                    const widget = widgets.find((w) => w.type === 'weather');
-                    return sliderValues[widget?.id || '']?.h ?? widget?.h ?? 2;
-                  })()}
-                  onChange={(value) => {
-                    const widget = widgets.find((w) => w.type === 'weather');
-                    if (widget) {
-                      const roundedValue = Math.round(value);
-                      setSliderValues((prev) => ({ ...prev, [widget.id]: { ...prev[widget.id], h: roundedValue } }));
-                      if (roundedValue !== widget.h) {
-                        useDashboardStore.getState().updateWidgetLayout(widget.id, { h: roundedValue });
-                      }
-                    }
-                  }}
-                  minValue={1}
-                  maxValue={5}
-                  step={1}
-                  className="w-full"
-                >
-                  <SliderTrack>
-                    <SliderFilledTrack />
-                  </SliderTrack>
-                  <SliderThumb />
-                </Slider>
-              </VStack>
-            </VStack>
+            <WidgetSizeSection widgetType="weather" defaultW={2} defaultH={2} isDark={isDark} />
           </VStack>
         );
 
@@ -617,94 +462,10 @@ export default function Configure() {
             </VStack>
 
             {/* Font Size */}
-            <VStack space="md">
-              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Font Size: {fontSizes.units}pt</Text>
-              <Slider value={fontSizes.units} onChange={(value) => setFontSizes((prev) => ({ ...prev, units: value }))} onChangeEnd={(value) => updateUnitsSettings({ fontSize: value })} minValue={4} maxValue={30} step={1} className="w-full">
-                <SliderTrack>
-                  <SliderFilledTrack />
-                </SliderTrack>
-                <SliderThumb />
-              </Slider>
-              <HStack className="justify-between">
-                <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>4pt</Text>
-                <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>30pt</Text>
-              </HStack>
-            </VStack>
+            <FontSizeSection value={fontSizes.units} onChange={(value) => setFontSizes((prev) => ({ ...prev, units: value }))} onChangeEnd={(value) => updateUnitsSettings({ fontSize: value })} isDark={isDark} />
 
             {/* Widget Dimensions */}
-            <VStack space="md">
-              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Widget Size</Text>
-
-              <VStack space="sm">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>
-                  Width (grid units):{' '}
-                  {(() => {
-                    const widget = widgets.find((w) => w.type === 'units');
-                    return sliderValues[widget?.id || '']?.w ?? widget?.w ?? 2;
-                  })()}
-                </Text>
-                <Slider
-                  value={(() => {
-                    const widget = widgets.find((w) => w.type === 'units');
-                    return sliderValues[widget?.id || '']?.w ?? widget?.w ?? 2;
-                  })()}
-                  onChange={(value) => {
-                    const widget = widgets.find((w) => w.type === 'units');
-                    if (widget) {
-                      const roundedValue = Math.round(value);
-                      setSliderValues((prev) => ({ ...prev, [widget.id]: { ...prev[widget.id], w: roundedValue } }));
-                      if (roundedValue !== widget.w) {
-                        useDashboardStore.getState().updateWidgetLayout(widget.id, { w: roundedValue });
-                      }
-                    }
-                  }}
-                  minValue={1}
-                  maxValue={4}
-                  step={1}
-                  className="w-full"
-                >
-                  <SliderTrack>
-                    <SliderFilledTrack />
-                  </SliderTrack>
-                  <SliderThumb />
-                </Slider>
-              </VStack>
-
-              <VStack space="sm">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>
-                  Height (grid units):{' '}
-                  {(() => {
-                    const widget = widgets.find((w) => w.type === 'units');
-                    return sliderValues[widget?.id || '']?.h ?? widget?.h ?? 2;
-                  })()}
-                </Text>
-                <Slider
-                  value={(() => {
-                    const widget = widgets.find((w) => w.type === 'units');
-                    return sliderValues[widget?.id || '']?.h ?? widget?.h ?? 2;
-                  })()}
-                  onChange={(value) => {
-                    const widget = widgets.find((w) => w.type === 'units');
-                    if (widget) {
-                      const roundedValue = Math.round(value);
-                      setSliderValues((prev) => ({ ...prev, [widget.id]: { ...prev[widget.id], h: roundedValue } }));
-                      if (roundedValue !== widget.h) {
-                        useDashboardStore.getState().updateWidgetLayout(widget.id, { h: roundedValue });
-                      }
-                    }
-                  }}
-                  minValue={1}
-                  maxValue={5}
-                  step={1}
-                  className="w-full"
-                >
-                  <SliderTrack>
-                    <SliderFilledTrack />
-                  </SliderTrack>
-                  <SliderThumb />
-                </Slider>
-              </VStack>
-            </VStack>
+            <WidgetSizeSection widgetType="units" defaultW={2} defaultH={2} isDark={isDark} />
           </VStack>
         );
 
@@ -771,10 +532,7 @@ export default function Configure() {
 
               {/* Dispatch Scroll Speed */}
               <VStack space="sm">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>
-                  Dispatch Scroll Speed:{' '}
-                  {fontSizes.callsDispatchSpeed === 0 ? 'Off (manual)' : `${fontSizes.callsDispatchSpeed}px/s`}
-                </Text>
+                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Dispatch Scroll Speed: {fontSizes.callsDispatchSpeed === 0 ? 'Off (manual)' : `${fontSizes.callsDispatchSpeed}px/s`}</Text>
                 <Slider
                   value={fontSizes.callsDispatchSpeed}
                   onChange={(value) => setFontSizes((prev) => ({ ...prev, callsDispatchSpeed: Math.round(value) }))}
@@ -797,94 +555,10 @@ export default function Configure() {
             </VStack>
 
             {/* Font Size */}
-            <VStack space="md">
-              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Font Size: {fontSizes.calls}pt</Text>
-              <Slider value={fontSizes.calls} onChange={(value) => setFontSizes((prev) => ({ ...prev, calls: value }))} onChangeEnd={(value) => updateCallsSettings({ fontSize: value })} minValue={4} maxValue={30} step={1} className="w-full">
-                <SliderTrack>
-                  <SliderFilledTrack />
-                </SliderTrack>
-                <SliderThumb />
-              </Slider>
-              <HStack className="justify-between">
-                <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>4pt</Text>
-                <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>30pt</Text>
-              </HStack>
-            </VStack>
+            <FontSizeSection value={fontSizes.calls} onChange={(value) => setFontSizes((prev) => ({ ...prev, calls: value }))} onChangeEnd={(value) => updateCallsSettings({ fontSize: value })} isDark={isDark} />
 
             {/* Widget Dimensions */}
-            <VStack space="md">
-              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Widget Size</Text>
-
-              <VStack space="sm">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>
-                  Width (grid units):{' '}
-                  {(() => {
-                    const widget = widgets.find((w) => w.type === 'calls');
-                    return sliderValues[widget?.id || '']?.w ?? widget?.w ?? 2;
-                  })()}
-                </Text>
-                <Slider
-                  value={(() => {
-                    const widget = widgets.find((w) => w.type === 'calls');
-                    return sliderValues[widget?.id || '']?.w ?? widget?.w ?? 2;
-                  })()}
-                  onChange={(value) => {
-                    const widget = widgets.find((w) => w.type === 'calls');
-                    if (widget) {
-                      const roundedValue = Math.round(value);
-                      setSliderValues((prev) => ({ ...prev, [widget.id]: { ...prev[widget.id], w: roundedValue } }));
-                      if (roundedValue !== widget.w) {
-                        useDashboardStore.getState().updateWidgetLayout(widget.id, { w: roundedValue });
-                      }
-                    }
-                  }}
-                  minValue={1}
-                  maxValue={4}
-                  step={1}
-                  className="w-full"
-                >
-                  <SliderTrack>
-                    <SliderFilledTrack />
-                  </SliderTrack>
-                  <SliderThumb />
-                </Slider>
-              </VStack>
-
-              <VStack space="sm">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>
-                  Height (grid units):{' '}
-                  {(() => {
-                    const widget = widgets.find((w) => w.type === 'calls');
-                    return sliderValues[widget?.id || '']?.h ?? widget?.h ?? 2;
-                  })()}
-                </Text>
-                <Slider
-                  value={(() => {
-                    const widget = widgets.find((w) => w.type === 'calls');
-                    return sliderValues[widget?.id || '']?.h ?? widget?.h ?? 2;
-                  })()}
-                  onChange={(value) => {
-                    const widget = widgets.find((w) => w.type === 'calls');
-                    if (widget) {
-                      const roundedValue = Math.round(value);
-                      setSliderValues((prev) => ({ ...prev, [widget.id]: { ...prev[widget.id], h: roundedValue } }));
-                      if (roundedValue !== widget.h) {
-                        useDashboardStore.getState().updateWidgetLayout(widget.id, { h: roundedValue });
-                      }
-                    }
-                  }}
-                  minValue={1}
-                  maxValue={5}
-                  step={1}
-                  className="w-full"
-                >
-                  <SliderTrack>
-                    <SliderFilledTrack />
-                  </SliderTrack>
-                  <SliderThumb />
-                </Slider>
-              </VStack>
-            </VStack>
+            <WidgetSizeSection widgetType="calls" defaultW={2} defaultH={2} isDark={isDark} />
           </VStack>
         );
 
@@ -910,79 +584,7 @@ export default function Configure() {
             </VStack>
 
             {/* Widget Dimensions */}
-            <VStack space="md">
-              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Widget Size</Text>
-
-              <VStack space="sm">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>
-                  Width (grid units):{' '}
-                  {(() => {
-                    const widget = widgets.find((w) => w.type === 'notes');
-                    return sliderValues[widget?.id || '']?.w ?? widget?.w ?? 2;
-                  })()}
-                </Text>
-                <Slider
-                  value={(() => {
-                    const widget = widgets.find((w) => w.type === 'notes');
-                    return sliderValues[widget?.id || '']?.w ?? widget?.w ?? 2;
-                  })()}
-                  onChange={(value) => {
-                    const widget = widgets.find((w) => w.type === 'notes');
-                    if (widget) {
-                      const roundedValue = Math.round(value);
-                      setSliderValues((prev) => ({ ...prev, [widget.id]: { ...prev[widget.id], w: roundedValue } }));
-                      if (roundedValue !== widget.w) {
-                        useDashboardStore.getState().updateWidgetLayout(widget.id, { w: roundedValue });
-                      }
-                    }
-                  }}
-                  minValue={1}
-                  maxValue={4}
-                  step={1}
-                  className="w-full"
-                >
-                  <SliderTrack>
-                    <SliderFilledTrack />
-                  </SliderTrack>
-                  <SliderThumb />
-                </Slider>
-              </VStack>
-
-              <VStack space="sm">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>
-                  Height (grid units):{' '}
-                  {(() => {
-                    const widget = widgets.find((w) => w.type === 'notes');
-                    return sliderValues[widget?.id || '']?.h ?? widget?.h ?? 1;
-                  })()}
-                </Text>
-                <Slider
-                  value={(() => {
-                    const widget = widgets.find((w) => w.type === 'notes');
-                    return sliderValues[widget?.id || '']?.h ?? widget?.h ?? 1;
-                  })()}
-                  onChange={(value) => {
-                    const widget = widgets.find((w) => w.type === 'notes');
-                    if (widget) {
-                      const roundedValue = Math.round(value);
-                      setSliderValues((prev) => ({ ...prev, [widget.id]: { ...prev[widget.id], h: roundedValue } }));
-                      if (roundedValue !== widget.h) {
-                        useDashboardStore.getState().updateWidgetLayout(widget.id, { h: roundedValue });
-                      }
-                    }
-                  }}
-                  minValue={1}
-                  maxValue={5}
-                  step={1}
-                  className="w-full"
-                >
-                  <SliderTrack>
-                    <SliderFilledTrack />
-                  </SliderTrack>
-                  <SliderThumb />
-                </Slider>
-              </VStack>
-            </VStack>
+            <WidgetSizeSection widgetType="notes" defaultW={2} defaultH={1} isDark={isDark} />
           </VStack>
         );
 
@@ -1006,79 +608,7 @@ export default function Configure() {
             </VStack>
 
             {/* Widget Dimensions */}
-            <VStack space="md">
-              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Widget Size</Text>
-
-              <VStack space="sm">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>
-                  Width (grid units):{' '}
-                  {(() => {
-                    const widget = widgets.find((w) => w.type === 'time');
-                    return sliderValues[widget?.id || '']?.w ?? widget?.w ?? 1;
-                  })()}
-                </Text>
-                <Slider
-                  value={(() => {
-                    const widget = widgets.find((w) => w.type === 'time');
-                    return sliderValues[widget?.id || '']?.w ?? widget?.w ?? 1;
-                  })()}
-                  onChange={(value) => {
-                    const widget = widgets.find((w) => w.type === 'time');
-                    if (widget) {
-                      const roundedValue = Math.round(value);
-                      setSliderValues((prev) => ({ ...prev, [widget.id]: { ...prev[widget.id], w: roundedValue } }));
-                      if (roundedValue !== widget.w) {
-                        useDashboardStore.getState().updateWidgetLayout(widget.id, { w: roundedValue });
-                      }
-                    }
-                  }}
-                  minValue={1}
-                  maxValue={4}
-                  step={1}
-                  className="w-full"
-                >
-                  <SliderTrack>
-                    <SliderFilledTrack />
-                  </SliderTrack>
-                  <SliderThumb />
-                </Slider>
-              </VStack>
-
-              <VStack space="sm">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>
-                  Height (grid units):{' '}
-                  {(() => {
-                    const widget = widgets.find((w) => w.type === 'time');
-                    return sliderValues[widget?.id || '']?.h ?? widget?.h ?? 1;
-                  })()}
-                </Text>
-                <Slider
-                  value={(() => {
-                    const widget = widgets.find((w) => w.type === 'time');
-                    return sliderValues[widget?.id || '']?.h ?? widget?.h ?? 1;
-                  })()}
-                  onChange={(value) => {
-                    const widget = widgets.find((w) => w.type === 'time');
-                    if (widget) {
-                      const roundedValue = Math.round(value);
-                      setSliderValues((prev) => ({ ...prev, [widget.id]: { ...prev[widget.id], h: roundedValue } }));
-                      if (roundedValue !== widget.h) {
-                        useDashboardStore.getState().updateWidgetLayout(widget.id, { h: roundedValue });
-                      }
-                    }
-                  }}
-                  minValue={1}
-                  maxValue={5}
-                  step={1}
-                  className="w-full"
-                >
-                  <SliderTrack>
-                    <SliderFilledTrack />
-                  </SliderTrack>
-                  <SliderThumb />
-                </Slider>
-              </VStack>
-            </VStack>
+            <WidgetSizeSection widgetType="time" defaultW={1} defaultH={1} isDark={isDark} />
           </VStack>
         );
 
@@ -1098,94 +628,15 @@ export default function Configure() {
             </VStack>
 
             {/* Font Size */}
-            <VStack space="md">
-              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Font Size: {fontSizes.personnelStatusSummary}pt</Text>
-              <Slider value={fontSizes.personnelStatusSummary} onChange={(value) => setFontSizes((prev) => ({ ...prev, personnelStatusSummary: value }))} onChangeEnd={(value) => updatePersonnelStatusSummarySettings({ fontSize: value })} minValue={4} maxValue={30} step={1} className="w-full">
-                <SliderTrack>
-                  <SliderFilledTrack />
-                </SliderTrack>
-                <SliderThumb />
-              </Slider>
-              <HStack className="justify-between">
-                <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>4pt</Text>
-                <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>30pt</Text>
-              </HStack>
-            </VStack>
+            <FontSizeSection
+              value={fontSizes.personnelStatusSummary}
+              onChange={(value) => setFontSizes((prev) => ({ ...prev, personnelStatusSummary: value }))}
+              onChangeEnd={(value) => updatePersonnelStatusSummarySettings({ fontSize: value })}
+              isDark={isDark}
+            />
 
             {/* Widget Dimensions */}
-            <VStack space="md">
-              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Widget Size</Text>
-
-              <VStack space="sm">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>
-                  Width (grid units):{' '}
-                  {(() => {
-                    const widget = widgets.find((w) => w.type === 'personnel_status_summary');
-                    return sliderValues[widget?.id || '']?.w ?? widget?.w ?? 1;
-                  })()}
-                </Text>
-                <Slider
-                  value={(() => {
-                    const widget = widgets.find((w) => w.type === 'personnel_status_summary');
-                    return sliderValues[widget?.id || '']?.w ?? widget?.w ?? 1;
-                  })()}
-                  onChange={(value) => {
-                    const widget = widgets.find((w) => w.type === 'personnel_status_summary');
-                    if (widget) {
-                      const roundedValue = Math.round(value);
-                      setSliderValues((prev) => ({ ...prev, [widget.id]: { ...prev[widget.id], w: roundedValue } }));
-                      if (roundedValue !== widget.w) {
-                        useDashboardStore.getState().updateWidgetLayout(widget.id, { w: roundedValue });
-                      }
-                    }
-                  }}
-                  minValue={1}
-                  maxValue={4}
-                  step={1}
-                  className="w-full"
-                >
-                  <SliderTrack>
-                    <SliderFilledTrack />
-                  </SliderTrack>
-                  <SliderThumb />
-                </Slider>
-              </VStack>
-
-              <VStack space="sm">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>
-                  Height (grid units):{' '}
-                  {(() => {
-                    const widget = widgets.find((w) => w.type === 'personnel_status_summary');
-                    return sliderValues[widget?.id || '']?.h ?? widget?.h ?? 1;
-                  })()}
-                </Text>
-                <Slider
-                  value={(() => {
-                    const widget = widgets.find((w) => w.type === 'personnel_status_summary');
-                    return sliderValues[widget?.id || '']?.h ?? widget?.h ?? 1;
-                  })()}
-                  onChange={(value) => {
-                    const widget = widgets.find((w) => w.type === 'personnel_status_summary');
-                    if (widget) {
-                      const roundedValue = Math.round(value);
-                      setSliderValues((prev) => ({ ...prev, [widget.id]: { ...prev[widget.id], h: roundedValue } }));
-                      if (roundedValue !== widget.h) {
-                        useDashboardStore.getState().updateWidgetLayout(widget.id, { h: roundedValue });
-                      }
-                    }
-                  }}
-                  minValue={1}
-                  maxValue={5}
-                  step={1}
-                  className="w-full"
-                >
-                  <SliderTrack>
-                    <SliderFilledTrack />
-                  </SliderTrack>
-                  <SliderThumb />
-                </Slider>
-              </VStack>
-            </VStack>
+            <WidgetSizeSection widgetType="personnel_status_summary" defaultW={1} defaultH={1} isDark={isDark} />
           </VStack>
         );
 
@@ -1205,94 +656,15 @@ export default function Configure() {
             </VStack>
 
             {/* Font Size */}
-            <VStack space="md">
-              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Font Size: {fontSizes.personnelStaffingSummary}pt</Text>
-              <Slider value={fontSizes.personnelStaffingSummary} onChange={(value) => setFontSizes((prev) => ({ ...prev, personnelStaffingSummary: value }))} onChangeEnd={(value) => updatePersonnelStaffingSummarySettings({ fontSize: value })} minValue={4} maxValue={30} step={1} className="w-full">
-                <SliderTrack>
-                  <SliderFilledTrack />
-                </SliderTrack>
-                <SliderThumb />
-              </Slider>
-              <HStack className="justify-between">
-                <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>4pt</Text>
-                <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>30pt</Text>
-              </HStack>
-            </VStack>
+            <FontSizeSection
+              value={fontSizes.personnelStaffingSummary}
+              onChange={(value) => setFontSizes((prev) => ({ ...prev, personnelStaffingSummary: value }))}
+              onChangeEnd={(value) => updatePersonnelStaffingSummarySettings({ fontSize: value })}
+              isDark={isDark}
+            />
 
             {/* Widget Dimensions */}
-            <VStack space="md">
-              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Widget Size</Text>
-
-              <VStack space="sm">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>
-                  Width (grid units):{' '}
-                  {(() => {
-                    const widget = widgets.find((w) => w.type === 'personnel_staffing_summary');
-                    return sliderValues[widget?.id || '']?.w ?? widget?.w ?? 1;
-                  })()}
-                </Text>
-                <Slider
-                  value={(() => {
-                    const widget = widgets.find((w) => w.type === 'personnel_staffing_summary');
-                    return sliderValues[widget?.id || '']?.w ?? widget?.w ?? 1;
-                  })()}
-                  onChange={(value) => {
-                    const widget = widgets.find((w) => w.type === 'personnel_staffing_summary');
-                    if (widget) {
-                      const roundedValue = Math.round(value);
-                      setSliderValues((prev) => ({ ...prev, [widget.id]: { ...prev[widget.id], w: roundedValue } }));
-                      if (roundedValue !== widget.w) {
-                        useDashboardStore.getState().updateWidgetLayout(widget.id, { w: roundedValue });
-                      }
-                    }
-                  }}
-                  minValue={1}
-                  maxValue={4}
-                  step={1}
-                  className="w-full"
-                >
-                  <SliderTrack>
-                    <SliderFilledTrack />
-                  </SliderTrack>
-                  <SliderThumb />
-                </Slider>
-              </VStack>
-
-              <VStack space="sm">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>
-                  Height (grid units):{' '}
-                  {(() => {
-                    const widget = widgets.find((w) => w.type === 'personnel_staffing_summary');
-                    return sliderValues[widget?.id || '']?.h ?? widget?.h ?? 1;
-                  })()}
-                </Text>
-                <Slider
-                  value={(() => {
-                    const widget = widgets.find((w) => w.type === 'personnel_staffing_summary');
-                    return sliderValues[widget?.id || '']?.h ?? widget?.h ?? 1;
-                  })()}
-                  onChange={(value) => {
-                    const widget = widgets.find((w) => w.type === 'personnel_staffing_summary');
-                    if (widget) {
-                      const roundedValue = Math.round(value);
-                      setSliderValues((prev) => ({ ...prev, [widget.id]: { ...prev[widget.id], h: roundedValue } }));
-                      if (roundedValue !== widget.h) {
-                        useDashboardStore.getState().updateWidgetLayout(widget.id, { h: roundedValue });
-                      }
-                    }
-                  }}
-                  minValue={1}
-                  maxValue={5}
-                  step={1}
-                  className="w-full"
-                >
-                  <SliderTrack>
-                    <SliderFilledTrack />
-                  </SliderTrack>
-                  <SliderThumb />
-                </Slider>
-              </VStack>
-            </VStack>
+            <WidgetSizeSection widgetType="personnel_staffing_summary" defaultW={1} defaultH={1} isDark={isDark} />
           </VStack>
         );
 
@@ -1322,94 +694,15 @@ export default function Configure() {
             </VStack>
 
             {/* Font Size */}
-            <VStack space="md">
-              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Font Size: {fontSizes.unitsSummary}pt</Text>
-              <Slider value={fontSizes.unitsSummary} onChange={(value) => setFontSizes((prev) => ({ ...prev, unitsSummary: value }))} onChangeEnd={(value) => updateUnitsSummarySettings({ fontSize: value })} minValue={4} maxValue={30} step={1} className="w-full">
-                <SliderTrack>
-                  <SliderFilledTrack />
-                </SliderTrack>
-                <SliderThumb />
-              </Slider>
-              <HStack className="justify-between">
-                <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>4pt</Text>
-                <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>30pt</Text>
-              </HStack>
-            </VStack>
+            <FontSizeSection
+              value={fontSizes.unitsSummary}
+              onChange={(value) => setFontSizes((prev) => ({ ...prev, unitsSummary: value }))}
+              onChangeEnd={(value) => updateUnitsSummarySettings({ fontSize: value })}
+              isDark={isDark}
+            />
 
             {/* Widget Dimensions */}
-            <VStack space="md">
-              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Widget Size</Text>
-
-              <VStack space="sm">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>
-                  Width (grid units):{' '}
-                  {(() => {
-                    const widget = widgets.find((w) => w.type === 'units_summary');
-                    return sliderValues[widget?.id || '']?.w ?? widget?.w ?? 1;
-                  })()}
-                </Text>
-                <Slider
-                  value={(() => {
-                    const widget = widgets.find((w) => w.type === 'units_summary');
-                    return sliderValues[widget?.id || '']?.w ?? widget?.w ?? 1;
-                  })()}
-                  onChange={(value) => {
-                    const widget = widgets.find((w) => w.type === 'units_summary');
-                    if (widget) {
-                      const roundedValue = Math.round(value);
-                      setSliderValues((prev) => ({ ...prev, [widget.id]: { ...prev[widget.id], w: roundedValue } }));
-                      if (roundedValue !== widget.w) {
-                        useDashboardStore.getState().updateWidgetLayout(widget.id, { w: roundedValue });
-                      }
-                    }
-                  }}
-                  minValue={1}
-                  maxValue={4}
-                  step={1}
-                  className="w-full"
-                >
-                  <SliderTrack>
-                    <SliderFilledTrack />
-                  </SliderTrack>
-                  <SliderThumb />
-                </Slider>
-              </VStack>
-
-              <VStack space="sm">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>
-                  Height (grid units):{' '}
-                  {(() => {
-                    const widget = widgets.find((w) => w.type === 'units_summary');
-                    return sliderValues[widget?.id || '']?.h ?? widget?.h ?? 1;
-                  })()}
-                </Text>
-                <Slider
-                  value={(() => {
-                    const widget = widgets.find((w) => w.type === 'units_summary');
-                    return sliderValues[widget?.id || '']?.h ?? widget?.h ?? 1;
-                  })()}
-                  onChange={(value) => {
-                    const widget = widgets.find((w) => w.type === 'units_summary');
-                    if (widget) {
-                      const roundedValue = Math.round(value);
-                      setSliderValues((prev) => ({ ...prev, [widget.id]: { ...prev[widget.id], h: roundedValue } }));
-                      if (roundedValue !== widget.h) {
-                        useDashboardStore.getState().updateWidgetLayout(widget.id, { h: roundedValue });
-                      }
-                    }
-                  }}
-                  minValue={1}
-                  maxValue={5}
-                  step={1}
-                  className="w-full"
-                >
-                  <SliderTrack>
-                    <SliderFilledTrack />
-                  </SliderTrack>
-                  <SliderThumb />
-                </Slider>
-              </VStack>
-            </VStack>
+            <WidgetSizeSection widgetType="units_summary" defaultW={1} defaultH={1} isDark={isDark} />
           </VStack>
         );
 
@@ -1434,7 +727,15 @@ export default function Configure() {
 
               <VStack space="sm">
                 <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Max Priorities to Show: {fontSizes.callsSummaryMaxPriorities}</Text>
-                <Slider value={fontSizes.callsSummaryMaxPriorities} onChange={(value) => setFontSizes((prev) => ({ ...prev, callsSummaryMaxPriorities: Math.round(value) }))} onChangeEnd={(value) => updateCallsSummarySettings({ maxPrioritiesToShow: Math.round(value) })} minValue={1} maxValue={10} step={1} className="w-full">
+                <Slider
+                  value={fontSizes.callsSummaryMaxPriorities}
+                  onChange={(value) => setFontSizes((prev) => ({ ...prev, callsSummaryMaxPriorities: Math.round(value) }))}
+                  onChangeEnd={(value) => updateCallsSummarySettings({ maxPrioritiesToShow: Math.round(value) })}
+                  minValue={1}
+                  maxValue={10}
+                  step={1}
+                  className="w-full"
+                >
                   <SliderTrack>
                     <SliderFilledTrack />
                   </SliderTrack>
@@ -1444,94 +745,15 @@ export default function Configure() {
             </VStack>
 
             {/* Font Size */}
-            <VStack space="md">
-              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Font Size: {fontSizes.callsSummary}pt</Text>
-              <Slider value={fontSizes.callsSummary} onChange={(value) => setFontSizes((prev) => ({ ...prev, callsSummary: value }))} onChangeEnd={(value) => updateCallsSummarySettings({ fontSize: value })} minValue={4} maxValue={30} step={1} className="w-full">
-                <SliderTrack>
-                  <SliderFilledTrack />
-                </SliderTrack>
-                <SliderThumb />
-              </Slider>
-              <HStack className="justify-between">
-                <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>4pt</Text>
-                <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>30pt</Text>
-              </HStack>
-            </VStack>
+            <FontSizeSection
+              value={fontSizes.callsSummary}
+              onChange={(value) => setFontSizes((prev) => ({ ...prev, callsSummary: value }))}
+              onChangeEnd={(value) => updateCallsSummarySettings({ fontSize: value })}
+              isDark={isDark}
+            />
 
             {/* Widget Dimensions */}
-            <VStack space="md">
-              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Widget Size</Text>
-
-              <VStack space="sm">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>
-                  Width (grid units):{' '}
-                  {(() => {
-                    const widget = widgets.find((w) => w.type === 'calls_summary');
-                    return sliderValues[widget?.id || '']?.w ?? widget?.w ?? 1;
-                  })()}
-                </Text>
-                <Slider
-                  value={(() => {
-                    const widget = widgets.find((w) => w.type === 'calls_summary');
-                    return sliderValues[widget?.id || '']?.w ?? widget?.w ?? 1;
-                  })()}
-                  onChange={(value) => {
-                    const widget = widgets.find((w) => w.type === 'calls_summary');
-                    if (widget) {
-                      const roundedValue = Math.round(value);
-                      setSliderValues((prev) => ({ ...prev, [widget.id]: { ...prev[widget.id], w: roundedValue } }));
-                      if (roundedValue !== widget.w) {
-                        useDashboardStore.getState().updateWidgetLayout(widget.id, { w: roundedValue });
-                      }
-                    }
-                  }}
-                  minValue={1}
-                  maxValue={4}
-                  step={1}
-                  className="w-full"
-                >
-                  <SliderTrack>
-                    <SliderFilledTrack />
-                  </SliderTrack>
-                  <SliderThumb />
-                </Slider>
-              </VStack>
-
-              <VStack space="sm">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>
-                  Height (grid units):{' '}
-                  {(() => {
-                    const widget = widgets.find((w) => w.type === 'calls_summary');
-                    return sliderValues[widget?.id || '']?.h ?? widget?.h ?? 1;
-                  })()}
-                </Text>
-                <Slider
-                  value={(() => {
-                    const widget = widgets.find((w) => w.type === 'calls_summary');
-                    return sliderValues[widget?.id || '']?.h ?? widget?.h ?? 1;
-                  })()}
-                  onChange={(value) => {
-                    const widget = widgets.find((w) => w.type === 'calls_summary');
-                    if (widget) {
-                      const roundedValue = Math.round(value);
-                      setSliderValues((prev) => ({ ...prev, [widget.id]: { ...prev[widget.id], h: roundedValue } }));
-                      if (roundedValue !== widget.h) {
-                        useDashboardStore.getState().updateWidgetLayout(widget.id, { h: roundedValue });
-                      }
-                    }
-                  }}
-                  minValue={1}
-                  maxValue={5}
-                  step={1}
-                  className="w-full"
-                >
-                  <SliderTrack>
-                    <SliderFilledTrack />
-                  </SliderTrack>
-                  <SliderThumb />
-                </Slider>
-              </VStack>
-            </VStack>
+            <WidgetSizeSection widgetType="calls_summary" defaultW={1} defaultH={1} isDark={isDark} />
           </VStack>
         );
 

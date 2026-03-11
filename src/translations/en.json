@@ -466,25 +466,8 @@
     "username": "Username",
     "username_placeholder": "Enter your username"
   },
-  "sso": {
-    "button": "Login with SSO",
-    "continue": "Continue",
-    "department_id": "Department ID",
-    "department_id_placeholder": "Enter your department ID",
-    "error_fetching_config": "Failed to fetch SSO configuration. Please check your username and try again.",
-    "error_login_failed": "SSO login failed. Please try again.",
-    "error_no_token": "Failed to get authentication token from the identity provider.",
-    "error_not_configured": "SSO is not configured for this account.",
-    "error_title": "SSO Error",
-    "loading_config": "Looking up SSO configuration...",
-    "login_with_sso": "Sign in with SSO",
-    "page_subtitle": "Enter your username to find your SSO configuration.",
-    "page_title": "SSO Login",
-    "processing": "Processing...",
-    "username": "Username",
-    "username_placeholder": "Enter your username"
-  },
   "maintenance": {
+    "downtime_message": "We are working hard to complete maintenance as soon as possible. Please check back soon.",
     "downtime_title": "What is the Downtime?",
     "message": "Please check back in sometime.",
     "support_message": "If you need assistance, please contact us at",
@@ -639,6 +622,24 @@
     "username": "Username",
     "version": "Version",
     "website": "Website"
+  },
+  "sso": {
+    "button": "Login with SSO",
+    "continue": "Continue",
+    "department_id": "Department ID",
+    "department_id_placeholder": "Enter your department ID",
+    "error_fetching_config": "Failed to fetch SSO configuration. Please check your username and try again.",
+    "error_login_failed": "SSO login failed. Please try again.",
+    "error_no_token": "Failed to get authentication token from the identity provider.",
+    "error_not_configured": "SSO is not configured for this account.",
+    "error_title": "SSO Error",
+    "loading_config": "Looking up SSO configuration...",
+    "login_with_sso": "Sign in with SSO",
+    "page_subtitle": "Enter your username to find your SSO configuration.",
+    "page_title": "SSO Login",
+    "processing": "Processing...",
+    "username": "Username",
+    "username_placeholder": "Enter your username"
   },
   "status": {
     "add_note": "Add Note",

@@ -466,24 +466,6 @@
     "username": "اسم المستخدم",
     "username_placeholder": "أدخل اسم المستخدم الخاص بك"
   },
-  "sso": {
-    "button": "تسجيل الدخول باستخدام SSO",
-    "continue": "متابعة",
-    "department_id": "معرف القسم",
-    "department_id_placeholder": "أدخل معرف قسمك",
-    "error_fetching_config": "فشل في جلب تكوين SSO. يرجى التحقق من اسم المستخدم والمحاولة مرة أخرى.",
-    "error_login_failed": "فشل تسجيل الدخول عبر SSO. يرجى المحاولة مرة أخرى.",
-    "error_no_token": "فشل في الحصول على رمز المصادقة من مزود الهوية.",
-    "error_not_configured": "SSO غير مكون لهذا الحساب.",
-    "error_title": "خطأ في SSO",
-    "loading_config": "جارٍ البحث عن تكوين SSO...",
-    "login_with_sso": "تسجيل الدخول باستخدام SSO",
-    "page_subtitle": "أدخل اسم المستخدم للعثور على تكوين SSO الخاص بك.",
-    "page_title": "تسجيل الدخول SSO",
-    "processing": "جارٍ المعالجة...",
-    "username": "اسم المستخدم",
-    "username_placeholder": "أدخل اسم المستخدم"
-  },
   "maintenance": {
     "downtime_message": "نحن نعمل بجد لإكمال الصيانة في أسرع وقت ممكن. يرجى التحقق مرة أخرى قريبا.",
     "downtime_title": "ما هو وقت التوقف؟",
@@ -640,6 +622,24 @@
     "username": "اسم المستخدم",
     "version": "الإصدار",
     "website": "الموقع الإلكتروني"
+  },
+  "sso": {
+    "button": "تسجيل الدخول باستخدام SSO",
+    "continue": "متابعة",
+    "department_id": "معرف القسم",
+    "department_id_placeholder": "أدخل معرف قسمك",
+    "error_fetching_config": "فشل في جلب تكوين SSO. يرجى التحقق من اسم المستخدم والمحاولة مرة أخرى.",
+    "error_login_failed": "فشل تسجيل الدخول عبر SSO. يرجى المحاولة مرة أخرى.",
+    "error_no_token": "فشل في الحصول على رمز المصادقة من مزود الهوية.",
+    "error_not_configured": "SSO غير مكون لهذا الحساب.",
+    "error_title": "خطأ في SSO",
+    "loading_config": "جارٍ البحث عن تكوين SSO...",
+    "login_with_sso": "تسجيل الدخول باستخدام SSO",
+    "page_subtitle": "أدخل اسم المستخدم للعثور على تكوين SSO الخاص بك.",
+    "page_title": "تسجيل الدخول SSO",
+    "processing": "جارٍ المعالجة...",
+    "username": "اسم المستخدم",
+    "username_placeholder": "أدخل اسم المستخدم"
   },
   "status": {
     "add_note": "إضافة ملاحظة",

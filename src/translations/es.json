@@ -466,24 +466,6 @@
     "username": "Nombre de usuario",
     "username_placeholder": "Introduce tu nombre de usuario"
   },
-  "sso": {
-    "button": "Iniciar sesión con SSO",
-    "continue": "Continuar",
-    "department_id": "ID de Departamento",
-    "department_id_placeholder": "Ingrese su ID de departamento",
-    "error_fetching_config": "No se pudo obtener la configuración de SSO. Verifique su nombre de usuario e intente de nuevo.",
-    "error_login_failed": "Error al iniciar sesión con SSO. Por favor, inténtelo de nuevo.",
-    "error_no_token": "No se pudo obtener el token de autenticación del proveedor de identidad.",
-    "error_not_configured": "SSO no está configurado para esta cuenta.",
-    "error_title": "Error de SSO",
-    "loading_config": "Buscando configuración de SSO...",
-    "login_with_sso": "Iniciar sesión con SSO",
-    "page_subtitle": "Ingrese su nombre de usuario para encontrar su configuración de SSO.",
-    "page_title": "Inicio de sesión SSO",
-    "processing": "Procesando...",
-    "username": "Nombre de usuario",
-    "username_placeholder": "Ingrese su nombre de usuario"
-  },
   "maintenance": {
     "downtime_message": "Estamos trabajando arduamente para completar el mantenimiento lo antes posible. Por favor, vuelve a consultar pronto.",
     "downtime_title": "¿Cuál es el tiempo de inactividad?",
@@ -640,6 +622,24 @@
     "username": "Nombre de usuario",
     "version": "Versión",
     "website": "Sitio web"
+  },
+  "sso": {
+    "button": "Iniciar sesión con SSO",
+    "continue": "Continuar",
+    "department_id": "ID de Departamento",
+    "department_id_placeholder": "Ingrese su ID de departamento",
+    "error_fetching_config": "No se pudo obtener la configuración de SSO. Verifique su nombre de usuario e intente de nuevo.",
+    "error_login_failed": "Error al iniciar sesión con SSO. Por favor, inténtelo de nuevo.",
+    "error_no_token": "No se pudo obtener el token de autenticación del proveedor de identidad.",
+    "error_not_configured": "SSO no está configurado para esta cuenta.",
+    "error_title": "Error de SSO",
+    "loading_config": "Buscando configuración de SSO...",
+    "login_with_sso": "Iniciar sesión con SSO",
+    "page_subtitle": "Ingrese su nombre de usuario para encontrar su configuración de SSO.",
+    "page_title": "Inicio de sesión SSO",
+    "processing": "Procesando...",
+    "username": "Nombre de usuario",
+    "username_placeholder": "Ingrese su nombre de usuario"
   },
   "status": {
     "add_note": "Añadir Nota",

@@ -30,12 +30,7 @@ const DISPATCH_TYPE_COLORS: Record<string, string> = {
 
 const SEPARATOR_WIDTH = 40;
 
-export const AutoScrollingDispatches: React.FC<AutoScrollingDispatchesProps> = ({
-  dispatches,
-  resolveDisplayName,
-  scrollSpeed,
-  fontSize,
-}) => {
+export const AutoScrollingDispatches: React.FC<AutoScrollingDispatchesProps> = ({ dispatches, resolveDisplayName, scrollSpeed, fontSize }) => {
   const scrollX = useRef(new Animated.Value(0)).current;
   const animRef = useRef<Animated.CompositeAnimation | null>(null);
   const [primaryWidth, setPrimaryWidth] = useState(0);

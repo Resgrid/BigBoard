@@ -106,10 +106,7 @@ export const refreshTokenRequest = async (refreshToken: string): Promise<AuthRes
   }
 };
 
-export const fetchSsoConfigForUser = async (
-  username: string,
-  departmentId?: number,
-): Promise<DepartmentSsoConfig | null> => {
+export const fetchSsoConfigForUser = async (username: string, departmentId?: number): Promise<DepartmentSsoConfig | null> => {
   try {
     const params: Record<string, string | number> = { username };
     if (departmentId !== undefined) {
