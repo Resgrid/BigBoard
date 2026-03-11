@@ -3,6 +3,34 @@ export interface AuthTokens {
   refreshToken: string;
 }
 
+export interface DepartmentSsoConfig {
+  ssoEnabled: boolean;
+  providerType: 'oidc' | 'saml2' | null;
+  authority: string | null;
+  clientId: string | null;
+  metadataUrl: string | null;
+  entityId: string | null;
+  allowLocalLogin: boolean;
+  requireSso: boolean;
+  requireMfa: boolean;
+  oidcRedirectUri: string | null;
+  oidcScopes: string | null;
+  departmentCode: string | null;
+}
+
+export interface ExternalTokenRequest {
+  provider: 'oidc' | 'saml2';
+  external_token: string;
+  department_code?: string;
+  scope: string;
+}
+
+export interface SsoLoginCredentials {
+  provider: 'oidc' | 'saml2';
+  externalToken: string;
+  departmentCode?: string;
+}
+
 export interface LoginCredentials {
   username: string;
   password: string;
@@ -47,6 +75,7 @@ export interface AuthState {
   profile: ProfileModel | null;
   userId: string | null;
   login: (credentials: LoginCredentials) => Promise<void>;
+  loginWithSso: (credentials: SsoLoginCredentials) => Promise<void>;
   logout: () => Promise<void>;
   refreshAccessToken: () => Promise<void>;
   isFirstTime: boolean;

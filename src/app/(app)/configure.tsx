@@ -1,4 +1,5 @@
 import { useRouter } from 'expo-router';
+import { ChevronDown, ChevronUp } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
 import React, { useState } from 'react';
 import { ScrollView } from 'react-native';
@@ -12,6 +13,9 @@ import { Switch } from '@/components/ui/switch';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
 import { useDashboardStore } from '@/stores/dashboard/store';
+import { DEFAULT_CALLS_COLUMN_ORDER, type CallsColumnKey, CALLS_COLUMN_LABELS, useCallsSettingsStore } from '@/stores/widget-settings/calls-settings-store';
+import { DEFAULT_PERSONNEL_COLUMN_ORDER, type PersonnelColumnKey, PERSONNEL_COLUMN_LABELS, usePersonnelSettingsStore } from '@/stores/widget-settings/personnel-settings-store';
+import { DEFAULT_UNITS_COLUMN_ORDER, type UnitsColumnKey, UNITS_COLUMN_LABELS, useUnitsSettingsStore } from '@/stores/widget-settings/units-settings-store';
 import { useWidgetSettingsStore } from '@/stores/widget-settings/store';
 import { WidgetType } from '@/types/widget';
 
@@ -47,10 +51,73 @@ export default function Configure() {
     updateCallsSummarySettings,
   } = useWidgetSettingsStore();
 
+  const { settings: personnelSettings, updateSettings: updatePersonnelColumnSettings } = usePersonnelSettingsStore();
+  const { settings: unitsSettings, updateSettings: updateUnitsColumnSettings } = useUnitsSettingsStore();
+  const { settings: callsColumnSettings, updateSettings: updateCallsColumnSettings } = useCallsSettingsStore();
+
+  const personnelColumnOrder: PersonnelColumnKey[] = personnelSettings.columnOrder?.length ? personnelSettings.columnOrder : DEFAULT_PERSONNEL_COLUMN_ORDER;
+  const unitsColumnOrder: UnitsColumnKey[] = unitsSettings.columnOrder?.length ? unitsSettings.columnOrder : DEFAULT_UNITS_COLUMN_ORDER;
+  const callsColumnOrder: CallsColumnKey[] = callsColumnSettings.columnOrder?.length ? callsColumnSettings.columnOrder : DEFAULT_CALLS_COLUMN_ORDER;
+
+  const moveColumn = <T extends string>(order: T[], index: number, direction: 'up' | 'down', onUpdate: (newOrder: T[]) => void) => {
+    const newOrder = [...order];
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= newOrder.length) return;
+    [newOrder[index], newOrder[targetIndex]] = [newOrder[targetIndex], newOrder[index]];
+    onUpdate(newOrder);
+  };
+
+  const renderColumnOrderEditor = <T extends string>(
+    order: T[],
+    labels: Record<T, string>,
+    onUpdate: (newOrder: T[]) => void
+  ) => (
+    <VStack space="sm">
+      {order.map((col, index) => (
+        <HStack key={col} className="items-center justify-between" space="sm">
+          <Text className={`flex-1 text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>{labels[col]}</Text>
+          <HStack space="xs">
+            <Button
+              size="sm"
+              variant="outline"
+              onPress={() => moveColumn(order, index, 'up', onUpdate)}
+              isDisabled={index === 0}
+              className="px-2"
+            >
+              <ChevronUp size={14} color={isDark ? '#9ca3af' : '#4b5563'} />
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onPress={() => moveColumn(order, index, 'down', onUpdate)}
+              isDisabled={index === order.length - 1}
+              className="px-2"
+            >
+              <ChevronDown size={14} color={isDark ? '#9ca3af' : '#4b5563'} />
+            </Button>
+          </HStack>
+        </HStack>
+      ))}
+    </VStack>
+  );
+
   const [activeTab, setActiveTab] = useState<TabType>('personnel');
 
   // Local state for slider values to prevent infinite loops
-  const [sliderValues, setSliderValues] = useState<Record<string, { w?: number; h?: number }>>({});
+  const [sliderValues, setSliderValues] = useState<Record<string, { w?: number; h?: number }>>({}); 
+
+  // Local state for font size sliders to break the onChange -> store update -> re-render cycle
+  const [fontSizes, setFontSizes] = useState({
+    personnel: personnel.fontSize,
+    units: units.fontSize,
+    calls: calls.fontSize,
+    callsDispatchSpeed: calls.dispatchScrollSpeed ?? 40,
+    personnelStatusSummary: personnelStatusSummary.fontSize,
+    personnelStaffingSummary: personnelStaffingSummary.fontSize,
+    unitsSummary: unitsSummary.fontSize,
+    callsSummary: callsSummary.fontSize,
+    callsSummaryMaxPriorities: callsSummary.maxPrioritiesToShow,
+  });
 
   const handleSave = () => {
     router.back();
@@ -110,6 +177,13 @@ export default function Configure() {
               </HStack>
             </VStack>
 
+            {/* Column Order */}
+            <VStack space="md">
+              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Column Order</Text>
+              <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Use arrows to reorder columns</Text>
+              {renderColumnOrderEditor(personnelColumnOrder, PERSONNEL_COLUMN_LABELS, (newOrder) => updatePersonnelColumnSettings({ columnOrder: newOrder }))}
+            </VStack>
+
             {/* Options */}
             <VStack space="md">
               <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Options</Text>
@@ -147,8 +221,8 @@ export default function Configure() {
 
             {/* Font Size */}
             <VStack space="md">
-              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Font Size: {personnel.fontSize}pt</Text>
-              <Slider value={personnel.fontSize} onChange={(value) => updatePersonnelSettings({ fontSize: value })} minValue={4} maxValue={30} step={1} className="w-full">
+              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Font Size: {fontSizes.personnel}pt</Text>
+              <Slider value={fontSizes.personnel} onChange={(value) => setFontSizes((prev) => ({ ...prev, personnel: value }))} onChangeEnd={(value) => updatePersonnelSettings({ fontSize: value })} minValue={4} maxValue={30} step={1} className="w-full">
                 <SliderTrack>
                   <SliderFilledTrack />
                 </SliderTrack>
@@ -535,10 +609,17 @@ export default function Configure() {
               </HStack>
             </VStack>
 
+            {/* Column Order */}
+            <VStack space="md">
+              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Column Order</Text>
+              <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Use arrows to reorder columns</Text>
+              {renderColumnOrderEditor(unitsColumnOrder, UNITS_COLUMN_LABELS, (newOrder) => updateUnitsColumnSettings({ columnOrder: newOrder }))}
+            </VStack>
+
             {/* Font Size */}
             <VStack space="md">
-              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Font Size: {units.fontSize}pt</Text>
-              <Slider value={units.fontSize} onChange={(value) => updateUnitsSettings({ fontSize: value })} minValue={4} maxValue={30} step={1} className="w-full">
+              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Font Size: {fontSizes.units}pt</Text>
+              <Slider value={fontSizes.units} onChange={(value) => setFontSizes((prev) => ({ ...prev, units: value }))} onChangeEnd={(value) => updateUnitsSettings({ fontSize: value })} minValue={4} maxValue={30} step={1} className="w-full">
                 <SliderTrack>
                   <SliderFilledTrack />
                 </SliderTrack>
@@ -665,6 +746,18 @@ export default function Configure() {
                 <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Address</Text>
                 <Switch value={calls.showAddress} onValueChange={(value) => updateCallsSettings({ showAddress: value })} />
               </HStack>
+
+              <HStack className="items-center justify-between">
+                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Dispatched</Text>
+                <Switch value={calls.showDispatched} onValueChange={(value) => updateCallsSettings({ showDispatched: value })} />
+              </HStack>
+            </VStack>
+
+            {/* Column Order */}
+            <VStack space="md">
+              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Column Order</Text>
+              <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Use arrows to reorder columns</Text>
+              {renderColumnOrderEditor(callsColumnOrder, CALLS_COLUMN_LABELS, (newOrder) => updateCallsColumnSettings({ columnOrder: newOrder }))}
             </VStack>
 
             {/* Options */}
@@ -675,12 +768,38 @@ export default function Configure() {
                 <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Show Linked Calls</Text>
                 <Switch value={calls.showLinkedCalls} onValueChange={(value) => updateCallsSettings({ showLinkedCalls: value })} />
               </HStack>
+
+              {/* Dispatch Scroll Speed */}
+              <VStack space="sm">
+                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>
+                  Dispatch Scroll Speed:{' '}
+                  {fontSizes.callsDispatchSpeed === 0 ? 'Off (manual)' : `${fontSizes.callsDispatchSpeed}px/s`}
+                </Text>
+                <Slider
+                  value={fontSizes.callsDispatchSpeed}
+                  onChange={(value) => setFontSizes((prev) => ({ ...prev, callsDispatchSpeed: Math.round(value) }))}
+                  onChangeEnd={(value) => updateCallsSettings({ dispatchScrollSpeed: Math.round(value) })}
+                  minValue={0}
+                  maxValue={200}
+                  step={5}
+                  className="w-full"
+                >
+                  <SliderTrack>
+                    <SliderFilledTrack />
+                  </SliderTrack>
+                  <SliderThumb />
+                </Slider>
+                <HStack className="justify-between">
+                  <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Off</Text>
+                  <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>200px/s</Text>
+                </HStack>
+              </VStack>
             </VStack>
 
             {/* Font Size */}
             <VStack space="md">
-              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Font Size: {calls.fontSize}pt</Text>
-              <Slider value={calls.fontSize} onChange={(value) => updateCallsSettings({ fontSize: value })} minValue={4} maxValue={30} step={1} className="w-full">
+              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Font Size: {fontSizes.calls}pt</Text>
+              <Slider value={fontSizes.calls} onChange={(value) => setFontSizes((prev) => ({ ...prev, calls: value }))} onChangeEnd={(value) => updateCallsSettings({ fontSize: value })} minValue={4} maxValue={30} step={1} className="w-full">
                 <SliderTrack>
                   <SliderFilledTrack />
                 </SliderTrack>
@@ -980,8 +1099,8 @@ export default function Configure() {
 
             {/* Font Size */}
             <VStack space="md">
-              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Font Size: {personnelStatusSummary.fontSize}pt</Text>
-              <Slider value={personnelStatusSummary.fontSize} onChange={(value) => updatePersonnelStatusSummarySettings({ fontSize: value })} minValue={4} maxValue={30} step={1} className="w-full">
+              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Font Size: {fontSizes.personnelStatusSummary}pt</Text>
+              <Slider value={fontSizes.personnelStatusSummary} onChange={(value) => setFontSizes((prev) => ({ ...prev, personnelStatusSummary: value }))} onChangeEnd={(value) => updatePersonnelStatusSummarySettings({ fontSize: value })} minValue={4} maxValue={30} step={1} className="w-full">
                 <SliderTrack>
                   <SliderFilledTrack />
                 </SliderTrack>
@@ -1087,8 +1206,8 @@ export default function Configure() {
 
             {/* Font Size */}
             <VStack space="md">
-              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Font Size: {personnelStaffingSummary.fontSize}pt</Text>
-              <Slider value={personnelStaffingSummary.fontSize} onChange={(value) => updatePersonnelStaffingSummarySettings({ fontSize: value })} minValue={4} maxValue={30} step={1} className="w-full">
+              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Font Size: {fontSizes.personnelStaffingSummary}pt</Text>
+              <Slider value={fontSizes.personnelStaffingSummary} onChange={(value) => setFontSizes((prev) => ({ ...prev, personnelStaffingSummary: value }))} onChangeEnd={(value) => updatePersonnelStaffingSummarySettings({ fontSize: value })} minValue={4} maxValue={30} step={1} className="w-full">
                 <SliderTrack>
                   <SliderFilledTrack />
                 </SliderTrack>
@@ -1204,8 +1323,8 @@ export default function Configure() {
 
             {/* Font Size */}
             <VStack space="md">
-              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Font Size: {unitsSummary.fontSize}pt</Text>
-              <Slider value={unitsSummary.fontSize} onChange={(value) => updateUnitsSummarySettings({ fontSize: value })} minValue={4} maxValue={30} step={1} className="w-full">
+              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Font Size: {fontSizes.unitsSummary}pt</Text>
+              <Slider value={fontSizes.unitsSummary} onChange={(value) => setFontSizes((prev) => ({ ...prev, unitsSummary: value }))} onChangeEnd={(value) => updateUnitsSummarySettings({ fontSize: value })} minValue={4} maxValue={30} step={1} className="w-full">
                 <SliderTrack>
                   <SliderFilledTrack />
                 </SliderTrack>
@@ -1314,8 +1433,8 @@ export default function Configure() {
               </HStack>
 
               <VStack space="sm">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Max Priorities to Show: {callsSummary.maxPrioritiesToShow}</Text>
-                <Slider value={callsSummary.maxPrioritiesToShow} onChange={(value) => updateCallsSummarySettings({ maxPrioritiesToShow: Math.round(value) })} minValue={1} maxValue={10} step={1} className="w-full">
+                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Max Priorities to Show: {fontSizes.callsSummaryMaxPriorities}</Text>
+                <Slider value={fontSizes.callsSummaryMaxPriorities} onChange={(value) => setFontSizes((prev) => ({ ...prev, callsSummaryMaxPriorities: Math.round(value) }))} onChangeEnd={(value) => updateCallsSummarySettings({ maxPrioritiesToShow: Math.round(value) })} minValue={1} maxValue={10} step={1} className="w-full">
                   <SliderTrack>
                     <SliderFilledTrack />
                   </SliderTrack>
@@ -1326,8 +1445,8 @@ export default function Configure() {
 
             {/* Font Size */}
             <VStack space="md">
-              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Font Size: {callsSummary.fontSize}pt</Text>
-              <Slider value={callsSummary.fontSize} onChange={(value) => updateCallsSummarySettings({ fontSize: value })} minValue={4} maxValue={30} step={1} className="w-full">
+              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Font Size: {fontSizes.callsSummary}pt</Text>
+              <Slider value={fontSizes.callsSummary} onChange={(value) => setFontSizes((prev) => ({ ...prev, callsSummary: value }))} onChangeEnd={(value) => updateCallsSummarySettings({ fontSize: value })} minValue={4} maxValue={30} step={1} className="w-full">
                 <SliderTrack>
                   <SliderFilledTrack />
                 </SliderTrack>

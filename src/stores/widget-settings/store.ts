@@ -62,6 +62,8 @@ export interface CallsWidgetSettings {
   showPriority: boolean;
   showAddress: boolean;
   showLinkedCalls: boolean;
+  showDispatched: boolean;
+  dispatchScrollSpeed: number;
   fontSize: number;
 }
 
@@ -182,6 +184,8 @@ const defaultCallsSettings: CallsWidgetSettings = {
   showPriority: true,
   showAddress: true,
   showLinkedCalls: true,
+  showDispatched: true,
+  dispatchScrollSpeed: 40,
   fontSize: 14,
 };
 

@@ -6,9 +6,8 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { logger } from '@/lib/logging';
 
-import { loginRequest, refreshTokenRequest } from '../../lib/auth/api';
-import type { AuthResponse, AuthState, LoginCredentials } from '../../lib/auth/types';
-import { type ProfileModel } from '../../lib/auth/types';
+import { loginRequest, refreshTokenRequest, externalTokenRequest } from '../../lib/auth/api';
+import type { AuthState, LoginCredentials, ProfileModel, SsoLoginCredentials } from '../../lib/auth/types';
 
 // Create MMKV storage instance for auth persistence
 const authStorage = new MMKV({
@@ -174,7 +173,7 @@ const useAuthStore = create<AuthState>()(
           //);
           const expiresIn = response.expires_in * 1000 - Date.now() - 60000; // Refresh 1 minute before expiry
           setTimeout(() => get().refreshAccessToken(), expiresIn);
-        } catch (error) {
+        } catch {
           // If refresh fails, log out the user
           get().logout();
         }
@@ -190,6 +189,78 @@ const useAuthStore = create<AuthState>()(
         set({
           status: 'onboarding',
         });
+      },
+
+      loginWithSso: async (credentials: SsoLoginCredentials) => {
+        try {
+          set({ status: 'loading', error: null });
+          logger.info({
+            message: 'LoginWithSso: Calling external token API',
+            context: { provider: credentials.provider },
+          });
+
+          const response = await externalTokenRequest({
+            provider: credentials.provider,
+            external_token: credentials.externalToken,
+            department_code: credentials.departmentCode,
+            scope: 'openid email profile offline_access mobile',
+          });
+
+          if (response.successful && response.authResponse) {
+            if (!response.authResponse.id_token && !response.authResponse.access_token) {
+              throw new Error('Invalid SSO response: missing token data');
+            }
+
+            let profileData: ProfileModel;
+            try {
+              const tokenToDecode = response.authResponse.id_token || response.authResponse.access_token;
+              profileData = jwtDecode<ProfileModel>(tokenToDecode);
+              logger.info({
+                message: 'LoginWithSso: Successfully decoded token',
+                context: { userId: profileData.sub },
+              });
+            } catch (jwtError) {
+              logger.error({
+                message: 'LoginWithSso: Failed to decode token',
+                context: { error: jwtError instanceof Error ? jwtError.message : String(jwtError) },
+              });
+              throw new Error('Failed to decode SSO authentication token');
+            }
+
+            const now = new Date();
+            const expiresOn = new Date(now.getTime() + response.authResponse.expires_in * 1000).getTime().toString();
+
+            set({
+              accessToken: response.authResponse.access_token,
+              refreshToken: response.authResponse.refresh_token,
+              refreshTokenExpiresOn: expiresOn,
+              status: 'signedIn',
+              error: null,
+              profile: profileData,
+              userId: profileData.sub,
+            });
+
+            logger.info({
+              message: 'LoginWithSso: State updated to signedIn',
+              context: { userId: profileData.sub },
+            });
+          } else {
+            logger.error({
+              message: 'LoginWithSso: API returned unsuccessful response',
+              context: { message: response.message },
+            });
+            set({ status: 'error', error: response.message || 'SSO login failed' });
+          }
+        } catch (error) {
+          logger.error({
+            message: 'LoginWithSso: Exception caught',
+            context: { error: error instanceof Error ? error.message : String(error) },
+          });
+          set({
+            status: 'error',
+            error: error instanceof Error ? error.message : 'SSO login failed',
+          });
+        }
       },
     }),
     {

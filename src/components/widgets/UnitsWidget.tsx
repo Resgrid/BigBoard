@@ -9,7 +9,7 @@ import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
 import { useUnitsSignalRUpdates } from '@/hooks/use-units-signalr-updates';
 import { useUnitsStore } from '@/stores/units/store';
-import { useUnitsSettingsStore } from '@/stores/widget-settings/units-settings-store';
+import { DEFAULT_UNITS_COLUMN_ORDER, type UnitsColumnKey, useUnitsSettingsStore } from '@/stores/widget-settings/units-settings-store';
 
 import { WidgetContainer } from './WidgetContainer';
 
@@ -58,6 +58,90 @@ export const UnitsWidget: React.FC<UnitsWidgetProps> = ({ onRemove, isEditMode, 
   };
 
   const fontSize = settings.fontSize || 12;
+  const columnOrder: UnitsColumnKey[] = settings.columnOrder?.length ? settings.columnOrder : DEFAULT_UNITS_COLUMN_ORDER;
+
+  const columnVisible: Record<UnitsColumnKey, boolean> = {
+    name: true,
+    station: !!settings.showStation,
+    type: !!settings.showType,
+    state: !!settings.showState,
+    timestamp: !!settings.showTimestamp,
+  };
+
+  const columnFlex: Record<UnitsColumnKey, number> = {
+    name: 1,
+    station: 0.8,
+    type: 0.7,
+    state: 0.7,
+    timestamp: 0.9,
+  };
+
+  const columnHeaderLabel: Record<UnitsColumnKey, string> = {
+    name: 'Name',
+    station: 'Station',
+    type: 'Type',
+    state: 'State',
+    timestamp: 'Updated',
+  };
+
+  const renderHeaderCell = (col: UnitsColumnKey) => {
+    if (!columnVisible[col]) return null;
+    return (
+      <Box key={col} style={{ flex: columnFlex[col] }}>
+        <Text className={`text-xs font-bold ${isDark ? 'text-gray-300' : 'text-gray-700'}`} style={{ fontSize: fontSize - 2 }}>
+          {columnHeaderLabel[col]}
+        </Text>
+      </Box>
+    );
+  };
+
+  const renderDataCell = (col: UnitsColumnKey, unit: (typeof filteredUnits)[0]) => {
+    if (!columnVisible[col]) return null;
+    switch (col) {
+      case 'name':
+        return (
+          <Box key={col} style={{ flex: columnFlex[col] }}>
+            <Text className={`text-xs ${isDark ? 'text-gray-300' : 'text-gray-700'}`} style={{ fontSize }} numberOfLines={1}>
+              {unit.Name}
+            </Text>
+          </Box>
+        );
+      case 'station':
+        return (
+          <Box key={col} style={{ flex: columnFlex[col] }}>
+            <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`} style={{ fontSize }} numberOfLines={1}>
+              {unit.GroupName}
+            </Text>
+          </Box>
+        );
+      case 'type':
+        return (
+          <Box key={col} style={{ flex: columnFlex[col] }}>
+            <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`} style={{ fontSize }} numberOfLines={1}>
+              {unit.Type}
+            </Text>
+          </Box>
+        );
+      case 'state':
+        return (
+          <Box key={col} style={{ flex: columnFlex[col] }}>
+            <Text className="text-xs" style={{ fontSize, color: unit.CurrentStatusColor ? `#${unit.CurrentStatusColor}` : '#888888' }} numberOfLines={1}>
+              {unit.CurrentStatus || 'Unknown'}
+            </Text>
+          </Box>
+        );
+      case 'timestamp':
+        return (
+          <Box key={col} style={{ flex: columnFlex[col] }}>
+            <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`} style={{ fontSize }} numberOfLines={1}>
+              {getTimeago(unit.CurrentStatusTimestampUtc)}
+            </Text>
+          </Box>
+        );
+      default:
+        return null;
+    }
+  };
 
   if (error) {
     return (
@@ -85,77 +169,13 @@ export const UnitsWidget: React.FC<UnitsWidgetProps> = ({ onRemove, isEditMode, 
         <VStack space="xs">
           {/* Header Row */}
           <HStack space="sm" className={`border-b pb-1 ${isDark ? 'border-gray-700' : 'border-gray-300'}`}>
-            <Box style={{ flex: 1 }}>
-              <Text className={`text-xs font-bold ${isDark ? 'text-gray-300' : 'text-gray-700'}`} style={{ fontSize: fontSize - 2 }}>
-                Name
-              </Text>
-            </Box>
-            {settings.showStation && (
-              <Box style={{ flex: 0.8 }}>
-                <Text className={`text-xs font-bold ${isDark ? 'text-gray-300' : 'text-gray-700'}`} style={{ fontSize: fontSize - 2 }}>
-                  Station
-                </Text>
-              </Box>
-            )}
-            {settings.showType && (
-              <Box style={{ flex: 0.7 }}>
-                <Text className={`text-xs font-bold ${isDark ? 'text-gray-300' : 'text-gray-700'}`} style={{ fontSize: fontSize - 2 }}>
-                  Type
-                </Text>
-              </Box>
-            )}
-            {settings.showState && (
-              <Box style={{ flex: 0.7 }}>
-                <Text className={`text-xs font-bold ${isDark ? 'text-gray-300' : 'text-gray-700'}`} style={{ fontSize: fontSize - 2 }}>
-                  State
-                </Text>
-              </Box>
-            )}
-            {settings.showTimestamp && (
-              <Box style={{ flex: 0.9 }}>
-                <Text className={`text-xs font-bold ${isDark ? 'text-gray-300' : 'text-gray-700'}`} style={{ fontSize: fontSize - 2 }}>
-                  Updated
-                </Text>
-              </Box>
-            )}
+            {columnOrder.map((col) => renderHeaderCell(col))}
           </HStack>
 
           {/* Data Rows */}
           {filteredUnits.map((unit, index) => (
             <HStack key={unit.UnitId} space="sm" className={`py-1 ${index % 2 === 0 ? (isDark ? 'bg-gray-800/30' : 'bg-gray-100/50') : ''}`}>
-              <Box style={{ flex: 1 }}>
-                <Text className={`text-xs ${isDark ? 'text-gray-300' : 'text-gray-700'}`} style={{ fontSize }} numberOfLines={1}>
-                  {unit.Name}
-                </Text>
-              </Box>
-              {settings.showStation && (
-                <Box style={{ flex: 0.8 }}>
-                  <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`} style={{ fontSize }} numberOfLines={1}>
-                    {unit.GroupName}
-                  </Text>
-                </Box>
-              )}
-              {settings.showType && (
-                <Box style={{ flex: 0.7 }}>
-                  <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`} style={{ fontSize }} numberOfLines={1}>
-                    {unit.Type}
-                  </Text>
-                </Box>
-              )}
-              {settings.showState && (
-                <Box style={{ flex: 0.7 }}>
-                  <Text className="text-xs" style={{ fontSize, color: unit.CurrentStatusColor ? `#${unit.CurrentStatusColor}` : '#888888' }} numberOfLines={1}>
-                    {unit.CurrentStatus || 'Unknown'}
-                  </Text>
-                </Box>
-              )}
-              {settings.showTimestamp && (
-                <Box style={{ flex: 0.9 }}>
-                  <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`} style={{ fontSize }} numberOfLines={1}>
-                    {getTimeago(unit.CurrentStatusTimestampUtc)}
-                  </Text>
-                </Box>
-              )}
+              {columnOrder.map((col) => renderDataCell(col, unit))}
             </HStack>
           ))}
 
