@@ -1,10 +1,83 @@
 /* eslint-env node */
 const { app, BrowserWindow, shell } = require('electron');
 const path = require('path');
+const http = require('http');
+const fs = require('fs');
+
+const MIME_TYPES = {
+  '.html': 'text/html; charset=utf-8',
+  '.js': 'application/javascript',
+  '.mjs': 'application/javascript',
+  '.css': 'text/css',
+  '.json': 'application/json',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.gif': 'image/gif',
+  '.svg': 'image/svg+xml',
+  '.ico': 'image/x-icon',
+  '.woff': 'font/woff',
+  '.woff2': 'font/woff2',
+  '.ttf': 'font/ttf',
+  '.eot': 'application/vnd.ms-fontobject',
+  '.wav': 'audio/wav',
+  '.mp3': 'audio/mpeg',
+  '.mp4': 'video/mp4',
+  '.webm': 'video/webm',
+  '.wasm': 'application/wasm',
+  '.map': 'application/json',
+};
+
+/**
+ * Starts a local HTTP server serving `distDir` on a random loopback port.
+ * Absolute asset paths (e.g. /_expo/static/…) resolve correctly under http://
+ * whereas file:// would break them.
+ * @param {string} distDir
+ * @returns {Promise<{ server: http.Server, port: number }>}
+ */
+function startLocalServer(distDir) {
+  return new Promise((resolve, reject) => {
+    const server = http.createServer((req, res) => {
+      let urlPath = (req.url || '/').split('?')[0];
+      if (urlPath === '/') urlPath = '/index.html';
+
+      const filePath = path.join(distDir, urlPath);
+      const ext = path.extname(filePath).toLowerCase();
+      const contentType = MIME_TYPES[ext] || 'application/octet-stream';
+
+      fs.readFile(filePath, (err, data) => {
+        if (err) {
+          // SPA fallback: serve index.html for unknown routes
+          fs.readFile(path.join(distDir, 'index.html'), (fallbackErr, fallbackData) => {
+            if (fallbackErr) {
+              res.writeHead(404);
+              res.end('Not found');
+            } else {
+              res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+              res.end(fallbackData);
+            }
+          });
+        } else {
+          res.writeHead(200, { 'Content-Type': contentType });
+          res.end(data);
+        }
+      });
+    });
+
+    server.once('error', reject);
+    // Port 0 lets the OS pick a free port; bind to loopback only
+    server.listen(0, '127.0.0.1', () => {
+      resolve({ server, port: /** @type {import('net').AddressInfo} */ (server.address()).port });
+    });
+  });
+}
 
 const isDev = !app.isPackaged;
 
-function createWindow() {
+/** @type {http.Server | null} */
+let fileServer = null;
+
+async function createWindow() {
   const mainWindow = new BrowserWindow({
     width: 1400,
     height: 900,
@@ -31,8 +104,13 @@ function createWindow() {
     mainWindow.loadURL('http://localhost:8081');
     mainWindow.webContents.openDevTools();
   } else {
-    // Production: load built web export
-    mainWindow.loadFile(path.join(__dirname, '..', 'dist', 'index.html'));
+    // Production: serve built web export via local HTTP server so that
+    // absolute asset paths (/_expo/static/…) resolve correctly.
+    // Using loadFile() under file:// breaks those root-relative references.
+    const distDir = path.join(__dirname, '..', 'dist');
+    const { server, port } = await startLocalServer(distDir);
+    fileServer = server;
+    mainWindow.loadURL(`http://127.0.0.1:${port}`);
   }
 
   // Open external links in default browser
@@ -60,5 +138,13 @@ app.whenReady().then(() => {
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
+  }
+});
+
+// Clean up the local file server on exit
+app.on('before-quit', () => {
+  if (fileServer) {
+    fileServer.close();
+    fileServer = null;
   }
 });

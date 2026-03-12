@@ -2,6 +2,7 @@ import { useRouter } from 'expo-router';
 import { ChevronDown, ChevronUp } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ScrollView } from 'react-native';
 
 import { Box } from '@/components/ui/box';
@@ -30,15 +31,16 @@ interface WidgetSizeSectionProps {
 
 const WidgetSizeSection: React.FC<WidgetSizeSectionProps> = ({ widgetType, defaultW = 2, defaultH = 2, isDark }) => {
   const { widgets } = useDashboardStore();
+  const { t } = useTranslation();
   const widget = widgets.find((w) => w.type === widgetType);
   const [localW, setLocalW] = useState(() => widget?.w ?? defaultW);
   const [localH, setLocalH] = useState(() => widget?.h ?? defaultH);
 
   return (
     <VStack space="md">
-      <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Widget Size</Text>
+      <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>{t('configure.widget_size')}</Text>
       <VStack space="sm">
-        <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Width (grid units): {localW}</Text>
+        <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>{t('configure.width_grid_units', { value: localW })}</Text>
         <Slider
           value={localW}
           onChange={(value) => {
@@ -60,7 +62,7 @@ const WidgetSizeSection: React.FC<WidgetSizeSectionProps> = ({ widgetType, defau
         </Slider>
       </VStack>
       <VStack space="sm">
-        <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Height (grid units): {localH}</Text>
+        <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>{t('configure.height_grid_units', { value: localH })}</Text>
         <Slider
           value={localH}
           onChange={(value) => {
@@ -92,24 +94,28 @@ interface FontSizeSectionProps {
   isDark: boolean;
 }
 
-const FontSizeSection: React.FC<FontSizeSectionProps> = ({ value, onChange, onChangeEnd, isDark }) => (
-  <VStack space="md">
-    <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Font Size: {value}pt</Text>
-    <Slider value={value} onChange={onChange} onChangeEnd={onChangeEnd} minValue={4} maxValue={30} step={1} className="w-full">
-      <SliderTrack>
-        <SliderFilledTrack />
-      </SliderTrack>
-      <SliderThumb />
-    </Slider>
-    <HStack className="justify-between">
-      <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>4pt</Text>
-      <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>30pt</Text>
-    </HStack>
-  </VStack>
-);
+const FontSizeSection: React.FC<FontSizeSectionProps> = ({ value, onChange, onChangeEnd, isDark }) => {
+  const { t } = useTranslation();
+  return (
+    <VStack space="md">
+      <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>{t('configure.font_size', { value })}</Text>
+      <Slider value={value} onChange={onChange} onChangeEnd={onChangeEnd} minValue={4} maxValue={30} step={1} className="w-full">
+        <SliderTrack>
+          <SliderFilledTrack />
+        </SliderTrack>
+        <SliderThumb />
+      </Slider>
+      <HStack className="justify-between">
+        <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('configure.font_size_min')}</Text>
+        <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('configure.font_size_max')}</Text>
+      </HStack>
+    </VStack>
+  );
+};
 
 export default function Configure() {
   const router = useRouter();
+  const { t } = useTranslation();
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
   const { widgets } = useDashboardStore();
@@ -158,12 +164,28 @@ export default function Configure() {
     <VStack space="sm">
       {order.map((col, index) => (
         <HStack key={col} className="items-center justify-between" space="sm">
-          <Text className={`flex-1 text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>{labels[col]}</Text>
+          <Text className={`flex-1 text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>{t(labels[col])}</Text>
           <HStack space="xs">
-            <Button size="sm" variant="outline" onPress={() => moveColumn(order, index, 'up', onUpdate)} isDisabled={index === 0} className="px-2">
+            <Button
+              size="sm"
+              variant="outline"
+              onPress={() => moveColumn(order, index, 'up', onUpdate)}
+              isDisabled={index === 0}
+              className="px-2"
+              accessibilityLabel={t('configure.move_column_up', { columnName: t(labels[col]) })}
+              aria-label={t('configure.move_column_up', { columnName: t(labels[col]) })}
+            >
               <ChevronUp size={14} color={isDark ? '#9ca3af' : '#4b5563'} />
             </Button>
-            <Button size="sm" variant="outline" onPress={() => moveColumn(order, index, 'down', onUpdate)} isDisabled={index === order.length - 1} className="px-2">
+            <Button
+              size="sm"
+              variant="outline"
+              onPress={() => moveColumn(order, index, 'down', onUpdate)}
+              isDisabled={index === order.length - 1}
+              className="px-2"
+              accessibilityLabel={t('configure.move_column_down', { columnName: t(labels[col]) })}
+              aria-label={t('configure.move_column_down', { columnName: t(labels[col]) })}
+            >
               <ChevronDown size={14} color={isDark ? '#9ca3af' : '#4b5563'} />
             </Button>
           </HStack>
@@ -247,8 +269,8 @@ export default function Configure() {
 
             {/* Column Order */}
             <VStack space="md">
-              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Column Order</Text>
-              <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Use arrows to reorder columns</Text>
+              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>{t('configure.column_order')}</Text>
+              <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{t('configure.use_arrows_reorder')}</Text>
               {renderColumnOrderEditor(personnelColumnOrder, PERSONNEL_COLUMN_LABELS, (newOrder) => updatePersonnelColumnSettings({ columnOrder: newOrder }))}
             </VStack>
 
@@ -456,8 +478,8 @@ export default function Configure() {
 
             {/* Column Order */}
             <VStack space="md">
-              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Column Order</Text>
-              <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Use arrows to reorder columns</Text>
+              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>{t('configure.column_order')}</Text>
+              <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{t('configure.use_arrows_reorder')}</Text>
               {renderColumnOrderEditor(unitsColumnOrder, UNITS_COLUMN_LABELS, (newOrder) => updateUnitsColumnSettings({ columnOrder: newOrder }))}
             </VStack>
 
@@ -479,45 +501,45 @@ export default function Configure() {
               <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Visible Columns</Text>
 
               <HStack className="items-center justify-between">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>ID</Text>
+                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>{t('configure.id')}</Text>
                 <Switch value={calls.showId} onValueChange={(value) => updateCallsSettings({ showId: value })} />
               </HStack>
 
               <HStack className="items-center justify-between">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Name</Text>
+                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>{t('configure.name')}</Text>
                 <Switch value={calls.showName} onValueChange={(value) => updateCallsSettings({ showName: value })} />
               </HStack>
 
               <HStack className="items-center justify-between">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Timestamp</Text>
+                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>{t('configure.timestamp')}</Text>
                 <Switch value={calls.showTimestamp} onValueChange={(value) => updateCallsSettings({ showTimestamp: value })} />
               </HStack>
 
               <HStack className="items-center justify-between">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Logged By</Text>
+                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>{t('configure.logged_by')}</Text>
                 <Switch value={calls.showUser} onValueChange={(value) => updateCallsSettings({ showUser: value })} />
               </HStack>
 
               <HStack className="items-center justify-between">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Priority</Text>
+                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>{t('configure.priority')}</Text>
                 <Switch value={calls.showPriority} onValueChange={(value) => updateCallsSettings({ showPriority: value })} />
               </HStack>
 
               <HStack className="items-center justify-between">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Address</Text>
+                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>{t('configure.address')}</Text>
                 <Switch value={calls.showAddress} onValueChange={(value) => updateCallsSettings({ showAddress: value })} />
               </HStack>
 
               <HStack className="items-center justify-between">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Dispatched</Text>
+                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>{t('configure.dispatched')}</Text>
                 <Switch value={calls.showDispatched} onValueChange={(value) => updateCallsSettings({ showDispatched: value })} />
               </HStack>
             </VStack>
 
             {/* Column Order */}
             <VStack space="md">
-              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Column Order</Text>
-              <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Use arrows to reorder columns</Text>
+              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>{t('configure.column_order')}</Text>
+              <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{t('configure.use_arrows_reorder')}</Text>
               {renderColumnOrderEditor(callsColumnOrder, CALLS_COLUMN_LABELS, (newOrder) => updateCallsColumnSettings({ columnOrder: newOrder }))}
             </VStack>
 
@@ -532,7 +554,9 @@ export default function Configure() {
 
               {/* Dispatch Scroll Speed */}
               <VStack space="sm">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Dispatch Scroll Speed: {fontSizes.callsDispatchSpeed === 0 ? 'Off (manual)' : `${fontSizes.callsDispatchSpeed}px/s`}</Text>
+                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>
+                  {t('configure.dispatch_scroll_speed', { speed: fontSizes.callsDispatchSpeed === 0 ? t('configure.dispatch_scroll_off') : `${fontSizes.callsDispatchSpeed}px/s` })}
+                </Text>
                 <Slider
                   value={fontSizes.callsDispatchSpeed}
                   onChange={(value) => setFontSizes((prev) => ({ ...prev, callsDispatchSpeed: Math.round(value) }))}
@@ -548,8 +572,8 @@ export default function Configure() {
                   <SliderThumb />
                 </Slider>
                 <HStack className="justify-between">
-                  <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Off</Text>
-                  <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>200px/s</Text>
+                  <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('configure.speed_off')}</Text>
+                  <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('configure.speed_max')}</Text>
                 </HStack>
               </VStack>
             </VStack>

@@ -5,12 +5,12 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 export type PersonnelColumnKey = 'name' | 'group' | 'staffing' | 'status' | 'roles' | 'timestamp';
 
 export const PERSONNEL_COLUMN_LABELS: Record<PersonnelColumnKey, string> = {
-  name: 'Name',
-  group: 'Group',
-  staffing: 'Staffing',
-  status: 'Status',
-  roles: 'Roles',
-  timestamp: 'Timestamp',
+  name: 'personnel.column.name',
+  group: 'personnel.column.group',
+  staffing: 'personnel.column.staffing',
+  status: 'personnel.column.status',
+  roles: 'personnel.column.roles',
+  timestamp: 'personnel.column.timestamp',
 };
 
 export const DEFAULT_PERSONNEL_COLUMN_ORDER: PersonnelColumnKey[] = ['name', 'group', 'staffing', 'status', 'roles', 'timestamp'];

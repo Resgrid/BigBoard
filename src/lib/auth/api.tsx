@@ -1,5 +1,6 @@
 import { Env } from '@env';
 import axios from 'axios';
+import * as Crypto from 'expo-crypto';
 import queryString from 'query-string';
 
 import { logger } from '@/lib/logging';
@@ -115,9 +116,10 @@ export const fetchSsoConfigForUser = async (username: string, departmentId?: num
 
     const response = await authApi.get('/connect/sso-config-for-user', { params });
 
+    const username_hash = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, username);
     logger.info({
       message: 'SSO config fetched successfully',
-      context: { username },
+      context: { username_hash },
     });
 
     return response.data?.Data ?? response.data ?? null;

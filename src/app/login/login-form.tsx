@@ -178,11 +178,11 @@ export const LoginForm = ({ onSubmit = () => {}, isLoading = false, error = unde
           </Button>
         )}
 
-        {onSsoPress && (
-          <Button className="mt-2 w-full" variant="outline" action="secondary" onPress={onSsoPress}>
+        {onSsoPress ? (
+          <Button className="mt-2 w-full" variant="outline" action="secondary" onPress={onSsoPress} disabled={isLoading}>
             <ButtonText>{t('sso.button')}</ButtonText>
           </Button>
-        )}
+        ) : null}
 
         {/* Footer */}
         <View className="mt-8 items-center">

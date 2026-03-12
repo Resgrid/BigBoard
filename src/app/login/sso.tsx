@@ -141,6 +141,7 @@ interface SamlLoginSectionProps {
 function SamlLoginSection({ config, onError }: SamlLoginSectionProps) {
   const { t } = useTranslation();
   const [isOpening, setIsOpening] = useState(false);
+  const loginWithSso = useAuthStore((s) => s.loginWithSso);
 
   const { startSamlLogin } = useSamlLogin(config.metadataUrl);
 
@@ -151,11 +152,31 @@ function SamlLoginSection({ config, onError }: SamlLoginSectionProps) {
     }
     setIsOpening(true);
     try {
-      await startSamlLogin();
+      const result = await startSamlLogin();
+      if (result.type === 'success') {
+        await loginWithSso({
+          provider: 'saml2',
+          externalToken: result.samlResponse,
+          departmentCode: config.departmentCode ?? undefined,
+        });
+      } else if (result.type === 'error') {
+        logger.error({
+          message: 'SamlLoginSection: SAML auth session failed',
+          context: { error: result.error },
+        });
+        onError(t('sso.error_login_failed'));
+      }
+      // 'cancel' is silent — user dismissed intentionally
+    } catch (err) {
+      logger.error({
+        message: 'SamlLoginSection: Unexpected error during SAML login',
+        context: { error: err instanceof Error ? err.message : String(err) },
+      });
+      onError(t('sso.error_login_failed'));
     } finally {
       setIsOpening(false);
     }
-  }, [config.metadataUrl, onError, startSamlLogin, t]);
+  }, [config.metadataUrl, config.departmentCode, loginWithSso, onError, startSamlLogin, t]);
 
   return (
     <Button className="w-full bg-indigo-600 dark:bg-indigo-500" variant="solid" onPress={handlePress} disabled={isOpening}>
@@ -347,7 +368,13 @@ export default function SsoLoginScreen() {
               )}
 
               {ssoConfig.providerType === 'oidc' ? (
-                <OidcLoginSection config={ssoConfig} onSuccess={handleSsoSuccess} onError={handleSsoError} />
+                ssoConfig.authority && ssoConfig.clientId ? (
+                  <OidcLoginSection config={ssoConfig} onSuccess={handleSsoSuccess} onError={handleSsoError} />
+                ) : (
+                  <View className="rounded-lg bg-red-50 p-4 dark:bg-red-900/20">
+                    <Text className="text-center text-sm text-red-700 dark:text-red-300">{t('sso.error_oidc_missing_config')}</Text>
+                  </View>
+                )
               ) : ssoConfig.providerType === 'saml2' ? (
                 <SamlLoginSection config={ssoConfig} onError={handleSsoError} />
               ) : (

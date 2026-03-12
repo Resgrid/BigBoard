@@ -55,6 +55,8 @@ export const useCallsStore = create<CallsState>((set, get) => ({
           }
         });
         set({ callExtraDataMap: newExtraDataMap });
+      } else {
+        set({ callExtraDataMap: {} });
       }
     } catch (error) {
       logger.error({
@@ -81,6 +83,8 @@ export const useCallsStore = create<CallsState>((set, get) => ({
           }
         });
         set({ callExtraDataMap: newExtraDataMap });
+      } else {
+        set({ callExtraDataMap: {} });
       }
     } catch {
       set({ error: 'Failed to fetch calls', isLoading: false });
@@ -112,7 +116,10 @@ export const useCallsStore = create<CallsState>((set, get) => ({
   },
   fetchAllCallExtraData: async () => {
     const { calls } = get();
-    if (!calls || calls.length === 0) return;
+    if (!calls || calls.length === 0) {
+      set({ callExtraDataMap: {} });
+      return;
+    }
     try {
       const extraDataResults = await Promise.allSettled(calls.map((call) => getCallExtraData(call.CallId)));
       const newExtraDataMap: Record<string, CallExtraDataResultData> = {};

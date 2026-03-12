@@ -215,10 +215,6 @@ const useAuthStore = create<AuthState>()(
             try {
               const tokenToDecode = response.authResponse.id_token || response.authResponse.access_token;
               profileData = jwtDecode<ProfileModel>(tokenToDecode);
-              logger.info({
-                message: 'LoginWithSso: Successfully decoded token',
-                context: { userId: profileData.sub },
-              });
             } catch (jwtError) {
               logger.error({
                 message: 'LoginWithSso: Failed to decode token',
@@ -226,6 +222,19 @@ const useAuthStore = create<AuthState>()(
               });
               throw new Error('Failed to decode SSO authentication token');
             }
+
+            if (!profileData.sub || typeof profileData.sub !== 'string') {
+              logger.error({
+                message: 'LoginWithSso: Decoded token missing required claims',
+                context: { error: 'Missing or invalid sub claim in decoded token' },
+              });
+              throw new Error('Invalid SSO token: missing sub');
+            }
+
+            logger.info({
+              message: 'LoginWithSso: Successfully decoded token',
+              context: { userId: profileData.sub },
+            });
 
             const now = new Date();
             const expiresOn = new Date(now.getTime() + response.authResponse.expires_in * 1000).getTime().toString();

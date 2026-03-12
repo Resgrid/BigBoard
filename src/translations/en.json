@@ -337,6 +337,29 @@
     "upload": "Upload",
     "uploading": "Uploading..."
   },
+  "configure": {
+    "address": "Address",
+    "column_order": "Column Order",
+    "dispatch_scroll_off": "Off (manual)",
+    "dispatch_scroll_speed": "Dispatch Scroll Speed: {{speed}}",
+    "dispatched": "Dispatched",
+    "font_size": "Font Size: {{value}}pt",
+    "font_size_max": "30pt",
+    "font_size_min": "4pt",
+    "height_grid_units": "Height (grid units): {{value}}",
+    "id": "ID",
+    "logged_by": "Logged By",
+    "move_column_down": "Move column {{columnName}} down",
+    "move_column_up": "Move column {{columnName}} up",
+    "name": "Name",
+    "priority": "Priority",
+    "speed_max": "200px/s",
+    "speed_off": "Off",
+    "timestamp": "Timestamp",
+    "use_arrows_reorder": "Use arrows to reorder columns",
+    "widget_size": "Widget Size",
+    "width_grid_units": "Width (grid units): {{value}}"
+  },
   "contacts": {
     "add": "Add Contact",
     "addedBy": "Added By",
@@ -508,6 +531,16 @@
   "onboarding": {
     "message": "Welcome to obytes app site"
   },
+  "personnel": {
+    "column": {
+      "group": "Group",
+      "name": "Name",
+      "roles": "Roles",
+      "staffing": "Staffing",
+      "status": "Status",
+      "timestamp": "Timestamp"
+    }
+  },
   "protocols": {
     "details": {
       "close": "Close",
@@ -632,6 +665,7 @@
     "error_login_failed": "SSO login failed. Please try again.",
     "error_no_token": "Failed to get authentication token from the identity provider.",
     "error_not_configured": "SSO is not configured for this account.",
+    "error_oidc_missing_config": "OIDC login is unavailable: authority or client ID is missing from the configuration.",
     "error_title": "SSO Error",
     "loading_config": "Looking up SSO configuration...",
     "login_with_sso": "Sign in with SSO",

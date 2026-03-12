@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, StyleSheet, View } from 'react-native';
+import { Animated, Platform, StyleSheet, View } from 'react-native';
 
 import { Box } from '@/components/ui/box';
 import { Text } from '@/components/ui/text';
@@ -55,7 +55,8 @@ export const AutoScrollingDispatches: React.FC<AutoScrollingDispatchesProps> = (
       Animated.timing(scrollX, {
         toValue: -loopWidth,
         duration,
-        useNativeDriver: false, // false = works correctly on both web and native
+        useNativeDriver: Platform.OS !== 'web',
+        isInteraction: false,
       })
     );
     animRef.current = anim;
