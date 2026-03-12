@@ -176,7 +176,7 @@ export function useSignalRLifecycle({ isSignedIn, hasInitialized }: UseSignalRLi
             context: { appState: currentAppState.current, isActive: currentIsActive.current },
           });
         }
-      }, 2000); // 2 second delay
+      }, 2000) as unknown as number; // 2 second delay
     }
 
     return clearTimers;
@@ -218,7 +218,7 @@ export function useSignalRLifecycle({ isSignedIn, hasInitialized }: UseSignalRLi
               context: { appState: currentAppState.current, isActive: currentIsActive.current },
             });
           }
-        }, 1000); // 1 second delay for resume
+        }, 1000) as unknown as number; // 1 second delay for resume
       }
     }
 

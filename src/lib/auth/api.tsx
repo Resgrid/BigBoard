@@ -1,11 +1,12 @@
 import { Env } from '@env';
 import axios from 'axios';
+import * as Crypto from 'expo-crypto';
 import queryString from 'query-string';
 
 import { logger } from '@/lib/logging';
 
 import { getBaseApiUrl } from '../storage/app';
-import type { AuthResponse, LoginCredentials, LoginResponse } from './types';
+import type { AuthResponse, DepartmentSsoConfig, ExternalTokenRequest, LoginCredentials, LoginResponse } from './types';
 
 const authApi = axios.create({
   headers: {
@@ -103,5 +104,69 @@ export const refreshTokenRequest = async (refreshToken: string): Promise<AuthRes
       context: { error },
     });
     throw error;
+  }
+};
+
+export const fetchSsoConfigForUser = async (username: string, departmentId?: number): Promise<DepartmentSsoConfig | null> => {
+  try {
+    const params: Record<string, string | number> = { username };
+    if (departmentId !== undefined) {
+      params.departmentId = departmentId;
+    }
+
+    const response = await authApi.get('/connect/sso-config-for-user', { params });
+
+    const username_hash = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, username);
+    logger.info({
+      message: 'SSO config fetched successfully',
+      context: { username_hash },
+    });
+
+    return Object.hasOwn(response.data ?? {}, 'Data') ? response.data.Data : (response.data ?? null);
+  } catch (error) {
+    logger.error({
+      message: 'Failed to fetch SSO config',
+      context: { error },
+    });
+    return null;
+  }
+};
+
+export const externalTokenRequest = async (credentials: ExternalTokenRequest): Promise<LoginResponse> => {
+  try {
+    const data = queryString.stringify({
+      provider: credentials.provider,
+      external_token: credentials.external_token,
+      ...(credentials.department_code ? { department_code: credentials.department_code } : {}),
+      scope: credentials.scope,
+    });
+
+    logger.info({
+      message: 'API: Sending external token request',
+      context: { provider: credentials.provider },
+    });
+
+    const response = await authApi.post<AuthResponse>('/connect/external-token', data);
+
+    if (response.status === 200) {
+      logger.info({ message: 'External token exchange successful' });
+      return {
+        successful: true,
+        message: 'Login successful',
+        authResponse: response.data,
+      };
+    }
+
+    return { successful: false, message: 'External token exchange failed', authResponse: null };
+  } catch (error) {
+    logger.error({
+      message: 'External token request failed',
+      context: { error },
+    });
+    return {
+      successful: false,
+      message: error instanceof Error ? error.message : 'SSO login failed',
+      authResponse: null,
+    };
   }
 };

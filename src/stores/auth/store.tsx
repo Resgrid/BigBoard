@@ -6,9 +6,8 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { logger } from '@/lib/logging';
 
-import { loginRequest, refreshTokenRequest } from '../../lib/auth/api';
-import type { AuthResponse, AuthState, LoginCredentials } from '../../lib/auth/types';
-import { type ProfileModel } from '../../lib/auth/types';
+import { externalTokenRequest, loginRequest, refreshTokenRequest } from '../../lib/auth/api';
+import type { AuthState, LoginCredentials, ProfileModel, SsoLoginCredentials } from '../../lib/auth/types';
 
 // Create MMKV storage instance for auth persistence
 const authStorage = new MMKV({
@@ -174,7 +173,7 @@ const useAuthStore = create<AuthState>()(
           //);
           const expiresIn = response.expires_in * 1000 - Date.now() - 60000; // Refresh 1 minute before expiry
           setTimeout(() => get().refreshAccessToken(), expiresIn);
-        } catch (error) {
+        } catch {
           // If refresh fails, log out the user
           get().logout();
         }
@@ -190,6 +189,114 @@ const useAuthStore = create<AuthState>()(
         set({
           status: 'onboarding',
         });
+      },
+
+      loginWithSso: async (credentials: SsoLoginCredentials) => {
+        try {
+          set({ status: 'loading', error: null });
+          logger.info({
+            message: 'LoginWithSso: Calling external token API',
+            context: { provider: credentials.provider },
+          });
+
+          const response = await externalTokenRequest({
+            provider: credentials.provider,
+            external_token: credentials.externalToken,
+            department_code: credentials.departmentCode,
+            scope: 'openid email profile offline_access mobile',
+          });
+
+          if (response.successful && response.authResponse) {
+            if (!response.authResponse.access_token) {
+              logger.error({
+                message: 'LoginWithSso: Missing access_token in SSO response',
+                context: { error: 'access_token is absent or empty in authResponse' },
+              });
+              throw new Error('Invalid SSO response: missing access_token');
+            }
+
+            let profileData: ProfileModel;
+            try {
+              const tokenToDecode = response.authResponse.id_token || response.authResponse.access_token;
+              profileData = jwtDecode<ProfileModel>(tokenToDecode);
+            } catch (jwtError) {
+              logger.error({
+                message: 'LoginWithSso: Failed to decode token',
+                context: { error: jwtError instanceof Error ? jwtError.message : String(jwtError) },
+              });
+              throw new Error('Failed to decode SSO authentication token');
+            }
+
+            if (!profileData.sub || typeof profileData.sub !== 'string') {
+              logger.error({
+                message: 'LoginWithSso: Decoded token missing required claims',
+                context: { error: 'Missing or invalid sub claim in decoded token' },
+              });
+              throw new Error('Invalid SSO token: missing sub');
+            }
+
+            logger.info({
+              message: 'LoginWithSso: Successfully decoded token',
+              context: { userId: profileData.sub },
+            });
+
+            const now = new Date();
+            const rawExpiresIn = response.authResponse.expires_in;
+            const expiresInSeconds =
+              typeof rawExpiresIn === 'number' && rawExpiresIn > 0 ? rawExpiresIn : 3600;
+            if (!(typeof rawExpiresIn === 'number' && rawExpiresIn > 0)) {
+              logger.warn({
+                message: 'LoginWithSso: expires_in missing or invalid; defaulting to 3600s',
+                context: { expires_in: rawExpiresIn },
+              });
+            }
+            const expiresOn = new Date(now.getTime() + expiresInSeconds * 1000).getTime().toString();
+
+            const hasRefreshToken = typeof response.authResponse.refresh_token === 'string' && response.authResponse.refresh_token.length > 0;
+            if (!hasRefreshToken) {
+              logger.warn({
+                message: 'LoginWithSso: No refresh token in response; session cannot be silently refreshed',
+                context: { userId: profileData.sub },
+              });
+            }
+
+            set({
+              accessToken: response.authResponse.access_token,
+              refreshToken: hasRefreshToken ? response.authResponse.refresh_token : null,
+              refreshTokenExpiresOn: expiresOn,
+              status: 'signedIn',
+              error: hasRefreshToken ? null : 'Session cannot be refreshed automatically; re-authentication will be required.',
+              profile: profileData,
+              userId: profileData.sub,
+            });
+
+            logger.info({
+              message: 'LoginWithSso: State updated to signedIn',
+              context: { userId: profileData.sub },
+            });
+
+            return { success: true };
+          } else {
+            const failureError = new Error(response.message || 'SSO login failed');
+            logger.error({
+              message: 'LoginWithSso: API returned unsuccessful response',
+              context: { message: response.message },
+            });
+            set({ status: 'error', error: response.message || 'SSO login failed' });
+            return { success: false, error: failureError };
+          }
+        } catch (error) {
+          const caughtError = error instanceof Error ? error : new Error('SSO login failed');
+          logger.error({
+            message: 'LoginWithSso: Exception caught',
+            context: { error: caughtError.message },
+          });
+          set({
+            status: 'error',
+            error: caughtError.message,
+          });
+          return { success: false, error: caughtError };
+        }
       },
     }),
     {

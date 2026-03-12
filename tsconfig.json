@@ -3,32 +3,71 @@
   "compilerOptions": {
     "strict": true,
     "allowSyntheticDefaultImports": true,
-    "types": ["jest"],
+    "types": [
+      "jest"
+    ],
     "experimentalDecorators": true,
     "jsx": "react-native",
     "module": "es2015",
     "sourceMap": true,
     "target": "esnext",
-    "lib": ["esnext", "dom"],
+    "lib": [
+      "esnext",
+      "dom"
+    ],
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "disableSourceOfProjectReferenceRedirect": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@env": ["./src/lib/env.js"],
-      "@assets/*": ["./assets/*"],
-      "tailwind.config": ["./tailwind.config.js"]
+      "@/*": [
+        "./src/*"
+      ],
+      "@env": [
+        "./src/lib/env.js"
+      ],
+      "@assets/*": [
+        "./assets/*"
+      ],
+      "tailwind.config": [
+        "./tailwind.config.js"
+      ]
     },
     "esModuleInterop": true,
     "checkJs": true,
-    "typeRoots": ["./node_modules/@types", "./types"]
+    "typeRoots": [
+      "./node_modules/@types",
+      "./types"
+    ]
   },
   "ts-node": {
     "compilerOptions": {
       "module": "commonjs"
     }
   },
-  "exclude": ["docs", "cli", "android", "lib", "ios", "node_modules", "storybookDocsComponents"],
-  "include": ["src/**/*.ts", "src/**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts", "nativewind-env.d.ts", "__mocks__/**/*.ts", "app.config.ts", "jest-setup.ts", "jest-platform-setup.ts", "__tests__/**/*.ts", "__tests__/**/*.tsx", "types/**/*.ts"]
+  "exclude": [
+    "docs",
+    "cli",
+    "android",
+    "lib",
+    "ios",
+    "macos",
+    "windows",
+    "node_modules",
+    "storybookDocsComponents"
+  ],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts",
+    "nativewind-env.d.ts",
+    "__mocks__/**/*.ts",
+    "app.config.ts",
+    "jest-setup.ts",
+    "jest-platform-setup.ts",
+    "__tests__/**/*.ts",
+    "__tests__/**/*.tsx",
+    "types/**/*.ts"
+  ]
 }

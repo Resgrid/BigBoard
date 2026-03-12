@@ -218,7 +218,7 @@ describe('useSignalRStore', () => {
         callCount++;
         if (callCount <= 2) {
           return {
-            config: { EventingUrl: undefined },
+            config: { EventingUrl: undefined as any },
             isInitialized: false,
             isInitializing: false,
             fetchConfig: mockFetchConfig,

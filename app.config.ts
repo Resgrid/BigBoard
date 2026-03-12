@@ -49,6 +49,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       ITSAppUsesNonExemptEncryption: false,
       UIViewControllerBasedStatusBarAppearance: false,
       NSBluetoothAlwaysUsageDescription: 'Allow Resgrid Dispatch to connect to bluetooth devices for PTT.',
+      LSApplicationQueriesSchemes: [Env.SCHEME.toLowerCase()],
     },
     entitlements: {
       ...((Env.APP_ENV === 'production' || Env.APP_ENV === 'internal') && {
@@ -70,6 +71,14 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     softwareKeyboardLayoutMode: 'pan',
     package: Env.PACKAGE,
     googleServicesFile: 'google-services.json',
+    intentFilters: [
+      {
+        action: 'VIEW',
+        autoVerify: true,
+        data: [{ scheme: Env.SCHEME.toLowerCase(), host: 'auth', pathPrefix: '/callback' }],
+        category: ['BROWSABLE', 'DEFAULT'],
+      },
+    ],
     permissions: [
       'android.permission.WAKE_LOCK',
       'android.permission.RECORD_AUDIO',
@@ -262,6 +271,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     '@livekit/react-native-expo-plugin',
     '@config-plugins/react-native-webrtc',
     '@config-plugins/react-native-callkeep',
+    'expo-web-browser',
     './customGradle.plugin.js',
     './customManifest.plugin.js',
     ['app-icon-badge', appIconBadgeConfig],

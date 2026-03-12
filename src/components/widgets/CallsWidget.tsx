@@ -1,15 +1,22 @@
 import { useColorScheme } from 'nativewind';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { ScrollView } from 'react-native';
 
+import { getAllGroups } from '@/api/groups/groups';
+import { getRecipients } from '@/api/messaging/messages';
+import { AutoScrollingDispatches } from '@/components/calls/auto-scrolling-dispatches';
 import { Box } from '@/components/ui/box';
 import { HStack } from '@/components/ui/hstack';
 import { Spinner } from '@/components/ui/spinner';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
 import { useCallsSignalRUpdates } from '@/hooks/use-calls-signalr-updates';
+import { type GroupResultData } from '@/models/v4/groups/groupsResultData';
+import { type RecipientsResultData } from '@/models/v4/messages/recipientsResultData';
 import { useCallsStore } from '@/stores/calls/store';
-import { useCallsSettingsStore } from '@/stores/widget-settings/calls-settings-store';
+import { usePersonnelStore } from '@/stores/personnel/store';
+import { useUnitsStore } from '@/stores/units/store';
+import { CALLS_COLUMN_LABELS, type CallsColumnKey, DEFAULT_CALLS_COLUMN_ORDER, useCallsSettingsStore } from '@/stores/widget-settings/calls-settings-store';
 
 import { WidgetContainer } from './WidgetContainer';
 
@@ -22,18 +29,78 @@ interface CallsWidgetProps {
   containerHeight?: number;
 }
 
-export const CallsWidget: React.FC<CallsWidgetProps> = ({ onRemove, isEditMode, width = 2, height = 2, containerWidth, containerHeight }) => {
+export const CallsWidget: React.FC<CallsWidgetProps> = ({ onRemove, isEditMode, containerWidth, containerHeight }) => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
-  const { calls, callPriorities, isLoading, error, init } = useCallsStore();
+  const { calls, callPriorities, callExtraDataMap, isLoading, error, init } = useCallsStore();
   const { settings } = useCallsSettingsStore();
+  const { personnel, init: initPersonnel } = usePersonnelStore();
+  const { units, fetchUnits } = useUnitsStore();
+  const [groups, setGroups] = useState<GroupResultData[]>([]);
+  const [roles, setRoles] = useState<RecipientsResultData[]>([]);
 
   // Enable real-time updates via SignalR
   useCallsSignalRUpdates();
 
   useEffect(() => {
     init();
-  }, [init]);
+    initPersonnel();
+    fetchUnits();
+
+    getAllGroups()
+      .then((res) => setGroups(res.Data || []))
+      .catch(() => setGroups([]));
+
+    getRecipients(false, false)
+      .then((res) => {
+        const roleRecipients = (res.Data || []).filter((r) => r.Type === 'Role');
+        setRoles(roleRecipients);
+      })
+      .catch(() => setRoles([]));
+  }, [init, initPersonnel, fetchUnits]);
+
+  // Build lookup maps for name resolution of dispatched entities
+  const personnelMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    personnel.forEach((p) => {
+      map[p.UserId] = `${p.FirstName} ${p.LastName}`.trim();
+    });
+    return map;
+  }, [personnel]);
+
+  const unitsMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    units.forEach((u) => {
+      map[u.UnitId] = u.Name;
+    });
+    return map;
+  }, [units]);
+
+  const groupsMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    groups.forEach((g) => {
+      map[g.GroupId] = g.Name;
+    });
+    return map;
+  }, [groups]);
+
+  const rolesMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    roles.forEach((r) => {
+      map[r.Id] = r.Name;
+    });
+    return map;
+  }, [roles]);
+
+  const resolveDispatchName = (type: string, id: string, name: string): string => {
+    if (name) return name;
+    const lowerType = (type || '').toLowerCase();
+    if (lowerType === 'personnel' || lowerType === 'user') return personnelMap[id] || id;
+    if (lowerType === 'unit') return unitsMap[id] || id;
+    if (lowerType === 'group' || lowerType === 'station') return groupsMap[id] || id;
+    if (lowerType === 'role') return rolesMap[id] || id;
+    return name || id;
+  };
 
   const getPriorityName = (priorityId: number): string => {
     const priority = callPriorities.find((p) => p.Id === priorityId);
@@ -58,6 +125,102 @@ export const CallsWidget: React.FC<CallsWidgetProps> = ({ onRemove, isEditMode, 
   };
 
   const fontSize = settings.fontSize || 12;
+  const columnOrder: CallsColumnKey[] = settings.columnOrder?.length ? settings.columnOrder : DEFAULT_CALLS_COLUMN_ORDER;
+
+  const columnVisible: Record<CallsColumnKey, boolean> = {
+    id: !!settings.showId,
+    name: !!settings.showName,
+    address: !!settings.showAddress,
+    timestamp: !!settings.showTimestamp,
+    priority: !!settings.showPriority,
+    dispatched: !!settings.showDispatched,
+  };
+
+  const columnFlex: Record<CallsColumnKey, number> = {
+    id: 0.5,
+    name: 1.2,
+    address: 1.2,
+    timestamp: 0.9,
+    priority: 0.7,
+    dispatched: 1.8,
+  };
+
+  const renderHeaderCell = (col: CallsColumnKey) => {
+    if (!columnVisible[col]) return null;
+    return (
+      <Box key={col} style={{ flex: columnFlex[col] }}>
+        <Text className={`text-xs font-bold ${isDark ? 'text-gray-300' : 'text-gray-700'}`} style={{ fontSize: fontSize - 2 }}>
+          {CALLS_COLUMN_LABELS[col]}
+        </Text>
+      </Box>
+    );
+  };
+
+  const renderDataCell = (col: CallsColumnKey, call: (typeof calls)[0]) => {
+    if (!columnVisible[col]) return null;
+    switch (col) {
+      case 'id':
+        return (
+          <Box key={col} style={{ flex: columnFlex[col] }}>
+            <Text className={`text-xs ${isDark ? 'text-gray-300' : 'text-gray-700'}`} style={{ fontSize }} numberOfLines={1}>
+              {call.Number}
+            </Text>
+          </Box>
+        );
+      case 'name':
+        return (
+          <Box key={col} style={{ flex: columnFlex[col] }}>
+            <Text className={`text-xs ${isDark ? 'text-gray-300' : 'text-gray-700'}`} style={{ fontSize }} numberOfLines={1}>
+              {call.Name}
+            </Text>
+          </Box>
+        );
+      case 'address':
+        return (
+          <Box key={col} style={{ flex: columnFlex[col] }}>
+            <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`} style={{ fontSize }} numberOfLines={1}>
+              {call.Address || 'No address'}
+            </Text>
+          </Box>
+        );
+      case 'timestamp':
+        return (
+          <Box key={col} style={{ flex: columnFlex[col] }}>
+            <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`} style={{ fontSize }} numberOfLines={1}>
+              {getTimeago(call.LoggedOn)}
+            </Text>
+          </Box>
+        );
+      case 'priority':
+        return (
+          <Box key={col} style={{ flex: columnFlex[col] }}>
+            <Text className="text-xs" style={{ fontSize, color: getPriorityColor(call.Priority) }} numberOfLines={1}>
+              {getPriorityName(call.Priority)}
+            </Text>
+          </Box>
+        );
+      case 'dispatched': {
+        const extraData = callExtraDataMap[call.CallId];
+        const dispatches = extraData?.Dispatches || [];
+        if (dispatches.length === 0) {
+          return (
+            <Box key={col} style={{ flex: columnFlex[col] }}>
+              <Text className={`text-xs ${isDark ? 'text-gray-500' : 'text-gray-400'}`} style={{ fontSize }}>
+                —
+              </Text>
+            </Box>
+          );
+        }
+        return (
+          <Box key={col} style={{ flex: columnFlex[col] }}>
+            <AutoScrollingDispatches dispatches={dispatches} resolveDisplayName={resolveDispatchName} scrollSpeed={settings.dispatchScrollSpeed ?? 40} fontSize={fontSize} />
+          </Box>
+        );
+      }
+      default:
+        return null;
+    }
+  };
 
   if (error) {
     return (
@@ -85,81 +248,13 @@ export const CallsWidget: React.FC<CallsWidgetProps> = ({ onRemove, isEditMode, 
         <VStack space="xs">
           {/* Header Row */}
           <HStack space="sm" className={`border-b pb-1 ${isDark ? 'border-gray-700' : 'border-gray-300'}`}>
-            {settings.showId && (
-              <Box style={{ flex: 0.5 }}>
-                <Text className={`text-xs font-bold ${isDark ? 'text-gray-300' : 'text-gray-700'}`} style={{ fontSize: fontSize - 2 }}>
-                  ID
-                </Text>
-              </Box>
-            )}
-            {settings.showName && (
-              <Box style={{ flex: 1.2 }}>
-                <Text className={`text-xs font-bold ${isDark ? 'text-gray-300' : 'text-gray-700'}`} style={{ fontSize: fontSize - 2 }}>
-                  Name
-                </Text>
-              </Box>
-            )}
-            {settings.showAddress && (
-              <Box style={{ flex: 1.2 }}>
-                <Text className={`text-xs font-bold ${isDark ? 'text-gray-300' : 'text-gray-700'}`} style={{ fontSize: fontSize - 2 }}>
-                  Address
-                </Text>
-              </Box>
-            )}
-            {settings.showTimestamp && (
-              <Box style={{ flex: 0.9 }}>
-                <Text className={`text-xs font-bold ${isDark ? 'text-gray-300' : 'text-gray-700'}`} style={{ fontSize: fontSize - 2 }}>
-                  Logged
-                </Text>
-              </Box>
-            )}
-            {settings.showPriority && (
-              <Box style={{ flex: 0.7 }}>
-                <Text className={`text-xs font-bold ${isDark ? 'text-gray-300' : 'text-gray-700'}`} style={{ fontSize: fontSize - 2 }}>
-                  Priority
-                </Text>
-              </Box>
-            )}
+            {columnOrder.map((col) => renderHeaderCell(col))}
           </HStack>
 
           {/* Data Rows */}
           {calls.map((call, index) => (
             <HStack key={call.CallId} space="sm" className={`py-1 ${index % 2 === 0 ? (isDark ? 'bg-gray-800/30' : 'bg-gray-100/50') : ''}`}>
-              {settings.showId && (
-                <Box style={{ flex: 0.5 }}>
-                  <Text className={`text-xs ${isDark ? 'text-gray-300' : 'text-gray-700'}`} style={{ fontSize }} numberOfLines={1}>
-                    {call.Number}
-                  </Text>
-                </Box>
-              )}
-              {settings.showName && (
-                <Box style={{ flex: 1.2 }}>
-                  <Text className={`text-xs ${isDark ? 'text-gray-300' : 'text-gray-700'}`} style={{ fontSize }} numberOfLines={1}>
-                    {call.Name}
-                  </Text>
-                </Box>
-              )}
-              {settings.showAddress && (
-                <Box style={{ flex: 1.2 }}>
-                  <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`} style={{ fontSize }} numberOfLines={1}>
-                    {call.Address || 'No address'}
-                  </Text>
-                </Box>
-              )}
-              {settings.showTimestamp && (
-                <Box style={{ flex: 0.9 }}>
-                  <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`} style={{ fontSize }} numberOfLines={1}>
-                    {getTimeago(call.LoggedOn)}
-                  </Text>
-                </Box>
-              )}
-              {settings.showPriority && (
-                <Box style={{ flex: 0.7 }}>
-                  <Text className="text-xs" style={{ fontSize, color: getPriorityColor(call.Priority) }} numberOfLines={1}>
-                    {getPriorityName(call.Priority)}
-                  </Text>
-                </Box>
-              )}
+              {columnOrder.map((col) => renderDataCell(col, call))}
             </HStack>
           ))}
 

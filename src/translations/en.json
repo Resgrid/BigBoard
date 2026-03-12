@@ -337,6 +337,29 @@
     "upload": "Upload",
     "uploading": "Uploading..."
   },
+  "configure": {
+    "address": "Address",
+    "column_order": "Column Order",
+    "dispatch_scroll_off": "Off (manual)",
+    "dispatch_scroll_speed": "Dispatch Scroll Speed: {{speed}}",
+    "dispatched": "Dispatched",
+    "font_size": "Font Size: {{value}}pt",
+    "font_size_max": "30pt",
+    "font_size_min": "4pt",
+    "height_grid_units": "Height (grid units): {{value}}",
+    "id": "ID",
+    "logged_by": "Logged By",
+    "move_column_down": "Move column {{columnName}} down",
+    "move_column_up": "Move column {{columnName}} up",
+    "name": "Name",
+    "priority": "Priority",
+    "speed_max": "200px/s",
+    "speed_off": "Off",
+    "timestamp": "Timestamp",
+    "use_arrows_reorder": "Use arrows to reorder columns",
+    "widget_size": "Widget Size",
+    "width_grid_units": "Width (grid units): {{value}}"
+  },
   "contacts": {
     "add": "Add Contact",
     "addedBy": "Added By",
@@ -467,7 +490,7 @@
     "username_placeholder": "Enter your username"
   },
   "maintenance": {
-    "downtime_message": "We are working hard to complete the maintenance as quickly as possible. Please check back soon.",
+    "downtime_message": "We are working hard to complete maintenance as soon as possible. Please check back soon.",
     "downtime_title": "What is the Downtime?",
     "message": "Please check back in sometime.",
     "support_message": "If you need assistance, please contact us at",
@@ -507,6 +530,16 @@
   },
   "onboarding": {
     "message": "Welcome to obytes app site"
+  },
+  "personnel": {
+    "column": {
+      "group": "Group",
+      "name": "Name",
+      "roles": "Roles",
+      "staffing": "Staffing",
+      "status": "Status",
+      "timestamp": "Timestamp"
+    }
   },
   "protocols": {
     "details": {
@@ -622,6 +655,25 @@
     "username": "Username",
     "version": "Version",
     "website": "Website"
+  },
+  "sso": {
+    "button": "Login with SSO",
+    "continue": "Continue",
+    "department_id": "Department ID",
+    "department_id_placeholder": "Enter your department ID",
+    "error_fetching_config": "Failed to fetch SSO configuration. Please check your username and try again.",
+    "error_login_failed": "SSO login failed. Please try again.",
+    "error_no_token": "Failed to get authentication token from the identity provider.",
+    "error_not_configured": "SSO is not configured for this account.",
+    "error_oidc_missing_config": "OIDC login is unavailable: authority or client ID is missing from the configuration.",
+    "error_title": "SSO Error",
+    "loading_config": "Looking up SSO configuration...",
+    "login_with_sso": "Sign in with SSO",
+    "page_subtitle": "Enter your username to find your SSO configuration.",
+    "page_title": "SSO Login",
+    "processing": "Processing...",
+    "username": "Username",
+    "username_placeholder": "Enter your username"
   },
   "status": {
     "add_note": "Add Note",

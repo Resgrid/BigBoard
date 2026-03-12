@@ -2,6 +2,19 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
+export type CallsColumnKey = 'id' | 'name' | 'address' | 'timestamp' | 'priority' | 'dispatched';
+
+export const CALLS_COLUMN_LABELS: Record<CallsColumnKey, string> = {
+  id: 'ID',
+  name: 'Name',
+  address: 'Address',
+  timestamp: 'Timestamp',
+  priority: 'Priority',
+  dispatched: 'Dispatched',
+};
+
+export const DEFAULT_CALLS_COLUMN_ORDER: CallsColumnKey[] = ['id', 'name', 'address', 'timestamp', 'priority', 'dispatched'];
+
 export interface CallsWidgetSettings {
   showId: boolean;
   showName: boolean;
@@ -10,7 +23,10 @@ export interface CallsWidgetSettings {
   showPriority: boolean;
   showAddress: boolean;
   showLinkedCalls: boolean;
+  showDispatched: boolean;
+  dispatchScrollSpeed: number;
   fontSize: number;
+  columnOrder: CallsColumnKey[];
 }
 
 interface CallsSettingsState {
@@ -27,7 +43,10 @@ const defaultSettings: CallsWidgetSettings = {
   showPriority: true,
   showAddress: true,
   showLinkedCalls: true,
+  showDispatched: true,
+  dispatchScrollSpeed: 40,
   fontSize: 12,
+  columnOrder: DEFAULT_CALLS_COLUMN_ORDER,
 };
 
 export const useCallsSettingsStore = create<CallsSettingsState>()(

@@ -135,7 +135,7 @@ export const useMapSignalRUpdates = (onMarkersUpdate: (markers: MapMakerInfoData
       // Debounce the API call to prevent rapid consecutive requests
       debounceTimer.current = setTimeout(() => {
         fetchAndUpdateMarkers();
-      }, DEBOUNCE_DELAY);
+      }, DEBOUNCE_DELAY) as unknown as number;
     }
 
     // Cleanup function

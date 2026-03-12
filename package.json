@@ -10,6 +10,11 @@
     "android": "cross-env EXPO_NO_DOTENV=1 expo run:android",
     "ios": "cross-env EXPO_NO_DOTENV=1 expo run:ios --device",
     "web": "cross-env EXPO_NO_DOTENV=1 expo start --web",
+    "electron:dev": "concurrently \"cross-env BROWSER=none EXPO_NO_DOTENV=1 expo start --web\" \"wait-on http://localhost:8081 && electron electron/main.js\"",
+    "electron:build": "cross-env EXPO_NO_DOTENV=1 expo export --platform web && electron-builder",
+    "electron:build:win": "cross-env EXPO_NO_DOTENV=1 expo export --platform web && electron-builder --win",
+    "electron:build:mac": "cross-env EXPO_NO_DOTENV=1 expo export --platform web && electron-builder --mac",
+    "electron:build:linux": "cross-env EXPO_NO_DOTENV=1 expo export --platform web && electron-builder --linux",
     "xcode": "xed -b ios",
     "doctor": "npx expo-doctor@latest",
     "start:staging": "cross-env APP_ENV=staging yarn run start",
@@ -110,9 +115,11 @@
     "expo-application": "~6.1.5",
     "expo-asset": "~11.1.7",
     "expo-audio": "~0.4.9",
+    "expo-auth-session": "~6.2.1",
     "expo-av": "~15.1.7",
     "expo-build-properties": "~0.14.8",
     "expo-constants": "~17.1.8",
+    "expo-crypto": "~14.1.5",
     "expo-dev-client": "~5.2.4",
     "expo-device": "~7.1.4",
     "expo-document-picker": "~13.1.6",
@@ -134,6 +141,7 @@
     "expo-status-bar": "~2.2.3",
     "expo-system-ui": "~5.0.11",
     "expo-task-manager": "~13.1.6",
+    "expo-web-browser": "~14.2.0",
     "geojson": "~0.5.0",
     "i18next": "~23.14.0",
     "jwt-decode": "^4.0.0",
@@ -190,8 +198,11 @@
     "@typescript-eslint/eslint-plugin": "~5.62.0",
     "@typescript-eslint/parser": "~5.62.0",
     "babel-jest": "~30.0.0",
+    "concurrently": "^9.1.0",
     "cross-env": "~7.0.3",
     "dotenv": "~16.4.5",
+    "electron": "^33.0.0",
+    "electron-builder": "^25.1.8",
     "eslint": "~8.57.0",
     "eslint-config-expo": "~7.1.2",
     "eslint-config-prettier": "~9.1.0",
@@ -218,7 +229,8 @@
     "tailwindcss": "3.4.4",
     "ts-jest": "~29.1.2",
     "ts-node": "~10.9.2",
-    "typescript": "~5.8.3"
+    "typescript": "~5.8.3",
+    "wait-on": "^8.0.1"
   },
   "repository": {
     "type": "git",
@@ -252,5 +264,39 @@
   },
   "resolutions": {
     "form-data": "4.0.4"
+  },
+  "build": {
+    "appId": "com.resgrid.bigboard",
+    "productName": "BigBoard",
+    "extraMetadata": {
+      "main": "electron/main.js"
+    },
+    "directories": {
+      "output": "electron-dist"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*"
+    ],
+    "mac": {
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "category": "public.app-category.business"
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Utility"
+    }
   }
 }

@@ -40,9 +40,10 @@ export type LoginFormProps = {
   isLoading?: boolean;
   error?: string;
   onServerUrlPress?: () => void;
+  onSsoPress?: () => void;
 };
 
-export const LoginForm = ({ onSubmit = () => {}, isLoading = false, error = undefined, onServerUrlPress }: LoginFormProps) => {
+export const LoginForm = ({ onSubmit = () => {}, isLoading = false, error = undefined, onServerUrlPress, onSsoPress }: LoginFormProps) => {
   const { colorScheme } = useColorScheme();
   const { t } = useTranslation();
   const {
@@ -176,6 +177,12 @@ export const LoginForm = ({ onSubmit = () => {}, isLoading = false, error = unde
             <ButtonText>{t('settings.server_url')}</ButtonText>
           </Button>
         )}
+
+        {onSsoPress ? (
+          <Button className="mt-2 w-full" variant="outline" action="secondary" onPress={onSsoPress} disabled={isLoading}>
+            <ButtonText>{t('sso.button')}</ButtonText>
+          </Button>
+        ) : null}
 
         {/* Footer */}
         <View className="mt-8 items-center">

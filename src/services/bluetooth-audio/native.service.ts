@@ -390,7 +390,7 @@ export class BluetoothAudioServiceNative extends BluetoothAudioServiceBase {
             devicesFound: useBluetoothAudioStore.getState().availableDevices.length,
           },
         });
-      }, durationMs);
+      }, durationMs) as unknown as number;
     } catch (error) {
       logger.error({
         message: 'Failed to start Bluetooth scan',
@@ -442,7 +442,7 @@ export class BluetoothAudioServiceNative extends BluetoothAudioServiceBase {
             totalDevicesFound: useBluetoothAudioStore.getState().availableDevices.length,
           },
         });
-      }, durationMs);
+      }, durationMs) as unknown as number;
     } catch (error) {
       logger.error({
         message: 'Failed to start DEBUG Bluetooth scan',

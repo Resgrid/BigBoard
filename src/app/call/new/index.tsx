@@ -220,7 +220,7 @@ export default function NewCall() {
       toast.success(t('calls.create_success'));
 
       // Navigate back to calls list
-      router.push('/calls');
+      router.push('/calls' as any);
     } catch (error) {
       console.error('Error creating call:', error);
 

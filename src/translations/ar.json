@@ -337,6 +337,29 @@
     "upload": "رفع",
     "uploading": "جاري الرفع..."
   },
+  "configure": {
+    "address": "العنوان",
+    "column_order": "ترتيب الأعمدة",
+    "dispatch_scroll_off": "إيقاف (يدوي)",
+    "dispatch_scroll_speed": "سرعة التمرير: {{speed}}",
+    "dispatched": "تم الإرسال",
+    "font_size": "حجم الخط: {{value}} نقطة",
+    "font_size_max": "30 نقطة",
+    "font_size_min": "4 نقاط",
+    "height_grid_units": "الارتفاع (وحدات الشبكة): {{value}}",
+    "id": "المعرف",
+    "logged_by": "سجل بواسطة",
+    "move_column_down": "تحريك العمود {{columnName}} لأسفل",
+    "move_column_up": "تحريك العمود {{columnName}} لأعلى",
+    "name": "الاسم",
+    "priority": "الأولوية",
+    "speed_max": "200 بكسل/ث",
+    "speed_off": "إيقاف",
+    "timestamp": "الطابع الزمني",
+    "use_arrows_reorder": "استخدم الأسهم لإعادة ترتيب الأعمدة",
+    "widget_size": "حجم الأداة",
+    "width_grid_units": "العرض (وحدات الشبكة): {{value}}"
+  },
   "contacts": {
     "add": "إضافة جهة اتصال",
     "addedBy": "أضيف بواسطة",
@@ -508,6 +531,16 @@
   "onboarding": {
     "message": "مرحبًا بك في تطبيق obytes"
   },
+  "personnel": {
+    "column": {
+      "group": "المجموعة",
+      "name": "الاسم",
+      "roles": "الأدوار",
+      "staffing": "التوظيف",
+      "status": "الحالة",
+      "timestamp": "الطابع الزمني"
+    }
+  },
   "protocols": {
     "details": {
       "close": "إغلاق",
@@ -622,6 +655,25 @@
     "username": "اسم المستخدم",
     "version": "الإصدار",
     "website": "الموقع الإلكتروني"
+  },
+  "sso": {
+    "button": "تسجيل الدخول باستخدام SSO",
+    "continue": "متابعة",
+    "department_id": "معرف القسم",
+    "department_id_placeholder": "أدخل معرف قسمك",
+    "error_fetching_config": "فشل في جلب تكوين SSO. يرجى التحقق من اسم المستخدم والمحاولة مرة أخرى.",
+    "error_login_failed": "فشل تسجيل الدخول عبر SSO. يرجى المحاولة مرة أخرى.",
+    "error_no_token": "فشل في الحصول على رمز المصادقة من مزود الهوية.",
+    "error_not_configured": "SSO غير مكون لهذا الحساب.",
+    "error_oidc_missing_config": "تسجيل الدخول عبر OIDC غير متاح: النطاق أو معرف العميل مفقود من الإعداد.",
+    "error_title": "خطأ في SSO",
+    "loading_config": "جارٍ البحث عن تكوين SSO...",
+    "login_with_sso": "تسجيل الدخول باستخدام SSO",
+    "page_subtitle": "أدخل اسم المستخدم للعثور على تكوين SSO الخاص بك.",
+    "page_title": "تسجيل الدخول SSO",
+    "processing": "جارٍ المعالجة...",
+    "username": "اسم المستخدم",
+    "username_placeholder": "أدخل اسم المستخدم"
   },
   "status": {
     "add_note": "إضافة ملاحظة",

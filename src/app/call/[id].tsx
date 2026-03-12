@@ -89,7 +89,7 @@ export default function CallDetail() {
   };
 
   const handleEditCall = () => {
-    router.push(`/call/${callId}/edit`);
+    router.push(`/call/${callId}/edit` as any);
   };
 
   const handleCloseCall = () => {

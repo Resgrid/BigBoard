@@ -9,7 +9,7 @@ import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
 import { usePersonnelSignalRUpdates } from '@/hooks/use-personnel-signalr-updates';
 import { usePersonnelStore } from '@/stores/personnel/store';
-import { usePersonnelSettingsStore } from '@/stores/widget-settings/personnel-settings-store';
+import { DEFAULT_PERSONNEL_COLUMN_ORDER, type PersonnelColumnKey, usePersonnelSettingsStore } from '@/stores/widget-settings/personnel-settings-store';
 
 import { WidgetContainer } from './WidgetContainer';
 
@@ -89,6 +89,101 @@ export const PersonnelWidget: React.FC<PersonnelWidgetProps> = ({ onRemove, isEd
   };
 
   const fontSize = settings.fontSize || 12;
+  const columnOrder: PersonnelColumnKey[] = settings.columnOrder?.length ? settings.columnOrder : DEFAULT_PERSONNEL_COLUMN_ORDER;
+
+  const columnVisible: Record<PersonnelColumnKey, boolean> = {
+    name: true,
+    group: !!settings.showGroup,
+    staffing: !!settings.showStaffing,
+    status: !!settings.showStatus,
+    roles: !!settings.showRoles,
+    timestamp: !!settings.showTimestamp,
+  };
+
+  const columnFlex: Record<PersonnelColumnKey, number> = {
+    name: 1,
+    group: 0.8,
+    staffing: 0.7,
+    status: 0.7,
+    roles: 0.8,
+    timestamp: 0.9,
+  };
+
+  const columnHeaderLabel: Record<PersonnelColumnKey, string> = {
+    name: 'Name',
+    group: 'Group',
+    staffing: 'Staffing',
+    status: 'Status',
+    roles: 'Roles',
+    timestamp: 'Updated',
+  };
+
+  const renderHeaderCell = (col: PersonnelColumnKey) => {
+    if (!columnVisible[col]) return null;
+    return (
+      <Box key={col} style={{ flex: columnFlex[col] }}>
+        <Text className={`text-xs font-bold ${isDark ? 'text-gray-300' : 'text-gray-700'}`} style={{ fontSize: fontSize - 2 }}>
+          {columnHeaderLabel[col]}
+        </Text>
+      </Box>
+    );
+  };
+
+  const renderDataCell = (col: PersonnelColumnKey, person: (typeof sortedPersonnel)[0]) => {
+    if (!columnVisible[col]) return null;
+    switch (col) {
+      case 'name':
+        return (
+          <Box key={col} style={{ flex: columnFlex[col] }}>
+            <Text className={`text-xs ${isDark ? 'text-gray-300' : 'text-gray-700'}`} style={{ fontSize }} numberOfLines={1}>
+              {person.FirstName} {person.LastName}
+            </Text>
+          </Box>
+        );
+      case 'group':
+        return (
+          <Box key={col} style={{ flex: columnFlex[col] }}>
+            <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`} style={{ fontSize }} numberOfLines={1}>
+              {person.GroupName}
+            </Text>
+          </Box>
+        );
+      case 'staffing':
+        return (
+          <Box key={col} style={{ flex: columnFlex[col] }}>
+            <Text className="text-xs" style={{ fontSize, color: person.StaffingColor }} numberOfLines={1}>
+              {person.Staffing}
+            </Text>
+          </Box>
+        );
+      case 'status':
+        return (
+          <Box key={col} style={{ flex: columnFlex[col] }}>
+            <Text className="text-xs" style={{ fontSize, color: person.StatusColor }} numberOfLines={1}>
+              {person.Status}
+            </Text>
+          </Box>
+        );
+      case 'roles':
+        return (
+          <Box key={col} style={{ flex: columnFlex[col] }}>
+            <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`} style={{ fontSize: fontSize - 2 }} numberOfLines={1}>
+              {person.Roles}
+            </Text>
+          </Box>
+        );
+      case 'timestamp':
+        return (
+          <Box key={col} style={{ flex: columnFlex[col] }}>
+            <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`} style={{ fontSize }} numberOfLines={1}>
+              {getTimeago(person.StatusTimestamp)}
+            </Text>
+          </Box>
+        );
+      default:
+        return null;
+    }
+  };
 
   if (error) {
     return (
@@ -116,91 +211,13 @@ export const PersonnelWidget: React.FC<PersonnelWidgetProps> = ({ onRemove, isEd
         <VStack space="xs">
           {/* Header Row */}
           <HStack space="sm" className={`border-b pb-1 ${isDark ? 'border-gray-700' : 'border-gray-300'}`}>
-            <Box style={{ flex: 1 }}>
-              <Text className={`text-xs font-bold ${isDark ? 'text-gray-300' : 'text-gray-700'}`} style={{ fontSize: fontSize - 2 }}>
-                Name
-              </Text>
-            </Box>
-            {settings.showGroup && (
-              <Box style={{ flex: 0.8 }}>
-                <Text className={`text-xs font-bold ${isDark ? 'text-gray-300' : 'text-gray-700'}`} style={{ fontSize: fontSize - 2 }}>
-                  Group
-                </Text>
-              </Box>
-            )}
-            {settings.showStaffing && (
-              <Box style={{ flex: 0.7 }}>
-                <Text className={`text-xs font-bold ${isDark ? 'text-gray-300' : 'text-gray-700'}`} style={{ fontSize: fontSize - 2 }}>
-                  Staffing
-                </Text>
-              </Box>
-            )}
-            {settings.showStatus && (
-              <Box style={{ flex: 0.7 }}>
-                <Text className={`text-xs font-bold ${isDark ? 'text-gray-300' : 'text-gray-700'}`} style={{ fontSize: fontSize - 2 }}>
-                  Status
-                </Text>
-              </Box>
-            )}
-            {settings.showRoles && (
-              <Box style={{ flex: 0.8 }}>
-                <Text className={`text-xs font-bold ${isDark ? 'text-gray-300' : 'text-gray-700'}`} style={{ fontSize: fontSize - 2 }}>
-                  Roles
-                </Text>
-              </Box>
-            )}
-            {settings.showTimestamp && (
-              <Box style={{ flex: 0.9 }}>
-                <Text className={`text-xs font-bold ${isDark ? 'text-gray-300' : 'text-gray-700'}`} style={{ fontSize: fontSize - 2 }}>
-                  Updated
-                </Text>
-              </Box>
-            )}
+            {columnOrder.map((col) => renderHeaderCell(col))}
           </HStack>
 
           {/* Data Rows */}
           {sortedPersonnel.map((person, index) => (
             <HStack key={person.UserId} space="sm" className={`py-1 ${index % 2 === 0 ? (isDark ? 'bg-gray-800/30' : 'bg-gray-100/50') : ''}`}>
-              <Box style={{ flex: 1 }}>
-                <Text className={`text-xs ${isDark ? 'text-gray-300' : 'text-gray-700'}`} style={{ fontSize }} numberOfLines={1}>
-                  {person.FirstName} {person.LastName}
-                </Text>
-              </Box>
-              {settings.showGroup && (
-                <Box style={{ flex: 0.8 }}>
-                  <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`} style={{ fontSize }} numberOfLines={1}>
-                    {person.GroupName}
-                  </Text>
-                </Box>
-              )}
-              {settings.showStaffing && (
-                <Box style={{ flex: 0.7 }}>
-                  <Text className="text-xs" style={{ fontSize, color: person.StaffingColor }} numberOfLines={1}>
-                    {person.Staffing}
-                  </Text>
-                </Box>
-              )}
-              {settings.showStatus && (
-                <Box style={{ flex: 0.7 }}>
-                  <Text className="text-xs" style={{ fontSize, color: person.StatusColor }} numberOfLines={1}>
-                    {person.Status}
-                  </Text>
-                </Box>
-              )}
-              {settings.showRoles && (
-                <Box style={{ flex: 0.8 }}>
-                  <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`} style={{ fontSize: fontSize - 2 }} numberOfLines={1}>
-                    {person.Roles}
-                  </Text>
-                </Box>
-              )}
-              {settings.showTimestamp && (
-                <Box style={{ flex: 0.9 }}>
-                  <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`} style={{ fontSize }} numberOfLines={1}>
-                    {getTimeago(person.StatusTimestamp)}
-                  </Text>
-                </Box>
-              )}
+              {columnOrder.map((col) => renderDataCell(col, person))}
             </HStack>
           ))}
 

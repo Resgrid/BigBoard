@@ -123,7 +123,7 @@ export const SidebarCallCard = () => {
             size="sm"
             action="primary"
             onPress={() => {
-              router.push(`/call/${activeCall.CallId}`);
+              router.push(`/call/${activeCall.CallId}` as any);
             }}
           >
             <ButtonIcon as={Eye} />

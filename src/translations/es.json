@@ -337,6 +337,29 @@
     "upload": "Subir",
     "uploading": "Subiendo..."
   },
+  "configure": {
+    "address": "Dirección",
+    "column_order": "Orden de columnas",
+    "dispatch_scroll_off": "Desactivado (manual)",
+    "dispatch_scroll_speed": "Velocidad de desplazamiento: {{speed}}",
+    "dispatched": "Despachado",
+    "font_size": "Tamaño de fuente: {{value}}pt",
+    "font_size_max": "30pt",
+    "font_size_min": "4pt",
+    "height_grid_units": "Alto (unidades de cuadrícula): {{value}}",
+    "id": "ID",
+    "logged_by": "Registrado por",
+    "move_column_down": "Mover columna {{columnName}} hacia abajo",
+    "move_column_up": "Mover columna {{columnName}} hacia arriba",
+    "name": "Nombre",
+    "priority": "Prioridad",
+    "speed_max": "200px/s",
+    "speed_off": "Desactivado",
+    "timestamp": "Marca de tiempo",
+    "use_arrows_reorder": "Usa las flechas para reordenar columnas",
+    "widget_size": "Tamaño del widget",
+    "width_grid_units": "Ancho (unidades de cuadrícula): {{value}}"
+  },
   "contacts": {
     "add": "Añadir contacto",
     "addedBy": "Añadido por",
@@ -508,6 +531,16 @@
   "onboarding": {
     "message": "Bienvenido al sitio de la aplicación obytes"
   },
+  "personnel": {
+    "column": {
+      "group": "Grupo",
+      "name": "Nombre",
+      "roles": "Roles",
+      "staffing": "Dotación",
+      "status": "Estado",
+      "timestamp": "Marca de tiempo"
+    }
+  },
   "protocols": {
     "details": {
       "close": "Cerrar",
@@ -622,6 +655,25 @@
     "username": "Nombre de usuario",
     "version": "Versión",
     "website": "Sitio web"
+  },
+  "sso": {
+    "button": "Iniciar sesión con SSO",
+    "continue": "Continuar",
+    "department_id": "ID de Departamento",
+    "department_id_placeholder": "Ingrese su ID de departamento",
+    "error_fetching_config": "No se pudo obtener la configuración de SSO. Verifique su nombre de usuario e intente de nuevo.",
+    "error_login_failed": "Error al iniciar sesión con SSO. Por favor, inténtelo de nuevo.",
+    "error_no_token": "No se pudo obtener el token de autenticación del proveedor de identidad.",
+    "error_not_configured": "SSO no está configurado para esta cuenta.",
+    "error_oidc_missing_config": "El inicio de sesión OIDC no está disponible: falta la autoridad o el ID de cliente en la configuración.",
+    "error_title": "Error de SSO",
+    "loading_config": "Buscando configuración de SSO...",
+    "login_with_sso": "Iniciar sesión con SSO",
+    "page_subtitle": "Ingrese su nombre de usuario para encontrar su configuración de SSO.",
+    "page_title": "Inicio de sesión SSO",
+    "processing": "Procesando...",
+    "username": "Nombre de usuario",
+    "username_placeholder": "Ingrese su nombre de usuario"
   },
   "status": {
     "add_note": "Añadir Nota",
