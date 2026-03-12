@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Platform, StyleSheet, View } from 'react-native';
+import { AccessibilityInfo, Animated, Platform, StyleSheet, View } from 'react-native';
 
 import { Box } from '@/components/ui/box';
 import { Text } from '@/components/ui/text';
@@ -36,12 +36,12 @@ export const AutoScrollingDispatches: React.FC<AutoScrollingDispatchesProps> = (
   const [primaryWidth, setPrimaryWidth] = useState(0);
 
   useEffect(() => {
-    // Stop any running animation whenever deps change
+    // Stop any running animation and reset position whenever deps change
     animRef.current?.stop();
     animRef.current = null;
+    scrollX.setValue(0);
 
     if (scrollSpeed <= 0 || primaryWidth <= 0) {
-      scrollX.setValue(0);
       return;
     }
 
@@ -50,20 +50,29 @@ export const AutoScrollingDispatches: React.FC<AutoScrollingDispatchesProps> = (
     const loopWidth = primaryWidth + SEPARATOR_WIDTH;
     const duration = (loopWidth / scrollSpeed) * 1000;
 
-    scrollX.setValue(0);
-    const anim = Animated.loop(
-      Animated.timing(scrollX, {
-        toValue: -loopWidth,
-        duration,
-        useNativeDriver: Platform.OS !== 'web',
-        isInteraction: false,
-      })
-    );
-    animRef.current = anim;
-    anim.start();
+    let cancelled = false;
+
+    AccessibilityInfo.isReduceMotionEnabled().then((reduceMotion) => {
+      // If the effect was cleaned up or the user has reduce-motion enabled,
+      // leave scrollX at 0 and skip the animation entirely.
+      if (cancelled || reduceMotion) return;
+
+      const anim = Animated.loop(
+        Animated.timing(scrollX, {
+          toValue: -loopWidth,
+          duration,
+          useNativeDriver: Platform.OS !== 'web',
+          isInteraction: false,
+        })
+      );
+      animRef.current = anim;
+      anim.start();
+    });
 
     return () => {
-      anim.stop();
+      cancelled = true;
+      animRef.current?.stop();
+      animRef.current = null;
     };
   }, [primaryWidth, scrollSpeed, scrollX]);
 
@@ -99,6 +108,7 @@ export const AutoScrollingDispatches: React.FC<AutoScrollingDispatchesProps> = (
       <Animated.View style={[styles.row, { transform: [{ translateX: scrollX }] }]}>
         {/* Primary copy — measure width to drive the animation */}
         <View
+          testID="auto-scroll-primary"
           style={styles.row}
           onLayout={(e) => {
             const w = e.nativeEvent.layout.width;
@@ -108,11 +118,18 @@ export const AutoScrollingDispatches: React.FC<AutoScrollingDispatchesProps> = (
           {renderChips(dispatches, 'a')}
         </View>
 
-        {/* Gap + duplicate copy for seamless looping */}
+        {/* Gap + duplicate copy for seamless looping — hidden from screen readers */}
         {scrollSpeed > 0 ? (
           <>
-            <View style={{ width: SEPARATOR_WIDTH, flexShrink: 0 }} />
-            <View style={styles.row}>{renderChips(dispatches, 'b')}</View>
+            <View style={{ width: SEPARATOR_WIDTH, flexShrink: 0 }} accessible={false} />
+            <View
+              style={styles.row}
+              accessible={false}
+              accessibilityElementsHidden={true}
+              importantForAccessibility="no-hide-children"
+            >
+              {renderChips(dispatches, 'b')}
+            </View>
           </>
         ) : null}
       </Animated.View>

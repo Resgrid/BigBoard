@@ -75,7 +75,7 @@ export interface AuthState {
   profile: ProfileModel | null;
   userId: string | null;
   login: (credentials: LoginCredentials) => Promise<void>;
-  loginWithSso: (credentials: SsoLoginCredentials) => Promise<void>;
+  loginWithSso: (credentials: SsoLoginCredentials) => Promise<{ success: boolean; error?: Error }>;
   logout: () => Promise<void>;
   refreshAccessToken: () => Promise<void>;
   isFirstTime: boolean;

@@ -14,6 +14,7 @@ interface CallsState {
   callPriorities: CallPriorityResultData[];
   callTypes: CallTypeResultData[];
   callExtraDataMap: Record<string, CallExtraDataResultData>;
+  lastCallExtraDataFetchId: number;
   isLoading: boolean;
   error: string | null;
   fetchCalls: () => Promise<void>;
@@ -28,6 +29,7 @@ export const useCallsStore = create<CallsState>((set, get) => ({
   callPriorities: [],
   callTypes: [],
   callExtraDataMap: {},
+  lastCallExtraDataFetchId: 0,
   isLoading: false,
   error: null,
   init: async () => {
@@ -46,8 +48,11 @@ export const useCallsStore = create<CallsState>((set, get) => ({
 
       // Fetch extra data for all calls in parallel (non-blocking)
       const calls = callsResponse.Data;
+      const fetchId = Date.now();
+      set({ lastCallExtraDataFetchId: fetchId });
       if (calls && calls.length > 0) {
         const extraDataResults = await Promise.allSettled(calls.map((call) => getCallExtraData(call.CallId)));
+        if (get().lastCallExtraDataFetchId !== fetchId) return;
         const newExtraDataMap: Record<string, CallExtraDataResultData> = {};
         extraDataResults.forEach((result, index) => {
           if (result.status === 'fulfilled' && result.value?.Data) {
@@ -56,7 +61,9 @@ export const useCallsStore = create<CallsState>((set, get) => ({
         });
         set({ callExtraDataMap: newExtraDataMap });
       } else {
-        set({ callExtraDataMap: {} });
+        if (get().lastCallExtraDataFetchId === fetchId) {
+          set({ callExtraDataMap: {} });
+        }
       }
     } catch (error) {
       logger.error({
@@ -74,8 +81,11 @@ export const useCallsStore = create<CallsState>((set, get) => ({
       set({ calls: response.Data, isLoading: false });
       // Fetch extra data for all calls in parallel (non-blocking)
       const calls = response.Data;
+      const fetchId = Date.now();
+      set({ lastCallExtraDataFetchId: fetchId });
       if (calls && calls.length > 0) {
         const extraDataResults = await Promise.allSettled(calls.map((call) => getCallExtraData(call.CallId)));
+        if (get().lastCallExtraDataFetchId !== fetchId) return;
         const newExtraDataMap: Record<string, CallExtraDataResultData> = {};
         extraDataResults.forEach((result, index) => {
           if (result.status === 'fulfilled' && result.value?.Data) {
@@ -84,7 +94,9 @@ export const useCallsStore = create<CallsState>((set, get) => ({
         });
         set({ callExtraDataMap: newExtraDataMap });
       } else {
-        set({ callExtraDataMap: {} });
+        if (get().lastCallExtraDataFetchId === fetchId) {
+          set({ callExtraDataMap: {} });
+        }
       }
     } catch {
       set({ error: 'Failed to fetch calls', isLoading: false });
@@ -116,12 +128,17 @@ export const useCallsStore = create<CallsState>((set, get) => ({
   },
   fetchAllCallExtraData: async () => {
     const { calls } = get();
+    const fetchId = Date.now();
+    set({ lastCallExtraDataFetchId: fetchId });
     if (!calls || calls.length === 0) {
-      set({ callExtraDataMap: {} });
+      if (get().lastCallExtraDataFetchId === fetchId) {
+        set({ callExtraDataMap: {} });
+      }
       return;
     }
     try {
       const extraDataResults = await Promise.allSettled(calls.map((call) => getCallExtraData(call.CallId)));
+      if (get().lastCallExtraDataFetchId !== fetchId) return;
       const newExtraDataMap: Record<string, CallExtraDataResultData> = {};
       extraDataResults.forEach((result, index) => {
         if (result.status === 'fulfilled' && result.value?.Data) {

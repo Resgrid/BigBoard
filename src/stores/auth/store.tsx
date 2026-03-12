@@ -207,8 +207,12 @@ const useAuthStore = create<AuthState>()(
           });
 
           if (response.successful && response.authResponse) {
-            if (!response.authResponse.id_token && !response.authResponse.access_token) {
-              throw new Error('Invalid SSO response: missing token data');
+            if (!response.authResponse.access_token) {
+              logger.error({
+                message: 'LoginWithSso: Missing access_token in SSO response',
+                context: { error: 'access_token is absent or empty in authResponse' },
+              });
+              throw new Error('Invalid SSO response: missing access_token');
             }
 
             let profileData: ProfileModel;
@@ -253,22 +257,28 @@ const useAuthStore = create<AuthState>()(
               message: 'LoginWithSso: State updated to signedIn',
               context: { userId: profileData.sub },
             });
+
+            return { success: true };
           } else {
+            const failureError = new Error(response.message || 'SSO login failed');
             logger.error({
               message: 'LoginWithSso: API returned unsuccessful response',
               context: { message: response.message },
             });
             set({ status: 'error', error: response.message || 'SSO login failed' });
+            return { success: false, error: failureError };
           }
         } catch (error) {
+          const caughtError = error instanceof Error ? error : new Error('SSO login failed');
           logger.error({
             message: 'LoginWithSso: Exception caught',
-            context: { error: error instanceof Error ? error.message : String(error) },
+            context: { error: caughtError.message },
           });
           set({
             status: 'error',
-            error: error instanceof Error ? error.message : 'SSO login failed',
+            error: caughtError.message,
           });
+          return { success: false, error: caughtError };
         }
       },
     }),

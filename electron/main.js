@@ -1,5 +1,5 @@
 /* eslint-env node */
-const { app, BrowserWindow, shell } = require('electron');
+const { app, BrowserWindow, shell, ipcMain } = require('electron');
 const path = require('path');
 const http = require('http');
 const fs = require('fs');
@@ -38,10 +38,27 @@ const MIME_TYPES = {
 function startLocalServer(distDir) {
   return new Promise((resolve, reject) => {
     const server = http.createServer((req, res) => {
-      let urlPath = (req.url || '/').split('?')[0];
-      if (urlPath === '/') urlPath = '/index.html';
+      // Strip query string and hash fragment, then decode percent-encoding
+      let urlPath = (req.url || '/').split('?')[0].split('#')[0];
+      let decodedPath;
+      try {
+        decodedPath = decodeURIComponent(urlPath);
+      } catch {
+        res.writeHead(400);
+        res.end('Bad Request');
+        return;
+      }
+      if (decodedPath === '/') decodedPath = '/index.html';
 
-      const filePath = path.join(distDir, urlPath);
+      // Resolve and normalize; verify the result stays inside distDir
+      const filePath = path.normalize(path.join(distDir, decodedPath));
+      const safeRoot = distDir.endsWith(path.sep) ? distDir : distDir + path.sep;
+      if (filePath !== distDir && !filePath.startsWith(safeRoot)) {
+        res.writeHead(403);
+        res.end('Forbidden');
+        return;
+      }
+
       const ext = path.extname(filePath).toLowerCase();
       const contentType = MIME_TYPES[ext] || 'application/octet-stream';
 
@@ -123,15 +140,36 @@ async function createWindow() {
 }
 
 // Create window when Electron is ready
-app.whenReady().then(() => {
-  createWindow();
+app.whenReady().then(async () => {
+  await createWindow();
+
+  // IPC handlers — registered after BrowserWindow is created
+  ipcMain.handle('get-version', () => app.getVersion());
+
+  ipcMain.on('window-minimize', (event) => {
+    BrowserWindow.fromWebContents(event.sender)?.minimize();
+  });
+
+  ipcMain.on('window-maximize', (event) => {
+    const win = BrowserWindow.fromWebContents(event.sender);
+    if (win) {
+      win.isMaximized() ? win.unmaximize() : win.maximize();
+    }
+  });
+
+  ipcMain.on('window-close', (event) => {
+    BrowserWindow.fromWebContents(event.sender)?.close();
+  });
 
   // macOS: recreate window when dock icon clicked
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow();
+      createWindow().catch((err) => console.error('Failed to create window on activate:', err));
     }
   });
+}).catch((err) => {
+  console.error('Failed to initialize app:', err);
+  app.quit();
 });
 
 // Quit when all windows closed (except macOS)

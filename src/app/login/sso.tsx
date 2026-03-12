@@ -98,8 +98,12 @@ function OidcLoginSection({ config, onSuccess, onError }: OidcLoginSectionProps)
           return;
         }
 
-        await loginWithSso({ provider: 'oidc', externalToken: idToken, departmentCode });
-        onSuccessRef.current();
+        const ssoResult = await loginWithSso({ provider: 'oidc', externalToken: idToken, departmentCode });
+        if (ssoResult.success) {
+          onSuccessRef.current();
+        } else {
+          onErrorRef.current(tRef.current('sso.error_login_failed'));
+        }
       } catch (exchangeError) {
         logger.error({
           message: 'OidcLoginSection: Token exchange failed',
@@ -154,11 +158,18 @@ function SamlLoginSection({ config, onError }: SamlLoginSectionProps) {
     try {
       const result = await startSamlLogin();
       if (result.type === 'success') {
-        await loginWithSso({
+        const ssoResult = await loginWithSso({
           provider: 'saml2',
           externalToken: result.samlResponse,
           departmentCode: config.departmentCode ?? undefined,
         });
+        if (!ssoResult.success) {
+          logger.error({
+            message: 'SamlLoginSection: loginWithSso failed',
+            context: { error: ssoResult.error?.message },
+          });
+          onError(t('sso.error_login_failed'));
+        }
       } else if (result.type === 'error') {
         logger.error({
           message: 'SamlLoginSection: SAML auth session failed',

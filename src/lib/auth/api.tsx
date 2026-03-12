@@ -122,7 +122,7 @@ export const fetchSsoConfigForUser = async (username: string, departmentId?: num
       context: { username_hash },
     });
 
-    return response.data?.Data ?? response.data ?? null;
+    return Object.hasOwn(response.data ?? {}, 'Data') ? response.data.Data : (response.data ?? null);
   } catch (error) {
     logger.error({
       message: 'Failed to fetch SSO config',
