@@ -175,7 +175,7 @@ describe('AutoScrollingDispatches', () => {
           v.props.accessible === false && v.props.accessibilityElementsHidden === true
       );
       expect(duplicateRow).toBeDefined();
-      expect(duplicateRow?.props.importantForAccessibility).toBe('no-hide-children');
+      expect(duplicateRow?.props.importantForAccessibility).toBe('no-hide-descendants');
     });
 
     it('does NOT render the duplicate row when scrollSpeed is 0', () => {

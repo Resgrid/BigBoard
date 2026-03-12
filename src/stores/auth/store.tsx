@@ -241,14 +241,31 @@ const useAuthStore = create<AuthState>()(
             });
 
             const now = new Date();
-            const expiresOn = new Date(now.getTime() + response.authResponse.expires_in * 1000).getTime().toString();
+            const rawExpiresIn = response.authResponse.expires_in;
+            const expiresInSeconds =
+              typeof rawExpiresIn === 'number' && rawExpiresIn > 0 ? rawExpiresIn : 3600;
+            if (!(typeof rawExpiresIn === 'number' && rawExpiresIn > 0)) {
+              logger.warn({
+                message: 'LoginWithSso: expires_in missing or invalid; defaulting to 3600s',
+                context: { expires_in: rawExpiresIn },
+              });
+            }
+            const expiresOn = new Date(now.getTime() + expiresInSeconds * 1000).getTime().toString();
+
+            const hasRefreshToken = typeof response.authResponse.refresh_token === 'string' && response.authResponse.refresh_token.length > 0;
+            if (!hasRefreshToken) {
+              logger.warn({
+                message: 'LoginWithSso: No refresh token in response; session cannot be silently refreshed',
+                context: { userId: profileData.sub },
+              });
+            }
 
             set({
               accessToken: response.authResponse.access_token,
-              refreshToken: response.authResponse.refresh_token,
+              refreshToken: hasRefreshToken ? response.authResponse.refresh_token : null,
               refreshTokenExpiresOn: expiresOn,
               status: 'signedIn',
-              error: null,
+              error: hasRefreshToken ? null : 'Session cannot be refreshed automatically; re-authentication will be required.',
               profile: profileData,
               userId: profileData.sub,
             });

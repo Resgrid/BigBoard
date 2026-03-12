@@ -64,16 +64,25 @@ function startLocalServer(distDir) {
 
       fs.readFile(filePath, (err, data) => {
         if (err) {
-          // SPA fallback: serve index.html for unknown routes
-          fs.readFile(path.join(distDir, 'index.html'), (fallbackErr, fallbackData) => {
-            if (fallbackErr) {
-              res.writeHead(404);
-              res.end('Not found');
-            } else {
-              res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-              res.end(fallbackData);
-            }
-          });
+          // SPA fallback: only serve index.html when the file is missing and the
+          // request looks like a navigation route (no file extension).
+          if (err.code === 'ENOENT' && path.extname(req.url) === '') {
+            fs.readFile(path.join(distDir, 'index.html'), (fallbackErr, fallbackData) => {
+              if (fallbackErr) {
+                res.writeHead(fallbackErr.code === 'ENOENT' ? 404 : 500);
+                res.end(fallbackErr.message);
+              } else {
+                res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+                res.end(fallbackData);
+              }
+            });
+          } else if (err.code === 'ENOENT') {
+            res.writeHead(404);
+            res.end('Not found');
+          } else {
+            res.writeHead(500);
+            res.end(err.message);
+          }
         } else {
           res.writeHead(200, { 'Content-Type': contentType });
           res.end(data);
@@ -124,6 +133,10 @@ async function createWindow() {
     // Production: serve built web export via local HTTP server so that
     // absolute asset paths (/_expo/static/…) resolve correctly.
     // Using loadFile() under file:// breaks those root-relative references.
+    if (fileServer) {
+      fileServer.close();
+      fileServer = null;
+    }
     const distDir = path.join(__dirname, '..', 'dist');
     const { server, port } = await startLocalServer(distDir);
     fileServer = server;

@@ -126,7 +126,7 @@ export const AutoScrollingDispatches: React.FC<AutoScrollingDispatchesProps> = (
               style={styles.row}
               accessible={false}
               accessibilityElementsHidden={true}
-              importantForAccessibility="no-hide-children"
+              importantForAccessibility="no-hide-descendants"
             >
               {renderChips(dispatches, 'b')}
             </View>
