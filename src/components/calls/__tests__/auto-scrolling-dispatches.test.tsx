@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { act, fireEvent, render } from '@testing-library/react-native';
 import React from 'react';
-import { AccessibilityInfo, Animated } from 'react-native';
+import { Animated } from 'react-native';
 
 import { DispatchedEventResultData } from '@/models/v4/calls/dispatchedEventResultData';
 
@@ -43,17 +43,17 @@ const triggerLayout = (getByTestId: ReturnType<typeof render>['getByTestId'], wi
 // ---------------------------------------------------------------------------
 
 describe('AutoScrollingDispatches', () => {
-  describe('reduce-motion accessibility gate', () => {
-    let loopSpy: jest.SpyInstance;
+  describe('animation behaviour', () => {
+    let timingSpy: jest.SpyInstance;
     let startMock: jest.Mock;
     let stopMock: jest.Mock;
 
     beforeEach(() => {
       startMock = jest.fn();
       stopMock = jest.fn();
-      // Intercept Animated.loop so we can assert whether an animation was
+      // Intercept Animated.timing so we can assert whether an animation was
       // started without relying on the internal Animated scheduler.
-      loopSpy = jest.spyOn(Animated, 'loop').mockReturnValue({
+      timingSpy = jest.spyOn(Animated, 'timing').mockReturnValue({
         start: startMock,
         stop: stopMock,
         reset: jest.fn(),
@@ -61,35 +61,11 @@ describe('AutoScrollingDispatches', () => {
     });
 
     afterEach(() => {
-      loopSpy.mockRestore();
+      timingSpy.mockRestore();
       jest.restoreAllMocks();
     });
 
-    it('does NOT create or start an animation when reduce-motion is enabled', async () => {
-      jest.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockResolvedValue(true as never);
-
-      const { getByTestId } = render(
-        <AutoScrollingDispatches
-          dispatches={[makeDispatch()]}
-          resolveDisplayName={resolveDisplayName}
-          scrollSpeed={50}
-          fontSize={14}
-        />
-      );
-
-      // Provide a non-zero primaryWidth so the effect proceeds past the early
-      // return guard and reaches the isReduceMotionEnabled check.
-      await act(async () => {
-        triggerLayout(getByTestId);
-      });
-
-      expect(loopSpy).not.toHaveBeenCalled();
-      expect(startMock).not.toHaveBeenCalled();
-    });
-
-    it('creates and starts an animation when reduce-motion is disabled', async () => {
-      jest.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockResolvedValue(false as never);
-
+    it('creates and starts an animation when scrollSpeed is positive', async () => {
       const { getByTestId } = render(
         <AutoScrollingDispatches
           dispatches={[makeDispatch()]}
@@ -103,13 +79,11 @@ describe('AutoScrollingDispatches', () => {
         triggerLayout(getByTestId);
       });
 
-      expect(loopSpy).toHaveBeenCalledTimes(1);
+      expect(timingSpy).toHaveBeenCalledTimes(1);
       expect(startMock).toHaveBeenCalledTimes(1);
     });
 
-    it('does NOT start an animation when scrollSpeed is 0, regardless of reduce-motion', async () => {
-      jest.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockResolvedValue(false as never);
-
+    it('does NOT create or start an animation when scrollSpeed is 0', async () => {
       const { getByTestId } = render(
         <AutoScrollingDispatches
           dispatches={[makeDispatch()]}
@@ -123,18 +97,16 @@ describe('AutoScrollingDispatches', () => {
         triggerLayout(getByTestId);
       });
 
-      expect(loopSpy).not.toHaveBeenCalled();
+      expect(timingSpy).not.toHaveBeenCalled();
       expect(startMock).not.toHaveBeenCalled();
     });
 
     it('stops a running animation on unmount without throwing when animRef is null', async () => {
-      jest.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockResolvedValue(true as never);
-
       const { getByTestId, unmount } = render(
         <AutoScrollingDispatches
           dispatches={[makeDispatch()]}
           resolveDisplayName={resolveDisplayName}
-          scrollSpeed={50}
+          scrollSpeed={0}
           fontSize={14}
         />
       );
