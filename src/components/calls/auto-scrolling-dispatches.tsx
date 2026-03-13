@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { AccessibilityInfo, Animated, Platform, StyleSheet, View } from 'react-native';
+import { Animated, Platform, StyleSheet, View } from 'react-native';
 
 import { Box } from '@/components/ui/box';
 import { Text } from '@/components/ui/text';
@@ -50,27 +50,31 @@ export const AutoScrollingDispatches: React.FC<AutoScrollingDispatchesProps> = (
     const loopWidth = primaryWidth + SEPARATOR_WIDTH;
     const duration = (loopWidth / scrollSpeed) * 1000;
 
-    let cancelled = false;
+    let active = true;
 
-    AccessibilityInfo.isReduceMotionEnabled().then((reduceMotion) => {
-      // If the effect was cleaned up or the user has reduce-motion enabled,
-      // leave scrollX at 0 and skip the animation entirely.
-      if (cancelled || reduceMotion) return;
+    // Use a recursive Animated.timing approach instead of Animated.loop so that
+    // scrollX is explicitly reset to 0 at the start of each cycle. This avoids a
+    // web/Electron quirk where Animated.loop does not reliably reset the value
+    // between iterations, causing chips to scroll off-screen and then freeze.
+    const runCycle = () => {
+      if (!active) return;
+      scrollX.setValue(0);
+      const timing = Animated.timing(scrollX, {
+        toValue: -loopWidth,
+        duration,
+        useNativeDriver: Platform.OS !== 'web',
+        isInteraction: false,
+      });
+      animRef.current = timing;
+      timing.start(({ finished }) => {
+        if (finished && active) runCycle();
+      });
+    };
 
-      const anim = Animated.loop(
-        Animated.timing(scrollX, {
-          toValue: -loopWidth,
-          duration,
-          useNativeDriver: Platform.OS !== 'web',
-          isInteraction: false,
-        })
-      );
-      animRef.current = anim;
-      anim.start();
-    });
+    runCycle();
 
     return () => {
-      cancelled = true;
+      active = false;
       animRef.current?.stop();
       animRef.current = null;
     };

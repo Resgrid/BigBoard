@@ -69,16 +69,20 @@ export type AuthStatus = 'idle' | 'signedIn' | 'signedOut' | 'loading' | 'error'
 export interface AuthState {
   accessToken: string | null;
   refreshToken: string | null;
+  /** Stores the access-token expiry as a Unix-ms epoch string */
   refreshTokenExpiresOn: string | null;
   status: AuthStatus;
   error: string | null;
   profile: ProfileModel | null;
   userId: string | null;
+  isFirstTime: boolean;
+  /** True once Zustand has finished rehydrating from persisted storage */
+  _hasHydrated: boolean;
   login: (credentials: LoginCredentials) => Promise<void>;
   loginWithSso: (credentials: SsoLoginCredentials) => Promise<{ success: boolean; error?: Error }>;
   logout: () => Promise<void>;
   refreshAccessToken: () => Promise<void>;
-  isFirstTime: boolean;
   isAuthenticated: () => boolean;
   setIsOnboarding: () => void;
+  setHasHydrated: (value: boolean) => void;
 }

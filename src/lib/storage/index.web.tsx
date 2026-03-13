@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { type StateStorage } from 'zustand/middleware';
 
 // Mock MMKV class for web to satisfy type requirements if needed,
@@ -56,22 +56,32 @@ export const zustandStorage: StateStorage = {
 };
 
 export const useIsFirstTime = () => {
-  const [isFirstTime, setIsFirstTime] = useState<boolean | undefined>(undefined);
-
-  useEffect(() => {
-    const value = localStorage.getItem(IS_FIRST_TIME);
-    // If value is null, it's first time (true). If 'false', it's not.
-    setIsFirstTime(value === null ? true : value === 'true');
-  }, []);
+  // Read synchronously in the useState initializer so the very first render
+  // already has the correct value.  An async useEffect approach causes a
+  // false-positive "first time" flag on every page load before the effect fires.
+  const [isFirstTime, setIsFirstTime] = useState<boolean>(() => {
+    try {
+      const value = localStorage.getItem(IS_FIRST_TIME);
+      // null means the key was never written → genuine first-time visit
+      return value === null || value === 'true';
+    } catch {
+      return true; // safe default if localStorage is unavailable
+    }
+  });
 
   const setFirstTime = (value: boolean | undefined) => {
-    if (value === undefined) {
-      localStorage.removeItem(IS_FIRST_TIME);
-    } else {
-      localStorage.setItem(IS_FIRST_TIME, String(value));
+    const next = value ?? true;
+    try {
+      if (value === undefined) {
+        localStorage.removeItem(IS_FIRST_TIME);
+      } else {
+        localStorage.setItem(IS_FIRST_TIME, String(value));
+      }
+    } catch (e) {
+      console.error('Error writing IS_FIRST_TIME to localStorage', e);
     }
-    setIsFirstTime(value);
+    setIsFirstTime(next);
   };
 
-  return [isFirstTime ?? true, setFirstTime] as const;
+  return [isFirstTime, setFirstTime] as const;
 };
