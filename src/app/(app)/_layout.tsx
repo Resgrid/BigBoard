@@ -39,6 +39,7 @@ import { WIDGET_LABELS, WidgetType } from '@/types/widget';
 export default function TabLayout() {
   const { t } = useTranslation();
   const { status } = useAuthStore();
+  const _hasHydrated = useAuthStore((state) => state._hasHydrated);
   const [isFirstTime, _setIsFirstTime] = useIsFirstTime();
   const [isNotificationsOpen, setIsNotificationsOpen] = React.useState(false);
 
@@ -283,6 +284,22 @@ export default function TabLayout() {
       message: 'Maintenance mode enabled, redirecting to maintenance page',
     });
     return <Redirect href={'/maintenance' as any} />;
+  }
+
+  if (isFirstTime === undefined || !_hasHydrated) {
+    // Auth store or first-time flag not yet read from storage — show loading
+    // to avoid a false redirect to /login or /onboarding before state is known
+    logger.info({
+      message: 'Waiting for auth store and storage hydration',
+      context: { hasHydrated: _hasHydrated, isFirstTime },
+    });
+    return (
+      <View style={styles.container}>
+        <View className="flex-1 items-center justify-center bg-white dark:bg-gray-900">
+          <ActivityIndicator size="large" color="#0066cc" />
+        </View>
+      </View>
+    );
   }
 
   if (isFirstTime) {

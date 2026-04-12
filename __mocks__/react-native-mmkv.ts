@@ -1,33 +1,52 @@
 /**
- * Mock for react-native-mmkv on web platform
- * Uses an in-memory storage for tests
+ * Mock for react-native-mmkv.
+ * Used in two contexts:
+ *   1. Jest tests (automatic via __mocks__ directory)
+ *   2. Production web builds (metro.config.js routes MMKV imports here for web)
+ *
+ * In browser environments (web production + jsdom) we delegate to localStorage
+ * so that data survives page refreshes. In bare Node.js we fall back to an
+ * in-memory map (useful for server-side or non-DOM test runners).
  */
 
 import { useState } from 'react';
 
-// In-memory storage for tests
+// Detect whether a real localStorage is available (browser / jsdom)
+const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+
+// In-memory storage fallback (Node.js / non-DOM environments)
 const inMemoryStorage: Record<string, Record<string, string>> = {};
 
 class MockMMKV {
-  private storage: Record<string, string>;
-  private prefix: string;
+  private id: string;
 
   constructor(config?: { id?: string; encryptionKey?: string }) {
-    this.prefix = config?.id || 'mmkv';
-    // Use in-memory storage for tests
-    if (!inMemoryStorage[this.prefix]) {
-      inMemoryStorage[this.prefix] = {};
+    // encryptionKey is intentionally ignored – not needed for localStorage / in-memory
+    this.id = config?.id ?? 'mmkv.default';
+    if (!isBrowser && !inMemoryStorage[this.id]) {
+      inMemoryStorage[this.id] = {};
     }
-    this.storage = inMemoryStorage[this.prefix];
   }
 
-  private getKey(key: string): string {
-    return key;
+  /** Build the localStorage key for a given store key */
+  private lsKey(key: string): string {
+    return `mmkv.${this.id}.${key}`;
+  }
+
+  private getMemory(): Record<string, string> {
+    if (!inMemoryStorage[this.id]) {
+      inMemoryStorage[this.id] = {};
+    }
+    return inMemoryStorage[this.id];
   }
 
   set(key: string, value: string | number | boolean): void {
     try {
-      this.storage[this.getKey(key)] = String(value);
+      if (isBrowser) {
+        localStorage.setItem(this.lsKey(key), String(value));
+      } else {
+        this.getMemory()[key] = String(value);
+      }
     } catch (error) {
       console.error('MMKV Mock: Failed to set value', error);
     }
@@ -35,7 +54,10 @@ class MockMMKV {
 
   getString(key: string): string | undefined {
     try {
-      const value = this.storage[this.getKey(key)];
+      if (isBrowser) {
+        return localStorage.getItem(this.lsKey(key)) ?? undefined;
+      }
+      const value = this.getMemory()[key];
       return value !== undefined ? value : undefined;
     } catch (error) {
       console.error('MMKV Mock: Failed to get string', error);
@@ -45,7 +67,7 @@ class MockMMKV {
 
   getNumber(key: string): number | undefined {
     try {
-      const value = this.storage[this.getKey(key)];
+      const value = this.getString(key);
       if (value === undefined) return undefined;
       const num = Number(value);
       return isNaN(num) ? undefined : num;
@@ -57,7 +79,7 @@ class MockMMKV {
 
   getBoolean(key: string): boolean | undefined {
     try {
-      const value = this.storage[this.getKey(key)];
+      const value = this.getString(key);
       if (value === undefined) return undefined;
       return value === 'true';
     } catch (error) {
@@ -68,7 +90,11 @@ class MockMMKV {
 
   delete(key: string): void {
     try {
-      delete this.storage[this.getKey(key)];
+      if (isBrowser) {
+        localStorage.removeItem(this.lsKey(key));
+      } else {
+        delete this.getMemory()[key];
+      }
     } catch (error) {
       console.error('MMKV Mock: Failed to delete', error);
     }
@@ -76,7 +102,18 @@ class MockMMKV {
 
   getAllKeys(): string[] {
     try {
-      return Object.keys(this.storage);
+      if (isBrowser) {
+        const prefix = this.lsKey('');
+        const keys: string[] = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (k && k.startsWith(prefix)) {
+            keys.push(k.slice(prefix.length));
+          }
+        }
+        return keys;
+      }
+      return Object.keys(this.getMemory());
     } catch (error) {
       console.error('MMKV Mock: Failed to get all keys', error);
       return [];
@@ -85,7 +122,18 @@ class MockMMKV {
 
   clearAll(): void {
     try {
-      Object.keys(this.storage).forEach((key) => delete this.storage[key]);
+      if (isBrowser) {
+        const prefix = this.lsKey('');
+        const toRemove: string[] = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (k && k.startsWith(prefix)) toRemove.push(k);
+        }
+        toRemove.forEach((k) => localStorage.removeItem(k));
+      } else {
+        const mem = this.getMemory();
+        Object.keys(mem).forEach((key) => delete mem[key]);
+      }
     } catch (error) {
       console.error('MMKV Mock: Failed to clear all', error);
     }
@@ -93,7 +141,10 @@ class MockMMKV {
 
   contains(key: string): boolean {
     try {
-      return this.storage[this.getKey(key)] !== undefined;
+      if (isBrowser) {
+        return localStorage.getItem(this.lsKey(key)) !== null;
+      }
+      return this.getMemory()[key] !== undefined;
     } catch (error) {
       console.error('MMKV Mock: Failed to check contains', error);
       return false;

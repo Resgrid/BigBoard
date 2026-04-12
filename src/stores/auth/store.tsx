@@ -40,6 +40,8 @@ const useAuthStore = create<AuthState>()(
       profile: null,
       userId: null,
       isFirstTime: true,
+      _hasHydrated: false,
+      setHasHydrated: (value: boolean) => set({ _hasHydrated: value }),
       login: async (credentials: LoginCredentials) => {
         try {
           set({ status: 'loading', error: null });
@@ -99,19 +101,9 @@ const useAuthStore = create<AuthState>()(
               context: { userId: profileData.sub },
             });
 
-            // Set up automatic token refresh
-            //const decodedToken: { exp: number } = jwtDecode(
-            //);
-            //const now = new Date();
-            //const expiresIn =
-            //  response.authResponse?.expires_in! * 1000 - Date.now() - 60000; // Refresh 1 minute before expiry
-            //const expiresOn = new Date(
-            //  now.getTime() + response.authResponse?.expires_in! * 1000
-            //)
-            //  .getTime()
-            //  .toString();
-
-            //setTimeout(() => get().refreshAccessToken(), expiresIn);
+            // Schedule automatic access-token refresh (1 min before expiry, minimum 60 s)
+            const msUntilRefresh = Math.max(response.authResponse.expires_in * 1000 - 60_000, 60_000);
+            setTimeout(() => get().refreshAccessToken(), msUntilRefresh);
           } else {
             logger.error({
               message: 'Login: API returned unsuccessful response',
@@ -160,19 +152,20 @@ const useAuthStore = create<AuthState>()(
 
           const response = await refreshTokenRequest(refreshToken);
 
+          const now = new Date();
+          const newExpiresOn = new Date(now.getTime() + response.expires_in * 1000).getTime().toString();
+
           set({
             accessToken: response.access_token,
             refreshToken: response.refresh_token,
+            refreshTokenExpiresOn: newExpiresOn,
             status: 'signedIn',
             error: null,
           });
 
-          // Set up next token refresh
-          //const decodedToken: { exp: number } = jwt_decode(
-          //  response.access_token
-          //);
-          const expiresIn = response.expires_in * 1000 - Date.now() - 60000; // Refresh 1 minute before expiry
-          setTimeout(() => get().refreshAccessToken(), expiresIn);
+          // Schedule next refresh 1 min before the new access token expires (minimum 60 s)
+          const msUntilRefresh = Math.max(response.expires_in * 1000 - 60_000, 60_000);
+          setTimeout(() => get().refreshAccessToken(), msUntilRefresh);
         } catch {
           // If refresh fails, log out the user
           get().logout();
@@ -275,6 +268,12 @@ const useAuthStore = create<AuthState>()(
               context: { userId: profileData.sub },
             });
 
+            // Schedule automatic access-token refresh if we have a refresh token
+            if (hasRefreshToken) {
+              const msUntilRefresh = Math.max(expiresInSeconds * 1000 - 60_000, 60_000);
+              setTimeout(() => get().refreshAccessToken(), msUntilRefresh);
+            }
+
             return { success: true };
           } else {
             const failureError = new Error(response.message || 'SSO login failed');
@@ -302,7 +301,7 @@ const useAuthStore = create<AuthState>()(
     {
       name: 'auth-storage',
       storage: createJSONStorage(() => mmkvStorage),
-      // Only persist essential auth data
+      // Only persist essential auth data (_hasHydrated is intentionally excluded)
       partialize: (state) => ({
         accessToken: state.accessToken,
         refreshToken: state.refreshToken,
@@ -312,6 +311,25 @@ const useAuthStore = create<AuthState>()(
         status: state.status,
         isFirstTime: state.isFirstTime,
       }),
+      onRehydrateStorage: () => (state) => {
+        // Mark the store as hydrated so the UI knows it can trust the status value
+        state?.setHasHydrated(true);
+
+        // If the user was signed in, check whether we need to refresh the access token
+        if (state?.status === 'signedIn' && state?.refreshToken) {
+          const expiresAt = state.refreshTokenExpiresOn ? parseInt(state.refreshTokenExpiresOn, 10) : 0;
+          const now = Date.now();
+
+          if (expiresAt > 0 && expiresAt - now > 60_000) {
+            // Token still has more than 1 minute left — schedule a proactive refresh
+            const msUntilRefresh = expiresAt - now - 60_000;
+            setTimeout(() => useAuthStore.getState().refreshAccessToken(), msUntilRefresh);
+          } else {
+            // Token is expired or expiring very soon — refresh immediately
+            Promise.resolve().then(() => useAuthStore.getState().refreshAccessToken());
+          }
+        }
+      },
     }
   )
 );
