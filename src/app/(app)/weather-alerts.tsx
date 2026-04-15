@@ -1,13 +1,15 @@
 import { useRouter } from 'expo-router';
-import { AlertTriangle, CheckCircle } from 'lucide-react-native';
+import { AlertCircle, AlertTriangle, CheckCircle } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
 import React, { useCallback, useMemo, useState } from 'react';
 import { FlatList, Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 
 import { Box } from '@/components/ui/box';
+import { Button, ButtonText } from '@/components/ui/button';
 import { HStack } from '@/components/ui/hstack';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
+import { translate } from '@/lib/i18n';
 import { SEVERITY_COLORS, SEVERITY_LABELS, WeatherAlertSeverity } from '@/models/v4/weatherAlerts/weatherAlertEnums';
 import { type WeatherAlertResultData } from '@/models/v4/weatherAlerts/weatherAlertResultData';
 import { useWeatherAlertsStore } from '@/stores/weatherAlerts/store';
@@ -23,22 +25,22 @@ const FILTER_MAP: Record<FilterType, WeatherAlertSeverity | null> = {
   minor: WeatherAlertSeverity.Minor,
 };
 
-const FILTERS: { label: string; value: FilterType }[] = [
-  { label: 'All', value: 'all' },
-  { label: 'Extreme', value: 'extreme' },
-  { label: 'Severe', value: 'severe' },
-  { label: 'Moderate', value: 'moderate' },
-  { label: 'Minor', value: 'minor' },
+const getFilters = (): { label: string; value: FilterType }[] => [
+  { label: translate('weatherAlerts.filter.all'), value: 'all' },
+  { label: translate('weatherAlerts.filter.extreme'), value: 'extreme' },
+  { label: translate('weatherAlerts.filter.severe'), value: 'severe' },
+  { label: translate('weatherAlerts.filter.moderate'), value: 'moderate' },
+  { label: translate('weatherAlerts.filter.minor'), value: 'minor' },
 ];
 
-const SORTS: { label: string; value: SortType }[] = [
-  { label: 'Severity', value: 'severity' },
-  { label: 'Expires soonest', value: 'expires' },
-  { label: 'Newest', value: 'newest' },
+const getSorts = (): { label: string; value: SortType }[] => [
+  { label: translate('weatherAlerts.sort.severity'), value: 'severity' },
+  { label: translate('weatherAlerts.sort.expiresSoonest'), value: 'expires' },
+  { label: translate('weatherAlerts.sort.newest'), value: 'newest' },
 ];
 
 const formatDateTime = (utc: string): string => {
-  if (!utc) return 'N/A';
+  if (!utc) return translate('call_detail.not_available');
   const date = new Date(utc);
   return date.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
 };
@@ -48,19 +50,19 @@ const formatExpiry = (expiresUtc: string): string => {
   const expires = new Date(expiresUtc);
   const now = new Date();
   const diffMs = expires.getTime() - now.getTime();
-  if (diffMs <= 0) return 'Expired';
+  if (diffMs <= 0) return translate('weatherAlerts.expired');
   const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
   const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-  if (diffHours > 24) return `${Math.floor(diffHours / 24)}d ${diffHours % 24}h remaining`;
-  if (diffHours > 0) return `${diffHours}h ${diffMins}m remaining`;
-  return `${diffMins}m remaining`;
+  if (diffHours > 24) return `${translate('weatherAlerts.time_days_hours', { days: Math.floor(diffHours / 24), hours: diffHours % 24 })} ${translate('weatherAlerts.remaining')}`;
+  if (diffHours > 0) return `${translate('weatherAlerts.time_hours_minutes', { hours: diffHours, minutes: diffMins })} ${translate('weatherAlerts.remaining')}`;
+  return `${translate('weatherAlerts.time_minutes', { minutes: diffMins })} ${translate('weatherAlerts.remaining')}`;
 };
 
 export default function WeatherAlertsScreen() {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
   const router = useRouter();
-  const { alerts, isLoading, fetchActiveAlerts } = useWeatherAlertsStore();
+  const { alerts, isLoading, error, fetchActiveAlerts } = useWeatherAlertsStore();
   const [filter, setFilter] = useState<FilterType>('all');
   const [sort, setSort] = useState<SortType>('severity');
 
@@ -97,7 +99,7 @@ export default function WeatherAlertsScreen() {
 
   const renderAlertCard = ({ item }: { item: WeatherAlertResultData }) => {
     const severityColor = SEVERITY_COLORS[item.Severity as WeatherAlertSeverity] || SEVERITY_COLORS[0];
-    const severityLabel = SEVERITY_LABELS[item.Severity as WeatherAlertSeverity] || 'Unknown';
+    const severityLabel = SEVERITY_LABELS[item.Severity as WeatherAlertSeverity] || translate('common.unknown');
 
     return (
       <Pressable
@@ -125,7 +127,9 @@ export default function WeatherAlertsScreen() {
               {item.AreaDescription}
             </Text>
             <HStack className="items-center justify-between">
-              <Text className={`text-xs ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>Effective: {formatDateTime(item.EffectiveUtc)}</Text>
+              <Text className={`text-xs ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>
+                {translate('weatherAlerts.detail.effective')}: {formatDateTime(item.EffectiveUtc)}
+              </Text>
               <Text className={`text-xs font-medium ${isDark ? 'text-amber-400' : 'text-amber-600'}`}>{formatExpiry(item.ExpiresUtc)}</Text>
             </HStack>
           </VStack>
@@ -134,13 +138,27 @@ export default function WeatherAlertsScreen() {
     );
   };
 
-  const renderEmpty = () => (
-    <Box className="flex-1 items-center justify-center py-20">
-      <CheckCircle size={48} color={isDark ? '#22C55E' : '#16A34A'} />
-      <Text className={`mt-4 text-lg ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>No active alerts</Text>
-      {filter !== 'all' && <Text className={`mt-1 text-sm ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>Try changing your filter</Text>}
-    </Box>
-  );
+  const renderEmpty = () => {
+    if (error && !isLoading) {
+      return (
+        <Box className="flex-1 items-center justify-center py-20">
+          <AlertCircle size={48} color={isDark ? '#EF4444' : '#DC2626'} />
+          <Text className={`mt-4 text-lg ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{translate('weatherAlerts.errorLoading')}</Text>
+          <Button variant="outline" onPress={onRefresh} className="mt-4">
+            <ButtonText>{translate('common.retry')}</ButtonText>
+          </Button>
+        </Box>
+      );
+    }
+
+    return (
+      <Box className="flex-1 items-center justify-center py-20">
+        <CheckCircle size={48} color={isDark ? '#22C55E' : '#16A34A'} />
+        <Text className={`mt-4 text-lg ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{translate('weatherAlerts.noActiveAlerts')}</Text>
+        {filter !== 'all' && <Text className={`mt-1 text-sm ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>{translate('weatherAlerts.tryChangingFilter')}</Text>}
+      </Box>
+    );
+  };
 
   return (
     <Box className={`flex-1 ${isDark ? 'bg-gray-900' : 'bg-gray-100'}`} testID="weather-alerts-screen">
@@ -149,7 +167,7 @@ export default function WeatherAlertsScreen() {
         {/* Title row */}
         <View style={styles.titleRow}>
           <AlertTriangle size={20} color={isDark ? '#F59E0B' : '#D97706'} />
-          <Text className={`ml-2 text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Weather Alerts</Text>
+          <Text className={`ml-2 text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>{translate('weatherAlerts.title')}</Text>
           <View style={[styles.countBadge, { backgroundColor: '#0066cc' }]}>
             <Text className="text-xs font-medium text-white">{alerts.length}</Text>
           </View>
@@ -157,7 +175,7 @@ export default function WeatherAlertsScreen() {
 
         {/* Filter tabs - horizontal scroll */}
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.pillRow}>
-          {FILTERS.map(({ label, value }) => {
+          {getFilters().map(({ label, value }) => {
             const isActive = filter === value;
             return (
               <Pressable key={value} onPress={() => setFilter(value)} style={[styles.filterPill, isActive ? styles.filterPillActive : isDark ? styles.filterPillDark : styles.filterPillLight]}>
@@ -169,8 +187,8 @@ export default function WeatherAlertsScreen() {
 
         {/* Sort options - horizontal scroll */}
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.sortRow}>
-          <Text className={`mr-2 text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Sort:</Text>
-          {SORTS.map(({ label, value }) => {
+          <Text className={`mr-2 text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{translate('weatherAlerts.sort.label')}</Text>
+          {getSorts().map(({ label, value }) => {
             const isActive = sort === value;
             return (
               <Pressable key={value} onPress={() => setSort(value)} style={[styles.sortPill, isActive ? (isDark ? styles.sortPillActiveDark : styles.sortPillActiveLight) : null]}>

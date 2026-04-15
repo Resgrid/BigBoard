@@ -12,9 +12,10 @@ import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
 import type { GridConfig } from '@/hooks/use-grid-config';
 import { useGridConfig } from '@/hooks/use-grid-config';
+import { translate } from '@/lib/i18n';
 import { useDashboardStore } from '@/stores/dashboard/store';
 import type { Widget } from '@/types/widget';
-import { WIDGET_LABELS, WidgetType } from '@/types/widget';
+import { WIDGET_LABEL_KEYS, WidgetType } from '@/types/widget';
 
 import { WidgetRenderer } from './widgets/WidgetRenderer';
 
@@ -130,8 +131,8 @@ const DraggableWidget: React.FC<DraggableWidgetProps> = ({ widget, position, isE
   const widgetWidth = w * baseWidth - 10;
   const widgetHeight = h * baseHeight - 10;
 
-  const baseX = position.x * baseWidth + gridPadding;
-  const baseY = position.y * baseHeight + gridPadding;
+  const baseX = position.x * baseWidth;
+  const baseY = position.y * baseHeight;
 
   // Reset position when not dragging
   React.useEffect(() => {
@@ -154,8 +155,8 @@ const DraggableWidget: React.FC<DraggableWidgetProps> = ({ widget, position, isE
     })
     .onEnd(() => {
       // Calculate new grid position
-      const newX = Math.round((baseX + translateX.value - gridPadding) / baseWidth);
-      const newY = Math.round((baseY + translateY.value - gridPadding) / baseHeight);
+      const newX = Math.round((baseX + translateX.value) / baseWidth);
+      const newY = Math.round((baseY + translateY.value) / baseHeight);
 
       // Clamp to valid grid positions
       const clampedX = Math.max(0, Math.min(numColumns - w, newX));
@@ -314,7 +315,7 @@ export const Dashboard: React.FC = () => {
                   className={`rounded px-4 py-2 ${isDark ? 'border border-gray-600 bg-gray-700' : 'border border-gray-300 bg-white'}`}
                   {...(Platform.OS === 'web' ? { 'data-testid': `add-widget-${type}` } : { testID: `add-widget-${type}` })}
                 >
-                  <Text className={`text-sm ${isDark ? 'text-white' : 'text-gray-900'}`}>{WIDGET_LABELS[type]}</Text>
+                  <Text className={`text-sm ${isDark ? 'text-white' : 'text-gray-900'}`}>{translate(WIDGET_LABEL_KEYS[type] as any)}</Text>
                 </Pressable>
               ))}
               {availableWidgets.length === 0 && <Text className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>All widgets added</Text>}

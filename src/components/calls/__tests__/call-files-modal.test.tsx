@@ -56,7 +56,7 @@ jest.mock('@/hooks/use-analytics', () => ({
 }));
 
 // Mock expo modules
-jest.mock('expo-file-system', () => ({
+jest.mock('expo-file-system/legacy', () => ({
   documentDirectory: '/mock/documents/',
   writeAsStringAsync: jest.fn(),
   EncodingType: {
@@ -492,7 +492,7 @@ describe('CallFilesModal', () => {
 
   describe('File Download', () => {
     const mockGetCallAttachmentFile = require('@/api/calls/callFiles').getCallAttachmentFile;
-    const mockWriteAsStringAsync = require('expo-file-system').writeAsStringAsync;
+    const mockWriteAsStringAsync = require('expo-file-system/legacy').writeAsStringAsync;
     const mockShareAsync = require('expo-sharing').shareAsync;
 
     beforeEach(() => {

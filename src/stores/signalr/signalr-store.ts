@@ -177,31 +177,34 @@ export const useSignalRStore = create<SignalRState>((set, get) => ({
       });
 
       signalRService.on('weatherAlertReceived', (message) => {
-        const alertId = String(message);
-        logger.info({
-          message: 'weatherAlertReceived',
-          context: { alertId },
-        });
+        if (typeof message !== 'string' || message.trim() === '') {
+          logger.warn({ message: 'weatherAlertReceived: invalid payload', context: { message } });
+          return;
+        }
+        const alertId = message.trim();
+        logger.info({ message: 'weatherAlertReceived', context: { alertId } });
         useWeatherAlertsStore.getState().handleAlertReceived(alertId);
         set({ lastUpdateMessage: JSON.stringify({ type: 'weatherAlertReceived', alertId }), lastUpdateTimestamp: Date.now() });
       });
 
       signalRService.on('weatherAlertUpdated', (message) => {
-        const alertId = String(message);
-        logger.info({
-          message: 'weatherAlertUpdated',
-          context: { alertId },
-        });
+        if (typeof message !== 'string' || message.trim() === '') {
+          logger.warn({ message: 'weatherAlertUpdated: invalid payload', context: { message } });
+          return;
+        }
+        const alertId = message.trim();
+        logger.info({ message: 'weatherAlertUpdated', context: { alertId } });
         useWeatherAlertsStore.getState().handleAlertUpdated(alertId);
         set({ lastUpdateMessage: JSON.stringify({ type: 'weatherAlertUpdated', alertId }), lastUpdateTimestamp: Date.now() });
       });
 
       signalRService.on('weatherAlertExpired', (message) => {
-        const alertId = String(message);
-        logger.info({
-          message: 'weatherAlertExpired',
-          context: { alertId },
-        });
+        if (typeof message !== 'string' || message.trim() === '') {
+          logger.warn({ message: 'weatherAlertExpired: invalid payload', context: { message } });
+          return;
+        }
+        const alertId = message.trim();
+        logger.info({ message: 'weatherAlertExpired', context: { alertId } });
         useWeatherAlertsStore.getState().handleAlertExpired(alertId);
         set({ lastUpdateMessage: JSON.stringify({ type: 'weatherAlertExpired', alertId }), lastUpdateTimestamp: Date.now() });
       });

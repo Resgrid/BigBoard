@@ -4,6 +4,8 @@ import { colorScheme } from 'nativewind';
 import React, { useEffect } from 'react';
 import { Animated, Dimensions, Platform, Pressable, SafeAreaView, StatusBar, StyleSheet, Text, View } from 'react-native';
 
+import { translate } from '@/lib/i18n';
+
 // Define the interface directly in this file
 interface NotificationPayload {
   id: string;
@@ -109,7 +111,7 @@ export const NotificationDetail = ({ notification, onClose, onDelete, onNavigate
             <Pressable onPress={handleClose} style={styles.backButton}>
               <ArrowLeft size={24} className="text-primary-500 dark:text-primary-400" strokeWidth={2} />
             </Pressable>
-            <Text style={styles.headerTitle}>Notification</Text>
+            <Text style={styles.headerTitle}>{translate('notifications.detail_title')}</Text>
             <Pressable onPress={handleDelete} style={styles.deleteButton}>
               <Trash2 size={24} className="text-red-500 dark:text-red-400" strokeWidth={2} />
             </Pressable>
@@ -138,7 +140,7 @@ export const NotificationDetail = ({ notification, onClose, onDelete, onNavigate
 
             {notification.metadata && Object.keys(notification.metadata).length > 0 ? (
               <View style={styles.metadataDetailsContainer}>
-                <Text style={styles.metadataTitle}>Additional Information</Text>
+                <Text style={styles.metadataTitle}>{translate('notifications.additional_info')}</Text>
                 {Object.entries(notification.metadata).map(([key, value]) => (
                   <View key={key} style={styles.metadataItem}>
                     <Text style={styles.metadataKey}>{formatKey(key)}:</Text>
@@ -151,7 +153,7 @@ export const NotificationDetail = ({ notification, onClose, onDelete, onNavigate
             {notification.referenceType && notification.referenceId ? (
               <Pressable onPress={handleNavigateToReference} style={styles.referenceButton}>
                 <ExternalLink size={18} style={styles.referenceButtonIcon} />
-                <Text style={styles.buttonText}>View {notification.referenceType}</Text>
+                <Text style={styles.buttonText}>{translate('notifications.view_reference', { type: notification.referenceType })}</Text>
               </Pressable>
             ) : null}
           </View>

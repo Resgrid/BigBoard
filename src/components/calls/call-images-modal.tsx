@@ -1,4 +1,4 @@
-import { EncodingType, readAsStringAsync } from 'expo-file-system/src/legacy';
+import { EncodingType, readAsStringAsync } from 'expo-file-system/legacy';
 import { Image } from 'expo-image';
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as ImagePicker from 'expo-image-picker';

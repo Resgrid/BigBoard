@@ -88,18 +88,19 @@ export function getDefaultWidgetSizes(platform: PlatformCategory): Record<Widget
   };
 }
 
-export const WIDGET_LABELS: Record<WidgetType, string> = {
-  [WidgetType.PERSONNEL]: 'Personnel',
-  [WidgetType.UNITS]: 'Units',
-  [WidgetType.CALLS]: 'Calls',
-  [WidgetType.MAP]: 'Map',
-  [WidgetType.WEATHER]: 'Weather',
-  [WidgetType.NOTES]: 'Notes',
-  [WidgetType.TIME]: 'Time',
-  [WidgetType.PERSONNEL_STATUS_SUMMARY]: 'Personnel Status Summary',
-  [WidgetType.PERSONNEL_STAFFING_SUMMARY]: 'Personnel Staffing Summary',
-  [WidgetType.UNITS_SUMMARY]: 'Units Summary',
-  [WidgetType.CALLS_SUMMARY]: 'Calls Summary',
-  [WidgetType.WEATHER_ALERTS]: 'Weather Alerts',
-  [WidgetType.SCHEDULED_CALLS]: 'Scheduled Calls',
+/** Maps each widget type to its i18n translation key. Resolve via translate() at render time. */
+export const WIDGET_LABEL_KEYS: Record<WidgetType, string> = {
+  [WidgetType.PERSONNEL]: 'widgets.personnel',
+  [WidgetType.UNITS]: 'widgets.units',
+  [WidgetType.CALLS]: 'widgets.calls',
+  [WidgetType.MAP]: 'widgets.map',
+  [WidgetType.WEATHER]: 'widgets.weather',
+  [WidgetType.NOTES]: 'widgets.notes',
+  [WidgetType.TIME]: 'widgets.time',
+  [WidgetType.PERSONNEL_STATUS_SUMMARY]: 'widgets.personnel_status_summary',
+  [WidgetType.PERSONNEL_STAFFING_SUMMARY]: 'widgets.personnel_staffing_summary',
+  [WidgetType.UNITS_SUMMARY]: 'widgets.units_summary',
+  [WidgetType.CALLS_SUMMARY]: 'widgets.calls_summary',
+  [WidgetType.WEATHER_ALERTS]: 'widgets.weather_alerts',
+  [WidgetType.SCHEDULED_CALLS]: 'widgets.scheduled_calls',
 };

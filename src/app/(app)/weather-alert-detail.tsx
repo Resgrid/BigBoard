@@ -2,6 +2,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { AlertTriangle, Clock, Info, MapPin, Shield } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ScrollView } from 'react-native';
 
 import { Box } from '@/components/ui/box';
@@ -13,20 +14,20 @@ import { VStack } from '@/components/ui/vstack';
 import { SEVERITY_COLORS, SEVERITY_LABELS, WeatherAlertCertainty, type WeatherAlertSeverity, WeatherAlertUrgency } from '@/models/v4/weatherAlerts/weatherAlertEnums';
 import { useWeatherAlertsStore } from '@/stores/weatherAlerts/store';
 
-const URGENCY_LABELS: Record<number, string> = {
-  [WeatherAlertUrgency.Unknown]: 'Unknown',
-  [WeatherAlertUrgency.Immediate]: 'Immediate',
-  [WeatherAlertUrgency.Expected]: 'Expected',
-  [WeatherAlertUrgency.Future]: 'Future',
-  [WeatherAlertUrgency.Past]: 'Past',
+const URGENCY_KEYS: Record<number, string> = {
+  [WeatherAlertUrgency.Unknown]: 'weatherAlerts.urgency.unknown',
+  [WeatherAlertUrgency.Immediate]: 'weatherAlerts.urgency.immediate',
+  [WeatherAlertUrgency.Expected]: 'weatherAlerts.urgency.expected',
+  [WeatherAlertUrgency.Future]: 'weatherAlerts.urgency.future',
+  [WeatherAlertUrgency.Past]: 'weatherAlerts.urgency.past',
 };
 
-const CERTAINTY_LABELS: Record<number, string> = {
-  [WeatherAlertCertainty.Unknown]: 'Unknown',
-  [WeatherAlertCertainty.Observed]: 'Observed',
-  [WeatherAlertCertainty.Likely]: 'Likely',
-  [WeatherAlertCertainty.Possible]: 'Possible',
-  [WeatherAlertCertainty.Unlikely]: 'Unlikely',
+const CERTAINTY_KEYS: Record<number, string> = {
+  [WeatherAlertCertainty.Unknown]: 'weatherAlerts.certainty.unknown',
+  [WeatherAlertCertainty.Observed]: 'weatherAlerts.certainty.observed',
+  [WeatherAlertCertainty.Likely]: 'weatherAlerts.certainty.likely',
+  [WeatherAlertCertainty.Possible]: 'weatherAlerts.certainty.possible',
+  [WeatherAlertCertainty.Unlikely]: 'weatherAlerts.certainty.unlikely',
 };
 
 const formatDateTime = (utc: string): string => {
@@ -44,6 +45,7 @@ const formatDateTime = (utc: string): string => {
 export default function WeatherAlertDetailScreen() {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
+  const { t } = useTranslation();
   const { alertId } = useLocalSearchParams<{ alertId: string }>();
   const { selectedAlert, isLoadingDetail, alerts, fetchAlertDetail } = useWeatherAlertsStore();
 
@@ -54,22 +56,24 @@ export default function WeatherAlertDetailScreen() {
     if (existing) {
       useWeatherAlertsStore.setState({ selectedAlert: existing });
     } else {
+      // Clear stale data before fetching so previous alert doesn't flash
+      useWeatherAlertsStore.setState({ selectedAlert: null });
       fetchAlertDetail(alertId);
     }
   }, [alertId, alerts, fetchAlertDetail]);
 
-  if (isLoadingDetail || !selectedAlert) {
+  if (isLoadingDetail || !selectedAlert || selectedAlert.WeatherAlertId !== alertId) {
     return (
       <Box className={`flex-1 items-center justify-center ${isDark ? 'bg-gray-900' : 'bg-gray-100'}`}>
         <Spinner size="large" />
-        <Text className={`mt-4 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Loading alert details...</Text>
+        <Text className={`mt-4 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('weatherAlerts.loadingDetail')}</Text>
       </Box>
     );
   }
 
   const alert = selectedAlert;
   const severityColor = SEVERITY_COLORS[alert.Severity as WeatherAlertSeverity] || SEVERITY_COLORS[0];
-  const severityLabel = SEVERITY_LABELS[alert.Severity as WeatherAlertSeverity] || 'Unknown';
+  const severityLabel = SEVERITY_LABELS[alert.Severity as WeatherAlertSeverity] || t('weatherAlerts.severity.unknown');
 
   return (
     <Box className={`flex-1 ${isDark ? 'bg-gray-900' : 'bg-gray-100'}`} testID="weather-alert-detail-screen">
@@ -91,7 +95,7 @@ export default function WeatherAlertDetailScreen() {
         {/* Headline */}
         {alert.Headline ? (
           <VStack className={`mx-4 mt-3 rounded-lg p-4 ${isDark ? 'bg-gray-800' : 'bg-white'}`} space="xs">
-            <Text className={`text-sm font-semibold ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Headline</Text>
+            <Text className={`text-sm font-semibold ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('weatherAlerts.detail.headline')}</Text>
             <Text className={`text-base ${isDark ? 'text-white' : 'text-gray-900'}`}>{alert.Headline}</Text>
           </VStack>
         ) : null}
@@ -100,19 +104,19 @@ export default function WeatherAlertDetailScreen() {
         <VStack className={`mx-4 mt-3 rounded-lg p-4 ${isDark ? 'bg-gray-800' : 'bg-white'}`} space="sm">
           <HStack className="items-center">
             <Clock size={16} color={isDark ? '#9CA3AF' : '#6B7280'} />
-            <Text className={`ml-2 text-sm font-semibold ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Timing</Text>
+            <Text className={`ml-2 text-sm font-semibold ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('weatherAlerts.detail.timing')}</Text>
           </HStack>
           <VStack space="xs">
             <HStack className="items-center justify-between">
-              <Text className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Effective</Text>
+              <Text className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('weatherAlerts.detail.effective')}</Text>
               <Text className={`text-sm font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>{formatDateTime(alert.EffectiveUtc)}</Text>
             </HStack>
             <HStack className="items-center justify-between">
-              <Text className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Onset</Text>
+              <Text className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('weatherAlerts.detail.onset')}</Text>
               <Text className={`text-sm font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>{formatDateTime(alert.OnsetUtc)}</Text>
             </HStack>
             <HStack className="items-center justify-between">
-              <Text className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Expires</Text>
+              <Text className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('weatherAlerts.detail.expires')}</Text>
               <Text className={`text-sm font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>{formatDateTime(alert.ExpiresUtc)}</Text>
             </HStack>
           </VStack>
@@ -123,7 +127,7 @@ export default function WeatherAlertDetailScreen() {
           <VStack className={`mx-4 mt-3 rounded-lg p-4 ${isDark ? 'bg-gray-800' : 'bg-white'}`} space="xs">
             <HStack className="items-center">
               <MapPin size={16} color={isDark ? '#9CA3AF' : '#6B7280'} />
-              <Text className={`ml-2 text-sm font-semibold ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Affected Area</Text>
+              <Text className={`ml-2 text-sm font-semibold ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('weatherAlerts.detail.affectedArea')}</Text>
             </HStack>
             <Text className={`text-sm ${isDark ? 'text-white' : 'text-gray-900'}`}>{alert.AreaDescription}</Text>
           </VStack>
@@ -132,7 +136,7 @@ export default function WeatherAlertDetailScreen() {
         {/* Description */}
         {alert.Description ? (
           <VStack className={`mx-4 mt-3 rounded-lg p-4 ${isDark ? 'bg-gray-800' : 'bg-white'}`} space="xs">
-            <Text className={`text-sm font-semibold ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Description</Text>
+            <Text className={`text-sm font-semibold ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('weatherAlerts.detail.description')}</Text>
             <Text className={`text-sm leading-5 ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>{alert.Description}</Text>
           </VStack>
         ) : null}
@@ -142,7 +146,7 @@ export default function WeatherAlertDetailScreen() {
           <VStack className={`mx-4 mt-3 rounded-lg border p-4 ${isDark ? 'border-amber-700 bg-amber-900/20' : 'border-amber-300 bg-amber-50'}`} space="xs">
             <HStack className="items-center">
               <Shield size={16} color={isDark ? '#F59E0B' : '#D97706'} />
-              <Text className={`ml-2 text-sm font-semibold ${isDark ? 'text-amber-400' : 'text-amber-700'}`}>Instructions</Text>
+              <Text className={`ml-2 text-sm font-semibold ${isDark ? 'text-amber-400' : 'text-amber-700'}`}>{t('weatherAlerts.detail.instructions')}</Text>
             </HStack>
             <Text className={`text-sm leading-5 ${isDark ? 'text-amber-200' : 'text-amber-900'}`}>{alert.Instruction}</Text>
           </VStack>
@@ -152,21 +156,21 @@ export default function WeatherAlertDetailScreen() {
         <VStack className={`mx-4 mt-3 rounded-lg p-4 ${isDark ? 'bg-gray-800' : 'bg-white'}`} space="sm">
           <HStack className="items-center">
             <Info size={16} color={isDark ? '#9CA3AF' : '#6B7280'} />
-            <Text className={`ml-2 text-sm font-semibold ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Details</Text>
+            <Text className={`ml-2 text-sm font-semibold ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('weatherAlerts.detail.details')}</Text>
           </HStack>
           <Divider />
           <VStack space="xs">
             <HStack className="items-center justify-between">
-              <Text className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Urgency</Text>
-              <Text className={`text-sm font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>{URGENCY_LABELS[alert.Urgency] || 'Unknown'}</Text>
+              <Text className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('weatherAlerts.detail.urgency')}</Text>
+              <Text className={`text-sm font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>{t(URGENCY_KEYS[alert.Urgency] || 'weatherAlerts.urgency.unknown')}</Text>
             </HStack>
             <HStack className="items-center justify-between">
-              <Text className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Certainty</Text>
-              <Text className={`text-sm font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>{CERTAINTY_LABELS[alert.Certainty] || 'Unknown'}</Text>
+              <Text className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('weatherAlerts.detail.certainty')}</Text>
+              <Text className={`text-sm font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>{t(CERTAINTY_KEYS[alert.Certainty] || 'weatherAlerts.certainty.unknown')}</Text>
             </HStack>
             {alert.SenderName ? (
               <HStack className="items-center justify-between">
-                <Text className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Sender</Text>
+                <Text className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('weatherAlerts.detail.sender')}</Text>
                 <Text className={`text-sm font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>{alert.SenderName}</Text>
               </HStack>
             ) : null}

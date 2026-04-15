@@ -35,7 +35,7 @@ import { useRolesStore } from '@/stores/roles/store';
 import { securityStore } from '@/stores/security/store';
 import { useSignalRStore } from '@/stores/signalr/signalr-store';
 import { useWeatherAlertsStore } from '@/stores/weatherAlerts/store';
-import { WIDGET_LABELS, WidgetType } from '@/types/widget';
+import { WidgetType } from '@/types/widget';
 
 export default function TabLayout() {
   const { t } = useTranslation();

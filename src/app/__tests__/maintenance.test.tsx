@@ -66,23 +66,22 @@ describe('Maintenance', () => {
   it('should display support email', () => {
     render(<Maintenance />);
 
-    expect(screen.getByText('support@resgrid.com')).toBeTruthy();
+    expect(screen.getByText('maintenance.support_email')).toBeTruthy();
   });
 
-  it('should redirect to login if maintenance mode is disabled', () => {
+  it('should redirect to home if maintenance mode is disabled', () => {
     (Env as any).MAINTENANCE_MODE = false;
 
     render(<Maintenance />);
 
     waitFor(() => {
-      expect(mockReplace).toHaveBeenCalledWith('/login');
+      expect(mockReplace).toHaveBeenCalledWith('/home');
     });
   });
 
   it('should display copyright and version info', () => {
     render(<Maintenance />);
 
-    const currentYear = new Date().getFullYear();
-    expect(screen.getByText(new RegExp(`${currentYear}`))).toBeTruthy();
+    expect(screen.getByText('maintenance.footer_copyright')).toBeTruthy();
   });
 });

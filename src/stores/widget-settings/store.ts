@@ -2,6 +2,8 @@ import { MMKV } from 'react-native-mmkv';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
+import { DEFAULT_SCHEDULED_CALLS_COLUMN_ORDER, type ScheduledCallsWidgetSettings } from './scheduled-calls-settings-store';
+
 // Widget Settings Interfaces
 export interface GroupSorting {
   groupId: string;
@@ -99,29 +101,6 @@ export interface CallsSummarySettings {
   showRecentCall: boolean;
   showPriorityCounts: boolean;
   maxPrioritiesToShow: number;
-}
-
-export interface ScheduledCallsWidgetSettings {
-  fontSize: number;
-  showName: boolean;
-  showScheduledTime: boolean;
-  showPriority: boolean;
-  showAddress: boolean;
-  showDispatched: boolean;
-  dispatchScrollSpeed: number;
-  sortBy: 'scheduledTime' | 'priority' | 'name';
-  sortOrder: 'asc' | 'desc';
-  filterGroupIds: string[];
-  filterUnitIds: string[];
-  filterPersonnelIds: string[];
-  filterRoleIds: string[];
-  colorThresholdRedMinutes: number;
-  colorThresholdYellowMinutes: number;
-  colorThresholdGreenMinutes: number;
-  colorRedHex: string;
-  colorYellowHex: string;
-  colorGreenHex: string;
-  colorDefaultHex: string;
 }
 
 export interface WeatherAlertsWidgetSettings {
@@ -295,13 +274,14 @@ const defaultWeatherAlertsSettings: WeatherAlertsWidgetSettings = {
 };
 
 const defaultScheduledCallsSettings: ScheduledCallsWidgetSettings = {
-  fontSize: 14,
+  fontSize: 12,
   showName: true,
   showScheduledTime: true,
   showPriority: true,
   showAddress: true,
   showDispatched: true,
   dispatchScrollSpeed: 40,
+  columnOrder: DEFAULT_SCHEDULED_CALLS_COLUMN_ORDER,
   sortBy: 'scheduledTime',
   sortOrder: 'asc',
   filterGroupIds: [],

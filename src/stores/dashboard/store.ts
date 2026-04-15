@@ -2,8 +2,9 @@ import { MMKV } from 'react-native-mmkv';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
+import { translate } from '@/lib/i18n';
 import type { PlatformCategory, Widget, WidgetLayout, WidgetType } from '@/types/widget';
-import { DEFAULT_WIDGET_SIZES, getDefaultWidgetSizes, WIDGET_LABELS } from '@/types/widget';
+import { DEFAULT_WIDGET_SIZES, getDefaultWidgetSizes, WIDGET_LABEL_KEYS } from '@/types/widget';
 
 interface DashboardState {
   widgets: Widget[];
@@ -61,7 +62,7 @@ export const useDashboardStore = create<DashboardState>()(
           id,
           key: id, // Required by react-native-draggable-grid
           type,
-          name: WIDGET_LABELS[type],
+          name: translate(WIDGET_LABEL_KEYS[type] as any),
           x: 0,
           y: 0,
           w: size.w,
