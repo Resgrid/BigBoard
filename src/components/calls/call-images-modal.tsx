@@ -1,4 +1,4 @@
-import * as FileSystem from 'expo-file-system';
+import { EncodingType, readAsStringAsync } from 'expo-file-system/legacy';
 import { Image } from 'expo-image';
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as ImagePicker from 'expo-image-picker';
@@ -155,8 +155,8 @@ const CallImagesModal: React.FC<CallImagesModalProps> = ({ isOpen, onClose, call
       );
 
       // Read the manipulated image as base64
-      const base64Image = await FileSystem.readAsStringAsync(manipulatedImage.uri, {
-        encoding: FileSystem.EncodingType.Base64,
+      const base64Image = await readAsStringAsync(manipulatedImage.uri, {
+        encoding: EncodingType.Base64,
       });
 
       // Get current location if available

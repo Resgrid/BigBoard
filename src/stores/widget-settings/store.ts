@@ -2,6 +2,8 @@ import { MMKV } from 'react-native-mmkv';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
+import { DEFAULT_SCHEDULED_CALLS_COLUMN_ORDER, type ScheduledCallsWidgetSettings } from './scheduled-calls-settings-store';
+
 // Widget Settings Interfaces
 export interface GroupSorting {
   groupId: string;
@@ -101,6 +103,28 @@ export interface CallsSummarySettings {
   maxPrioritiesToShow: number;
 }
 
+export interface WeatherAlertsWidgetSettings {
+  fontSize: number;
+  showExtreme: boolean;
+  showSevere: boolean;
+  showModerate: boolean;
+  showMinor: boolean;
+  showUnknown: boolean;
+  showCategoryGeo: boolean;
+  showCategoryMet: boolean;
+  showCategorySafety: boolean;
+  showCategoryFire: boolean;
+  showCategoryHealth: boolean;
+  showCategoryEnv: boolean;
+  showCategoryTransport: boolean;
+  showCategoryInfra: boolean;
+  showCategoryOther: boolean;
+  showHeadline: boolean;
+  showArea: boolean;
+  showExpiry: boolean;
+  maxAlertsInWidget: number;
+}
+
 interface WidgetSettingsState {
   personnel: PersonnelWidgetSettings;
   map: MapWidgetSettings;
@@ -113,6 +137,8 @@ interface WidgetSettingsState {
   personnelStaffingSummary: PersonnelStaffingSummarySettings;
   unitsSummary: UnitsSummarySettings;
   callsSummary: CallsSummarySettings;
+  weatherAlerts: WeatherAlertsWidgetSettings;
+  scheduledCalls: ScheduledCallsWidgetSettings;
 
   // Actions
   updatePersonnelSettings: (settings: Partial<PersonnelWidgetSettings>) => void;
@@ -126,6 +152,8 @@ interface WidgetSettingsState {
   updatePersonnelStaffingSummarySettings: (settings: Partial<PersonnelStaffingSummarySettings>) => void;
   updateUnitsSummarySettings: (settings: Partial<UnitsSummarySettings>) => void;
   updateCallsSummarySettings: (settings: Partial<CallsSummarySettings>) => void;
+  updateWeatherAlertsSettings: (settings: Partial<WeatherAlertsWidgetSettings>) => void;
+  updateScheduledCallsSettings: (settings: Partial<ScheduledCallsWidgetSettings>) => void;
   resetAllSettings: () => void;
 }
 
@@ -223,6 +251,52 @@ const defaultCallsSummarySettings: CallsSummarySettings = {
   maxPrioritiesToShow: 3,
 };
 
+const defaultWeatherAlertsSettings: WeatherAlertsWidgetSettings = {
+  fontSize: 14,
+  showExtreme: true,
+  showSevere: true,
+  showModerate: true,
+  showMinor: true,
+  showUnknown: true,
+  showCategoryGeo: true,
+  showCategoryMet: true,
+  showCategorySafety: true,
+  showCategoryFire: true,
+  showCategoryHealth: true,
+  showCategoryEnv: true,
+  showCategoryTransport: true,
+  showCategoryInfra: true,
+  showCategoryOther: true,
+  showHeadline: true,
+  showArea: true,
+  showExpiry: true,
+  maxAlertsInWidget: 3,
+};
+
+const defaultScheduledCallsSettings: ScheduledCallsWidgetSettings = {
+  fontSize: 12,
+  showName: true,
+  showScheduledTime: true,
+  showPriority: true,
+  showAddress: true,
+  showDispatched: true,
+  dispatchScrollSpeed: 40,
+  columnOrder: DEFAULT_SCHEDULED_CALLS_COLUMN_ORDER,
+  sortBy: 'scheduledTime',
+  sortOrder: 'asc',
+  filterGroupIds: [],
+  filterUnitIds: [],
+  filterPersonnelIds: [],
+  filterRoleIds: [],
+  colorThresholdRedMinutes: 15,
+  colorThresholdYellowMinutes: 60,
+  colorThresholdGreenMinutes: 240,
+  colorRedHex: '#EF4444',
+  colorYellowHex: '#F59E0B',
+  colorGreenHex: '#10B981',
+  colorDefaultHex: '#6B7280',
+};
+
 const STORAGE_KEY = 'widget-settings';
 
 // Create MMKV storage instance
@@ -256,6 +330,8 @@ export const useWidgetSettingsStore = create<WidgetSettingsState>()(
       personnelStaffingSummary: defaultPersonnelStaffingSummarySettings,
       unitsSummary: defaultUnitsSummarySettings,
       callsSummary: defaultCallsSummarySettings,
+      weatherAlerts: defaultWeatherAlertsSettings,
+      scheduledCalls: defaultScheduledCallsSettings,
 
       updatePersonnelSettings: (settings) =>
         set((state) => ({
@@ -312,6 +388,16 @@ export const useWidgetSettingsStore = create<WidgetSettingsState>()(
           callsSummary: { ...state.callsSummary, ...settings },
         })),
 
+      updateWeatherAlertsSettings: (settings) =>
+        set((state) => ({
+          weatherAlerts: { ...state.weatherAlerts, ...settings },
+        })),
+
+      updateScheduledCallsSettings: (settings) =>
+        set((state) => ({
+          scheduledCalls: { ...state.scheduledCalls, ...settings },
+        })),
+
       resetAllSettings: () =>
         set({
           personnel: defaultPersonnelSettings,
@@ -325,6 +411,8 @@ export const useWidgetSettingsStore = create<WidgetSettingsState>()(
           personnelStaffingSummary: defaultPersonnelStaffingSummarySettings,
           unitsSummary: defaultUnitsSummarySettings,
           callsSummary: defaultCallsSummarySettings,
+          weatherAlerts: defaultWeatherAlertsSettings,
+          scheduledCalls: defaultScheduledCallsSettings,
         }),
     }),
     {

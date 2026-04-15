@@ -90,9 +90,9 @@ export const RolesModal: React.FC<RolesModalProps> = ({ isOpen, onClose }) => {
           error: err,
         },
       });
-      useToastStore.getState().showToast('error', 'Error saving role assignments');
+      useToastStore.getState().showToast('error', t('roles.save_error', 'Error saving role assignments'));
     }
-  }, [activeUnit, pendingAssignments, onClose, filteredRoles, unitRoleAssignments]);
+  }, [activeUnit, pendingAssignments, onClose, filteredRoles, unitRoleAssignments, t]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="full">

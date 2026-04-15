@@ -1,7 +1,7 @@
 import { Plus } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
 import React from 'react';
-import { Dimensions, Platform, Pressable, StyleSheet, View } from 'react-native';
+import { Platform, Pressable, StyleSheet, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
@@ -10,17 +10,14 @@ import { HStack } from '@/components/ui/hstack';
 import { ScrollView } from '@/components/ui/scroll-view';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
+import type { GridConfig } from '@/hooks/use-grid-config';
+import { useGridConfig } from '@/hooks/use-grid-config';
+import { translate } from '@/lib/i18n';
 import { useDashboardStore } from '@/stores/dashboard/store';
 import type { Widget } from '@/types/widget';
-import { WIDGET_LABELS, WidgetType } from '@/types/widget';
+import { WIDGET_LABEL_KEYS, WidgetType } from '@/types/widget';
 
 import { WidgetRenderer } from './widgets/WidgetRenderer';
-
-const BASE_WIDGET_WIDTH = 180;
-const BASE_WIDGET_HEIGHT = 180;
-const GRID_PADDING = 8;
-const screenWidth = Dimensions.get('window').width;
-const NUM_COLUMNS = Math.floor((screenWidth - GRID_PADDING * 2) / BASE_WIDGET_WIDTH);
 
 // Calculate grid positions for widgets
 const calculateGridLayout = (widgets: Widget[], numColumns: number) => {
@@ -118,21 +115,24 @@ interface DraggableWidgetProps {
   onDragStart: () => void;
   onDragEnd: (position: { x: number; y: number }) => void;
   onRemove: () => void;
+  gridConfig: GridConfig;
 }
 
-const DraggableWidget: React.FC<DraggableWidgetProps> = ({ widget, position, isEditMode, isDragging, onDragStart, onDragEnd, onRemove }) => {
+const DraggableWidget: React.FC<DraggableWidgetProps> = ({ widget, position, isEditMode, isDragging, onDragStart, onDragEnd, onRemove, gridConfig }) => {
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
   const startX = useSharedValue(0);
   const startY = useSharedValue(0);
 
-  const w = Math.min(widget.w || 1, NUM_COLUMNS);
-  const h = widget.h || 1;
-  const widgetWidth = w * BASE_WIDGET_WIDTH - 10;
-  const widgetHeight = h * BASE_WIDGET_HEIGHT - 10;
+  const { baseWidth, baseHeight, gridPadding, numColumns } = gridConfig;
 
-  const baseX = position.x * BASE_WIDGET_WIDTH + GRID_PADDING;
-  const baseY = position.y * BASE_WIDGET_HEIGHT + GRID_PADDING;
+  const w = Math.min(widget.w || 1, numColumns);
+  const h = widget.h || 1;
+  const widgetWidth = w * baseWidth - 10;
+  const widgetHeight = h * baseHeight - 10;
+
+  const baseX = position.x * baseWidth;
+  const baseY = position.y * baseHeight;
 
   // Reset position when not dragging
   React.useEffect(() => {
@@ -155,11 +155,11 @@ const DraggableWidget: React.FC<DraggableWidgetProps> = ({ widget, position, isE
     })
     .onEnd(() => {
       // Calculate new grid position
-      const newX = Math.round((baseX + translateX.value - GRID_PADDING) / BASE_WIDGET_WIDTH);
-      const newY = Math.round((baseY + translateY.value - GRID_PADDING) / BASE_WIDGET_HEIGHT);
+      const newX = Math.round((baseX + translateX.value) / baseWidth);
+      const newY = Math.round((baseY + translateY.value) / baseHeight);
 
       // Clamp to valid grid positions
-      const clampedX = Math.max(0, Math.min(NUM_COLUMNS - w, newX));
+      const clampedX = Math.max(0, Math.min(numColumns - w, newX));
       const clampedY = Math.max(0, newY);
 
       runOnJS(onDragEnd)({ x: clampedX, y: clampedY });
@@ -195,16 +195,43 @@ export const Dashboard: React.FC = () => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
   const [draggingId, setDraggingId] = React.useState<string | null>(null);
+  const gridConfig = useGridConfig();
+  const prevNumColumnsRef = React.useRef(gridConfig.numColumns);
 
   const { widgets, isEditMode, showAddMenu, setShowAddMenu, addWidget, removeWidget, updateWidgets } = useDashboardStore();
 
+  // Cancel drags and reflow widgets when column count changes (e.g., window resize)
+  React.useEffect(() => {
+    if (prevNumColumnsRef.current !== gridConfig.numColumns) {
+      prevNumColumnsRef.current = gridConfig.numColumns;
+      setDraggingId(null);
+
+      // Reset positions of widgets that no longer fit
+      const needsReflow = widgets.some((w) => {
+        const wWidth = Math.min(w.w || 1, gridConfig.numColumns);
+        return w.x + wWidth > gridConfig.numColumns;
+      });
+
+      if (needsReflow) {
+        const reflowed = widgets.map((w) => {
+          const wWidth = Math.min(w.w || 1, gridConfig.numColumns);
+          if (w.x + wWidth > gridConfig.numColumns) {
+            return { ...w, x: 0, y: 0 };
+          }
+          return w;
+        });
+        updateWidgets(reflowed);
+      }
+    }
+  }, [gridConfig.numColumns, widgets, updateWidgets]);
+
   // Calculate grid positions for all widgets
   const gridPositions = React.useMemo(() => {
-    return calculateGridLayout(widgets, NUM_COLUMNS);
-  }, [widgets]);
+    return calculateGridLayout(widgets, gridConfig.numColumns);
+  }, [widgets, gridConfig.numColumns]);
 
   const handleAddWidget = (type: WidgetType) => {
-    addWidget(type);
+    addWidget(type, gridConfig.platform);
   };
 
   const handleReorder = (draggedWidget: Widget, newPosition: { x: number; y: number }) => {
@@ -212,7 +239,7 @@ export const Dashboard: React.FC = () => {
 
     // Only update if position actually changed
     if (!currentPosition || currentPosition.x !== newPosition.x || currentPosition.y !== newPosition.y) {
-      const w = Math.min(draggedWidget.w || 1, NUM_COLUMNS);
+      const w = Math.min(draggedWidget.w || 1, gridConfig.numColumns);
       const h = draggedWidget.h || 1;
 
       // Check if new position would collide with any other widgets
@@ -223,7 +250,7 @@ export const Dashboard: React.FC = () => {
         const otherPos = gridPositions.get(otherWidget.id);
         if (!otherPos) continue;
 
-        const otherW = Math.min(otherWidget.w || 1, NUM_COLUMNS);
+        const otherW = Math.min(otherWidget.w || 1, gridConfig.numColumns);
         const otherH = otherWidget.h || 1;
 
         // Check for rectangle overlap
@@ -265,8 +292,8 @@ export const Dashboard: React.FC = () => {
         maxRow = Math.max(maxRow, bottomRow);
       }
     });
-    return maxRow * BASE_WIDGET_HEIGHT + GRID_PADDING * 2;
-  }, [widgets, gridPositions]);
+    return maxRow * gridConfig.baseHeight + gridConfig.gridPadding * 2;
+  }, [widgets, gridPositions, gridConfig.baseHeight, gridConfig.gridPadding]);
 
   return (
     <Box className="flex-1">
@@ -288,7 +315,7 @@ export const Dashboard: React.FC = () => {
                   className={`rounded px-4 py-2 ${isDark ? 'border border-gray-600 bg-gray-700' : 'border border-gray-300 bg-white'}`}
                   {...(Platform.OS === 'web' ? { 'data-testid': `add-widget-${type}` } : { testID: `add-widget-${type}` })}
                 >
-                  <Text className={`text-sm ${isDark ? 'text-white' : 'text-gray-900'}`}>{WIDGET_LABELS[type]}</Text>
+                  <Text className={`text-sm ${isDark ? 'text-white' : 'text-gray-900'}`}>{translate(WIDGET_LABEL_KEYS[type] as any)}</Text>
                 </Pressable>
               ))}
               {availableWidgets.length === 0 && <Text className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>All widgets added</Text>}
@@ -305,7 +332,7 @@ export const Dashboard: React.FC = () => {
             <Text className={`text-center ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Click the + button above to add widgets to your dashboard</Text>
           </VStack>
         ) : (
-          <View style={[styles.gridContainer, { height: containerHeight }]}>
+          <View style={[styles.gridContainer, { height: containerHeight, padding: gridConfig.gridPadding }]}>
             {widgets.map((widget) => {
               const position = gridPositions.get(widget.id);
               if (!position) return null;
@@ -323,6 +350,7 @@ export const Dashboard: React.FC = () => {
                     handleReorder(widget, newPos);
                   }}
                   onRemove={() => removeWidget(widget.id)}
+                  gridConfig={gridConfig}
                 />
               );
             })}
@@ -337,7 +365,6 @@ const styles = StyleSheet.create({
   gridContainer: {
     position: 'relative',
     width: '100%',
-    padding: GRID_PADDING,
   },
   widgetContainer: {
     position: 'absolute',

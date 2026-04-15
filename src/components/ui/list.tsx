@@ -3,6 +3,8 @@ import React from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import Svg, { Circle, Path } from 'react-native-svg';
 
+import { translate } from '@/lib/i18n';
+
 import { Text } from './text';
 type Props = {
   isLoading: boolean;
@@ -16,7 +18,7 @@ export const EmptyList = React.memo(({ isLoading }: Props) => {
       {!isLoading ? (
         <View>
           <NoData />
-          <Text className="pt-4 text-center">Sorry! No data found</Text>
+          <Text className="pt-4 text-center">{translate('common.no_data_found')}</Text>
         </View>
       ) : (
         <ActivityIndicator />

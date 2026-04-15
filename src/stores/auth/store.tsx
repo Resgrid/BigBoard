@@ -235,8 +235,7 @@ const useAuthStore = create<AuthState>()(
 
             const now = new Date();
             const rawExpiresIn = response.authResponse.expires_in;
-            const expiresInSeconds =
-              typeof rawExpiresIn === 'number' && rawExpiresIn > 0 ? rawExpiresIn : 3600;
+            const expiresInSeconds = typeof rawExpiresIn === 'number' && rawExpiresIn > 0 ? rawExpiresIn : 3600;
             if (!(typeof rawExpiresIn === 'number' && rawExpiresIn > 0)) {
               logger.warn({
                 message: 'LoginWithSso: expires_in missing or invalid; defaulting to 3600s',

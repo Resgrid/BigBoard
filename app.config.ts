@@ -271,6 +271,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     '@livekit/react-native-expo-plugin',
     '@config-plugins/react-native-webrtc',
     '@config-plugins/react-native-callkeep',
+    '@sentry/react-native',
     'expo-web-browser',
     './customGradle.plugin.js',
     './customManifest.plugin.js',

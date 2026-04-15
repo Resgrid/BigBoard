@@ -76,14 +76,14 @@ export default function Maintenance() {
               </View>
               <Text className="mb-2 text-lg font-semibold uppercase text-gray-900 dark:text-white">{t('maintenance.support_title')}</Text>
               <Text className="text-gray-600 dark:text-gray-400">
-                {t('maintenance.support_message')} <Text className="text-primary-600 underline">support@resgrid.com</Text>
+                {t('maintenance.support_message')} <Text className="text-primary-600 underline">{t('maintenance.support_email')}</Text>
               </Text>
             </View>
           </View>
 
           {/* Footer */}
           <View className="items-center pt-4">
-            <Text className="text-sm text-gray-500 dark:text-gray-500">© {new Date().getFullYear()} Resgrid, LLC. Created with ❤️ in Nevada</Text>
+            <Text className="text-sm text-gray-500 dark:text-gray-500">{t('maintenance.footer_copyright', { year: new Date().getFullYear() })}</Text>
             <Text className="mt-2 text-sm text-gray-400 dark:text-gray-600">v{packageJson.version}</Text>
           </View>
         </View>

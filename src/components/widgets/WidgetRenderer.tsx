@@ -10,9 +10,11 @@ import { NotesWidget } from './NotesWidget';
 import { PersonnelStaffingSummaryWidget } from './PersonnelStaffingSummaryWidget';
 import { PersonnelStatusSummaryWidget } from './PersonnelStatusSummaryWidget';
 import { PersonnelWidget } from './PersonnelWidget';
+import { ScheduledCallsWidget } from './ScheduledCallsWidget';
 import { TimeWidget } from './TimeWidget';
 import { UnitsSummaryWidget } from './UnitsSummaryWidget';
 import { UnitsWidget } from './UnitsWidget';
+import { WeatherAlertsWidget } from './WeatherAlertsWidget';
 import { WeatherWidget } from './WeatherWidget';
 
 interface WidgetRendererProps {
@@ -49,6 +51,10 @@ export const WidgetRenderer: React.FC<WidgetRendererProps> = ({ widget, onRemove
       return <UnitsSummaryWidget onRemove={onRemove} isEditMode={isEditMode} width={w} height={h} />;
     case WidgetType.CALLS_SUMMARY:
       return <CallsSummaryWidget onRemove={onRemove} isEditMode={isEditMode} width={w} height={h} />;
+    case WidgetType.WEATHER_ALERTS:
+      return <WeatherAlertsWidget onRemove={onRemove} isEditMode={isEditMode} width={w} height={h} containerWidth={containerWidth} containerHeight={containerHeight} />;
+    case WidgetType.SCHEDULED_CALLS:
+      return <ScheduledCallsWidget onRemove={onRemove} isEditMode={isEditMode} width={w} height={h} containerWidth={containerWidth} containerHeight={containerHeight} />;
     default:
       return null;
   }
