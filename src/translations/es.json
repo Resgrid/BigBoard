@@ -675,11 +675,11 @@
     "unassigned": "Sin asignar"
   },
   "scheduledCalls": {
-    "activatesIn": "Activates in",
-    "noScheduledCalls": "No pending scheduled calls",
-    "overdue": "overdue",
-    "scheduledTime": "Scheduled Time",
-    "title": "Scheduled Calls"
+    "activatesIn": "Se activa en",
+    "noScheduledCalls": "No hay llamadas programadas pendientes",
+    "overdue": "vencida",
+    "scheduledTime": "Hora programada",
+    "title": "Llamadas Programadas"
   },
   "settings": {
     "about": "Acerca de",
@@ -823,86 +823,86 @@
   },
   "weatherAlerts": {
     "category": {
-      "cbrne": "CBRNE",
-      "env": "Environmental",
-      "fire": "Fire",
-      "geo": "Geophysical",
-      "health": "Health",
-      "infra": "Infrastructure",
-      "met": "Meteorological",
-      "other": "Other",
-      "rescue": "Rescue",
-      "safety": "Safety",
-      "security": "Security",
-      "transport": "Transport"
+      "cbrne": "NBQR",
+      "env": "Ambiental",
+      "fire": "Incendio",
+      "geo": "Geofísico",
+      "health": "Salud",
+      "infra": "Infraestructura",
+      "met": "Meteorológico",
+      "other": "Otro",
+      "rescue": "Rescate",
+      "safety": "Seguridad",
+      "security": "Seguridad pública",
+      "transport": "Transporte"
     },
     "certainty": {
-      "likely": "Likely",
-      "observed": "Observed",
-      "possible": "Possible",
-      "unknown": "Unknown",
-      "unlikely": "Unlikely"
+      "likely": "Probable",
+      "observed": "Observado",
+      "possible": "Posible",
+      "unknown": "Desconocido",
+      "unlikely": "Improbable"
     },
     "detail": {
-      "affectedArea": "Affected Area",
-      "certainty": "Certainty",
-      "description": "Description",
-      "details": "Details",
-      "effective": "Effective",
-      "expires": "Expires",
-      "headline": "Headline",
-      "instructions": "Instructions",
-      "onset": "Onset",
-      "sender": "Sender",
-      "timing": "Timing",
-      "urgency": "Urgency"
+      "affectedArea": "Área afectada",
+      "certainty": "Certeza",
+      "description": "Descripción",
+      "details": "Detalles",
+      "effective": "Vigente",
+      "expires": "Expira",
+      "headline": "Titular",
+      "instructions": "Instrucciones",
+      "onset": "Inicio",
+      "sender": "Emisor",
+      "timing": "Horario",
+      "urgency": "Urgencia"
     },
     "errorLoading": "Error al cargar las alertas meteorológicas",
-    "expired": "Expired",
+    "expired": "Expirada",
     "filter": {
-      "all": "All",
-      "extreme": "Extreme",
-      "minor": "Minor",
-      "moderate": "Moderate",
-      "severe": "Severe"
+      "all": "Todas",
+      "extreme": "Extrema",
+      "minor": "Menor",
+      "moderate": "Moderada",
+      "severe": "Severa"
     },
-    "loadingDetail": "Loading alert details...",
-    "moreAlerts": "+{{count}} more alerts",
-    "noActiveAlerts": "No active alerts",
-    "notEnabled": "Weather alerts not enabled",
-    "remaining": "remaining",
+    "loadingDetail": "Cargando detalles de la alerta...",
+    "moreAlerts": "+{{count}} alertas más",
+    "noActiveAlerts": "No hay alertas activas",
+    "notEnabled": "Alertas meteorológicas no habilitadas",
+    "remaining": "restante",
     "severity": {
-      "extreme": "Extreme",
-      "minor": "Minor",
-      "moderate": "Moderate",
-      "severe": "Severe",
-      "unknown": "Unknown"
+      "extreme": "Extrema",
+      "minor": "Menor",
+      "moderate": "Moderada",
+      "severe": "Severa",
+      "unknown": "Desconocida"
     },
     "sort": {
-      "expiresSoonest": "Expires soonest",
-      "label": "Sort:",
-      "newest": "Newest",
-      "severity": "Severity"
+      "expiresSoonest": "Expira primero",
+      "label": "Ordenar:",
+      "newest": "Más reciente",
+      "severity": "Severidad"
     },
     "status": {
-      "actual": "Actual",
-      "draft": "Draft",
-      "exercise": "Exercise",
-      "system": "System",
-      "test": "Test",
-      "unknown": "Unknown"
+      "actual": "Real",
+      "draft": "Borrador",
+      "exercise": "Ejercicio",
+      "system": "Sistema",
+      "test": "Prueba",
+      "unknown": "Desconocido"
     },
     "time_days_hours": "{{days}}d {{hours}}h",
     "time_hours_minutes": "{{hours}}h {{minutes}}m",
     "time_minutes": "{{minutes}}m",
-    "title": "Weather Alerts",
-    "tryChangingFilter": "Try changing your filter",
+    "title": "Alertas Meteorológicas",
+    "tryChangingFilter": "Intenta cambiar el filtro",
     "urgency": {
-      "expected": "Expected",
-      "future": "Future",
-      "immediate": "Immediate",
-      "past": "Past",
-      "unknown": "Unknown"
+      "expected": "Esperada",
+      "future": "Futura",
+      "immediate": "Inmediata",
+      "past": "Pasada",
+      "unknown": "Desconocida"
     }
   },
   "welcome": "Bienvenido al sitio de la aplicación obytes",
