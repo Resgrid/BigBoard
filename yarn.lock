@@ -14159,10 +14159,10 @@ react-native-logs@~5.3.0:
   resolved "https://registry.yarnpkg.com/react-native-logs/-/react-native-logs-5.3.0.tgz#49ad1ec1fd37a5ef90280cc3e27e7233727fc921"
   integrity sha512-tq4S0JFy06ggu1D/udYeV80qPy5koURNNcKrVJmv0Hf3x44akysctaE4ARybD5Pv7MnFD8fP1VFhycSLjqXHQw==
 
-react-native-mmkv@~3.1.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/react-native-mmkv/-/react-native-mmkv-3.1.0.tgz#4b2c321cf11bde2f9da32acf76e0178ecd332ccc"
-  integrity sha512-HDh89nYVSufHMweZ3TVNUHQp2lsEh1ApaoV08bUOU1nrlmGgC3I7tGUn1Uy40Hs7yRMPKx5NWKE5Dh86jTVrwg==
+react-native-mmkv@~3.3.3:
+  version "3.3.3"
+  resolved "https://registry.yarnpkg.com/react-native-mmkv/-/react-native-mmkv-3.3.3.tgz#1f0326f6314e23725af8145964343224d074e6cd"
+  integrity sha512-GMsfOmNzx0p5+CtrCFRVtpOOMYNJXuksBVARSQrCFaZwjUyHJdQzcN900GGaFFNTxw2fs8s5Xje//RDKj9+PZA==
 
 react-native-quick-base64@2.1.1:
   version "2.1.1"
