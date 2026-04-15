@@ -1,7 +1,7 @@
 import { useRouter } from 'expo-router';
 import { ChevronDown, ChevronUp } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView } from 'react-native';
 
@@ -13,14 +13,16 @@ import { Slider, SliderFilledTrack, SliderThumb, SliderTrack } from '@/component
 import { Switch } from '@/components/ui/switch';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
+import { useGridConfig } from '@/hooks/use-grid-config';
 import { useDashboardStore } from '@/stores/dashboard/store';
 import { CALLS_COLUMN_LABELS, type CallsColumnKey, DEFAULT_CALLS_COLUMN_ORDER, useCallsSettingsStore } from '@/stores/widget-settings/calls-settings-store';
 import { DEFAULT_PERSONNEL_COLUMN_ORDER, PERSONNEL_COLUMN_LABELS, type PersonnelColumnKey, usePersonnelSettingsStore } from '@/stores/widget-settings/personnel-settings-store';
+import { DEFAULT_SCHEDULED_CALLS_COLUMN_ORDER, SCHEDULED_CALLS_COLUMN_LABELS, type ScheduledCallsColumnKey, useScheduledCallsSettingsStore } from '@/stores/widget-settings/scheduled-calls-settings-store';
 import { useWidgetSettingsStore } from '@/stores/widget-settings/store';
 import { DEFAULT_UNITS_COLUMN_ORDER, UNITS_COLUMN_LABELS, type UnitsColumnKey, useUnitsSettingsStore } from '@/stores/widget-settings/units-settings-store';
 import { WidgetType } from '@/types/widget';
 
-type TabType = 'personnel' | 'map' | 'weather' | 'units' | 'calls' | 'notes' | 'time' | 'personnelStatusSummary' | 'personnelStaffingSummary' | 'unitsSummary' | 'callsSummary';
+type TabType = 'personnel' | 'map' | 'weather' | 'units' | 'calls' | 'notes' | 'time' | 'personnelStatusSummary' | 'personnelStaffingSummary' | 'unitsSummary' | 'callsSummary' | 'weatherAlerts' | 'scheduledCalls';
 
 interface WidgetSizeSectionProps {
   widgetType: string;
@@ -30,11 +32,29 @@ interface WidgetSizeSectionProps {
 }
 
 const WidgetSizeSection: React.FC<WidgetSizeSectionProps> = ({ widgetType, defaultW = 2, defaultH = 2, isDark }) => {
-  const { widgets } = useDashboardStore();
+  const { widgets, updateWidgetLayout } = useDashboardStore();
   const { t } = useTranslation();
+  const gridConfig = useGridConfig();
   const widget = widgets.find((w) => w.type === widgetType);
-  const [localW, setLocalW] = useState(() => widget?.w ?? defaultW);
-  const [localH, setLocalH] = useState(() => widget?.h ?? defaultH);
+
+  // Cap slider max at sensible values so the slider remains usable on wide screens
+  const maxW = Math.min(gridConfig.maxWidgetWidth, 8);
+  const maxH = Math.min(gridConfig.maxWidgetHeight, 10);
+
+  const [localW, setLocalW] = useState(() => Math.min(widget?.w ?? defaultW, maxW));
+  const [localH, setLocalH] = useState(() => Math.min(widget?.h ?? defaultH, maxH));
+
+  // Keep local slider state in sync with the store (e.g., after migration or external update)
+  useEffect(() => {
+    if (widget) {
+      setLocalW(Math.min(widget.w || 1, maxW));
+      setLocalH(Math.min(widget.h || 1, maxH));
+    }
+  }, [widget?.id, widget?.w, widget?.h, maxW, maxH]);
+
+  if (!widget) {
+    return null;
+  }
 
   return (
     <VStack space="md">
@@ -44,14 +64,14 @@ const WidgetSizeSection: React.FC<WidgetSizeSectionProps> = ({ widgetType, defau
         <Slider
           value={localW}
           onChange={(value) => {
-            const rounded = Math.round(value);
+            const rounded = Math.max(1, Math.min(Math.round(value), maxW));
             setLocalW(rounded);
-            if (widget && rounded !== widget.w) {
-              useDashboardStore.getState().updateWidgetLayout(widget.id, { w: rounded });
+            if (rounded !== widget.w) {
+              updateWidgetLayout(widget.id, { w: rounded });
             }
           }}
           minValue={1}
-          maxValue={4}
+          maxValue={maxW}
           step={1}
           className="w-full"
         >
@@ -66,14 +86,14 @@ const WidgetSizeSection: React.FC<WidgetSizeSectionProps> = ({ widgetType, defau
         <Slider
           value={localH}
           onChange={(value) => {
-            const rounded = Math.round(value);
+            const rounded = Math.max(1, Math.min(Math.round(value), maxH));
             setLocalH(rounded);
-            if (widget && rounded !== widget.h) {
-              useDashboardStore.getState().updateWidgetLayout(widget.id, { h: rounded });
+            if (rounded !== widget.h) {
+              updateWidgetLayout(widget.id, { h: rounded });
             }
           }}
           minValue={1}
-          maxValue={5}
+          maxValue={maxH}
           step={1}
           className="w-full"
         >
@@ -131,6 +151,7 @@ export default function Configure() {
     personnelStaffingSummary,
     unitsSummary,
     callsSummary,
+    weatherAlerts: weatherAlertsSettings,
     updatePersonnelSettings,
     updateMapSettings,
     updateWeatherSettings,
@@ -142,15 +163,20 @@ export default function Configure() {
     updatePersonnelStaffingSummarySettings,
     updateUnitsSummarySettings,
     updateCallsSummarySettings,
+    updateWeatherAlertsSettings,
+    scheduledCalls: scheduledCallsGlobalSettings,
+    updateScheduledCallsSettings,
   } = useWidgetSettingsStore();
 
   const { settings: personnelSettings, updateSettings: updatePersonnelColumnSettings } = usePersonnelSettingsStore();
   const { settings: unitsSettings, updateSettings: updateUnitsColumnSettings } = useUnitsSettingsStore();
   const { settings: callsColumnSettings, updateSettings: updateCallsColumnSettings } = useCallsSettingsStore();
+  const { settings: scheduledCallsSettings, updateSettings: updateScheduledCallsColumnSettings } = useScheduledCallsSettingsStore();
 
   const personnelColumnOrder: PersonnelColumnKey[] = personnelSettings.columnOrder?.length ? personnelSettings.columnOrder : DEFAULT_PERSONNEL_COLUMN_ORDER;
   const unitsColumnOrder: UnitsColumnKey[] = unitsSettings.columnOrder?.length ? unitsSettings.columnOrder : DEFAULT_UNITS_COLUMN_ORDER;
   const callsColumnOrder: CallsColumnKey[] = callsColumnSettings.columnOrder?.length ? callsColumnSettings.columnOrder : DEFAULT_CALLS_COLUMN_ORDER;
+  const scheduledCallsColumnOrder: ScheduledCallsColumnKey[] = scheduledCallsSettings.columnOrder?.length ? scheduledCallsSettings.columnOrder : DEFAULT_SCHEDULED_CALLS_COLUMN_ORDER;
 
   const moveColumn = <T extends string>(order: T[], index: number, direction: 'up' | 'down', onUpdate: (newOrder: T[]) => void) => {
     const newOrder = [...order];
@@ -207,6 +233,13 @@ export default function Configure() {
     unitsSummary: unitsSummary.fontSize,
     callsSummary: callsSummary.fontSize,
     callsSummaryMaxPriorities: callsSummary.maxPrioritiesToShow,
+    weatherAlerts: weatherAlertsSettings.fontSize,
+    weatherAlertsMaxInWidget: weatherAlertsSettings.maxAlertsInWidget,
+    scheduledCalls: scheduledCallsSettings.fontSize,
+    scheduledCallsDispatchSpeed: scheduledCallsSettings.dispatchScrollSpeed ?? 40,
+    scheduledCallsRedThreshold: scheduledCallsSettings.colorThresholdRedMinutes,
+    scheduledCallsYellowThreshold: scheduledCallsSettings.colorThresholdYellowMinutes,
+    scheduledCallsGreenThreshold: scheduledCallsSettings.colorThresholdGreenMinutes,
   });
 
   const handleSave = () => {
@@ -228,6 +261,8 @@ export default function Configure() {
     { key: 'personnelStaffingSummary', label: 'Personnel Staffing', widgetType: WidgetType.PERSONNEL_STAFFING_SUMMARY },
     { key: 'unitsSummary', label: 'Units Summary', widgetType: WidgetType.UNITS_SUMMARY },
     { key: 'callsSummary', label: 'Calls Summary', widgetType: WidgetType.CALLS_SUMMARY },
+    { key: 'weatherAlerts', label: 'Weather Alerts', widgetType: WidgetType.WEATHER_ALERTS },
+    { key: 'scheduledCalls', label: 'Scheduled Calls', widgetType: WidgetType.SCHEDULED_CALLS },
   ];
 
   const renderTabContent = () => {
@@ -778,6 +813,415 @@ export default function Configure() {
 
             {/* Widget Dimensions */}
             <WidgetSizeSection widgetType="calls_summary" defaultW={1} defaultH={1} isDark={isDark} />
+          </VStack>
+        );
+
+      case 'weatherAlerts':
+        return (
+          <VStack space="lg" className="p-4">
+            <Text className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Weather Alerts Widget</Text>
+
+            {/* Severity Filters */}
+            <VStack space="md">
+              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Severity Levels</Text>
+
+              <HStack className="items-center justify-between">
+                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Extreme</Text>
+                <Switch value={weatherAlertsSettings.showExtreme} onValueChange={(value) => updateWeatherAlertsSettings({ showExtreme: value })} />
+              </HStack>
+
+              <HStack className="items-center justify-between">
+                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Severe</Text>
+                <Switch value={weatherAlertsSettings.showSevere} onValueChange={(value) => updateWeatherAlertsSettings({ showSevere: value })} />
+              </HStack>
+
+              <HStack className="items-center justify-between">
+                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Moderate</Text>
+                <Switch value={weatherAlertsSettings.showModerate} onValueChange={(value) => updateWeatherAlertsSettings({ showModerate: value })} />
+              </HStack>
+
+              <HStack className="items-center justify-between">
+                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Minor</Text>
+                <Switch value={weatherAlertsSettings.showMinor} onValueChange={(value) => updateWeatherAlertsSettings({ showMinor: value })} />
+              </HStack>
+
+              <HStack className="items-center justify-between">
+                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Unknown</Text>
+                <Switch value={weatherAlertsSettings.showUnknown} onValueChange={(value) => updateWeatherAlertsSettings({ showUnknown: value })} />
+              </HStack>
+            </VStack>
+
+            {/* Category Filters */}
+            <VStack space="md">
+              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Alert Categories</Text>
+
+              <HStack className="items-center justify-between">
+                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Geophysical</Text>
+                <Switch value={weatherAlertsSettings.showCategoryGeo} onValueChange={(value) => updateWeatherAlertsSettings({ showCategoryGeo: value })} />
+              </HStack>
+
+              <HStack className="items-center justify-between">
+                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Meteorological</Text>
+                <Switch value={weatherAlertsSettings.showCategoryMet} onValueChange={(value) => updateWeatherAlertsSettings({ showCategoryMet: value })} />
+              </HStack>
+
+              <HStack className="items-center justify-between">
+                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Safety</Text>
+                <Switch value={weatherAlertsSettings.showCategorySafety} onValueChange={(value) => updateWeatherAlertsSettings({ showCategorySafety: value })} />
+              </HStack>
+
+              <HStack className="items-center justify-between">
+                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Fire</Text>
+                <Switch value={weatherAlertsSettings.showCategoryFire} onValueChange={(value) => updateWeatherAlertsSettings({ showCategoryFire: value })} />
+              </HStack>
+
+              <HStack className="items-center justify-between">
+                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Health</Text>
+                <Switch value={weatherAlertsSettings.showCategoryHealth} onValueChange={(value) => updateWeatherAlertsSettings({ showCategoryHealth: value })} />
+              </HStack>
+
+              <HStack className="items-center justify-between">
+                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Environmental</Text>
+                <Switch value={weatherAlertsSettings.showCategoryEnv} onValueChange={(value) => updateWeatherAlertsSettings({ showCategoryEnv: value })} />
+              </HStack>
+
+              <HStack className="items-center justify-between">
+                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Transport</Text>
+                <Switch value={weatherAlertsSettings.showCategoryTransport} onValueChange={(value) => updateWeatherAlertsSettings({ showCategoryTransport: value })} />
+              </HStack>
+
+              <HStack className="items-center justify-between">
+                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Infrastructure</Text>
+                <Switch value={weatherAlertsSettings.showCategoryInfra} onValueChange={(value) => updateWeatherAlertsSettings({ showCategoryInfra: value })} />
+              </HStack>
+
+              <HStack className="items-center justify-between">
+                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Other</Text>
+                <Switch value={weatherAlertsSettings.showCategoryOther} onValueChange={(value) => updateWeatherAlertsSettings({ showCategoryOther: value })} />
+              </HStack>
+            </VStack>
+
+            {/* Display Options */}
+            <VStack space="md">
+              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Display Options</Text>
+
+              <HStack className="items-center justify-between">
+                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Show Headline</Text>
+                <Switch value={weatherAlertsSettings.showHeadline} onValueChange={(value) => updateWeatherAlertsSettings({ showHeadline: value })} />
+              </HStack>
+
+              <HStack className="items-center justify-between">
+                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Show Area</Text>
+                <Switch value={weatherAlertsSettings.showArea} onValueChange={(value) => updateWeatherAlertsSettings({ showArea: value })} />
+              </HStack>
+
+              <HStack className="items-center justify-between">
+                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Show Expiry Time</Text>
+                <Switch value={weatherAlertsSettings.showExpiry} onValueChange={(value) => updateWeatherAlertsSettings({ showExpiry: value })} />
+              </HStack>
+
+              {/* Max Alerts in Widget */}
+              <VStack space="sm">
+                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Max Alerts in Widget: {fontSizes.weatherAlertsMaxInWidget}</Text>
+                <Slider
+                  value={fontSizes.weatherAlertsMaxInWidget}
+                  onChange={(value) => setFontSizes((prev) => ({ ...prev, weatherAlertsMaxInWidget: Math.round(value) }))}
+                  onChangeEnd={(value) => updateWeatherAlertsSettings({ maxAlertsInWidget: Math.round(value) })}
+                  minValue={1}
+                  maxValue={10}
+                  step={1}
+                  className="w-full"
+                >
+                  <SliderTrack>
+                    <SliderFilledTrack />
+                  </SliderTrack>
+                  <SliderThumb />
+                </Slider>
+              </VStack>
+            </VStack>
+
+            {/* Font Size */}
+            <FontSizeSection
+              value={fontSizes.weatherAlerts}
+              onChange={(value) => setFontSizes((prev) => ({ ...prev, weatherAlerts: value }))}
+              onChangeEnd={(value) => updateWeatherAlertsSettings({ fontSize: value })}
+              isDark={isDark}
+            />
+
+            {/* Widget Dimensions */}
+            <WidgetSizeSection widgetType="weather_alerts" defaultW={1} defaultH={1} isDark={isDark} />
+          </VStack>
+        );
+
+      case 'scheduledCalls':
+        return (
+          <VStack space="lg" className="p-4">
+            <Text className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Scheduled Calls Widget</Text>
+
+            {/* Visible Columns */}
+            <VStack space="md">
+              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Visible Columns</Text>
+
+              <HStack className="items-center justify-between">
+                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Name</Text>
+                <Switch value={scheduledCallsSettings.showName} onValueChange={(value) => updateScheduledCallsColumnSettings({ showName: value })} />
+              </HStack>
+
+              <HStack className="items-center justify-between">
+                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Scheduled Time</Text>
+                <Switch value={scheduledCallsSettings.showScheduledTime} onValueChange={(value) => updateScheduledCallsColumnSettings({ showScheduledTime: value })} />
+              </HStack>
+
+              <HStack className="items-center justify-between">
+                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Priority</Text>
+                <Switch value={scheduledCallsSettings.showPriority} onValueChange={(value) => updateScheduledCallsColumnSettings({ showPriority: value })} />
+              </HStack>
+
+              <HStack className="items-center justify-between">
+                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Address</Text>
+                <Switch value={scheduledCallsSettings.showAddress} onValueChange={(value) => updateScheduledCallsColumnSettings({ showAddress: value })} />
+              </HStack>
+
+              <HStack className="items-center justify-between">
+                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Dispatched</Text>
+                <Switch value={scheduledCallsSettings.showDispatched} onValueChange={(value) => updateScheduledCallsColumnSettings({ showDispatched: value })} />
+              </HStack>
+            </VStack>
+
+            {/* Column Order */}
+            <VStack space="md">
+              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>{t('configure.column_order')}</Text>
+              <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{t('configure.use_arrows_reorder')}</Text>
+              {renderColumnOrderEditor(scheduledCallsColumnOrder, SCHEDULED_CALLS_COLUMN_LABELS, (newOrder) => updateScheduledCallsColumnSettings({ columnOrder: newOrder }))}
+            </VStack>
+
+            {/* Sorting */}
+            <VStack space="md">
+              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Sorting</Text>
+
+              <VStack space="sm">
+                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Sort By</Text>
+                <HStack space="sm">
+                  <Button variant={scheduledCallsSettings.sortBy === 'scheduledTime' ? 'solid' : 'outline'} onPress={() => updateScheduledCallsColumnSettings({ sortBy: 'scheduledTime' })} className="flex-1">
+                    <ButtonText>Time</ButtonText>
+                  </Button>
+                  <Button variant={scheduledCallsSettings.sortBy === 'priority' ? 'solid' : 'outline'} onPress={() => updateScheduledCallsColumnSettings({ sortBy: 'priority' })} className="flex-1">
+                    <ButtonText>Priority</ButtonText>
+                  </Button>
+                  <Button variant={scheduledCallsSettings.sortBy === 'name' ? 'solid' : 'outline'} onPress={() => updateScheduledCallsColumnSettings({ sortBy: 'name' })} className="flex-1">
+                    <ButtonText>Name</ButtonText>
+                  </Button>
+                </HStack>
+              </VStack>
+
+              <VStack space="sm">
+                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Sort Order</Text>
+                <HStack space="sm">
+                  <Button variant={scheduledCallsSettings.sortOrder === 'asc' ? 'solid' : 'outline'} onPress={() => updateScheduledCallsColumnSettings({ sortOrder: 'asc' })} className="flex-1">
+                    <ButtonText>Ascending</ButtonText>
+                  </Button>
+                  <Button variant={scheduledCallsSettings.sortOrder === 'desc' ? 'solid' : 'outline'} onPress={() => updateScheduledCallsColumnSettings({ sortOrder: 'desc' })} className="flex-1">
+                    <ButtonText>Descending</ButtonText>
+                  </Button>
+                </HStack>
+              </VStack>
+            </VStack>
+
+            {/* Filtering */}
+            <VStack space="md">
+              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Filtering</Text>
+              <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Enter comma-separated IDs to filter. Leave empty to show all.</Text>
+
+              <VStack space="sm">
+                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Group/Station IDs</Text>
+                <Input variant="outline" size="md">
+                  <InputField
+                    placeholder="e.g. 123,456"
+                    value={scheduledCallsSettings.filterGroupIds.join(',')}
+                    onChangeText={(text) =>
+                      updateScheduledCallsColumnSettings({
+                        filterGroupIds: text
+                          ? text
+                              .split(',')
+                              .map((s) => s.trim())
+                              .filter(Boolean)
+                          : [],
+                      })
+                    }
+                  />
+                </Input>
+              </VStack>
+
+              <VStack space="sm">
+                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Unit IDs</Text>
+                <Input variant="outline" size="md">
+                  <InputField
+                    placeholder="e.g. 123,456"
+                    value={scheduledCallsSettings.filterUnitIds.join(',')}
+                    onChangeText={(text) =>
+                      updateScheduledCallsColumnSettings({
+                        filterUnitIds: text
+                          ? text
+                              .split(',')
+                              .map((s) => s.trim())
+                              .filter(Boolean)
+                          : [],
+                      })
+                    }
+                  />
+                </Input>
+              </VStack>
+
+              <VStack space="sm">
+                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Personnel IDs</Text>
+                <Input variant="outline" size="md">
+                  <InputField
+                    placeholder="e.g. user-id-1,user-id-2"
+                    value={scheduledCallsSettings.filterPersonnelIds.join(',')}
+                    onChangeText={(text) =>
+                      updateScheduledCallsColumnSettings({
+                        filterPersonnelIds: text
+                          ? text
+                              .split(',')
+                              .map((s) => s.trim())
+                              .filter(Boolean)
+                          : [],
+                      })
+                    }
+                  />
+                </Input>
+              </VStack>
+
+              <VStack space="sm">
+                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Role IDs</Text>
+                <Input variant="outline" size="md">
+                  <InputField
+                    placeholder="e.g. 123,456"
+                    value={scheduledCallsSettings.filterRoleIds.join(',')}
+                    onChangeText={(text) =>
+                      updateScheduledCallsColumnSettings({
+                        filterRoleIds: text
+                          ? text
+                              .split(',')
+                              .map((s) => s.trim())
+                              .filter(Boolean)
+                          : [],
+                      })
+                    }
+                  />
+                </Input>
+              </VStack>
+            </VStack>
+
+            {/* Color Coding Thresholds */}
+            <VStack space="md">
+              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Urgency Color Coding</Text>
+              <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Color-code rows based on how soon a scheduled call will activate.</Text>
+
+              <VStack space="sm">
+                <HStack className="items-center" space="sm">
+                  <Box style={{ width: 16, height: 16, borderRadius: 4, backgroundColor: scheduledCallsSettings.colorRedHex }} />
+                  <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Red threshold: {fontSizes.scheduledCallsRedThreshold} min</Text>
+                </HStack>
+                <Slider
+                  value={fontSizes.scheduledCallsRedThreshold}
+                  onChange={(value) => setFontSizes((prev) => ({ ...prev, scheduledCallsRedThreshold: Math.round(value) }))}
+                  onChangeEnd={(value) => updateScheduledCallsColumnSettings({ colorThresholdRedMinutes: Math.round(value) })}
+                  minValue={1}
+                  maxValue={120}
+                  step={1}
+                  className="w-full"
+                >
+                  <SliderTrack>
+                    <SliderFilledTrack />
+                  </SliderTrack>
+                  <SliderThumb />
+                </Slider>
+              </VStack>
+
+              <VStack space="sm">
+                <HStack className="items-center" space="sm">
+                  <Box style={{ width: 16, height: 16, borderRadius: 4, backgroundColor: scheduledCallsSettings.colorYellowHex }} />
+                  <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Yellow threshold: {fontSizes.scheduledCallsYellowThreshold} min</Text>
+                </HStack>
+                <Slider
+                  value={fontSizes.scheduledCallsYellowThreshold}
+                  onChange={(value) => setFontSizes((prev) => ({ ...prev, scheduledCallsYellowThreshold: Math.round(value) }))}
+                  onChangeEnd={(value) => updateScheduledCallsColumnSettings({ colorThresholdYellowMinutes: Math.round(value) })}
+                  minValue={15}
+                  maxValue={480}
+                  step={5}
+                  className="w-full"
+                >
+                  <SliderTrack>
+                    <SliderFilledTrack />
+                  </SliderTrack>
+                  <SliderThumb />
+                </Slider>
+              </VStack>
+
+              <VStack space="sm">
+                <HStack className="items-center" space="sm">
+                  <Box style={{ width: 16, height: 16, borderRadius: 4, backgroundColor: scheduledCallsSettings.colorGreenHex }} />
+                  <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Green threshold: {fontSizes.scheduledCallsGreenThreshold} min</Text>
+                </HStack>
+                <Slider
+                  value={fontSizes.scheduledCallsGreenThreshold}
+                  onChange={(value) => setFontSizes((prev) => ({ ...prev, scheduledCallsGreenThreshold: Math.round(value) }))}
+                  onChangeEnd={(value) => updateScheduledCallsColumnSettings({ colorThresholdGreenMinutes: Math.round(value) })}
+                  minValue={60}
+                  maxValue={1440}
+                  step={15}
+                  className="w-full"
+                >
+                  <SliderTrack>
+                    <SliderFilledTrack />
+                  </SliderTrack>
+                  <SliderThumb />
+                </Slider>
+              </VStack>
+
+              <Text className={`text-xs ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>Gray = more than {scheduledCallsSettings.colorThresholdGreenMinutes} min away</Text>
+            </VStack>
+
+            {/* Dispatch Scroll Speed */}
+            <VStack space="md">
+              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Options</Text>
+              <VStack space="sm">
+                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>
+                  {t('configure.dispatch_scroll_speed', { speed: fontSizes.scheduledCallsDispatchSpeed === 0 ? t('configure.dispatch_scroll_off') : `${fontSizes.scheduledCallsDispatchSpeed}px/s` })}
+                </Text>
+                <Slider
+                  value={fontSizes.scheduledCallsDispatchSpeed}
+                  onChange={(value) => setFontSizes((prev) => ({ ...prev, scheduledCallsDispatchSpeed: Math.round(value) }))}
+                  onChangeEnd={(value) => updateScheduledCallsColumnSettings({ dispatchScrollSpeed: Math.round(value) })}
+                  minValue={0}
+                  maxValue={200}
+                  step={5}
+                  className="w-full"
+                >
+                  <SliderTrack>
+                    <SliderFilledTrack />
+                  </SliderTrack>
+                  <SliderThumb />
+                </Slider>
+                <HStack className="justify-between">
+                  <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('configure.speed_off')}</Text>
+                  <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('configure.speed_max')}</Text>
+                </HStack>
+              </VStack>
+            </VStack>
+
+            {/* Font Size */}
+            <FontSizeSection
+              value={fontSizes.scheduledCalls}
+              onChange={(value) => setFontSizes((prev) => ({ ...prev, scheduledCalls: value }))}
+              onChangeEnd={(value) => updateScheduledCallsColumnSettings({ fontSize: value })}
+              isDark={isDark}
+            />
+
+            {/* Widget Dimensions */}
+            <WidgetSizeSection widgetType="scheduled_calls" defaultW={3} defaultH={3} isDark={isDark} />
           </VStack>
         );
 

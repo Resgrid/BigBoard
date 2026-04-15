@@ -479,8 +479,8 @@
     "login_button_loading": "Logging in...",
     "login_button_success": "Logged in successfully",
     "no_account": "Don't have an account?",
-    "page_subtitle": "Enter the information below to Sign in to the Resgrid Dispatch application.",
-    "page_title": "Resgrid Dispatch",
+    "page_subtitle": "Enter the information below to Sign in to the Resgrid BigBoard application.",
+    "page_title": "Resgrid BigBoard",
     "password": "Password",
     "password_incorrect": "Password was incorrect",
     "password_placeholder": "Enter your password",
@@ -578,6 +578,13 @@
     "status": "{{active}} of {{total}} Roles",
     "tap_to_manage": "Tap to manage roles",
     "unassigned": "Unassigned"
+  },
+  "scheduledCalls": {
+    "activatesIn": "Activates in",
+    "noScheduledCalls": "No pending scheduled calls",
+    "overdue": "overdue",
+    "scheduledTime": "Scheduled Time",
+    "title": "Scheduled Calls"
   },
   "settings": {
     "about": "About",
@@ -712,6 +719,86 @@
     "protocols": "Protocols",
     "settings": "Settings",
     "shifts": "Shifts"
+  },
+  "weatherAlerts": {
+    "category": {
+      "cbrne": "CBRNE",
+      "env": "Environmental",
+      "fire": "Fire",
+      "geo": "Geophysical",
+      "health": "Health",
+      "infra": "Infrastructure",
+      "met": "Meteorological",
+      "other": "Other",
+      "rescue": "Rescue",
+      "safety": "Safety",
+      "security": "Security",
+      "transport": "Transport"
+    },
+    "certainty": {
+      "likely": "Likely",
+      "observed": "Observed",
+      "possible": "Possible",
+      "unknown": "Unknown",
+      "unlikely": "Unlikely"
+    },
+    "detail": {
+      "affectedArea": "Affected Area",
+      "certainty": "Certainty",
+      "description": "Description",
+      "details": "Details",
+      "effective": "Effective",
+      "expires": "Expires",
+      "headline": "Headline",
+      "instructions": "Instructions",
+      "onset": "Onset",
+      "sender": "Sender",
+      "timing": "Timing",
+      "urgency": "Urgency"
+    },
+    "expired": "Expired",
+    "filter": {
+      "all": "All",
+      "extreme": "Extreme",
+      "minor": "Minor",
+      "moderate": "Moderate",
+      "severe": "Severe"
+    },
+    "loadingDetail": "Loading alert details...",
+    "moreAlerts": "+{{count}} more alerts",
+    "noActiveAlerts": "No active alerts",
+    "notEnabled": "Weather alerts not enabled",
+    "remaining": "remaining",
+    "severity": {
+      "extreme": "Extreme",
+      "minor": "Minor",
+      "moderate": "Moderate",
+      "severe": "Severe",
+      "unknown": "Unknown"
+    },
+    "sort": {
+      "expiresSoonest": "Expires soonest",
+      "label": "Sort:",
+      "newest": "Newest",
+      "severity": "Severity"
+    },
+    "status": {
+      "actual": "Actual",
+      "draft": "Draft",
+      "exercise": "Exercise",
+      "system": "System",
+      "test": "Test",
+      "unknown": "Unknown"
+    },
+    "title": "Weather Alerts",
+    "tryChangingFilter": "Try changing your filter",
+    "urgency": {
+      "expected": "Expected",
+      "future": "Future",
+      "immediate": "Immediate",
+      "past": "Past",
+      "unknown": "Unknown"
+    }
   },
   "welcome": "Welcome to obytes app site"
 }

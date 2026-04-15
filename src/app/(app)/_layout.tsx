@@ -34,6 +34,7 @@ import { useDashboardStore } from '@/stores/dashboard/store';
 import { useRolesStore } from '@/stores/roles/store';
 import { securityStore } from '@/stores/security/store';
 import { useSignalRStore } from '@/stores/signalr/signalr-store';
+import { useWeatherAlertsStore } from '@/stores/weatherAlerts/store';
 import { WIDGET_LABELS, WidgetType } from '@/types/widget';
 
 export default function TabLayout() {
@@ -143,6 +144,19 @@ export default function TabLayout() {
           // Don't fail initialization if SignalR connection fails
         }
 
+        try {
+          await useWeatherAlertsStore.getState().init();
+          logger.info({
+            message: 'Weather alerts store initialized',
+            context: { platform: Platform.OS },
+          });
+        } catch (error) {
+          logger.error({
+            message: 'Failed to init weather alerts',
+            context: { error },
+          });
+        }
+
         hasInitialized.current = true;
 
         logger.info({
@@ -182,7 +196,7 @@ export default function TabLayout() {
 
     try {
       // Refresh data
-      await Promise.all([useCoreStore.getState().fetchConfig(), useCallsStore.getState().fetchCalls(), useRolesStore.getState().fetchRoles()]);
+      await Promise.all([useCoreStore.getState().fetchConfig(), useCallsStore.getState().fetchCalls(), useRolesStore.getState().fetchRoles(), useWeatherAlertsStore.getState().fetchActiveAlerts()]);
     } catch (error) {
       logger.error({
         message: 'Failed to refresh data on app resume',

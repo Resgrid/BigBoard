@@ -579,6 +579,13 @@
     "tap_to_manage": "انقر لإدارة الأدوار",
     "unassigned": "غير معين"
   },
+  "scheduledCalls": {
+    "activatesIn": "Activates in",
+    "noScheduledCalls": "No pending scheduled calls",
+    "overdue": "overdue",
+    "scheduledTime": "Scheduled Time",
+    "title": "Scheduled Calls"
+  },
   "settings": {
     "about": "حول التطبيق",
     "account": "الحساب",
@@ -712,6 +719,86 @@
     "protocols": "البروتوكولات",
     "settings": "الإعدادات",
     "shifts": "المناوبات"
+  },
+  "weatherAlerts": {
+    "category": {
+      "cbrne": "CBRNE",
+      "env": "Environmental",
+      "fire": "Fire",
+      "geo": "Geophysical",
+      "health": "Health",
+      "infra": "Infrastructure",
+      "met": "Meteorological",
+      "other": "Other",
+      "rescue": "Rescue",
+      "safety": "Safety",
+      "security": "Security",
+      "transport": "Transport"
+    },
+    "certainty": {
+      "likely": "Likely",
+      "observed": "Observed",
+      "possible": "Possible",
+      "unknown": "Unknown",
+      "unlikely": "Unlikely"
+    },
+    "detail": {
+      "affectedArea": "Affected Area",
+      "certainty": "Certainty",
+      "description": "Description",
+      "details": "Details",
+      "effective": "Effective",
+      "expires": "Expires",
+      "headline": "Headline",
+      "instructions": "Instructions",
+      "onset": "Onset",
+      "sender": "Sender",
+      "timing": "Timing",
+      "urgency": "Urgency"
+    },
+    "expired": "Expired",
+    "filter": {
+      "all": "All",
+      "extreme": "Extreme",
+      "minor": "Minor",
+      "moderate": "Moderate",
+      "severe": "Severe"
+    },
+    "loadingDetail": "Loading alert details...",
+    "moreAlerts": "+{{count}} more alerts",
+    "noActiveAlerts": "No active alerts",
+    "notEnabled": "Weather alerts not enabled",
+    "remaining": "remaining",
+    "severity": {
+      "extreme": "Extreme",
+      "minor": "Minor",
+      "moderate": "Moderate",
+      "severe": "Severe",
+      "unknown": "Unknown"
+    },
+    "sort": {
+      "expiresSoonest": "Expires soonest",
+      "label": "Sort:",
+      "newest": "Newest",
+      "severity": "Severity"
+    },
+    "status": {
+      "actual": "Actual",
+      "draft": "Draft",
+      "exercise": "Exercise",
+      "system": "System",
+      "test": "Test",
+      "unknown": "Unknown"
+    },
+    "title": "Weather Alerts",
+    "tryChangingFilter": "Try changing your filter",
+    "urgency": {
+      "expected": "Expected",
+      "future": "Future",
+      "immediate": "Immediate",
+      "past": "Past",
+      "unknown": "Unknown"
+    }
   },
   "welcome": "مرحبًا بك في موقع تطبيق obytes"
 }

@@ -1,6 +1,6 @@
 import type { BottomSheetBackdropProps } from '@gorhom/bottom-sheet';
 import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from '@gorhom/bottom-sheet';
-import * as FileSystem from 'expo-file-system';
+import { documentDirectory, EncodingType, writeAsStringAsync } from 'expo-file-system/src/legacy';
 import * as Sharing from 'expo-sharing';
 import { Download, File, X } from 'lucide-react-native';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -106,7 +106,7 @@ export const CallFilesModal: React.FC<CallFilesModalProps> = ({ isOpen, onClose,
 
       // Create a temporary file
       const fileName = file.FileName || file.Name || `file_${file.Id}`;
-      const fileUri = `${FileSystem.documentDirectory}${fileName}`;
+      const fileUri = `${documentDirectory}${fileName}`;
 
       // Convert blob to base64
       const base64Data = await new Promise<string>((resolve, reject) => {
@@ -122,8 +122,8 @@ export const CallFilesModal: React.FC<CallFilesModalProps> = ({ isOpen, onClose,
       });
 
       // Write file to device
-      await FileSystem.writeAsStringAsync(fileUri, base64Data, {
-        encoding: FileSystem.EncodingType.Base64,
+      await writeAsStringAsync(fileUri, base64Data, {
+        encoding: EncodingType.Base64,
       });
 
       // Share/open the file
