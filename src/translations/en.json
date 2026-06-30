@@ -725,6 +725,8 @@
     "links": "Links",
     "login_info": "Login Info",
     "logout": "Logout",
+    "modern_notification_sounds": "Modern Notification Sounds",
+    "modern_notification_sounds_description": "Use the new modern alert tones for push notifications. Turn this off to use the classic sounds. (Android only)",
     "more": "More",
     "no_units_available": "No units available",
     "none_selected": "None Selected",

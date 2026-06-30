@@ -725,6 +725,8 @@
     "links": "Enlaces",
     "login_info": "Información de inicio de sesión",
     "logout": "Cerrar sesión",
+    "modern_notification_sounds": "Sonidos de notificación modernos",
+    "modern_notification_sounds_description": "Usa los nuevos tonos de alerta modernos para las notificaciones push. Desactívalo para usar los sonidos clásicos. (Solo Android)",
     "more": "Más",
     "no_units_available": "No hay unidades disponibles",
     "none_selected": "Ninguna seleccionada",

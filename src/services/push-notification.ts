@@ -5,6 +5,7 @@ import { Platform } from 'react-native';
 
 import { registerUnitDevice } from '@/api/devices/push';
 import { logger } from '@/lib/logging';
+import { getModernNotificationSoundsEnabled, markSoundChannelsMigrated, needsSoundChannelMigration, NOTIFICATION_SOUND_CHANNELS } from '@/lib/notification-sounds';
 import { getDeviceUuid } from '@/lib/storage/app';
 import { useCoreStore } from '@/stores/app/core-store';
 import { usePushNotificationModalStore } from '@/stores/push-notification/store';
@@ -57,25 +58,40 @@ class PushNotificationService {
     });
   }
 
+  // Creates every non-custom channel (generic call, priority calls, notification and
+  // message) with either its modern or legacy sound, based on the user's preference.
+  private async createSoundChannels(): Promise<void> {
+    // Default (preference on) uses the modern sounds; turning it off reverts each channel
+    // to its original sound (or silence). Custom channels (c1-c25) are handled separately.
+    const useModern = getModernNotificationSoundsEnabled();
+    for (const channel of NOTIFICATION_SOUND_CHANNELS) {
+      const sound = useModern ? channel.modernSound : channel.legacySound;
+      await this.createNotificationChannel(channel.id, channel.name, channel.description, sound, channel.vibration);
+    }
+  }
+
   private async setupAndroidNotificationChannels(): Promise<void> {
     if (Platform.OS === 'android') {
       try {
-        // Standard call channels
-        await this.createNotificationChannel('calls', 'Generic Call', 'Generic Call');
-        await this.createNotificationChannel('0', 'Emergency Call', 'Emergency Call', 'callemergency');
-        await this.createNotificationChannel('1', 'High Call', 'High Call', 'callhigh');
-        await this.createNotificationChannel('2', 'Medium Call', 'Medium Call', 'callmedium');
-        await this.createNotificationChannel('3', 'Low Call', 'Low Call', 'calllow');
+        // Channels are immutable once created. On upgrade, existing (often silent) call,
+        // notification and message channels must be deleted so they can be recreated below
+        // with their modern sounds. Deleting a non-existent channel is a safe no-op.
+        if (needsSoundChannelMigration()) {
+          await Promise.all(NOTIFICATION_SOUND_CHANNELS.map((channel) => Notifications.deleteNotificationChannelAsync(channel.id)));
+        }
 
-        // Message and notification channels
-        await this.createNotificationChannel('notif', 'Notification', 'Notifications', undefined, false);
-        await this.createNotificationChannel('message', 'Message', 'Messages', undefined, false);
+        // Call, notification and message channels use the modern or legacy sounds based
+        // on the user preference. When modern (the default) is active they all play audio.
+        await this.createSoundChannels();
 
         // Custom call channels (c1-c25)
         for (let i = 1; i <= 25; i++) {
           const channelId = `c${i}`;
           await this.createNotificationChannel(channelId, `Custom Call ${i}`, `Custom Call Tone ${i}`, channelId);
         }
+
+        // Mark the channels as created for the current sound-config version.
+        markSoundChannelsMigrated();
 
         logger.info({
           message: 'Android notification channels setup completed',
@@ -86,6 +102,34 @@ class PushNotificationService {
           context: { error },
         });
       }
+    }
+  }
+
+  /**
+   * Re-applies the call/notification/message channel sounds based on the current "modern
+   * notification sounds" preference. Android notification channels are immutable once
+   * created, so each affected channel is deleted and then re-created with the new sound.
+   * Custom channels (c1-c25) are left untouched. No-op off Android.
+   */
+  public async refreshNotificationSoundChannels(): Promise<void> {
+    if (Platform.OS !== 'android') {
+      return;
+    }
+
+    try {
+      // Delete first — re-creating an existing channel id does not change its sound.
+      await Promise.all(NOTIFICATION_SOUND_CHANNELS.map((channel) => Notifications.deleteNotificationChannelAsync(channel.id)));
+      await this.createSoundChannels();
+
+      logger.info({
+        message: 'Android notification channel sounds refreshed',
+        context: { modern: getModernNotificationSoundsEnabled() },
+      });
+    } catch (error) {
+      logger.error({
+        message: 'Error refreshing Android notification channel sounds',
+        context: { error },
+      });
     }
   }
 

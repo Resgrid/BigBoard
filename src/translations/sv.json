@@ -725,6 +725,8 @@
     "links": "Länkar",
     "login_info": "Inloggningsuppgifter",
     "logout": "Logga ut",
+    "modern_notification_sounds": "Moderna aviseringsljud",
+    "modern_notification_sounds_description": "Använd de nya moderna varningsljuden för push-aviseringar. Stäng av för att använda de klassiska ljuden. (Endast Android)",
     "more": "Mer",
     "no_units_available": "Inga enheter tillgängliga",
     "none_selected": "Inget valt",

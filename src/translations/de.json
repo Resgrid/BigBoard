@@ -725,6 +725,8 @@
     "links": "Links",
     "login_info": "Anmeldedaten",
     "logout": "Abmelden",
+    "modern_notification_sounds": "Moderne Benachrichtigungstöne",
+    "modern_notification_sounds_description": "Neue moderne Hinweistöne für Push-Benachrichtigungen verwenden. Deaktivieren Sie diese Option, um die klassischen Töne zu verwenden. (Nur Android)",
     "more": "Mehr",
     "no_units_available": "Keine Einheiten verfügbar",
     "none_selected": "Nichts ausgewählt",

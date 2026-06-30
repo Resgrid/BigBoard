@@ -725,6 +725,8 @@
     "links": "Linki",
     "login_info": "Dane logowania",
     "logout": "Wyloguj się",
+    "modern_notification_sounds": "Nowoczesne dźwięki powiadomień",
+    "modern_notification_sounds_description": "Używaj nowych, nowoczesnych dźwięków alertów dla powiadomień push. Wyłącz, aby używać klasycznych dźwięków. (Tylko Android)",
     "more": "Więcej",
     "no_units_available": "Brak dostępnych jednostek",
     "none_selected": "Nie wybrano",

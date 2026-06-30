@@ -725,6 +725,8 @@
     "links": "Collegamenti",
     "login_info": "Informazioni di accesso",
     "logout": "Esci",
+    "modern_notification_sounds": "Suoni di notifica moderni",
+    "modern_notification_sounds_description": "Usa i nuovi toni di avviso moderni per le notifiche push. Disattiva questa opzione per usare i suoni classici. (Solo Android)",
     "more": "Altro",
     "no_units_available": "Nessuna unità disponibile",
     "none_selected": "Nessuna selezione",

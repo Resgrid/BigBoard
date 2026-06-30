@@ -725,6 +725,8 @@
     "links": "Посилання",
     "login_info": "Дані для входу",
     "logout": "Вийти",
+    "modern_notification_sounds": "Сучасні звуки сповіщень",
+    "modern_notification_sounds_description": "Використовувати нові сучасні звуки для push-сповіщень. Вимкніть, щоб використовувати класичні звуки. (Лише Android)",
     "more": "Більше",
     "no_units_available": "Підрозділи недоступні",
     "none_selected": "Нічого не вибрано",

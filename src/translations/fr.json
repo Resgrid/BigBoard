@@ -725,6 +725,8 @@
     "links": "Liens",
     "login_info": "Informations de connexion",
     "logout": "Déconnexion",
+    "modern_notification_sounds": "Sons de notification modernes",
+    "modern_notification_sounds_description": "Utiliser les nouvelles tonalités d'alerte modernes pour les notifications push. Désactivez cette option pour utiliser les sons classiques. (Android uniquement)",
     "more": "Plus",
     "no_units_available": "Aucune unité disponible",
     "none_selected": "Aucun sélectionné",
