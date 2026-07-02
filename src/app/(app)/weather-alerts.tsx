@@ -84,7 +84,8 @@ export default function WeatherAlertsScreen() {
       case 'severity':
       default:
         result.sort((a, b) => {
-          if (b.Severity !== a.Severity) return b.Severity - a.Severity;
+          // Core enum: Extreme=0 is most severe, so ascending puts the worst alerts first.
+          if (a.Severity !== b.Severity) return a.Severity - b.Severity;
           return new Date(b.EffectiveUtc).getTime() - new Date(a.EffectiveUtc).getTime();
         });
         break;
@@ -98,7 +99,7 @@ export default function WeatherAlertsScreen() {
   }, [fetchActiveAlerts]);
 
   const renderAlertCard = ({ item }: { item: WeatherAlertResultData }) => {
-    const severityColor = SEVERITY_COLORS[item.Severity as WeatherAlertSeverity] || SEVERITY_COLORS[0];
+    const severityColor = SEVERITY_COLORS[item.Severity as WeatherAlertSeverity] || SEVERITY_COLORS[WeatherAlertSeverity.Unknown];
     const severityLabel = SEVERITY_LABELS[item.Severity as WeatherAlertSeverity] || translate('common.unknown');
 
     return (

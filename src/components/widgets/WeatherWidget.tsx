@@ -14,6 +14,7 @@ import { VStack } from '@/components/ui/vstack';
 import { useCoreStore } from '@/stores/app/core-store';
 import { useLocationStore } from '@/stores/app/location-store';
 import { useMapStore } from '@/stores/mapping/map-store';
+import { useWidgetSettingsStore } from '@/stores/widget-settings/store';
 
 import { WidgetContainer } from './WidgetContainer';
 
@@ -33,6 +34,7 @@ export const WeatherWidget: React.FC<WeatherWidgetProps> = ({ onRemove, isEditMo
   const { config } = useCoreStore();
   const { latitude, longitude, setLocation } = useLocationStore();
   const { mapData, fetchMapData } = useMapStore();
+  const units = useWidgetSettingsStore((state) => state.weather.units);
   const [weatherData, setWeatherData] = useState<WeatherOutlook | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -146,7 +148,7 @@ export const WeatherWidget: React.FC<WeatherWidgetProps> = ({ onRemove, isEditMo
       try {
         setIsLoading(true);
         console.log('WeatherWidget - Fetching weather data...');
-        const data = await getWeatherOutlook(apiKey, lat!, lon!);
+        const data = await getWeatherOutlook(apiKey, lat!, lon!, units);
         if (data) {
           console.log('WeatherWidget - Data loaded successfully:', data.location);
           setWeatherData(data);
@@ -164,7 +166,7 @@ export const WeatherWidget: React.FC<WeatherWidgetProps> = ({ onRemove, isEditMo
     };
 
     fetchWeather();
-  }, [config?.OpenWeatherApiKey, latitude, longitude, setLocation, metadata, mapData, fetchMapData]);
+  }, [config?.OpenWeatherApiKey, latitude, longitude, setLocation, metadata, mapData, fetchMapData, units]);
 
   const getWeatherIcon = (condition: string, size: number = 48) => {
     const iconColor = isDark ? '#FCD34D' : '#F59E0B';
@@ -217,6 +219,11 @@ export const WeatherWidget: React.FC<WeatherWidgetProps> = ({ onRemove, isEditMo
   // Determine if we should use horizontal layout (need at least 500px for comfortable horizontal display)
   const useHorizontalLayout = containerWidth && containerWidth >= 500;
 
+  // Unit labels follow the OpenWeatherMap units the data was fetched with:
+  // metric -> Celsius / m/s, imperial -> Fahrenheit / mph, standard -> Kelvin / m/s.
+  const tempUnitLabel = units === 'metric' ? '°C' : units === 'standard' ? 'K' : '°F';
+  const windUnitLabel = units === 'imperial' ? 'mph' : 'm/s';
+
   return (
     <WidgetContainer title={`Weather - ${weatherData.location}`} onRemove={onRemove} isEditMode={isEditMode} testID="weather-widget" width={containerWidth} height={containerHeight}>
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
@@ -224,7 +231,10 @@ export const WeatherWidget: React.FC<WeatherWidgetProps> = ({ onRemove, isEditMo
           {/* Current Weather */}
           <VStack space="xs" className="items-center">
             {getWeatherIcon(weatherData.current.condition, 64)}
-            <Text className={`text-5xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>{weatherData.current.temperature}°F</Text>
+            <Text className={`text-5xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+              {weatherData.current.temperature}
+              {tempUnitLabel}
+            </Text>
             <Text className={`text-lg ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{weatherData.current.condition}</Text>
             <HStack space="md" className="mt-1">
               <VStack space="xs" className="items-center">
@@ -233,7 +243,9 @@ export const WeatherWidget: React.FC<WeatherWidgetProps> = ({ onRemove, isEditMo
               </VStack>
               <VStack space="xs" className="items-center">
                 <Text className={`text-xs ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>Wind</Text>
-                <Text className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>{weatherData.current.windSpeed} mph</Text>
+                <Text className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                  {weatherData.current.windSpeed} {windUnitLabel}
+                </Text>
               </VStack>
             </HStack>
           </VStack>

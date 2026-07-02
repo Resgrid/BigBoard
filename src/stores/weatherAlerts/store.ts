@@ -25,9 +25,9 @@ interface WeatherAlertsState {
 
 const sortAlerts = (alerts: WeatherAlertResultData[]): WeatherAlertResultData[] => {
   return [...alerts].sort((a, b) => {
-    // Sort by severity descending (Extreme=4 first)
-    if (b.Severity !== a.Severity) {
-      return b.Severity - a.Severity;
+    // Sort by severity ascending (Core enum: Extreme=0 is most severe, so it sorts first)
+    if (a.Severity !== b.Severity) {
+      return a.Severity - b.Severity;
     }
     // Then by EffectiveUtc descending (newest first)
     return new Date(b.EffectiveUtc).getTime() - new Date(a.EffectiveUtc).getTime();

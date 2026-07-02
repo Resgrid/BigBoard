@@ -13,7 +13,7 @@ export class WeatherAlertResultData {
   public ExpiresUtc: string = '';
   public EffectiveUtc: string = '';
   public Status: number = 0;
-  public Category: number = 0;
+  public AlertCategory: number = 0;
   public Urgency: number = 0;
   public Certainty: number = 0;
   public Sender: string = '';

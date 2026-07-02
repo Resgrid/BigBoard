@@ -11,7 +11,7 @@ import { HStack } from '@/components/ui/hstack';
 import { Spinner } from '@/components/ui/spinner';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
-import { SEVERITY_COLORS, SEVERITY_LABELS, WeatherAlertCertainty, type WeatherAlertSeverity, WeatherAlertUrgency } from '@/models/v4/weatherAlerts/weatherAlertEnums';
+import { SEVERITY_COLORS, SEVERITY_LABELS, WeatherAlertCertainty, WeatherAlertSeverity, WeatherAlertUrgency } from '@/models/v4/weatherAlerts/weatherAlertEnums';
 import { useWeatherAlertsStore } from '@/stores/weatherAlerts/store';
 
 const URGENCY_KEYS: Record<number, string> = {
@@ -72,7 +72,7 @@ export default function WeatherAlertDetailScreen() {
   }
 
   const alert = selectedAlert;
-  const severityColor = SEVERITY_COLORS[alert.Severity as WeatherAlertSeverity] || SEVERITY_COLORS[0];
+  const severityColor = SEVERITY_COLORS[alert.Severity as WeatherAlertSeverity] || SEVERITY_COLORS[WeatherAlertSeverity.Unknown];
   const severityLabel = SEVERITY_LABELS[alert.Severity as WeatherAlertSeverity] || t('weatherAlerts.severity.unknown');
 
   return (

@@ -59,22 +59,15 @@ const isSeverityVisible = (severity: number, ws: WeatherAlertsWidgetSettings): b
 
 const isCategoryVisible = (category: number, ws: WeatherAlertsWidgetSettings): boolean => {
   switch (category) {
-    case WeatherAlertCategory.Geo:
-      return ws.showCategoryGeo;
     case WeatherAlertCategory.Met:
       return ws.showCategoryMet;
-    case WeatherAlertCategory.Safety:
-      return ws.showCategorySafety;
     case WeatherAlertCategory.Fire:
       return ws.showCategoryFire;
     case WeatherAlertCategory.Health:
       return ws.showCategoryHealth;
     case WeatherAlertCategory.Env:
       return ws.showCategoryEnv;
-    case WeatherAlertCategory.Transport:
-      return ws.showCategoryTransport;
-    case WeatherAlertCategory.Infra:
-      return ws.showCategoryInfra;
+    case WeatherAlertCategory.Other:
     default:
       return ws.showCategoryOther;
   }
@@ -83,13 +76,14 @@ const isCategoryVisible = (category: number, ws: WeatherAlertsWidgetSettings): b
 interface AlertCardProps {
   alert: WeatherAlertResultData;
   isDark: boolean;
+  showHeadline: boolean;
   showArea: boolean;
   showExpiry: boolean;
   fontSize: number;
 }
 
-const AlertCard: React.FC<AlertCardProps> = ({ alert, isDark, showArea, showExpiry, fontSize }) => {
-  const severityColor = SEVERITY_COLORS[alert.Severity as WeatherAlertSeverity] || SEVERITY_COLORS[0];
+const AlertCard: React.FC<AlertCardProps> = ({ alert, isDark, showHeadline, showArea, showExpiry, fontSize }) => {
+  const severityColor = SEVERITY_COLORS[alert.Severity as WeatherAlertSeverity] || SEVERITY_COLORS[WeatherAlertSeverity.Unknown];
   const severityLabel = SEVERITY_LABELS[alert.Severity as WeatherAlertSeverity] || 'Unknown';
 
   return (
@@ -104,6 +98,11 @@ const AlertCard: React.FC<AlertCardProps> = ({ alert, isDark, showArea, showExpi
             <Text className="text-xs font-medium text-white">{severityLabel}</Text>
           </Box>
         </HStack>
+        {showHeadline && alert.Headline ? (
+          <Text className={`${isDark ? 'text-gray-300' : 'text-gray-700'}`} numberOfLines={2} style={{ fontSize: fontSize - 1 }}>
+            {alert.Headline}
+          </Text>
+        ) : null}
         {showArea && alert.AreaDescription ? (
           <Text className={`${isDark ? 'text-gray-400' : 'text-gray-600'}`} numberOfLines={1} style={{ fontSize: fontSize - 2 }}>
             {alert.AreaDescription}
@@ -134,7 +133,7 @@ export const WeatherAlertsWidget: React.FC<WeatherAlertsWidgetProps> = ({ onRemo
 
   // Filter alerts by severity and category settings
   const filteredAlerts = useMemo(() => {
-    return alerts.filter((alert) => isSeverityVisible(alert.Severity, widgetSettings) && isCategoryVisible(alert.Category, widgetSettings));
+    return alerts.filter((alert) => isSeverityVisible(alert.Severity, widgetSettings) && isCategoryVisible(alert.AlertCategory, widgetSettings));
   }, [alerts, widgetSettings]);
 
   const handlePress = () => {
@@ -188,7 +187,15 @@ export const WeatherAlertsWidget: React.FC<WeatherAlertsWidgetProps> = ({ onRemo
       <Pressable onPress={handlePress} style={{ flex: 1 }}>
         <ScrollView showsVerticalScrollIndicator={false}>
           {displayAlerts.map((alert) => (
-            <AlertCard key={alert.WeatherAlertId} alert={alert} isDark={isDark} showArea={widgetSettings.showArea} showExpiry={widgetSettings.showExpiry} fontSize={widgetSettings.fontSize} />
+            <AlertCard
+              key={alert.WeatherAlertId}
+              alert={alert}
+              isDark={isDark}
+              showHeadline={widgetSettings.showHeadline}
+              showArea={widgetSettings.showArea}
+              showExpiry={widgetSettings.showExpiry}
+              fontSize={widgetSettings.fontSize}
+            />
           ))}
           {remaining > 0 && (
             <HStack className="items-center justify-center py-1">
