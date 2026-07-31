@@ -800,6 +800,7 @@
     "call_destination_enabled": "Kann auf Einsätze reagieren",
     "calls_tab": "Einsätze",
     "failed_to_save_status": "Status konnte nicht gespeichert werden. Bitte versuchen Sie es erneut.",
+    "fetch_destination_error": "Ziele konnten nicht geladen werden. Bitte versuchen Sie es erneut.",
     "general_status": "Allgemeiner Status ohne bestimmtes Ziel",
     "loading_stations": "Wachen werden geladen...",
     "no_destination": "Kein Ziel",
@@ -837,15 +838,11 @@
       "cbrne": "CBRNE",
       "env": "Umwelt",
       "fire": "Feuer",
-      "geo": "Geophysikalisch",
       "health": "Gesundheit",
-      "infra": "Infrastruktur",
       "met": "Meteorologisch",
       "other": "Sonstiges",
       "rescue": "Rettung",
-      "safety": "Sicherheit",
-      "security": "Sicherheit (Security)",
-      "transport": "Transport"
+      "security": "Sicherheit (Security)"
     },
     "certainty": {
       "likely": "Wahrscheinlich",

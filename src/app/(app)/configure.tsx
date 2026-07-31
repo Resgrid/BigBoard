@@ -862,18 +862,8 @@ export default function Configure() {
               <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>{t('configure.alert_categories')}</Text>
 
               <HStack className="items-center justify-between">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>{t('weatherAlerts.category.geo')}</Text>
-                <Switch value={weatherAlertsSettings.showCategoryGeo} onValueChange={(value) => updateWeatherAlertsSettings({ showCategoryGeo: value })} />
-              </HStack>
-
-              <HStack className="items-center justify-between">
                 <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>{t('weatherAlerts.category.met')}</Text>
                 <Switch value={weatherAlertsSettings.showCategoryMet} onValueChange={(value) => updateWeatherAlertsSettings({ showCategoryMet: value })} />
-              </HStack>
-
-              <HStack className="items-center justify-between">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>{t('weatherAlerts.category.safety')}</Text>
-                <Switch value={weatherAlertsSettings.showCategorySafety} onValueChange={(value) => updateWeatherAlertsSettings({ showCategorySafety: value })} />
               </HStack>
 
               <HStack className="items-center justify-between">
@@ -889,16 +879,6 @@ export default function Configure() {
               <HStack className="items-center justify-between">
                 <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>{t('weatherAlerts.category.env')}</Text>
                 <Switch value={weatherAlertsSettings.showCategoryEnv} onValueChange={(value) => updateWeatherAlertsSettings({ showCategoryEnv: value })} />
-              </HStack>
-
-              <HStack className="items-center justify-between">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>{t('weatherAlerts.category.transport')}</Text>
-                <Switch value={weatherAlertsSettings.showCategoryTransport} onValueChange={(value) => updateWeatherAlertsSettings({ showCategoryTransport: value })} />
-              </HStack>
-
-              <HStack className="items-center justify-between">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>{t('weatherAlerts.category.infra')}</Text>
-                <Switch value={weatherAlertsSettings.showCategoryInfra} onValueChange={(value) => updateWeatherAlertsSettings({ showCategoryInfra: value })} />
               </HStack>
 
               <HStack className="items-center justify-between">

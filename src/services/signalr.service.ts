@@ -20,6 +20,7 @@ export interface SignalRConnectionStateCallbacks {
   onClose?: () => void;
   onReconnecting?: () => void;
   onReconnected?: () => void;
+  onError?: (error: Error) => void;
 }
 
 export interface SignalRMessage {
@@ -193,8 +194,11 @@ class SignalRService {
       const connection = connectionBuilder.build();
 
       // Set up event handlers
-      connection.onclose(() => {
+      connection.onclose((error) => {
         this.handleConnectionClose(config.name);
+        if (error) {
+          this.notifyConnectionStateCallbacks(config.name, 'onError', error);
+        }
         this.notifyConnectionStateCallbacks(config.name, 'onClose');
       });
 
@@ -203,6 +207,9 @@ class SignalRService {
           message: `Reconnecting to hub: ${config.name}`,
           context: { error },
         });
+        if (error) {
+          this.notifyConnectionStateCallbacks(config.name, 'onError', error);
+        }
         this.notifyConnectionStateCallbacks(config.name, 'onReconnecting');
       });
 
@@ -323,8 +330,11 @@ class SignalRService {
         .build();
 
       // Set up event handlers
-      connection.onclose(() => {
+      connection.onclose((error) => {
         this.handleConnectionClose(config.name);
+        if (error) {
+          this.notifyConnectionStateCallbacks(config.name, 'onError', error);
+        }
         this.notifyConnectionStateCallbacks(config.name, 'onClose');
       });
 
@@ -333,6 +343,9 @@ class SignalRService {
           message: `Reconnecting to hub: ${config.name}`,
           context: { error },
         });
+        if (error) {
+          this.notifyConnectionStateCallbacks(config.name, 'onError', error);
+        }
         this.notifyConnectionStateCallbacks(config.name, 'onReconnecting');
       });
 
@@ -614,21 +627,38 @@ class SignalRService {
   // Connection state callback methods
   private connectionStateCallbacks: Map<string, Set<SignalRConnectionStateCallbacks>> = new Map();
 
-  public registerConnectionStateCallbacks(hubName: string, callbacks: SignalRConnectionStateCallbacks): void {
+  public registerConnectionStateCallbacks(hubName: string, callbacks: SignalRConnectionStateCallbacks): SignalRConnectionStateCallbacks {
     if (!this.connectionStateCallbacks.has(hubName)) {
       this.connectionStateCallbacks.set(hubName, new Set());
     }
     this.connectionStateCallbacks.get(hubName)?.add(callbacks);
+    return callbacks;
   }
 
-  private notifyConnectionStateCallbacks(hubName: string, event: keyof SignalRConnectionStateCallbacks): void {
+  public unregisterConnectionStateCallbacks(hubName: string, handle: SignalRConnectionStateCallbacks): void {
+    const callbacks = this.connectionStateCallbacks.get(hubName);
+    if (callbacks) {
+      callbacks.delete(handle);
+      if (callbacks.size === 0) {
+        this.connectionStateCallbacks.delete(hubName);
+      }
+    }
+  }
+
+  private notifyConnectionStateCallbacks(hubName: string, event: keyof SignalRConnectionStateCallbacks, error?: Error): void {
     this.connectionStateCallbacks.get(hubName)?.forEach((callbacks) => {
       try {
-        callbacks[event]?.();
-      } catch (error) {
+        if (event === 'onError') {
+          if (error) {
+            callbacks.onError?.(error);
+          }
+        } else {
+          callbacks[event]?.();
+        }
+      } catch (callbackError) {
         logger.error({
           message: `Error in connection state callback (${event}) for hub: ${hubName}`,
-          context: { error },
+          context: { error: callbackError },
         });
       }
     });

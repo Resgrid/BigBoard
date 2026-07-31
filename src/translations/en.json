@@ -800,6 +800,7 @@
     "call_destination_enabled": "Can respond to calls",
     "calls_tab": "Calls",
     "failed_to_save_status": "Failed to save status. Please try again.",
+    "fetch_destination_error": "Failed to load destinations. Please try again.",
     "general_status": "General status without specific destination",
     "loading_stations": "Loading stations...",
     "no_destination": "No Destination",
@@ -837,15 +838,11 @@
       "cbrne": "CBRNE",
       "env": "Environmental",
       "fire": "Fire",
-      "geo": "Geophysical",
       "health": "Health",
-      "infra": "Infrastructure",
       "met": "Meteorological",
       "other": "Other",
       "rescue": "Rescue",
-      "safety": "Safety",
-      "security": "Security",
-      "transport": "Transport"
+      "security": "Security"
     },
     "certainty": {
       "likely": "Likely",

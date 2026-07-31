@@ -33,9 +33,13 @@ export const loginRequest = async (credentials: LoginCredentials): Promise<Login
       scope: Env.IS_MOBILE_APP ? 'openid profile offline_access mobile' : 'openid profile offline_access',
     });
 
+    // GDPR Art. 5(1)(c) data minimization: never log raw username PII.
+    const username_hash = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, credentials.username);
+    const gdpr = { purpose: 'auth', lawful_basis: 'contract' } as const;
+
     logger.info({
       message: 'API: Sending login request',
-      context: { username: credentials.username, baseURL: authApi.defaults.baseURL },
+      context: { username_hash, baseURL: authApi.defaults.baseURL, gdpr },
     });
 
     const response = await authApi.post<AuthResponse>('/connect/token', data);
@@ -48,7 +52,7 @@ export const loginRequest = async (credentials: LoginCredentials): Promise<Login
     if (response.status === 200) {
       logger.info({
         message: 'Login successful',
-        context: { username: credentials.username },
+        context: { username_hash, gdpr },
       });
 
       return {
@@ -59,7 +63,7 @@ export const loginRequest = async (credentials: LoginCredentials): Promise<Login
     } else {
       logger.error({
         message: 'Login failed',
-        context: { status: response.status, username: credentials.username },
+        context: { status: response.status, username_hash, gdpr },
       });
 
       return {
@@ -69,12 +73,14 @@ export const loginRequest = async (credentials: LoginCredentials): Promise<Login
       };
     }
   } catch (error) {
+    const username_hash = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, credentials.username);
     logger.error({
       message: 'Login API call failed with exception',
       context: {
         error: error instanceof Error ? error.message : String(error),
         status: axios.isAxiosError(error) ? error.response?.status : undefined,
-        username: credentials.username,
+        username_hash,
+        gdpr: { purpose: 'auth', lawful_basis: 'contract' },
       },
     });
 

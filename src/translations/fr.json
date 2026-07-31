@@ -800,6 +800,7 @@
     "call_destination_enabled": "Peut répondre aux appels",
     "calls_tab": "Appels",
     "failed_to_save_status": "Échec de l'enregistrement du statut. Veuillez réessayer.",
+    "fetch_destination_error": "Échec du chargement des destinations. Veuillez réessayer.",
     "general_status": "Statut général sans destination spécifique",
     "loading_stations": "Chargement des casernes...",
     "no_destination": "Aucune destination",
@@ -837,15 +838,11 @@
       "cbrne": "NRBC",
       "env": "Environnemental",
       "fire": "Incendie",
-      "geo": "Géophysique",
       "health": "Santé",
-      "infra": "Infrastructure",
       "met": "Météorologique",
       "other": "Autre",
       "rescue": "Secours",
-      "safety": "Sécurité",
-      "security": "Sûreté",
-      "transport": "Transport"
+      "security": "Sûreté"
     },
     "certainty": {
       "likely": "Probable",

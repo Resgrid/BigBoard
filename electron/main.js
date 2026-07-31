@@ -146,7 +146,9 @@ async function createWindow() {
   // Open external links in default browser (http/https only)
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     if (url.startsWith('https://') || url.startsWith('http://')) {
-      shell.openExternal(url);
+      shell.openExternal(url).catch((error) => {
+        console.error(`Failed to open external URL "${url}":`, error);
+      });
     }
     return { action: 'deny' };
   });

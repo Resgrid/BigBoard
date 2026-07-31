@@ -3,13 +3,14 @@ import { create } from 'zustand';
 import { useAuthStore } from '@/lib';
 import { Env } from '@/lib/env';
 import { logger } from '@/lib/logging';
-import { signalRService } from '@/services/signalr.service';
+import { type SignalRConnectionStateCallbacks, signalRService } from '@/services/signalr.service';
 
 import { useCoreStore } from '../app/core-store';
 import { securityStore, useSecurityStore } from '../security/store';
 import { useWeatherAlertsStore } from '../weatherAlerts/store';
 
 let updateHubListenersRegistered = false;
+let updateHubStateCallbackHandle: SignalRConnectionStateCallbacks | null = null;
 
 interface SignalRState {
   isUpdateHubConnected: boolean;
@@ -225,7 +226,7 @@ export const useSignalRStore = create<SignalRState>((set, get) => ({
 
         // Set up connection state monitoring via the service's public API
         // This ensures we properly track disconnections and reconnections
-        signalRService.registerConnectionStateCallbacks(Env.CHANNEL_HUB_NAME, {
+        updateHubStateCallbackHandle = signalRService.registerConnectionStateCallbacks(Env.CHANNEL_HUB_NAME, {
           onClose: () => {
             logger.info({
               message: 'Update SignalR hub connection closed',
@@ -244,6 +245,13 @@ export const useSignalRStore = create<SignalRState>((set, get) => ({
             });
             set({ isUpdateHubConnected: true, error: null });
           },
+          onError: (error) => {
+            logger.error({
+              message: 'Update SignalR hub connection error',
+              context: { error },
+            });
+            set({ error });
+          },
         });
       }
     } catch (error) {
@@ -257,6 +265,10 @@ export const useSignalRStore = create<SignalRState>((set, get) => ({
   },
   disconnectUpdateHub: async () => {
     try {
+      if (updateHubStateCallbackHandle) {
+        signalRService.unregisterConnectionStateCallbacks(Env.CHANNEL_HUB_NAME, updateHubStateCallbackHandle);
+        updateHubStateCallbackHandle = null;
+      }
       await signalRService.disconnectFromHub(Env.CHANNEL_HUB_NAME);
       set({ isUpdateHubConnected: false, lastUpdateMessage: null });
     } catch (error) {

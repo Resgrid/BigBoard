@@ -20,7 +20,18 @@ const MotionView = Motion.View as React.ComponentType<IMotionViewProps>;
 
 type IAnimatedPressableProps = React.ComponentProps<typeof Pressable> & MotionComponentProps<typeof Pressable, ViewStyle, unknown, unknown, unknown>;
 
-const AnimatedPressable = createMotionAnimatedComponent(Pressable) as React.ComponentType<IAnimatedPressableProps>;
+const AnimatedPressableBase = createMotionAnimatedComponent(Pressable);
+
+// Runtime guard: createMotionAnimatedComponent must produce a valid React
+// component (function or forwardRef/memo object) before we narrow its props.
+if (__DEV__) {
+  const isComponent = typeof AnimatedPressableBase === 'function' || (typeof AnimatedPressableBase === 'object' && AnimatedPressableBase !== null);
+  if (!isComponent) {
+    throw new Error('createMotionAnimatedComponent(Pressable) did not return a valid React component');
+  }
+}
+
+const AnimatedPressable = AnimatedPressableBase as unknown as React.ComponentType<IAnimatedPressableProps>;
 
 const StyledUIIcon = styled(UIIcon, { className: 'style' });
 

@@ -27,7 +27,9 @@ export interface WeatherOutlook {
  * Units understood by the OpenWeatherMap API.
  * - `standard` = Kelvin, `metric` = Celsius / m/s, `imperial` = Fahrenheit / mph.
  */
-export type WeatherUnits = 'standard' | 'metric' | 'imperial';
+export const WEATHER_UNITS = ['standard', 'metric', 'imperial'] as const;
+
+export type WeatherUnits = (typeof WEATHER_UNITS)[number];
 
 export const getWeather = async (apiKey: string, lat: number, lon: number, units: WeatherUnits = 'imperial'): Promise<WeatherData | null> => {
   if (!apiKey) {

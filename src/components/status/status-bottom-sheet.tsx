@@ -4,6 +4,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, TouchableOpacity } from 'react-native';
 
+import { logger } from '@/lib/logging';
 import { invertColor } from '@/lib/utils';
 import { type CustomStatusResultData } from '@/models/v4/customStatuses/customStatusResultData';
 import { SaveUnitStatusInput, SaveUnitStatusRoleInput } from '@/models/v4/unitStatus/saveUnitStatusInput';
@@ -58,6 +59,19 @@ export const StatusBottomSheet = () => {
   const { unitRoleAssignments } = useRolesStore();
   const { saveUnitStatus } = useStatusesStore();
   const { latitude, longitude, heading, accuracy, speed, altitude, timestamp } = useLocationStore();
+
+  const handleRetryFetchDestination = React.useCallback(async () => {
+    if (!activeUnit) return;
+    try {
+      await fetchDestinationData(activeUnit.UnitId);
+    } catch (err) {
+      logger.error({
+        message: 'Failed to retry fetching destination data',
+        context: { error: err, unitId: activeUnit.UnitId },
+      });
+      showToast('error', t('status.fetch_destination_error'));
+    }
+  }, [activeUnit, fetchDestinationData, showToast, t]);
 
   // Helper function to safely get status properties
   const getStatusProperty = React.useCallback(
@@ -531,7 +545,7 @@ export const StatusBottomSheet = () => {
               {error && (
                 <VStack space="md" className="mb-4 w-full items-center justify-center">
                   <Text className="text-center text-red-500">{error}</Text>
-                  <Button variant="outline" size="sm" onPress={() => activeUnit && fetchDestinationData(activeUnit.UnitId)} testID="destination-retry-button">
+                  <Button variant="outline" size="sm" onPress={handleRetryFetchDestination} testID="destination-retry-button">
                     <ButtonText>{t('common.retry')}</ButtonText>
                   </Button>
                 </VStack>

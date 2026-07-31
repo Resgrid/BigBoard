@@ -4,6 +4,10 @@ import { Animated, Easing, Platform, View } from 'react-native';
 
 import { skeletonStyle, skeletonTextStyle } from './styles';
 
+// Module-level: Easing.bezier returns a new function each call, so keeping it
+// here gives a referentially stable easing for the pulse effect below.
+const SKELETON_EASING = Easing.bezier(0.4, 0, 0.6, 1);
+
 type ISkeletonProps = React.ComponentProps<typeof View> &
   VariantProps<typeof skeletonStyle> & {
     isLoaded?: boolean;
@@ -21,7 +25,6 @@ const Skeleton = forwardRef<React.ElementRef<typeof View>, ISkeletonProps>(({ cl
   const isWeb = Platform.OS === 'web';
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const animRef = useRef<Animated.CompositeAnimation | null>(null);
-  const customTimingFunction = Easing.bezier(0.4, 0, 0.6, 1);
   const fadeDuration = 0.6;
   const animationDuration = (fadeDuration * 10000) / speed;
 
@@ -34,19 +37,19 @@ const Skeleton = forwardRef<React.ElementRef<typeof View>, ISkeletonProps>(({ cl
         Animated.timing(pulseAnim, {
           toValue: 1,
           duration: animationDuration / 2,
-          easing: customTimingFunction,
+          easing: SKELETON_EASING,
           useNativeDriver: true,
         }),
         Animated.timing(pulseAnim, {
           toValue: 0.75,
           duration: animationDuration / 2,
-          easing: customTimingFunction,
+          easing: SKELETON_EASING,
           useNativeDriver: true,
         }),
         Animated.timing(pulseAnim, {
           toValue: 1,
           duration: animationDuration / 2,
-          easing: customTimingFunction,
+          easing: SKELETON_EASING,
           useNativeDriver: true,
         }),
       ]);
@@ -61,7 +64,7 @@ const Skeleton = forwardRef<React.ElementRef<typeof View>, ISkeletonProps>(({ cl
       animRef.current?.stop();
       animRef.current = null;
     };
-  }, [isLoaded, isWeb, animationDuration, pulseAnim, customTimingFunction]);
+  }, [isLoaded, isWeb, animationDuration, pulseAnim]);
 
   if (!isLoaded) {
     // On web, use a CSS keyframe animation to avoid JS-driven Animated.loop

@@ -361,7 +361,7 @@ export default function TabLayout() {
         <View className="flex-1 items-center justify-center bg-white px-6 dark:bg-gray-900">
           <Text className="text-lg font-semibold text-gray-900 dark:text-white">{t('common.error')}</Text>
           <Text className="mt-2 text-center text-gray-600 dark:text-gray-400">{initError}</Text>
-          <Button onPress={() => initializeApp()} className="mt-6 bg-primary-600" testID="init-retry-button">
+          <Button onPress={initializeApp} className="mt-6 bg-primary-600" testID="init-retry-button">
             <ButtonText>{t('common.retry')}</ButtonText>
           </Button>
         </View>
@@ -508,6 +508,18 @@ const DashboardControls = ({ t, router }: DashboardControlsProps) => {
   const maxY = widgets.length > 0 ? Math.max(...widgets.map((w) => w.y + (w.h || 1))) : 0;
   const totalCells = maxY * numColumns;
 
+  const handleToggleEditMode = useCallback(() => {
+    setEditMode(!isEditMode);
+  }, [setEditMode, isEditMode]);
+
+  const handleConfigurePress = useCallback(() => {
+    router.push('/(app)/configure');
+  }, [router]);
+
+  const handleAddPress = useCallback(() => {
+    setShowAddMenu(true);
+  }, [setShowAddMenu]);
+
   return (
     <View className="flex-row items-center gap-2">
       {isEditMode && (
@@ -517,13 +529,13 @@ const DashboardControls = ({ t, router }: DashboardControlsProps) => {
           </Text>
         </View>
       )}
-      <Pressable onPress={() => setEditMode(!isEditMode)} className={`rounded px-3 py-1.5 ${isEditMode ? 'bg-blue-500' : 'bg-primary-700'}`} testID="dashboard-edit-button">
+      <Pressable onPress={handleToggleEditMode} className={`rounded px-3 py-1.5 ${isEditMode ? 'bg-blue-500' : 'bg-primary-700'}`} testID="dashboard-edit-button">
         <Text className="text-sm font-medium text-white">{isEditMode ? 'Done' : 'Edit'}</Text>
       </Pressable>
-      <Pressable onPress={() => router.push('/(app)/configure')} className="rounded bg-primary-700 p-1.5" testID="dashboard-configure-button" accessibilityLabel={t('tabs.settings')} accessibilityRole="button">
+      <Pressable onPress={handleConfigurePress} className="rounded bg-primary-700 p-1.5" testID="dashboard-configure-button" accessibilityLabel={t('tabs.settings')} accessibilityRole="button">
         <Settings size={20} color="white" />
       </Pressable>
-      <Pressable onPress={() => setShowAddMenu(true)} className="rounded bg-primary-700 p-1.5" testID="dashboard-add-button" accessibilityLabel={t('common.add')} accessibilityRole="button">
+      <Pressable onPress={handleAddPress} className="rounded bg-primary-700 p-1.5" testID="dashboard-add-button" accessibilityLabel={t('common.add')} accessibilityRole="button">
         <Plus size={20} color="white" />
       </Pressable>
     </View>
@@ -555,11 +567,15 @@ const CreateNotificationButton = ({
   userId: string | null;
   departmentCode: string | undefined;
 }) => {
+  const handleNotificationsPress = useCallback(() => {
+    setIsNotificationsOpen(true);
+  }, [setIsNotificationsOpen]);
+
   if (!userId || !config || !config.NovuApplicationId || !config.NovuBackendApiUrl || !config.NovuSocketUrl || !departmentCode) {
     return null;
   }
 
-  return <NotificationButton onPress={() => setIsNotificationsOpen(true)} />;
+  return <NotificationButton onPress={handleNotificationsPress} />;
 };
 
 const styles = StyleSheet.create({

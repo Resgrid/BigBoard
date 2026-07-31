@@ -800,6 +800,7 @@
     "call_destination_enabled": "Kan svara på insatser",
     "calls_tab": "Insatser",
     "failed_to_save_status": "Kunde inte spara status. Vänligen försök igen.",
+    "fetch_destination_error": "Kunde inte ladda destinationer. Vänligen försök igen.",
     "general_status": "Allmän status utan specifik destination",
     "loading_stations": "Laddar stationer...",
     "no_destination": "Ingen destination",
@@ -837,15 +838,11 @@
       "cbrne": "CBRNE",
       "env": "Miljö",
       "fire": "Brand",
-      "geo": "Geofysisk",
       "health": "Hälsa",
-      "infra": "Infrastruktur",
       "met": "Meteorologisk",
       "other": "Övrigt",
       "rescue": "Räddning",
-      "safety": "Säkerhet",
-      "security": "Trygghet",
-      "transport": "Transport"
+      "security": "Trygghet"
     },
     "certainty": {
       "likely": "Trolig",

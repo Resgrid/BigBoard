@@ -800,6 +800,7 @@
     "call_destination_enabled": "Puede responder a llamadas",
     "calls_tab": "Llamadas",
     "failed_to_save_status": "Error al guardar el estado. Por favor, inténtelo de nuevo.",
+    "fetch_destination_error": "Error al cargar los destinos. Por favor, inténtelo de nuevo.",
     "general_status": "Estado general sin destino específico",
     "loading_stations": "Cargando estaciones...",
     "no_destination": "Sin Destino",
@@ -837,15 +838,11 @@
       "cbrne": "NBQR",
       "env": "Ambiental",
       "fire": "Incendio",
-      "geo": "Geofísico",
       "health": "Salud",
-      "infra": "Infraestructura",
       "met": "Meteorológico",
       "other": "Otro",
       "rescue": "Rescate",
-      "safety": "Seguridad",
-      "security": "Seguridad pública",
-      "transport": "Transporte"
+      "security": "Seguridad pública"
     },
     "certainty": {
       "likely": "Probable",
