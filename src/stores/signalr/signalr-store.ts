@@ -9,6 +9,8 @@ import { useCoreStore } from '../app/core-store';
 import { securityStore, useSecurityStore } from '../security/store';
 import { useWeatherAlertsStore } from '../weatherAlerts/store';
 
+let updateHubListenersRegistered = false;
+
 interface SignalRState {
   isUpdateHubConnected: boolean;
   lastUpdateMessage: unknown;
@@ -124,124 +126,124 @@ export const useSignalRStore = create<SignalRState>((set, get) => ({
         ],
       });
 
-      await signalRService.invoke(Env.CHANNEL_HUB_NAME, 'connect', parseInt(securityStore.getState().rights?.DepartmentId ?? '0'));
-
-      signalRService.on('personnelStatusUpdated', (message) => {
-        logger.info({
-          message: 'personnelStatusUpdated',
-          context: { message },
+      const departmentId = securityStore.getState().rights?.DepartmentId;
+      if (!departmentId) {
+        logger.warn({
+          message: 'DepartmentId not available, skipping update hub connect invoke',
         });
-        set({ lastUpdateMessage: JSON.stringify(message), lastUpdateTimestamp: Date.now() });
-      });
+      } else {
+        await signalRService.invoke(Env.CHANNEL_HUB_NAME, 'connect', parseInt(departmentId, 10));
+      }
 
-      signalRService.on('personnelStaffingUpdated', (message) => {
-        logger.info({
-          message: 'personnelStaffingUpdated',
-          context: { message },
-        });
-        set({ lastUpdateMessage: JSON.stringify(message), lastUpdateTimestamp: Date.now() });
-      });
+      if (!updateHubListenersRegistered) {
+        updateHubListenersRegistered = true;
 
-      signalRService.on('unitStatusUpdated', (message) => {
-        logger.info({
-          message: 'unitStatusUpdated',
-          context: { message },
-        });
-        set({ lastUpdateMessage: JSON.stringify(message), lastUpdateTimestamp: Date.now() });
-      });
-
-      signalRService.on('callsUpdated', (message) => {
-        const now = Date.now();
-
-        logger.info({
-          message: 'callsUpdated',
-          context: { message, now },
-        });
-        set({ lastUpdateMessage: JSON.stringify(message), lastUpdateTimestamp: now });
-      });
-
-      signalRService.on('callAdded', (message) => {
-        logger.info({
-          message: 'callAdded',
-          context: { message },
-        });
-        set({ lastUpdateMessage: JSON.stringify(message), lastUpdateTimestamp: Date.now() });
-      });
-
-      signalRService.on('callClosed', (message) => {
-        logger.info({
-          message: 'callClosed',
-          context: { message },
-        });
-        set({ lastUpdateMessage: JSON.stringify(message), lastUpdateTimestamp: Date.now() });
-      });
-
-      signalRService.on('weatherAlertReceived', (message) => {
-        if (typeof message !== 'string' || message.trim() === '') {
-          logger.warn({ message: 'weatherAlertReceived: invalid payload', context: { message } });
-          return;
-        }
-        const alertId = message.trim();
-        logger.info({ message: 'weatherAlertReceived', context: { alertId } });
-        useWeatherAlertsStore.getState().handleAlertReceived(alertId);
-        set({ lastUpdateMessage: JSON.stringify({ type: 'weatherAlertReceived', alertId }), lastUpdateTimestamp: Date.now() });
-      });
-
-      signalRService.on('weatherAlertUpdated', (message) => {
-        if (typeof message !== 'string' || message.trim() === '') {
-          logger.warn({ message: 'weatherAlertUpdated: invalid payload', context: { message } });
-          return;
-        }
-        const alertId = message.trim();
-        logger.info({ message: 'weatherAlertUpdated', context: { alertId } });
-        useWeatherAlertsStore.getState().handleAlertUpdated(alertId);
-        set({ lastUpdateMessage: JSON.stringify({ type: 'weatherAlertUpdated', alertId }), lastUpdateTimestamp: Date.now() });
-      });
-
-      signalRService.on('weatherAlertExpired', (message) => {
-        if (typeof message !== 'string' || message.trim() === '') {
-          logger.warn({ message: 'weatherAlertExpired: invalid payload', context: { message } });
-          return;
-        }
-        const alertId = message.trim();
-        logger.info({ message: 'weatherAlertExpired', context: { alertId } });
-        useWeatherAlertsStore.getState().handleAlertExpired(alertId);
-        set({ lastUpdateMessage: JSON.stringify({ type: 'weatherAlertExpired', alertId }), lastUpdateTimestamp: Date.now() });
-      });
-
-      signalRService.on('onConnected', () => {
-        logger.info({
-          message: 'Connected to update SignalR hub',
-        });
-        set({ isUpdateHubConnected: true, error: null });
-      });
-
-      // Set up connection state monitoring using the actual SignalR connection
-      // This ensures we properly track disconnections and reconnections
-      const hubConnection = (signalRService as any).connections?.get(Env.CHANNEL_HUB_NAME);
-      if (hubConnection) {
-        // Handle connection close
-        hubConnection.onclose(() => {
+        signalRService.on('personnelStatusUpdated', (message) => {
           logger.info({
-            message: 'Update SignalR hub connection closed',
+            message: 'personnelStatusUpdated',
           });
-          set({ isUpdateHubConnected: false });
+          set({ lastUpdateMessage: JSON.stringify(message), lastUpdateTimestamp: Date.now() });
         });
 
-        // Handle reconnecting state
-        hubConnection.onreconnecting(() => {
+        signalRService.on('personnelStaffingUpdated', (message) => {
           logger.info({
-            message: 'Update SignalR hub reconnecting',
+            message: 'personnelStaffingUpdated',
           });
-          set({ isUpdateHubConnected: false });
+          set({ lastUpdateMessage: JSON.stringify(message), lastUpdateTimestamp: Date.now() });
         });
 
-        // Handle reconnected state
-        hubConnection.onreconnected(() => {
+        signalRService.on('unitStatusUpdated', (message) => {
           logger.info({
-            message: 'Update SignalR hub reconnected',
+            message: 'unitStatusUpdated',
+          });
+          set({ lastUpdateMessage: JSON.stringify(message), lastUpdateTimestamp: Date.now() });
+        });
+
+        signalRService.on('callsUpdated', (message) => {
+          const now = Date.now();
+
+          logger.info({
+            message: 'callsUpdated',
+            context: { now },
+          });
+          set({ lastUpdateMessage: JSON.stringify(message), lastUpdateTimestamp: now });
+        });
+
+        signalRService.on('callAdded', (message) => {
+          logger.info({
+            message: 'callAdded',
+          });
+          set({ lastUpdateMessage: JSON.stringify(message), lastUpdateTimestamp: Date.now() });
+        });
+
+        signalRService.on('callClosed', (message) => {
+          logger.info({
+            message: 'callClosed',
+          });
+          set({ lastUpdateMessage: JSON.stringify(message), lastUpdateTimestamp: Date.now() });
+        });
+
+        signalRService.on('weatherAlertReceived', (message) => {
+          if (typeof message !== 'string' || message.trim() === '') {
+            logger.warn({ message: 'weatherAlertReceived: invalid payload', context: { message } });
+            return;
+          }
+          const alertId = message.trim();
+          logger.info({ message: 'weatherAlertReceived', context: { alertId } });
+          useWeatherAlertsStore.getState().handleAlertReceived(alertId);
+          set({ lastUpdateMessage: JSON.stringify({ type: 'weatherAlertReceived', alertId }), lastUpdateTimestamp: Date.now() });
+        });
+
+        signalRService.on('weatherAlertUpdated', (message) => {
+          if (typeof message !== 'string' || message.trim() === '') {
+            logger.warn({ message: 'weatherAlertUpdated: invalid payload', context: { message } });
+            return;
+          }
+          const alertId = message.trim();
+          logger.info({ message: 'weatherAlertUpdated', context: { alertId } });
+          useWeatherAlertsStore.getState().handleAlertUpdated(alertId);
+          set({ lastUpdateMessage: JSON.stringify({ type: 'weatherAlertUpdated', alertId }), lastUpdateTimestamp: Date.now() });
+        });
+
+        signalRService.on('weatherAlertExpired', (message) => {
+          if (typeof message !== 'string' || message.trim() === '') {
+            logger.warn({ message: 'weatherAlertExpired: invalid payload', context: { message } });
+            return;
+          }
+          const alertId = message.trim();
+          logger.info({ message: 'weatherAlertExpired', context: { alertId } });
+          useWeatherAlertsStore.getState().handleAlertExpired(alertId);
+          set({ lastUpdateMessage: JSON.stringify({ type: 'weatherAlertExpired', alertId }), lastUpdateTimestamp: Date.now() });
+        });
+
+        signalRService.on('onConnected', () => {
+          logger.info({
+            message: 'Connected to update SignalR hub',
           });
           set({ isUpdateHubConnected: true, error: null });
+        });
+
+        // Set up connection state monitoring via the service's public API
+        // This ensures we properly track disconnections and reconnections
+        signalRService.registerConnectionStateCallbacks(Env.CHANNEL_HUB_NAME, {
+          onClose: () => {
+            logger.info({
+              message: 'Update SignalR hub connection closed',
+            });
+            set({ isUpdateHubConnected: false });
+          },
+          onReconnecting: () => {
+            logger.info({
+              message: 'Update SignalR hub reconnecting',
+            });
+            set({ isUpdateHubConnected: false });
+          },
+          onReconnected: () => {
+            logger.info({
+              message: 'Update SignalR hub reconnected',
+            });
+            set({ isUpdateHubConnected: true, error: null });
+          },
         });
       }
     } catch (error) {

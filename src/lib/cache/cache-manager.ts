@@ -46,7 +46,13 @@ export class CacheManager {
       return null;
     }
 
-    const cacheItem: CacheItem<T> = JSON.parse(cached);
+    let cacheItem: CacheItem<T>;
+    try {
+      cacheItem = JSON.parse(cached);
+    } catch {
+      storage.delete(key);
+      return null;
+    }
 
     if (this.isExpired(cacheItem.timestamp, cacheItem.expiresIn)) {
       storage.delete(key);

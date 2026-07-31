@@ -16,6 +16,7 @@ import { LoginForm } from './login-form';
 
 export default function Login() {
   const [isErrorModalVisible, setIsErrorModalVisible] = useState(false);
+  const [isSessionExpiredVisible, setIsSessionExpiredVisible] = useState(false);
   const [showServerUrl, setShowServerUrl] = useState(false);
   const { t } = useTranslation();
   const { trackEvent } = useAnalytics();
@@ -53,6 +54,12 @@ export default function Login() {
         context: { error },
       });
       setIsErrorModalVisible(true);
+    }
+  }, [status, error]);
+
+  useEffect(() => {
+    if (status === 'signedOut' && error === 'session_expired') {
+      setIsSessionExpiredVisible(true);
     }
   }, [status, error]);
 
@@ -103,6 +110,37 @@ export default function Login() {
               action="primary"
               onPress={() => {
                 setIsErrorModalVisible(false);
+              }}
+            >
+              <ButtonText>{t('login.errorModal.confirmButton')}</ButtonText>
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Modal
+        isOpen={isSessionExpiredVisible}
+        onClose={() => {
+          setIsSessionExpiredVisible(false);
+        }}
+        size="full"
+        {...({} as any)}
+      >
+        <ModalBackdrop />
+        <ModalContent className="m-4 w-full max-w-3xl rounded-2xl">
+          <ModalHeader>
+            <Text className="text-xl font-semibold">{t('login.sessionExpiredModal.title', { defaultValue: 'Session Expired' })}</Text>
+          </ModalHeader>
+          <ModalBody>
+            <Text>{t('login.sessionExpiredModal.message', { defaultValue: 'Your session has expired. Please sign in again.' })}</Text>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              variant="solid"
+              size="sm"
+              action="primary"
+              onPress={() => {
+                setIsSessionExpiredVisible(false);
               }}
             >
               <ButtonText>{t('login.errorModal.confirmButton')}</ButtonText>

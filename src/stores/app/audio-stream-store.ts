@@ -5,6 +5,8 @@ import { getDepartmentAudioStreams } from '@/api/voice';
 import { logger } from '@/lib/logging';
 import { type DepartmentAudioResultStreamData } from '@/models/v4/voice/departmentAudioResultStreamData';
 
+let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+
 interface AudioStreamState {
   // Available streams
   availableStreams: DepartmentAudioResultStreamData[];
@@ -132,7 +134,11 @@ export const useAudioStreamStore = create<AudioStreamState>((set, get) => ({
               // For live streams, try to reconnect
               const { currentStream } = get();
               if (currentStream?.Id === stream.Id) {
-                setTimeout(async () => {
+                if (reconnectTimer) {
+                  clearTimeout(reconnectTimer);
+                }
+                reconnectTimer = setTimeout(async () => {
+                  reconnectTimer = null;
                   try {
                     await sound.replayAsync();
                   } catch (replayError) {
@@ -195,6 +201,11 @@ export const useAudioStreamStore = create<AudioStreamState>((set, get) => ({
   stopStream: async () => {
     try {
       const { soundObject, currentStream } = get();
+
+      if (reconnectTimer) {
+        clearTimeout(reconnectTimer);
+        reconnectTimer = null;
+      }
 
       if (soundObject) {
         await soundObject.pauseAsync();

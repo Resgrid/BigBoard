@@ -38,6 +38,17 @@ const LiveKitCallModal: React.FC<LiveKitCallModalProps> = ({
     }
   }, [localParticipant, isConnected]);
 
+  useEffect(() => {
+    return () => {
+      // Teardown on unmount so the room and its listeners don't leak if the
+      // user leaves without pressing "Leave Call". No-op when not in a room.
+      const { roomInstance, actions: storeActions } = useLiveKitCallStore.getState();
+      if (roomInstance) {
+        storeActions.disconnectFromRoom();
+      }
+    };
+  }, []);
+
   const handleJoinRoom = () => {
     if (selectedRoomForJoining && !isConnecting && !isConnected) {
       actions.connectToRoom(selectedRoomForJoining, participantIdentity);

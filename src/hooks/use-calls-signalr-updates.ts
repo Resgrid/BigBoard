@@ -8,12 +8,16 @@ import { useSignalRStore } from '@/stores/signalr/signalr-store';
  */
 export const useCallsSignalRUpdates = () => {
   const lastUpdateTimestamp = useSignalRStore((state) => state.lastUpdateTimestamp);
-  const { init } = useCallsStore();
+  const init = useCallsStore((state) => state.init);
 
   useEffect(() => {
     if (lastUpdateTimestamp > 0) {
-      // Refresh calls data when SignalR update is received
-      init();
+      // Debounce bursts of SignalR messages into a single refresh
+      const timer = setTimeout(() => {
+        init();
+      }, 1500);
+
+      return () => clearTimeout(timer);
     }
   }, [lastUpdateTimestamp, init]);
 };

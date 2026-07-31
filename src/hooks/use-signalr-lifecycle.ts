@@ -12,7 +12,8 @@ interface UseSignalRLifecycleOptions {
 
 export function useSignalRLifecycle({ isSignedIn, hasInitialized }: UseSignalRLifecycleOptions) {
   const { isActive, appState } = useAppLifecycle();
-  const signalRStore = useSignalRStore();
+  const disconnectUpdateHub = useSignalRStore((state) => state.disconnectUpdateHub);
+  const connectUpdateHub = useSignalRStore((state) => state.connectUpdateHub);
 
   // Track current values with refs for timer callbacks
   const currentIsActive = useRef(isActive);
@@ -62,7 +63,7 @@ export function useSignalRLifecycle({ isSignedIn, hasInitialized }: UseSignalRLi
     });
 
     try {
-      await signalRStore.disconnectUpdateHub();
+      await disconnectUpdateHub();
       logger.info({
         message: 'Successfully disconnected UpdateHub on app background',
       });
@@ -81,7 +82,7 @@ export function useSignalRLifecycle({ isSignedIn, hasInitialized }: UseSignalRLi
         pendingOperations.current = null;
       }
     }
-  }, [signalRStore]);
+  }, [disconnectUpdateHub]);
 
   const handleAppResume = useCallback(async () => {
     logger.debug({
@@ -111,7 +112,7 @@ export function useSignalRLifecycle({ isSignedIn, hasInitialized }: UseSignalRLi
     });
 
     try {
-      await signalRStore.connectUpdateHub();
+      await connectUpdateHub();
       logger.info({
         message: 'Successfully reconnected UpdateHub on app resume',
       });
@@ -130,7 +131,7 @@ export function useSignalRLifecycle({ isSignedIn, hasInitialized }: UseSignalRLi
         pendingOperations.current = null;
       }
     }
-  }, [signalRStore]);
+  }, [connectUpdateHub]);
 
   // Clear timers helper
   const clearTimers = useCallback(() => {

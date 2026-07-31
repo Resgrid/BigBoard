@@ -28,7 +28,7 @@ export const useProtocolsStore = create<ProtocolsState>((set) => ({
     set({ isLoading: true, error: null });
     try {
       const response = await getAllProtocols();
-      set({ protocols: response.Data, isLoading: false });
+      set({ protocols: response.Data ?? [], isLoading: false });
     } catch (error) {
       set({ isLoading: false, error: error instanceof Error ? error.message : 'An unknown error occurred' });
     }

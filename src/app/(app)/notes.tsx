@@ -9,6 +9,7 @@ import { NoteCard } from '@/components/notes/note-card';
 import { NoteDetailsSheet } from '@/components/notes/note-details-sheet';
 import { FocusAwareStatusBar } from '@/components/ui';
 import { Box } from '@/components/ui/box';
+import { Button, ButtonText } from '@/components/ui/button';
 import { FlatList } from '@/components/ui/flat-list';
 import { Input } from '@/components/ui/input';
 import { InputField, InputIcon, InputSlot } from '@/components/ui/input';
@@ -17,7 +18,7 @@ import { useNotesStore } from '@/stores/notes/store';
 
 export default function Notes() {
   const { t } = useTranslation();
-  const { notes, searchQuery, setSearchQuery, selectNote, isLoading, fetchNotes } = useNotesStore();
+  const { notes, searchQuery, setSearchQuery, selectNote, isLoading, error, fetchNotes } = useNotesStore();
   const { trackEvent } = useAnalytics();
   const [refreshing, setRefreshing] = React.useState(false);
 
@@ -75,6 +76,12 @@ export default function Notes() {
               contentContainerStyle={{ paddingBottom: 100 }}
               refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
             />
+          ) : error && notes.length === 0 ? (
+            <ZeroState isError heading={t('common.errorOccurred')} description={error}>
+              <Button variant="solid" size="md" onPress={() => fetchNotes()} testID="notes-retry-button">
+                <ButtonText>{t('common.retry')}</ButtonText>
+              </Button>
+            </ZeroState>
           ) : (
             <ZeroState icon={FileText} heading={t('notes.empty')} description={t('notes.emptyDescription')} />
           )}

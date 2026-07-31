@@ -1,6 +1,5 @@
 import axios, { type AxiosError, type AxiosInstance, type InternalAxiosRequestConfig } from 'axios';
 
-import { refreshTokenRequest } from '@/lib/auth/api';
 import { logger } from '@/lib/logging';
 import { getBaseApiUrl } from '@/lib/storage/app';
 import useAuthStore from '@/stores/auth/store';
@@ -74,35 +73,26 @@ axiosInstance.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const refreshToken = useAuthStore.getState().refreshToken;
-        if (!refreshToken) {
-          throw new Error('No refresh token available');
+        // Delegate to the auth store so the timer scheduler and this interceptor share one refresh
+        await useAuthStore.getState().refreshAccessToken();
+
+        const accessToken = useAuthStore.getState().accessToken;
+        if (!accessToken) {
+          throw new Error('Token refresh failed');
         }
 
-        const response = await refreshTokenRequest(refreshToken);
-        const { access_token, refresh_token: newRefreshToken } = response;
-
-        // Update tokens in store
-        useAuthStore.setState({
-          accessToken: access_token,
-          refreshToken: newRefreshToken,
-          status: 'signedIn',
-          error: null,
-        });
-
         // Update Authorization header
-        axiosInstance.defaults.headers.common.Authorization = `Bearer ${access_token}`;
-        originalRequest.headers.Authorization = `Bearer ${access_token}`;
+        axiosInstance.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
+        originalRequest.headers.Authorization = `Bearer ${accessToken}`;
 
         processQueue(null);
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError as Error);
-        // Handle refresh token failure
-        useAuthStore.getState().logout();
+        // Refresh failure already triggers logout in the auth store
         logger.error({
           message: 'Token refresh failed',
-          context: { error: refreshError },
+          context: { error: refreshError instanceof Error ? refreshError.message : String(refreshError) },
         });
         return Promise.reject(refreshError);
       } finally {

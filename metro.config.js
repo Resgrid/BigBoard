@@ -5,7 +5,7 @@ const path = require('path');
 const { getSentryExpoConfig } = require('@sentry/react-native/metro');
 //const { getDefaultConfig } = require('expo/metro-config');
 //const path = require('path');
-const { withNativeWind } = require('nativewind/metro');
+const { withNativewind } = require('nativewind/metro');
 
 const config = getSentryExpoConfig(__dirname, {
   isCSSEnabled: true,
@@ -77,4 +77,4 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
 
 config.resolver.unstable_conditionNames = _.uniq(config.resolver.unstable_conditionNames.concat('browser', 'require', 'react-native')); // <-- and here we can override what we want
 
-module.exports = withNativeWind(config, { input: './global.css', inlineRem: 16 });
+module.exports = withNativewind(config, { inlineRem: 16 });

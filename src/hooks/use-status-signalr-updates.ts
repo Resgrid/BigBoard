@@ -6,7 +6,8 @@ import { useSignalRStore } from '@/stores/signalr/signalr-store';
 
 export const useStatusSignalRUpdates = () => {
   const lastProcessedTimestamp = useRef<number>(0);
-  const { activeUnitId, setActiveUnitWithFetch } = useCoreStore();
+  const activeUnitId = useCoreStore((state) => state.activeUnitId);
+  const setActiveUnitWithFetch = useCoreStore((state) => state.setActiveUnitWithFetch);
 
   const lastUpdateTimestamp = useSignalRStore((state) => state.lastUpdateTimestamp);
   const lastUpdateMessage = useSignalRStore((state) => state.lastUpdateMessage);

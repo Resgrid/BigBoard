@@ -23,7 +23,7 @@ export const useMapStore = create<MapState>((set) => ({
     try {
       const result = await getMapDataAndMarkers();
       if (result?.Data) {
-        set({ mapData: result.Data, isLoading: false });
+        set({ mapData: { ...result.Data, MapMakerInfos: result.Data.MapMakerInfos ?? [] }, isLoading: false });
       } else {
         set({ error: 'No map data returned', isLoading: false });
       }

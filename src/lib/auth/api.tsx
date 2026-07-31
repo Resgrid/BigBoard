@@ -59,7 +59,7 @@ export const loginRequest = async (credentials: LoginCredentials): Promise<Login
     } else {
       logger.error({
         message: 'Login failed',
-        context: { response, username: credentials.username },
+        context: { status: response.status, username: credentials.username },
       });
 
       return {
@@ -71,7 +71,11 @@ export const loginRequest = async (credentials: LoginCredentials): Promise<Login
   } catch (error) {
     logger.error({
       message: 'Login API call failed with exception',
-      context: { error, username: credentials.username },
+      context: {
+        error: error instanceof Error ? error.message : String(error),
+        status: axios.isAxiosError(error) ? error.response?.status : undefined,
+        username: credentials.username,
+      },
     });
 
     // Return a failed response instead of throwing
@@ -101,7 +105,10 @@ export const refreshTokenRequest = async (refreshToken: string): Promise<AuthRes
   } catch (error) {
     logger.error({
       message: 'Token refresh failed',
-      context: { error },
+      context: {
+        error: error instanceof Error ? error.message : String(error),
+        status: axios.isAxiosError(error) ? error.response?.status : undefined,
+      },
     });
     throw error;
   }
@@ -126,7 +133,10 @@ export const fetchSsoConfigForUser = async (username: string, departmentId?: num
   } catch (error) {
     logger.error({
       message: 'Failed to fetch SSO config',
-      context: { error },
+      context: {
+        error: error instanceof Error ? error.message : String(error),
+        status: axios.isAxiosError(error) ? error.response?.status : undefined,
+      },
     });
     return null;
   }
@@ -161,7 +171,10 @@ export const externalTokenRequest = async (credentials: ExternalTokenRequest): P
   } catch (error) {
     logger.error({
       message: 'External token request failed',
-      context: { error },
+      context: {
+        error: error instanceof Error ? error.message : String(error),
+        status: axios.isAxiosError(error) ? error.response?.status : undefined,
+      },
     });
     return {
       successful: false,

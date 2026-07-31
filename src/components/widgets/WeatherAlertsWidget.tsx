@@ -122,7 +122,7 @@ export const WeatherAlertsWidget: React.FC<WeatherAlertsWidgetProps> = ({ onRemo
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
   const router = useRouter();
-  const { alerts, isLoading, settings } = useWeatherAlertsStore();
+  const { alerts, isLoading, error, settings, fetchActiveAlerts } = useWeatherAlertsStore();
   const widgetSettings = useWidgetSettingsStore((s) => s.weatherAlerts);
 
   useEffect(() => {
@@ -160,6 +160,21 @@ export const WeatherAlertsWidget: React.FC<WeatherAlertsWidgetProps> = ({ onRemo
       <WidgetContainer title="Weather Alerts" onRemove={onRemove} isEditMode={isEditMode} testID="weather-alerts-widget" width={containerWidth} height={containerHeight}>
         <Box className="flex-1 items-center justify-center">
           <Spinner size="small" />
+        </Box>
+      </WidgetContainer>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <WidgetContainer title="Weather Alerts" onRemove={onRemove} isEditMode={isEditMode} testID="weather-alerts-widget" width={containerWidth} height={containerHeight}>
+        <Box className="flex-1 items-center justify-center">
+          <AlertTriangle size={24} color={isDark ? '#EF4444' : '#DC2626'} />
+          <Text className={`mt-2 text-center text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Failed to load alerts</Text>
+          <Pressable onPress={() => fetchActiveAlerts()} className="mt-2" testID="weather-alerts-retry">
+            <Text className={`text-xs font-semibold ${isDark ? 'text-blue-400' : 'text-blue-600'}`}>Retry</Text>
+          </Pressable>
         </Box>
       </WidgetContainer>
     );

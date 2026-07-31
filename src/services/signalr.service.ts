@@ -1,6 +1,5 @@
 import { type HubConnection, HubConnectionBuilder, HubConnectionState, LogLevel } from '@microsoft/signalr';
 
-import { Env } from '@/lib/env';
 import { logger } from '@/lib/logging';
 import useAuthStore from '@/stores/auth/store';
 
@@ -15,6 +14,12 @@ export interface SignalRHubConnectConfig {
   eventingUrl: string; // Base EventingUrl from config (trailing slash will be added if missing)
   hubName: string;
   methods: string[];
+}
+
+export interface SignalRConnectionStateCallbacks {
+  onClose?: () => void;
+  onReconnecting?: () => void;
+  onReconnected?: () => void;
 }
 
 export interface SignalRMessage {
@@ -162,14 +167,8 @@ class SignalRService {
       // Reassemble the URL with the hub in the path
       let fullUrl = `${url.protocol}//${url.host}${pathWithHub}`;
 
-      // For geolocation hub, add token as URL parameter instead of header
-      const isGeolocationHub = config.hubName === Env.REALTIME_GEO_HUB_NAME;
-
-      // Merge existing query parameters with access_token if needed
+      // Merge existing query parameters
       const queryParams = new URLSearchParams(url.search);
-      if (isGeolocationHub) {
-        queryParams.set('access_token', token);
-      }
 
       // Add query string if there are any parameters
       if (queryParams.toString()) {
@@ -178,21 +177,16 @@ class SignalRService {
 
       logger.info({
         message: `Connecting to hub: ${config.name}`,
-        context: { config, fullUrl: isGeolocationHub ? fullUrl.replace(/access_token=[^&]+/, 'access_token=***') : fullUrl },
+        context: { config, fullUrl },
       });
 
       // Store the config for potential reconnections
       this.hubConfigs.set(config.name, config);
 
       const connectionBuilder = new HubConnectionBuilder()
-        .withUrl(
-          fullUrl,
-          isGeolocationHub
-            ? {}
-            : {
-                accessTokenFactory: () => token,
-              }
-        )
+        .withUrl(fullUrl, {
+          accessTokenFactory: () => token,
+        })
         .withAutomaticReconnect([0, 2000, 5000, 10000, 30000])
         .configureLogging(LogLevel.Information);
 
@@ -201,6 +195,7 @@ class SignalRService {
       // Set up event handlers
       connection.onclose(() => {
         this.handleConnectionClose(config.name);
+        this.notifyConnectionStateCallbacks(config.name, 'onClose');
       });
 
       connection.onreconnecting((error) => {
@@ -208,6 +203,7 @@ class SignalRService {
           message: `Reconnecting to hub: ${config.name}`,
           context: { error },
         });
+        this.notifyConnectionStateCallbacks(config.name, 'onReconnecting');
       });
 
       connection.onreconnected((connectionId) => {
@@ -216,6 +212,7 @@ class SignalRService {
           context: { connectionId },
         });
         this.reconnectAttempts.set(config.name, 0);
+        this.notifyConnectionStateCallbacks(config.name, 'onReconnected');
       });
 
       // Register all methods
@@ -228,7 +225,7 @@ class SignalRService {
         connection.on(method, (data) => {
           logger.info({
             message: `Received ${method} message from hub: ${config.name}`,
-            context: { method, data },
+            context: { method },
           });
           this.handleMessage(config.name, method, data);
         });
@@ -328,6 +325,7 @@ class SignalRService {
       // Set up event handlers
       connection.onclose(() => {
         this.handleConnectionClose(config.name);
+        this.notifyConnectionStateCallbacks(config.name, 'onClose');
       });
 
       connection.onreconnecting((error) => {
@@ -335,6 +333,7 @@ class SignalRService {
           message: `Reconnecting to hub: ${config.name}`,
           context: { error },
         });
+        this.notifyConnectionStateCallbacks(config.name, 'onReconnecting');
       });
 
       connection.onreconnected((connectionId) => {
@@ -343,6 +342,7 @@ class SignalRService {
           context: { connectionId },
         });
         this.reconnectAttempts.set(config.name, 0);
+        this.notifyConnectionStateCallbacks(config.name, 'onReconnected');
       });
 
       // Register all methods
@@ -355,7 +355,7 @@ class SignalRService {
         connection.on(method, (data) => {
           logger.info({
             message: `Received ${method} message from hub: ${config.name}`,
-            context: { method, data },
+            context: { method },
           });
           this.handleMessage(config.name, method, data);
         });
@@ -496,7 +496,7 @@ class SignalRService {
   private handleMessage(hubName: string, method: string, data: unknown): void {
     logger.debug({
       message: `Received message from hub: ${hubName}`,
-      context: { method, data },
+      context: { method },
     });
     // Emit event for subscribers using the method name as the event name
     this.emit(method, data);
@@ -611,8 +611,40 @@ class SignalRService {
     this.eventListeners.get(event)?.delete(callback);
   }
 
+  // Connection state callback methods
+  private connectionStateCallbacks: Map<string, Set<SignalRConnectionStateCallbacks>> = new Map();
+
+  public registerConnectionStateCallbacks(hubName: string, callbacks: SignalRConnectionStateCallbacks): void {
+    if (!this.connectionStateCallbacks.has(hubName)) {
+      this.connectionStateCallbacks.set(hubName, new Set());
+    }
+    this.connectionStateCallbacks.get(hubName)?.add(callbacks);
+  }
+
+  private notifyConnectionStateCallbacks(hubName: string, event: keyof SignalRConnectionStateCallbacks): void {
+    this.connectionStateCallbacks.get(hubName)?.forEach((callbacks) => {
+      try {
+        callbacks[event]?.();
+      } catch (error) {
+        logger.error({
+          message: `Error in connection state callback (${event}) for hub: ${hubName}`,
+          context: { error },
+        });
+      }
+    });
+  }
+
   private emit(event: string, data: unknown): void {
-    this.eventListeners.get(event)?.forEach((callback) => callback(data));
+    this.eventListeners.get(event)?.forEach((callback) => {
+      try {
+        callback(data);
+      } catch (error) {
+        logger.error({
+          message: `Error in event listener for event: ${event}`,
+          context: { error },
+        });
+      }
+    });
   }
 
   /**

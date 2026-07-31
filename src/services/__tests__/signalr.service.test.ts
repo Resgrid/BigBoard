@@ -153,7 +153,7 @@ describe('SignalRService', () => {
       );
     });
 
-    it('should use URL parameter for geolocation hub authentication', async () => {
+    it('should use accessTokenFactory for geolocation hub authentication', async () => {
       // Create a geolocation config
       const geoConfig: SignalRHubConnectConfig = {
         name: 'geoHub',
@@ -164,10 +164,12 @@ describe('SignalRService', () => {
 
       await signalRService.connectToHubWithEventingUrl(geoConfig);
 
-      // Should connect with URL parameter instead of header auth
+      // Token must not appear in the URL; auth flows via accessTokenFactory
       expect(mockBuilderInstance.withUrl).toHaveBeenCalledWith(
-        'https://api.example.com/geolocationHub?access_token=mock-token',
-        {}
+        'https://api.example.com/geolocationHub',
+        expect.objectContaining({
+          accessTokenFactory: expect.any(Function),
+        })
       );
     });
 
@@ -190,9 +192,9 @@ describe('SignalRService', () => {
       );
     });
 
-    it('should properly encode access token in URL for geolocation hub', async () => {
+    it('should not leak access token in URL for geolocation hub', async () => {
       // Set up a token that needs encoding
-      mockGetState.mockReturnValue({ 
+      mockGetState.mockReturnValue({
         accessToken: 'token with spaces & special chars',
         refreshAccessToken: mockRefreshAccessToken,
       });
@@ -206,16 +208,14 @@ describe('SignalRService', () => {
 
       await signalRService.connectToHubWithEventingUrl(geoConfig);
 
-      // Should properly encode the token in the URL (URLSearchParams uses + for spaces, which is correct)
-      expect(mockBuilderInstance.withUrl).toHaveBeenCalledWith(
-        'https://api.example.com/geolocationHub?access_token=token+with+spaces+%26+special+chars',
-        {}
-      );
+      const calledUrl = mockBuilderInstance.withUrl.mock.calls[0][0] as string;
+      expect(calledUrl).not.toContain('access_token');
+      expect(calledUrl).toBe('https://api.example.com/geolocationHub');
     });
 
-    it('should properly URI encode complex access tokens for geolocation hub', async () => {
+    it('should not leak complex access tokens in URL for geolocation hub', async () => {
       // Set up a complex token with various characters that need encoding
-      mockGetState.mockReturnValue({ 
+      mockGetState.mockReturnValue({
         accessToken: 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9+/=?#&',
         refreshAccessToken: mockRefreshAccessToken,
       });
@@ -229,11 +229,9 @@ describe('SignalRService', () => {
 
       await signalRService.connectToHubWithEventingUrl(geoConfig);
 
-      // Should properly encode all special characters in the token (URLSearchParams uses + for spaces, which is correct)
-      expect(mockBuilderInstance.withUrl).toHaveBeenCalledWith(
-        'https://api.example.com/geolocationHub?access_token=Bearer+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9%2B%2F%3D%3F%23%26',
-        {}
-      );
+      const calledUrl = mockBuilderInstance.withUrl.mock.calls[0][0] as string;
+      expect(calledUrl).not.toContain('access_token');
+      expect(calledUrl).toBe('https://api.example.com/geolocationHub');
     });
 
     it('should handle URL with existing query parameters for geolocation hub', async () => {
@@ -246,11 +244,10 @@ describe('SignalRService', () => {
 
       await signalRService.connectToHubWithEventingUrl(geoConfig);
 
-      // Should append the hub to the path and merge access_token with existing query parameters
-      expect(mockBuilderInstance.withUrl).toHaveBeenCalledWith(
-        'https://api.example.com/path/geolocationHub?existing=param&access_token=mock-token',
-        {}
-      );
+      // Should append the hub to the path and keep existing query parameters without leaking the token
+      const calledUrl = mockBuilderInstance.withUrl.mock.calls[0][0] as string;
+      expect(calledUrl).toBe('https://api.example.com/path/geolocationHub?existing=param');
+      expect(calledUrl).not.toContain('access_token');
     });
 
     it('should not add extra trailing slash if EventingUrl already has one', async () => {

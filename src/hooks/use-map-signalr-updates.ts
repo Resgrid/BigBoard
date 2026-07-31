@@ -58,15 +58,16 @@ export const useMapSignalRUpdates = (onMarkersUpdate: (markers: MapMakerInfoData
         }
 
         if (mapDataAndMarkers && mapDataAndMarkers.Data) {
+          const markers = mapDataAndMarkers.Data?.MapMakerInfos ?? [];
           logger.info({
             message: 'Updating map markers from SignalR update',
             context: {
-              markerCount: mapDataAndMarkers.Data.MapMakerInfos.length,
+              markerCount: markers.length,
               timestamp: timestampToProcess,
             },
           });
 
-          onMarkersUpdate(mapDataAndMarkers.Data.MapMakerInfos);
+          onMarkersUpdate(markers);
         }
 
         // Update the last processed timestamp after successful API call

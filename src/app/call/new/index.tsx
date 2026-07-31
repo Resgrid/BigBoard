@@ -9,6 +9,7 @@ import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, View } from 'react-native';
+import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as z from 'zod';
 
@@ -19,7 +20,7 @@ import FullScreenLocationPicker from '@/components/maps/full-screen-location-pic
 import LocationPicker from '@/components/maps/location-picker';
 import { CustomBottomSheet } from '@/components/ui/bottom-sheet';
 import { Box } from '@/components/ui/box';
-import { Button, ButtonText } from '@/components/ui/button';
+import { Button, ButtonSpinner, ButtonText } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { FocusAwareStatusBar } from '@/components/ui/focus-aware-status-bar';
 import { FormControl, FormControlError, FormControlLabel, FormControlLabelText } from '@/components/ui/form-control';
@@ -116,6 +117,7 @@ export default function NewCall() {
   const [isGeocodingPlusCode, setIsGeocodingPlusCode] = useState(false);
   const [isGeocodingCoordinates, setIsGeocodingCoordinates] = useState(false);
   const [isGeocodingWhat3Words, setIsGeocodingWhat3Words] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [addressResults, setAddressResults] = useState<GeocodingResult[]>([]);
   const [dispatchSelection, setDispatchSelection] = useState<DispatchSelection>({
     everyone: false,
@@ -175,6 +177,9 @@ export default function NewCall() {
   }, [trackEvent, callPriorities.length, callTypes.length]);
 
   const onSubmit = async (data: FormValues) => {
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
     try {
       // If we have latitude and longitude, add them to the data
       if (selectedLocation?.latitude && selectedLocation?.longitude) {
@@ -226,6 +231,8 @@ export default function NewCall() {
 
       // Show error toast
       toast.error(t('calls.create_error'));
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -592,296 +599,298 @@ export default function NewCall() {
         }}
       />
       <View className="size-full flex-1">
-        <Box className={`size-full w-full flex-1 ${colorScheme === 'dark' ? 'bg-neutral-950' : 'bg-neutral-50'}`}>
-          <ScrollView className="flex-1 px-4 py-6" contentContainerStyle={{ paddingBottom: Math.max(insets.bottom, 16) }} style={{ paddingTop: Math.max(insets.top, 16) }}>
-            <Text className="mb-6 text-2xl font-bold">{t('calls.create_new_call')}</Text>
+        <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding" keyboardVerticalOffset={10}>
+          <Box className={`size-full w-full flex-1 ${colorScheme === 'dark' ? 'bg-neutral-950' : 'bg-neutral-50'}`}>
+            <ScrollView className="flex-1 px-4 py-6" contentContainerStyle={{ paddingBottom: Math.max(insets.bottom, 16) }} style={{ paddingTop: Math.max(insets.top, 16) }}>
+              <Text className="mb-6 text-2xl font-bold">{t('calls.create_new_call')}</Text>
 
-            <Card className={`mb-8 rounded-lg border p-4 ${colorScheme === 'dark' ? 'border-neutral-800 bg-neutral-900' : 'border-neutral-200 bg-white'}`}>
-              <FormControl isInvalid={!!errors.name}>
-                <FormControlLabel>
-                  <FormControlLabelText>{t('calls.name')}</FormControlLabelText>
-                </FormControlLabel>
-                <Controller
-                  control={control}
-                  name="name"
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <Input>
-                      <InputField placeholder={t('calls.name_placeholder')} value={value} onChangeText={onChange} onBlur={onBlur} />
-                    </Input>
+              <Card className={`mb-8 rounded-lg border p-4 ${colorScheme === 'dark' ? 'border-neutral-800 bg-neutral-900' : 'border-neutral-200 bg-white'}`}>
+                <FormControl isInvalid={!!errors.name}>
+                  <FormControlLabel>
+                    <FormControlLabelText>{t('calls.name')}</FormControlLabelText>
+                  </FormControlLabel>
+                  <Controller
+                    control={control}
+                    name="name"
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <Input>
+                        <InputField placeholder={t('calls.name_placeholder')} value={value} onChangeText={onChange} onBlur={onBlur} />
+                      </Input>
+                    )}
+                  />
+                  {errors.name && (
+                    <FormControlError>
+                      <Text className="text-red-500">{errors.name.message}</Text>
+                    </FormControlError>
                   )}
-                />
-                {errors.name && (
-                  <FormControlError>
-                    <Text className="text-red-500">{errors.name.message}</Text>
-                  </FormControlError>
-                )}
-              </FormControl>
-            </Card>
+                </FormControl>
+              </Card>
 
-            <Card className={`mb-8 rounded-lg border p-4 ${colorScheme === 'dark' ? 'border-neutral-800 bg-neutral-900' : 'border-neutral-200 bg-white'}`}>
-              <FormControl isInvalid={!!errors.nature}>
-                <FormControlLabel>
-                  <FormControlLabelText>{t('calls.nature')}</FormControlLabelText>
-                </FormControlLabel>
-                <Controller
-                  control={control}
-                  name="nature"
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <Textarea>
-                      <TextareaInput value={value} onChangeText={onChange} onBlur={onBlur} numberOfLines={4} placeholder={t('calls.nature_placeholder')} />
-                    </Textarea>
+              <Card className={`mb-8 rounded-lg border p-4 ${colorScheme === 'dark' ? 'border-neutral-800 bg-neutral-900' : 'border-neutral-200 bg-white'}`}>
+                <FormControl isInvalid={!!errors.nature}>
+                  <FormControlLabel>
+                    <FormControlLabelText>{t('calls.nature')}</FormControlLabelText>
+                  </FormControlLabel>
+                  <Controller
+                    control={control}
+                    name="nature"
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <Textarea>
+                        <TextareaInput value={value} onChangeText={onChange} onBlur={onBlur} numberOfLines={4} placeholder={t('calls.nature_placeholder')} />
+                      </Textarea>
+                    )}
+                  />
+                  {errors.nature && (
+                    <FormControlError>
+                      <Text className="text-red-500">{errors.nature.message}</Text>
+                    </FormControlError>
                   )}
-                />
-                {errors.nature && (
-                  <FormControlError>
-                    <Text className="text-red-500">{errors.nature.message}</Text>
-                  </FormControlError>
-                )}
-              </FormControl>
-            </Card>
+                </FormControl>
+              </Card>
 
-            <Card className={`mb-8 rounded-lg border p-4 ${colorScheme === 'dark' ? 'border-neutral-800 bg-neutral-900' : 'border-neutral-200 bg-white'}`}>
-              <FormControl isInvalid={!!errors.priority}>
-                <FormControlLabel>
-                  <FormControlLabelText>{t('calls.priority')}</FormControlLabelText>
-                </FormControlLabel>
-                <Controller
-                  control={control}
-                  name="priority"
-                  render={({ field: { onChange, value } }) => (
-                    <Select onValueChange={onChange} selectedValue={value}>
-                      <SelectTrigger>
-                        <SelectInput placeholder={t('calls.select_priority')} className="w-5/6" />
-                        <SelectIcon as={ChevronDownIcon} className="mr-3" />
-                      </SelectTrigger>
-                      <SelectPortal>
-                        <SelectBackdrop />
-                        <SelectContent>
-                          {callPriorities.map((priority) => (
-                            <SelectItem key={priority.Id} label={priority.Name} value={priority.Name} />
-                          ))}
-                        </SelectContent>
-                      </SelectPortal>
-                    </Select>
+              <Card className={`mb-8 rounded-lg border p-4 ${colorScheme === 'dark' ? 'border-neutral-800 bg-neutral-900' : 'border-neutral-200 bg-white'}`}>
+                <FormControl isInvalid={!!errors.priority}>
+                  <FormControlLabel>
+                    <FormControlLabelText>{t('calls.priority')}</FormControlLabelText>
+                  </FormControlLabel>
+                  <Controller
+                    control={control}
+                    name="priority"
+                    render={({ field: { onChange, value } }) => (
+                      <Select onValueChange={onChange} selectedValue={value}>
+                        <SelectTrigger>
+                          <SelectInput placeholder={t('calls.select_priority')} className="w-5/6" />
+                          <SelectIcon as={ChevronDownIcon} className="mr-3" />
+                        </SelectTrigger>
+                        <SelectPortal>
+                          <SelectBackdrop />
+                          <SelectContent>
+                            {callPriorities.map((priority) => (
+                              <SelectItem key={priority.Id} label={priority.Name} value={priority.Name} />
+                            ))}
+                          </SelectContent>
+                        </SelectPortal>
+                      </Select>
+                    )}
+                  />
+                  {errors.priority && (
+                    <FormControlError>
+                      <Text className="text-red-500">{errors.priority.message}</Text>
+                    </FormControlError>
                   )}
-                />
-                {errors.priority && (
-                  <FormControlError>
-                    <Text className="text-red-500">{errors.priority.message}</Text>
-                  </FormControlError>
-                )}
-              </FormControl>
-            </Card>
+                </FormControl>
+              </Card>
 
-            <Card className={`mb-8 rounded-lg border p-4 ${colorScheme === 'dark' ? 'border-neutral-800 bg-neutral-900' : 'border-neutral-200 bg-white'}`}>
-              <FormControl isInvalid={!!errors.type}>
-                <FormControlLabel>
-                  <FormControlLabelText>{t('calls.type')}</FormControlLabelText>
-                </FormControlLabel>
-                <Controller
-                  control={control}
-                  name="type"
-                  render={({ field: { onChange, value } }) => (
-                    <Select onValueChange={onChange} selectedValue={value}>
-                      <SelectTrigger>
-                        <SelectInput placeholder={t('calls.select_type')} className="w-5/6" />
-                        <SelectIcon as={ChevronDownIcon} className="mr-3" />
-                      </SelectTrigger>
-                      <SelectPortal>
-                        <SelectBackdrop />
-                        <SelectContent>
-                          {callTypes.map((type) => (
-                            <SelectItem key={type.Id} label={type.Name} value={type.Name} />
-                          ))}
-                        </SelectContent>
-                      </SelectPortal>
-                    </Select>
+              <Card className={`mb-8 rounded-lg border p-4 ${colorScheme === 'dark' ? 'border-neutral-800 bg-neutral-900' : 'border-neutral-200 bg-white'}`}>
+                <FormControl isInvalid={!!errors.type}>
+                  <FormControlLabel>
+                    <FormControlLabelText>{t('calls.type')}</FormControlLabelText>
+                  </FormControlLabel>
+                  <Controller
+                    control={control}
+                    name="type"
+                    render={({ field: { onChange, value } }) => (
+                      <Select onValueChange={onChange} selectedValue={value}>
+                        <SelectTrigger>
+                          <SelectInput placeholder={t('calls.select_type')} className="w-5/6" />
+                          <SelectIcon as={ChevronDownIcon} className="mr-3" />
+                        </SelectTrigger>
+                        <SelectPortal>
+                          <SelectBackdrop />
+                          <SelectContent>
+                            {callTypes.map((type) => (
+                              <SelectItem key={type.Id} label={type.Name} value={type.Name} />
+                            ))}
+                          </SelectContent>
+                        </SelectPortal>
+                      </Select>
+                    )}
+                  />
+                  {errors.type && (
+                    <FormControlError>
+                      <Text className="text-red-500">{errors.type.message}</Text>
+                    </FormControlError>
                   )}
-                />
-                {errors.type && (
-                  <FormControlError>
-                    <Text className="text-red-500">{errors.type.message}</Text>
-                  </FormControlError>
-                )}
-              </FormControl>
-            </Card>
+                </FormControl>
+              </Card>
 
-            <Card className={`mb-8 rounded-lg border p-4 ${colorScheme === 'dark' ? 'border-neutral-800 bg-neutral-900' : 'border-neutral-200 bg-white'}`}>
-              <FormControl>
-                <FormControlLabel>
-                  <FormControlLabelText>{t('calls.note')}</FormControlLabelText>
-                </FormControlLabel>
-                <Controller
-                  control={control}
-                  name="note"
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <Textarea>
-                      <TextareaInput value={value} onChangeText={onChange} onBlur={onBlur} numberOfLines={4} placeholder={t('calls.note_placeholder')} />
-                    </Textarea>
-                  )}
-                />
-              </FormControl>
-            </Card>
+              <Card className={`mb-8 rounded-lg border p-4 ${colorScheme === 'dark' ? 'border-neutral-800 bg-neutral-900' : 'border-neutral-200 bg-white'}`}>
+                <FormControl>
+                  <FormControlLabel>
+                    <FormControlLabelText>{t('calls.note')}</FormControlLabelText>
+                  </FormControlLabel>
+                  <Controller
+                    control={control}
+                    name="note"
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <Textarea>
+                        <TextareaInput value={value} onChangeText={onChange} onBlur={onBlur} numberOfLines={4} placeholder={t('calls.note_placeholder')} />
+                      </Textarea>
+                    )}
+                  />
+                </FormControl>
+              </Card>
 
-            <Card className={`mb-8 rounded-lg border p-4 ${colorScheme === 'dark' ? 'border-neutral-800 bg-neutral-900' : 'border-neutral-200 bg-white'}`}>
-              <Text className="mb-4 text-lg font-semibold">{t('calls.call_location')}</Text>
+              <Card className={`mb-8 rounded-lg border p-4 ${colorScheme === 'dark' ? 'border-neutral-800 bg-neutral-900' : 'border-neutral-200 bg-white'}`}>
+                <Text className="mb-4 text-lg font-semibold">{t('calls.call_location')}</Text>
 
-              {/* Address Field */}
-              <FormControl className="mb-4">
-                <FormControlLabel>
-                  <FormControlLabelText>{t('calls.address')}</FormControlLabelText>
-                </FormControlLabel>
-                <Controller
-                  control={control}
-                  name="address"
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <Box className="flex-row items-center space-x-2">
-                      <Box className="flex-1">
-                        <Input>
-                          <InputField testID="address-input" placeholder={t('calls.address_placeholder')} value={value} onChangeText={onChange} onBlur={onBlur} />
-                        </Input>
+                {/* Address Field */}
+                <FormControl className="mb-4">
+                  <FormControlLabel>
+                    <FormControlLabelText>{t('calls.address')}</FormControlLabelText>
+                  </FormControlLabel>
+                  <Controller
+                    control={control}
+                    name="address"
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <Box className="flex-row items-center space-x-2">
+                        <Box className="flex-1">
+                          <Input>
+                            <InputField testID="address-input" placeholder={t('calls.address_placeholder')} value={value} onChangeText={onChange} onBlur={onBlur} />
+                          </Input>
+                        </Box>
+                        <Button testID="address-search-button" size="sm" variant="outline" className="ml-2" onPress={() => handleAddressSearch(value || '')} disabled={isGeocodingAddress || !value?.trim()}>
+                          {isGeocodingAddress ? <Text>...</Text> : <SearchIcon size={16} color={colorScheme === 'dark' ? '#ffffff' : '#000000'} />}
+                        </Button>
                       </Box>
-                      <Button testID="address-search-button" size="sm" variant="outline" className="ml-2" onPress={() => handleAddressSearch(value || '')} disabled={isGeocodingAddress || !value?.trim()}>
-                        {isGeocodingAddress ? <Text>...</Text> : <SearchIcon size={16} color={colorScheme === 'dark' ? '#ffffff' : '#000000'} />}
-                      </Button>
-                    </Box>
-                  )}
-                />
-              </FormControl>
+                    )}
+                  />
+                </FormControl>
 
-              {/* GPS Coordinates Field */}
-              <FormControl className="mb-4">
-                <FormControlLabel>
-                  <FormControlLabelText>{t('calls.coordinates')}</FormControlLabelText>
-                </FormControlLabel>
-                <Controller
-                  control={control}
-                  name="coordinates"
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <Box className="flex-row items-center space-x-2">
-                      <Box className="flex-1">
-                        <Input>
-                          <InputField testID="coordinates-input" placeholder={t('calls.coordinates_placeholder')} value={value} onChangeText={onChange} onBlur={onBlur} />
-                        </Input>
+                {/* GPS Coordinates Field */}
+                <FormControl className="mb-4">
+                  <FormControlLabel>
+                    <FormControlLabelText>{t('calls.coordinates')}</FormControlLabelText>
+                  </FormControlLabel>
+                  <Controller
+                    control={control}
+                    name="coordinates"
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <Box className="flex-row items-center space-x-2">
+                        <Box className="flex-1">
+                          <Input>
+                            <InputField testID="coordinates-input" placeholder={t('calls.coordinates_placeholder')} value={value} onChangeText={onChange} onBlur={onBlur} />
+                          </Input>
+                        </Box>
+                        <Button testID="coordinates-search-button" size="sm" variant="outline" className="ml-2" onPress={() => handleCoordinatesSearch(value || '')} disabled={isGeocodingCoordinates || !value?.trim()}>
+                          {isGeocodingCoordinates ? <Text>...</Text> : <SearchIcon size={16} color={colorScheme === 'dark' ? '#ffffff' : '#000000'} />}
+                        </Button>
                       </Box>
-                      <Button testID="coordinates-search-button" size="sm" variant="outline" className="ml-2" onPress={() => handleCoordinatesSearch(value || '')} disabled={isGeocodingCoordinates || !value?.trim()}>
-                        {isGeocodingCoordinates ? <Text>...</Text> : <SearchIcon size={16} color={colorScheme === 'dark' ? '#ffffff' : '#000000'} />}
-                      </Button>
-                    </Box>
-                  )}
-                />
-              </FormControl>
+                    )}
+                  />
+                </FormControl>
 
-              {/* what3words Field */}
-              <FormControl className="mb-4">
-                <FormControlLabel>
-                  <FormControlLabelText>{t('calls.what3words')}</FormControlLabelText>
-                </FormControlLabel>
-                <Controller
-                  control={control}
-                  name="what3words"
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <Box className="flex-row items-center space-x-2">
-                      <Box className="flex-1">
-                        <Input>
-                          <InputField testID="what3words-input" placeholder={t('calls.what3words_placeholder')} value={value} onChangeText={onChange} onBlur={onBlur} />
-                        </Input>
+                {/* what3words Field */}
+                <FormControl className="mb-4">
+                  <FormControlLabel>
+                    <FormControlLabelText>{t('calls.what3words')}</FormControlLabelText>
+                  </FormControlLabel>
+                  <Controller
+                    control={control}
+                    name="what3words"
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <Box className="flex-row items-center space-x-2">
+                        <Box className="flex-1">
+                          <Input>
+                            <InputField testID="what3words-input" placeholder={t('calls.what3words_placeholder')} value={value} onChangeText={onChange} onBlur={onBlur} />
+                          </Input>
+                        </Box>
+                        <Button testID="what3words-search-button" size="sm" variant="outline" className="ml-2" onPress={() => handleWhat3WordsSearch(value || '')} disabled={isGeocodingWhat3Words || !value?.trim()}>
+                          {isGeocodingWhat3Words ? <Text>...</Text> : <SearchIcon size={16} color={colorScheme === 'dark' ? '#ffffff' : '#000000'} />}
+                        </Button>
                       </Box>
-                      <Button testID="what3words-search-button" size="sm" variant="outline" className="ml-2" onPress={() => handleWhat3WordsSearch(value || '')} disabled={isGeocodingWhat3Words || !value?.trim()}>
-                        {isGeocodingWhat3Words ? <Text>...</Text> : <SearchIcon size={16} color={colorScheme === 'dark' ? '#ffffff' : '#000000'} />}
-                      </Button>
-                    </Box>
-                  )}
-                />
-              </FormControl>
+                    )}
+                  />
+                </FormControl>
 
-              {/* Plus Code Field */}
-              <FormControl className="mb-4">
-                <FormControlLabel>
-                  <FormControlLabelText>{t('calls.plus_code')}</FormControlLabelText>
-                </FormControlLabel>
-                <Controller
-                  control={control}
-                  name="plusCode"
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <Box className="flex-row items-center space-x-2">
-                      <Box className="flex-1">
-                        <Input>
-                          <InputField testID="plus-code-input" placeholder={t('calls.plus_code_placeholder')} value={value} onChangeText={onChange} onBlur={onBlur} />
-                        </Input>
+                {/* Plus Code Field */}
+                <FormControl className="mb-4">
+                  <FormControlLabel>
+                    <FormControlLabelText>{t('calls.plus_code')}</FormControlLabelText>
+                  </FormControlLabel>
+                  <Controller
+                    control={control}
+                    name="plusCode"
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <Box className="flex-row items-center space-x-2">
+                        <Box className="flex-1">
+                          <Input>
+                            <InputField testID="plus-code-input" placeholder={t('calls.plus_code_placeholder')} value={value} onChangeText={onChange} onBlur={onBlur} />
+                          </Input>
+                        </Box>
+                        <Button testID="plus-code-search-button" size="sm" variant="outline" className="ml-2" onPress={() => handlePlusCodeSearch(value || '')} disabled={isGeocodingPlusCode || !value?.trim()}>
+                          {isGeocodingPlusCode ? <Text>...</Text> : <SearchIcon size={16} color={colorScheme === 'dark' ? '#ffffff' : '#000000'} />}
+                        </Button>
                       </Box>
-                      <Button testID="plus-code-search-button" size="sm" variant="outline" className="ml-2" onPress={() => handlePlusCodeSearch(value || '')} disabled={isGeocodingPlusCode || !value?.trim()}>
-                        {isGeocodingPlusCode ? <Text>...</Text> : <SearchIcon size={16} color={colorScheme === 'dark' ? '#ffffff' : '#000000'} />}
-                      </Button>
-                    </Box>
-                  )}
-                />
-              </FormControl>
+                    )}
+                  />
+                </FormControl>
 
-              {/* Map Preview */}
-              <Box className="mb-4">
-                {selectedLocation ? (
-                  <LocationPicker initialLocation={selectedLocation} onLocationSelected={handleLocationSelected} height={200} />
-                ) : (
-                  <Button onPress={() => setShowLocationPicker(true)} className="w-full">
-                    <ButtonText>{t('calls.select_location')}</ButtonText>
-                  </Button>
-                )}
+                {/* Map Preview */}
+                <Box className="mb-4">
+                  {selectedLocation ? (
+                    <LocationPicker initialLocation={selectedLocation} onLocationSelected={handleLocationSelected} height={200} />
+                  ) : (
+                    <Button onPress={() => setShowLocationPicker(true)} className="w-full">
+                      <ButtonText>{t('calls.select_location')}</ButtonText>
+                    </Button>
+                  )}
+                </Box>
+              </Card>
+
+              <Card className={`mb-8 rounded-lg border p-4 ${colorScheme === 'dark' ? 'border-neutral-800 bg-neutral-900' : 'border-neutral-200 bg-white'}`}>
+                <FormControl>
+                  <FormControlLabel>
+                    <FormControlLabelText>{t('calls.contact_name')}</FormControlLabelText>
+                  </FormControlLabel>
+                  <Controller
+                    control={control}
+                    name="contactName"
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <Input>
+                        <InputField placeholder={t('calls.contact_name_placeholder')} value={value} onChangeText={onChange} onBlur={onBlur} />
+                      </Input>
+                    )}
+                  />
+                </FormControl>
+              </Card>
+
+              <Card className={`mb-8 rounded-lg border p-4 ${colorScheme === 'dark' ? 'border-neutral-800 bg-neutral-900' : 'border-neutral-200 bg-white'}`}>
+                <FormControl>
+                  <FormControlLabel>
+                    <FormControlLabelText>{t('calls.contact_info')}</FormControlLabelText>
+                  </FormControlLabel>
+                  <Controller
+                    control={control}
+                    name="contactInfo"
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <Input>
+                        <InputField placeholder={t('calls.contact_info_placeholder')} value={value} onChangeText={onChange} onBlur={onBlur} />
+                      </Input>
+                    )}
+                  />
+                </FormControl>
+              </Card>
+
+              <Card className={`mb-8 rounded-lg border p-4 ${colorScheme === 'dark' ? 'border-neutral-800 bg-neutral-900' : 'border-neutral-200 bg-white'}`}>
+                <Text className="mb-4 text-lg font-semibold">{t('calls.dispatch_to')}</Text>
+                <Button onPress={() => setShowDispatchModal(true)} className="w-full">
+                  <ButtonText>{getDispatchSummary()}</ButtonText>
+                </Button>
+              </Card>
+
+              <Box className="mb-6 flex-row space-x-4" style={{ paddingBottom: Math.max(insets.bottom, 16) }}>
+                <Button className="mr-10 flex-1" variant="outline" onPress={() => router.back()}>
+                  <ButtonText>{t('common.cancel')}</ButtonText>
+                </Button>
+                <Button className="ml-10 flex-1" variant="solid" action="primary" onPress={handleSubmit(onSubmit)} isDisabled={isSubmitting} testID="create-call-button">
+                  {isSubmitting ? <ButtonSpinner color="#ffffff" /> : <PlusIcon size={18} className="mr-2" />}
+                  <ButtonText>{t('calls.create')}</ButtonText>
+                </Button>
               </Box>
-            </Card>
-
-            <Card className={`mb-8 rounded-lg border p-4 ${colorScheme === 'dark' ? 'border-neutral-800 bg-neutral-900' : 'border-neutral-200 bg-white'}`}>
-              <FormControl>
-                <FormControlLabel>
-                  <FormControlLabelText>{t('calls.contact_name')}</FormControlLabelText>
-                </FormControlLabel>
-                <Controller
-                  control={control}
-                  name="contactName"
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <Input>
-                      <InputField placeholder={t('calls.contact_name_placeholder')} value={value} onChangeText={onChange} onBlur={onBlur} />
-                    </Input>
-                  )}
-                />
-              </FormControl>
-            </Card>
-
-            <Card className={`mb-8 rounded-lg border p-4 ${colorScheme === 'dark' ? 'border-neutral-800 bg-neutral-900' : 'border-neutral-200 bg-white'}`}>
-              <FormControl>
-                <FormControlLabel>
-                  <FormControlLabelText>{t('calls.contact_info')}</FormControlLabelText>
-                </FormControlLabel>
-                <Controller
-                  control={control}
-                  name="contactInfo"
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <Input>
-                      <InputField placeholder={t('calls.contact_info_placeholder')} value={value} onChangeText={onChange} onBlur={onBlur} />
-                    </Input>
-                  )}
-                />
-              </FormControl>
-            </Card>
-
-            <Card className={`mb-8 rounded-lg border p-4 ${colorScheme === 'dark' ? 'border-neutral-800 bg-neutral-900' : 'border-neutral-200 bg-white'}`}>
-              <Text className="mb-4 text-lg font-semibold">{t('calls.dispatch_to')}</Text>
-              <Button onPress={() => setShowDispatchModal(true)} className="w-full">
-                <ButtonText>{getDispatchSummary()}</ButtonText>
-              </Button>
-            </Card>
-
-            <Box className="mb-6 flex-row space-x-4" style={{ paddingBottom: Math.max(insets.bottom, 16) }}>
-              <Button className="mr-10 flex-1" variant="outline" onPress={() => router.back()}>
-                <ButtonText>{t('common.cancel')}</ButtonText>
-              </Button>
-              <Button className="ml-10 flex-1" variant="solid" action="primary" onPress={handleSubmit(onSubmit)}>
-                <PlusIcon size={18} className="mr-2" />
-                <ButtonText>{t('calls.create')}</ButtonText>
-              </Button>
-            </Box>
-          </ScrollView>
-        </Box>
+            </ScrollView>
+          </Box>
+        </KeyboardAvoidingView>
       </View>
 
       {/* Full-screen location picker overlay */}

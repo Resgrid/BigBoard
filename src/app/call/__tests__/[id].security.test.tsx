@@ -153,11 +153,12 @@ jest.mock('react-i18next', () => ({
 }));
 
 jest.mock('nativewind', () => ({
+  styled: jest.fn((Component: any) => Component),
   useColorScheme: () => ({ colorScheme: 'light' }),
 }));
 
 // Mock navigation hook
-jest.mock('@react-navigation/native', () => ({
+jest.mock('expo-router/react-navigation', () => ({
   useFocusEffect: jest.fn((callback: () => void) => {
     const React = require('react');
     React.useEffect(callback, []);

@@ -1,6 +1,7 @@
-import type { VariantProps } from '@gluestack-ui/nativewind-utils';
+import type { VariantProps } from '@gluestack-ui/utils/nativewind-utils';
 import React from 'react';
-import { Platform, View, type ViewProps } from 'react-native';
+import type { ViewProps } from 'react-native';
+import { Platform, View } from 'react-native';
 
 import { hstackStyle } from './styles';
 

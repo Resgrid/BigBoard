@@ -42,6 +42,7 @@ export const StatusBottomSheet = () => {
     availableCalls,
     availableStations,
     isLoading,
+    error,
     setIsOpen,
     setCurrentStep,
     setSelectedCall,
@@ -202,12 +203,12 @@ export const StatusBottomSheet = () => {
         return roleInput;
       });
 
-      // Set active call if a call was selected and it's different from the current active call
+      await saveUnitStatus(input);
+
+      // Set active call only after the status save succeeded
       if (selectedDestinationType === 'call' && selectedCall && activeCallId !== selectedCall.CallId) {
         setActiveCall(selectedCall.CallId);
       }
-
-      await saveUnitStatus(input);
 
       // Show success toast
       showToast('success', t('status.status_saved_successfully'));
@@ -525,6 +526,16 @@ export const StatusBottomSheet = () => {
                   </VStack>
                 </HStack>
               </TouchableOpacity>
+
+              {/* Destination fetch error with retry */}
+              {error && (
+                <VStack space="md" className="mb-4 w-full items-center justify-center">
+                  <Text className="text-center text-red-500">{error}</Text>
+                  <Button variant="outline" size="sm" onPress={() => activeUnit && fetchDestinationData(activeUnit.UnitId)} testID="destination-retry-button">
+                    <ButtonText>{t('common.retry')}</ButtonText>
+                  </Button>
+                </VStack>
+              )}
 
               {/* Show tabs only if we have both calls and stations to choose from */}
               {((detailLevel === 1 && availableStations.length > 0) || (detailLevel === 2 && availableCalls.length > 0) || (detailLevel === 3 && (availableCalls.length > 0 || availableStations.length > 0))) && (

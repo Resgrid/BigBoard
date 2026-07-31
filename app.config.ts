@@ -32,7 +32,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   orientation: 'default',
   icon: './assets/icon.png',
   userInterfaceStyle: 'automatic',
-  newArchEnabled: true,
   updates: {
     fallbackToCacheTimeout: 0,
   },
@@ -278,7 +277,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       'expo-navigation-bar',
       {
         position: 'relative',
-        visibility: 'hidden',
+        hidden: true,
         behavior: 'inset-touch',
       },
     ],
@@ -293,6 +292,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     '@config-plugins/react-native-webrtc',
     '@config-plugins/react-native-callkeep',
     '@sentry/react-native',
+    'expo-image',
+    'expo-sharing',
+    'expo-status-bar',
     'expo-web-browser',
     './customGradle.plugin.js',
     './customManifest.plugin.js',
