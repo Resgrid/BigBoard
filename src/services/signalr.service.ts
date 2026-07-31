@@ -196,9 +196,7 @@ class SignalRService {
       // Set up event handlers
       connection.onclose((error) => {
         this.handleConnectionClose(config.name);
-        if (error) {
-          this.notifyConnectionStateCallbacks(config.name, 'onError', error);
-        }
+        this.notifyConnectionError(config.name, error);
         this.notifyConnectionStateCallbacks(config.name, 'onClose');
       });
 
@@ -207,9 +205,7 @@ class SignalRService {
           message: `Reconnecting to hub: ${config.name}`,
           context: { error },
         });
-        if (error) {
-          this.notifyConnectionStateCallbacks(config.name, 'onError', error);
-        }
+        this.notifyConnectionError(config.name, error);
         this.notifyConnectionStateCallbacks(config.name, 'onReconnecting');
       });
 
@@ -332,9 +328,7 @@ class SignalRService {
       // Set up event handlers
       connection.onclose((error) => {
         this.handleConnectionClose(config.name);
-        if (error) {
-          this.notifyConnectionStateCallbacks(config.name, 'onError', error);
-        }
+        this.notifyConnectionError(config.name, error);
         this.notifyConnectionStateCallbacks(config.name, 'onClose');
       });
 
@@ -343,9 +337,7 @@ class SignalRService {
           message: `Reconnecting to hub: ${config.name}`,
           context: { error },
         });
-        if (error) {
-          this.notifyConnectionStateCallbacks(config.name, 'onError', error);
-        }
+        this.notifyConnectionError(config.name, error);
         this.notifyConnectionStateCallbacks(config.name, 'onReconnecting');
       });
 
@@ -642,6 +634,12 @@ class SignalRService {
       if (callbacks.size === 0) {
         this.connectionStateCallbacks.delete(hubName);
       }
+    }
+  }
+
+  private notifyConnectionError(hubName: string, error?: Error): void {
+    if (error) {
+      this.notifyConnectionStateCallbacks(hubName, 'onError', error);
     }
   }
 

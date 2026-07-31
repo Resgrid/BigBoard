@@ -25,6 +25,18 @@ authApi.interceptors.request.use((config) => {
 });
 
 export const loginRequest = async (credentials: LoginCredentials): Promise<LoginResponse> => {
+  // GDPR Art. 5(1)(c) data minimization: never log raw username PII.
+  // Computed before the try block (with its own fallback) so the hash is
+  // available in both success and error paths without an unguarded await
+  // inside catch.
+  let username_hash = 'unavailable';
+  try {
+    username_hash = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, credentials.username);
+  } catch {
+    // Hashing failed (e.g. crypto backend unavailable) — keep placeholder.
+  }
+  const gdpr = { purpose: 'auth', lawful_basis: 'contract' } as const;
+
   try {
     const data = queryString.stringify({
       grant_type: 'password',
@@ -32,10 +44,6 @@ export const loginRequest = async (credentials: LoginCredentials): Promise<Login
       password: credentials.password,
       scope: Env.IS_MOBILE_APP ? 'openid profile offline_access mobile' : 'openid profile offline_access',
     });
-
-    // GDPR Art. 5(1)(c) data minimization: never log raw username PII.
-    const username_hash = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, credentials.username);
-    const gdpr = { purpose: 'auth', lawful_basis: 'contract' } as const;
 
     logger.info({
       message: 'API: Sending login request',
@@ -73,14 +81,13 @@ export const loginRequest = async (credentials: LoginCredentials): Promise<Login
       };
     }
   } catch (error) {
-    const username_hash = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, credentials.username);
     logger.error({
       message: 'Login API call failed with exception',
       context: {
         error: error instanceof Error ? error.message : String(error),
         status: axios.isAxiosError(error) ? error.response?.status : undefined,
         username_hash,
-        gdpr: { purpose: 'auth', lawful_basis: 'contract' },
+        gdpr,
       },
     });
 

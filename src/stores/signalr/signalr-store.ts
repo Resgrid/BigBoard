@@ -223,9 +223,12 @@ export const useSignalRStore = create<SignalRState>((set, get) => ({
           });
           set({ isUpdateHubConnected: true, error: null });
         });
+      }
 
-        // Set up connection state monitoring via the service's public API
-        // This ensures we properly track disconnections and reconnections
+      // Connection state monitoring re-registers on each connect: disconnect
+      // unregisters and nulls the handle, so guard on the handle rather than
+      // the one-time listener flag above.
+      if (!updateHubStateCallbackHandle) {
         updateHubStateCallbackHandle = signalRService.registerConnectionStateCallbacks(Env.CHANNEL_HUB_NAME, {
           onClose: () => {
             logger.info({
