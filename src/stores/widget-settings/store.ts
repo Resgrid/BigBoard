@@ -110,14 +110,10 @@ export interface WeatherAlertsWidgetSettings {
   showModerate: boolean;
   showMinor: boolean;
   showUnknown: boolean;
-  showCategoryGeo: boolean;
   showCategoryMet: boolean;
-  showCategorySafety: boolean;
   showCategoryFire: boolean;
   showCategoryHealth: boolean;
   showCategoryEnv: boolean;
-  showCategoryTransport: boolean;
-  showCategoryInfra: boolean;
   showCategoryOther: boolean;
   showHeadline: boolean;
   showArea: boolean;
@@ -258,14 +254,10 @@ const defaultWeatherAlertsSettings: WeatherAlertsWidgetSettings = {
   showModerate: true,
   showMinor: true,
   showUnknown: true,
-  showCategoryGeo: true,
   showCategoryMet: true,
-  showCategorySafety: true,
   showCategoryFire: true,
   showCategoryHealth: true,
   showCategoryEnv: true,
-  showCategoryTransport: true,
-  showCategoryInfra: true,
   showCategoryOther: true,
   showHeadline: true,
   showArea: true,

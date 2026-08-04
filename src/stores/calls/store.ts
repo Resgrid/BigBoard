@@ -40,14 +40,14 @@ export const useCallsStore = create<CallsState>((set, get) => ({
       const callPrioritiesResponse = await getCallPriorities();
       const callTypesResponse = await getCallTypes();
       set({
-        calls: callsResponse.Data,
-        callPriorities: callPrioritiesResponse.Data,
-        callTypes: callTypesResponse.Data,
+        calls: callsResponse.Data ?? [],
+        callPriorities: callPrioritiesResponse.Data ?? [],
+        callTypes: callTypesResponse.Data ?? [],
         isLoading: false,
       });
 
       // Fetch extra data for all calls in parallel (non-blocking)
-      const calls = callsResponse.Data;
+      const calls = callsResponse.Data ?? [];
       const fetchId = Date.now();
       set({ lastCallExtraDataFetchId: fetchId });
       if (calls && calls.length > 0) {
@@ -78,9 +78,9 @@ export const useCallsStore = create<CallsState>((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       const response = await getCalls();
-      set({ calls: response.Data, isLoading: false });
+      set({ calls: response.Data ?? [], isLoading: false });
       // Fetch extra data for all calls in parallel (non-blocking)
-      const calls = response.Data;
+      const calls = response.Data ?? [];
       const fetchId = Date.now();
       set({ lastCallExtraDataFetchId: fetchId });
       if (calls && calls.length > 0) {
@@ -106,7 +106,7 @@ export const useCallsStore = create<CallsState>((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       const response = await getCallPriorities();
-      set({ callPriorities: response.Data, isLoading: false });
+      set({ callPriorities: response.Data ?? [], isLoading: false });
     } catch {
       set({ error: 'Failed to fetch call priorities', isLoading: false });
     }
@@ -121,7 +121,7 @@ export const useCallsStore = create<CallsState>((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       const response = await getCallTypes();
-      set({ callTypes: response.Data, isLoading: false });
+      set({ callTypes: response.Data ?? [], isLoading: false });
     } catch {
       set({ error: 'Failed to fetch call types', isLoading: false });
     }

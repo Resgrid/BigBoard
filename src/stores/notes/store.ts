@@ -31,7 +31,7 @@ export const useNotesStore = create<NotesState>((set) => ({
     set({ isLoading: true, error: null });
     try {
       const response = await getAllNotes();
-      set({ notes: response.Data, isLoading: false });
+      set({ notes: response.Data ?? [], isLoading: false });
     } catch (error) {
       set({ isLoading: false, error: error instanceof Error ? error.message : 'An unknown error occurred' });
     }

@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView } from 'react-native';
 
+import { ScheduledCallsFilterSection } from '@/components/configure/scheduled-calls-filter-section';
 import { Box } from '@/components/ui/box';
 import { Button, ButtonText } from '@/components/ui/button';
 import { HStack } from '@/components/ui/hstack';
@@ -861,18 +862,8 @@ export default function Configure() {
               <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>{t('configure.alert_categories')}</Text>
 
               <HStack className="items-center justify-between">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>{t('weatherAlerts.category.geo')}</Text>
-                <Switch value={weatherAlertsSettings.showCategoryGeo} onValueChange={(value) => updateWeatherAlertsSettings({ showCategoryGeo: value })} />
-              </HStack>
-
-              <HStack className="items-center justify-between">
                 <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>{t('weatherAlerts.category.met')}</Text>
                 <Switch value={weatherAlertsSettings.showCategoryMet} onValueChange={(value) => updateWeatherAlertsSettings({ showCategoryMet: value })} />
-              </HStack>
-
-              <HStack className="items-center justify-between">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>{t('weatherAlerts.category.safety')}</Text>
-                <Switch value={weatherAlertsSettings.showCategorySafety} onValueChange={(value) => updateWeatherAlertsSettings({ showCategorySafety: value })} />
               </HStack>
 
               <HStack className="items-center justify-between">
@@ -888,16 +879,6 @@ export default function Configure() {
               <HStack className="items-center justify-between">
                 <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>{t('weatherAlerts.category.env')}</Text>
                 <Switch value={weatherAlertsSettings.showCategoryEnv} onValueChange={(value) => updateWeatherAlertsSettings({ showCategoryEnv: value })} />
-              </HStack>
-
-              <HStack className="items-center justify-between">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>{t('weatherAlerts.category.transport')}</Text>
-                <Switch value={weatherAlertsSettings.showCategoryTransport} onValueChange={(value) => updateWeatherAlertsSettings({ showCategoryTransport: value })} />
-              </HStack>
-
-              <HStack className="items-center justify-between">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>{t('weatherAlerts.category.infra')}</Text>
-                <Switch value={weatherAlertsSettings.showCategoryInfra} onValueChange={(value) => updateWeatherAlertsSettings({ showCategoryInfra: value })} />
               </HStack>
 
               <HStack className="items-center justify-between">
@@ -1033,90 +1014,7 @@ export default function Configure() {
             </VStack>
 
             {/* Filtering */}
-            <VStack space="md">
-              <Text className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>{t('configure.filtering')}</Text>
-              <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{t('configure.filter_help')}</Text>
-
-              <VStack space="sm">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>{t('configure.group_station_ids')}</Text>
-                <Input variant="outline" size="md">
-                  <InputField
-                    placeholder={t('configure.filter_placeholder', { example: '123,456' })}
-                    value={scheduledCallsSettings.filterGroupIds.join(',')}
-                    onChangeText={(text) =>
-                      updateScheduledCallsColumnSettings({
-                        filterGroupIds: text
-                          ? text
-                              .split(',')
-                              .map((s) => s.trim())
-                              .filter(Boolean)
-                          : [],
-                      })
-                    }
-                  />
-                </Input>
-              </VStack>
-
-              <VStack space="sm">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>{t('configure.unit_ids')}</Text>
-                <Input variant="outline" size="md">
-                  <InputField
-                    placeholder={t('configure.filter_placeholder', { example: '123,456' })}
-                    value={scheduledCallsSettings.filterUnitIds.join(',')}
-                    onChangeText={(text) =>
-                      updateScheduledCallsColumnSettings({
-                        filterUnitIds: text
-                          ? text
-                              .split(',')
-                              .map((s) => s.trim())
-                              .filter(Boolean)
-                          : [],
-                      })
-                    }
-                  />
-                </Input>
-              </VStack>
-
-              <VStack space="sm">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>{t('configure.personnel_ids')}</Text>
-                <Input variant="outline" size="md">
-                  <InputField
-                    placeholder={t('configure.filter_placeholder', { example: 'user-id-1,user-id-2' })}
-                    value={scheduledCallsSettings.filterPersonnelIds.join(',')}
-                    onChangeText={(text) =>
-                      updateScheduledCallsColumnSettings({
-                        filterPersonnelIds: text
-                          ? text
-                              .split(',')
-                              .map((s) => s.trim())
-                              .filter(Boolean)
-                          : [],
-                      })
-                    }
-                  />
-                </Input>
-              </VStack>
-
-              <VStack space="sm">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>{t('configure.role_ids')}</Text>
-                <Input variant="outline" size="md">
-                  <InputField
-                    placeholder={t('configure.filter_placeholder', { example: '123,456' })}
-                    value={scheduledCallsSettings.filterRoleIds.join(',')}
-                    onChangeText={(text) =>
-                      updateScheduledCallsColumnSettings({
-                        filterRoleIds: text
-                          ? text
-                              .split(',')
-                              .map((s) => s.trim())
-                              .filter(Boolean)
-                          : [],
-                      })
-                    }
-                  />
-                </Input>
-              </VStack>
-            </VStack>
+            <ScheduledCallsFilterSection settings={scheduledCallsSettings} onUpdate={updateScheduledCallsColumnSettings} isDark={isDark} />
 
             {/* Color Coding Thresholds */}
             <VStack space="md">

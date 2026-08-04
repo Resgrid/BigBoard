@@ -35,15 +35,15 @@ export const useRolesStore = create<RolesState>((set) => ({
       const personnelResponse = await getAllPersonnelInfos('');
 
       set({
-        roles: response.Data,
-        users: personnelResponse.Data,
+        roles: response.Data ?? [],
+        users: personnelResponse.Data ?? [],
         isLoading: false,
       });
 
       const activeUnit = useCoreStore.getState().activeUnit;
       if (activeUnit) {
         const unitRoles = await getRoleAssignmentsForUnit(activeUnit.UnitId);
-        set({ unitRoleAssignments: unitRoles.Data });
+        set({ unitRoleAssignments: unitRoles.Data ?? [] });
       }
     } catch (error) {
       set({
@@ -56,7 +56,7 @@ export const useRolesStore = create<RolesState>((set) => ({
     set({ isLoading: true, error: null });
     try {
       const unitRoles = await getRoleAssignmentsForUnit(unitId);
-      set({ unitRoleAssignments: unitRoles.Data, isLoading: false });
+      set({ unitRoleAssignments: unitRoles.Data ?? [], isLoading: false });
     } catch (error) {
       set({ error: 'Failed to fetch unit roles', isLoading: false });
     }
@@ -65,7 +65,7 @@ export const useRolesStore = create<RolesState>((set) => ({
     set({ isLoading: true, error: null });
     try {
       const response = await getAllUnitRolesAndAssignmentsForDepartment();
-      set({ roles: response.Data, isLoading: false });
+      set({ roles: response.Data ?? [], isLoading: false });
     } catch (error) {
       set({ error: 'Failed to fetch all unit roles', isLoading: false });
     }
@@ -74,7 +74,7 @@ export const useRolesStore = create<RolesState>((set) => ({
     set({ isLoading: true, error: null });
     try {
       const personnelResponse = await getAllPersonnelInfos('');
-      set({ users: personnelResponse.Data, isLoading: false });
+      set({ users: personnelResponse.Data ?? [], isLoading: false });
     } catch (error) {
       set({ error: 'Failed to fetch personnel', isLoading: false });
     }

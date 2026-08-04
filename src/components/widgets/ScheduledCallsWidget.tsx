@@ -111,11 +111,18 @@ export const ScheduledCallsWidget: React.FC<ScheduledCallsWidgetProps> = ({ onRe
     return priority?.Color ? `#${priority.Color}` : '#888888';
   };
 
+  /** Parses server date strings as UTC when no timezone designator is present */
+  const parseScheduledDate = (value: string | undefined): Date => {
+    if (!value) return new Date(0);
+    const hasTimeZone = /(Z|[+-]\d{2}:?\d{2})$/i.test(value);
+    return new Date(hasTimeZone ? value : `${value}Z`);
+  };
+
   /** Returns minutes until the scheduled call becomes active. Negative means overdue. */
   const getMinutesUntilActive = (call: CallResultData): number => {
     const scheduled = call.DispatchedOnUtc || call.DispatchedOn || call.LoggedOnUtc || call.LoggedOn;
     if (!scheduled) return Infinity;
-    const diff = new Date(scheduled).getTime() - Date.now();
+    const diff = parseScheduledDate(scheduled).getTime() - Date.now();
     return diff / 60000;
   };
 
@@ -131,7 +138,7 @@ export const ScheduledCallsWidget: React.FC<ScheduledCallsWidgetProps> = ({ onRe
   const formatScheduledTime = (call: CallResultData): string => {
     const scheduled = call.DispatchedOnUtc || call.DispatchedOn || call.LoggedOnUtc || call.LoggedOn;
     if (!scheduled) return '—';
-    const date = new Date(scheduled);
+    const date = parseScheduledDate(scheduled);
     if (isNaN(date.getTime())) return '—';
 
     const minutes = getMinutesUntilActive(call);
@@ -203,8 +210,8 @@ export const ScheduledCallsWidget: React.FC<ScheduledCallsWidgetProps> = ({ onRe
       let cmp = 0;
       switch (settings.sortBy) {
         case 'scheduledTime': {
-          const aTime = new Date(a.DispatchedOnUtc || a.DispatchedOn || a.LoggedOnUtc || a.LoggedOn || 0).getTime();
-          const bTime = new Date(b.DispatchedOnUtc || b.DispatchedOn || b.LoggedOnUtc || b.LoggedOn || 0).getTime();
+          const aTime = parseScheduledDate(a.DispatchedOnUtc || a.DispatchedOn || a.LoggedOnUtc || a.LoggedOn).getTime();
+          const bTime = parseScheduledDate(b.DispatchedOnUtc || b.DispatchedOn || b.LoggedOnUtc || b.LoggedOn).getTime();
           cmp = aTime - bTime;
           break;
         }

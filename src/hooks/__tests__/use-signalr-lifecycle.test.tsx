@@ -42,15 +42,16 @@ describe('useSignalRLifecycle', () => {
       isActive: true,
     };
 
-    // Mock SignalR store
-    mockUseSignalRStore.mockReturnValue({
+    // Mock SignalR store (hook uses per-field selectors)
+    const signalRState = {
       connectUpdateHub: mockConnectUpdateHub,
       disconnectUpdateHub: mockDisconnectUpdateHub,
       connectGeolocationHub: mockConnectGeolocationHub,
       disconnectGeolocationHub: mockDisconnectGeolocationHub,
       isUpdateHubConnected: false,
       isGeolocationHubConnected: false,
-    } as any);
+    };
+    mockUseSignalRStore.mockImplementation(((selector: any) => (typeof selector === 'function' ? selector(signalRState) : signalRState)) as any);
 
     // Mock useAppLifecycle to return shared state
     mockUseAppLifecycle.mockImplementation(() => appLifecycleState);

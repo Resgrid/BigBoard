@@ -11,7 +11,7 @@ jest.mock('@/lib/auth');
 jest.mock('@/stores/calls/detail-store');
 
 // Mock navigation
-jest.mock('@react-navigation/native', () => ({
+jest.mock('expo-router/react-navigation', () => ({
   useIsFocused: () => true,
   useNavigation: () => ({
     navigate: jest.fn(),
@@ -20,6 +20,7 @@ jest.mock('@react-navigation/native', () => ({
 
 // Mock nativewind
 jest.mock('nativewind', () => ({
+  styled: jest.fn((Component: any) => Component),
   useColorScheme: () => ({ colorScheme: 'light' }),
   cssInterop: jest.fn(),
 }));

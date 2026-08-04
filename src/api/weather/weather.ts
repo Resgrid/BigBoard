@@ -23,13 +23,21 @@ export interface WeatherOutlook {
   location: string;
 }
 
-export const getWeather = async (apiKey: string, lat: number, lon: number): Promise<WeatherData | null> => {
+/**
+ * Units understood by the OpenWeatherMap API.
+ * - `standard` = Kelvin, `metric` = Celsius / m/s, `imperial` = Fahrenheit / mph.
+ */
+export const WEATHER_UNITS = ['standard', 'metric', 'imperial'] as const;
+
+export type WeatherUnits = (typeof WEATHER_UNITS)[number];
+
+export const getWeather = async (apiKey: string, lat: number, lon: number, units: WeatherUnits = 'imperial'): Promise<WeatherData | null> => {
   if (!apiKey) {
     return null;
   }
 
   try {
-    const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=imperial`);
+    const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=${units}`);
 
     if (!response.ok) {
       throw new Error('Weather API request failed');
@@ -50,7 +58,7 @@ export const getWeather = async (apiKey: string, lat: number, lon: number): Prom
   }
 };
 
-export const getWeatherOutlook = async (apiKey: string, lat: number, lon: number): Promise<WeatherOutlook | null> => {
+export const getWeatherOutlook = async (apiKey: string, lat: number, lon: number, units: WeatherUnits = 'imperial'): Promise<WeatherOutlook | null> => {
   if (!apiKey) {
     return null;
   }
@@ -58,8 +66,8 @@ export const getWeatherOutlook = async (apiKey: string, lat: number, lon: number
   try {
     // Fetch both current weather and forecast in parallel
     const [currentResponse, forecastResponse] = await Promise.all([
-      fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=imperial`),
-      fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=imperial`),
+      fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=${units}`),
+      fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=${units}`),
     ]);
 
     if (!currentResponse.ok || !forecastResponse.ok) {

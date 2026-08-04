@@ -143,9 +143,13 @@ async function createWindow() {
     mainWindow.loadURL(`http://127.0.0.1:${port}`);
   }
 
-  // Open external links in default browser
+  // Open external links in default browser (http/https only)
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-    shell.openExternal(url);
+    if (url.startsWith('https://') || url.startsWith('http://')) {
+      shell.openExternal(url).catch((error) => {
+        console.error(`Failed to open external URL "${url}":`, error);
+      });
+    }
     return { action: 'deny' };
   });
 

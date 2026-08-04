@@ -29,6 +29,27 @@ const mmkvStorage = {
   },
 };
 
+// Handle for the scheduled token-refresh timer so it can be cancelled
+let refreshTimer: ReturnType<typeof setTimeout> | null = null;
+
+// In-flight refresh promise so concurrent callers share a single refresh
+let refreshPromise: Promise<void> | null = null;
+
+const clearRefreshTimer = () => {
+  if (refreshTimer) {
+    clearTimeout(refreshTimer);
+    refreshTimer = null;
+  }
+};
+
+const scheduleTokenRefresh = (msUntilRefresh: number) => {
+  clearRefreshTimer();
+  refreshTimer = setTimeout(() => {
+    refreshTimer = null;
+    useAuthStore.getState().refreshAccessToken();
+  }, msUntilRefresh);
+};
+
 const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
@@ -61,7 +82,7 @@ const useAuthStore = create<AuthState>()(
             if (!response.authResponse || !response.authResponse.id_token) {
               logger.error({
                 message: 'Login: Missing auth response or id_token',
-                context: { authResponse: response.authResponse },
+                context: { hasAuthResponse: !!response.authResponse, hasIdToken: !!response.authResponse?.id_token },
               });
               throw new Error('Invalid authentication response: missing token data');
             }
@@ -103,7 +124,7 @@ const useAuthStore = create<AuthState>()(
 
             // Schedule automatic access-token refresh (1 min before expiry, minimum 60 s)
             const msUntilRefresh = Math.max(response.authResponse.expires_in * 1000 - 60_000, 60_000);
-            setTimeout(() => get().refreshAccessToken(), msUntilRefresh);
+            scheduleTokenRefresh(msUntilRefresh);
           } else {
             logger.error({
               message: 'Login: API returned unsuccessful response',
@@ -131,6 +152,8 @@ const useAuthStore = create<AuthState>()(
           message: 'Logout: Clearing auth state',
         });
 
+        clearRefreshTimer();
+
         set({
           accessToken: null,
           refreshToken: null,
@@ -144,32 +167,44 @@ const useAuthStore = create<AuthState>()(
       },
 
       refreshAccessToken: async () => {
-        try {
-          const { refreshToken } = get();
-          if (!refreshToken) {
-            throw new Error('No refresh token available');
-          }
-
-          const response = await refreshTokenRequest(refreshToken);
-
-          const now = new Date();
-          const newExpiresOn = new Date(now.getTime() + response.expires_in * 1000).getTime().toString();
-
-          set({
-            accessToken: response.access_token,
-            refreshToken: response.refresh_token,
-            refreshTokenExpiresOn: newExpiresOn,
-            status: 'signedIn',
-            error: null,
-          });
-
-          // Schedule next refresh 1 min before the new access token expires (minimum 60 s)
-          const msUntilRefresh = Math.max(response.expires_in * 1000 - 60_000, 60_000);
-          setTimeout(() => get().refreshAccessToken(), msUntilRefresh);
-        } catch {
-          // If refresh fails, log out the user
-          get().logout();
+        // Dedupe concurrent refreshes so the timer and the axios 401 interceptor share one request
+        if (refreshPromise) {
+          return refreshPromise;
         }
+
+        refreshPromise = (async () => {
+          try {
+            const { refreshToken } = get();
+            if (!refreshToken) {
+              throw new Error('No refresh token available');
+            }
+
+            const response = await refreshTokenRequest(refreshToken);
+
+            const now = new Date();
+            const newExpiresOn = new Date(now.getTime() + response.expires_in * 1000).getTime().toString();
+
+            set({
+              accessToken: response.access_token,
+              refreshToken: response.refresh_token,
+              refreshTokenExpiresOn: newExpiresOn,
+              status: 'signedIn',
+              error: null,
+            });
+
+            // Schedule next refresh 1 min before the new access token expires (minimum 60 s)
+            const msUntilRefresh = Math.max(response.expires_in * 1000 - 60_000, 60_000);
+            scheduleTokenRefresh(msUntilRefresh);
+          } catch {
+            // If refresh fails, log out the user and flag the session as expired
+            await get().logout();
+            set({ error: 'session_expired' });
+          } finally {
+            refreshPromise = null;
+          }
+        })();
+
+        return refreshPromise;
       },
       isAuthenticated: (): boolean => {
         return get().status === 'signedIn' && get().accessToken !== null;
@@ -270,7 +305,7 @@ const useAuthStore = create<AuthState>()(
             // Schedule automatic access-token refresh if we have a refresh token
             if (hasRefreshToken) {
               const msUntilRefresh = Math.max(expiresInSeconds * 1000 - 60_000, 60_000);
-              setTimeout(() => get().refreshAccessToken(), msUntilRefresh);
+              scheduleTokenRefresh(msUntilRefresh);
             }
 
             return { success: true };
@@ -322,7 +357,7 @@ const useAuthStore = create<AuthState>()(
           if (expiresAt > 0 && expiresAt - now > 60_000) {
             // Token still has more than 1 minute left — schedule a proactive refresh
             const msUntilRefresh = expiresAt - now - 60_000;
-            setTimeout(() => useAuthStore.getState().refreshAccessToken(), msUntilRefresh);
+            scheduleTokenRefresh(msUntilRefresh);
           } else {
             // Token is expired or expiring very soon — refresh immediately
             Promise.resolve().then(() => useAuthStore.getState().refreshAccessToken());

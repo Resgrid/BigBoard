@@ -1,5 +1,4 @@
-import { useIsFocused } from '@react-navigation/native';
-import * as NavigationBar from 'expo-navigation-bar';
+import { useIsFocused } from 'expo-router/react-navigation';
 import { useColorScheme } from 'nativewind';
 import * as React from 'react';
 import { Platform, StatusBar } from 'react-native';
@@ -17,19 +16,9 @@ export const FocusAwareStatusBar = ({ hidden = false }: Props) => {
     // Only call platform-specific methods when they are supported
     if (Platform.OS === 'android') {
       try {
-        // Make both status bar and navigation bar transparent for edge-to-edge experience
+        // Make status bar transparent for edge-to-edge experience
         StatusBar.setBackgroundColor('transparent');
         StatusBar.setTranslucent(true);
-
-        // Set navigation bar to be transparent and use overlay behavior
-        NavigationBar.setBackgroundColorAsync('transparent')
-          .then(() => NavigationBar.setBehaviorAsync('overlay-swipe'))
-          .catch(() => {
-            // Fallback to hiding navigation bar if overlay behavior is not supported
-            NavigationBar.setVisibilityAsync('hidden').catch(() => {
-              // Silently handle errors if NavigationBar API is not available
-            });
-          });
 
         // Set the system UI flags to hide navigation bar
         if (hidden) {
@@ -64,5 +53,5 @@ export const FocusAwareStatusBar = ({ hidden = false }: Props) => {
   if (Platform.OS === 'web') return null;
 
   // Only render SystemBars when focused and on supported platforms
-  return isFocused && (Platform.OS === 'android' || Platform.OS === 'ios') ? <SystemBars style={colorScheme} hidden={{ statusBar: hidden, navigationBar: true }} /> : null;
+  return isFocused && (Platform.OS === 'android' || Platform.OS === 'ios') ? <SystemBars style={colorScheme === 'dark' ? 'dark' : 'light'} hidden={{ statusBar: hidden, navigationBar: true }} /> : null;
 };

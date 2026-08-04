@@ -36,7 +36,7 @@ export const useContactsStore = create<ContactsState>((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       const response = await getAllContacts(forceRefresh);
-      set({ contacts: response.Data, isLoading: false });
+      set({ contacts: response.Data ?? [], isLoading: false });
     } catch (error) {
       set({ isLoading: false, error: error instanceof Error ? error.message : 'An unknown error occurred' });
     }

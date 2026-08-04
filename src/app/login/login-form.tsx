@@ -66,6 +66,9 @@ export const LoginForm = ({ onSubmit = () => {}, isLoading = false, error = unde
     });
   };
   const handleKeyPress = () => {
+    if (isLoading) {
+      return;
+    }
     Keyboard.dismiss();
     handleSubmit(onSubmit)();
   };

@@ -109,8 +109,14 @@ export const useLiveKitCallStore = create<LiveKitCallState>((set, get) => ({
                 error: null,
               });
               get().actions._updateParticipants(); // Initial participant list
-              newRoom.localParticipant.setMicrophoneEnabled(true);
-              newRoom.localParticipant.setCameraEnabled(false); // No video
+              get().actions.setMicrophoneEnabled(true); // Store action handles its own errors
+              newRoom.localParticipant.setCameraEnabled(false).catch((error: unknown) => {
+                // No video
+                logger.warn({
+                  message: 'Failed to disable camera on connect',
+                  context: { error, roomId },
+                });
+              });
 
               // Start CallKeep call for iOS background audio support
               if (Platform.OS === 'ios') {

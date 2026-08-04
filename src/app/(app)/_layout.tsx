@@ -43,6 +43,8 @@ export default function TabLayout() {
   const _hasHydrated = useAuthStore((state) => state._hasHydrated);
   const [isFirstTime, _setIsFirstTime] = useIsFirstTime();
   const [isNotificationsOpen, setIsNotificationsOpen] = React.useState(false);
+  const [hasInitialized, setHasInitialized] = useState(false);
+  const [initError, setInitError] = useState<string | null>(null);
 
   // Get store states first (hooks must be at top level)
   const config = useCoreStore((state) => state.config);
@@ -57,7 +59,6 @@ export default function TabLayout() {
   const insets = useSafeAreaInsets();
 
   // Refs to track initialization state
-  const hasInitialized = useRef(false);
   const isInitializing = useRef(false);
   const hasHiddenSplash = useRef(false);
   const lastSignedInStatus = useRef<string | null>(null);
@@ -95,17 +96,26 @@ export default function TabLayout() {
     }
 
     isInitializing.current = true;
+    setInitError(null);
     logger.info({
       message: 'Starting app initialization',
       context: {
-        hasInitialized: hasInitialized.current,
+        hasInitialized,
         platform: Platform.OS,
       },
     });
 
+    // Set a timeout for initialization to prevent infinite hanging
+    let initTimedOut = false;
+    let initTimeoutId: ReturnType<typeof setTimeout> | undefined;
+
     try {
-      // Set a timeout for initialization to prevent infinite hanging
-      const initTimeout = new Promise((_, reject) => setTimeout(() => reject(new Error('Initialization timeout after 30 seconds')), 30000));
+      const initTimeout = new Promise((_, reject) => {
+        initTimeoutId = setTimeout(() => {
+          initTimedOut = true;
+          reject(new Error('Initialization timeout after 30 seconds'));
+        }, 30000);
+      });
 
       const initPromise = (async () => {
         await useCoreStore.getState().init();
@@ -128,6 +138,9 @@ export default function TabLayout() {
           message: 'Security rights retrieved, connecting SignalR',
           context: { platform: Platform.OS },
         });
+
+        // Stop mutating stores if the timeout already won the race
+        if (initTimedOut) return;
 
         // Connect to SignalR after core initialization is complete
         try {
@@ -157,7 +170,10 @@ export default function TabLayout() {
           });
         }
 
-        hasInitialized.current = true;
+        // Avoid marking initialized if the timeout already won the race
+        if (initTimedOut) return;
+
+        setHasInitialized(true);
 
         logger.info({
           message: 'App initialization completed successfully',
@@ -172,14 +188,16 @@ export default function TabLayout() {
         context: { error, platform: Platform.OS },
       });
       // Reset initialization state on error so it can be retried
-      hasInitialized.current = false;
+      setHasInitialized(false);
+      setInitError(error instanceof Error ? error.message : String(error));
     } finally {
+      clearTimeout(initTimeoutId);
       isInitializing.current = false;
     }
-  }, [status]);
+  }, [status, hasInitialized]);
 
   const refreshDataFromBackground = useCallback(async () => {
-    if (status !== 'signedIn' || !hasInitialized.current) return;
+    if (status !== 'signedIn' || !hasInitialized) return;
 
     // On web platform, skip config refresh as network requests are blocked
     // This prevents an infinite loop when AppState changes trigger refreshes
@@ -203,26 +221,26 @@ export default function TabLayout() {
         context: { error },
       });
     }
-  }, [status]);
+  }, [status, hasInitialized]);
 
   // Handle SignalR lifecycle management
   useSignalRLifecycle({
     isSignedIn: status === 'signedIn',
-    hasInitialized: hasInitialized.current,
+    hasInitialized,
   });
 
   // WEB PLATFORM WORKAROUND: Call initialization directly during render
   // useEffect doesn't reliably fire on web platform due to React Native Web issues
   if (Platform.OS === 'web') {
     // CRITICAL: Also check coreIsInitializing from the store to prevent re-initialization during state updates
-    const shouldInitialize = status === 'signedIn' && !hasInitialized.current && !isInitializing.current && !coreIsInitializing;
+    const shouldInitialize = status === 'signedIn' && !hasInitialized && !isInitializing.current && !coreIsInitializing;
 
     if (shouldInitialize) {
       logger.info({
         message: 'WEB: Triggering initialization during render phase',
         context: {
           status,
-          hasInitialized: hasInitialized.current,
+          hasInitialized,
           isInitializing: isInitializing.current,
           coreIsInitializing,
         },
@@ -244,13 +262,13 @@ export default function TabLayout() {
       return;
     }
 
-    const shouldInitialize = status === 'signedIn' && !hasInitialized.current && !isInitializing.current;
+    const shouldInitialize = status === 'signedIn' && !hasInitialized && !isInitializing.current;
 
     logger.info({
       message: 'App initialization effect triggered',
       context: {
         status,
-        hasInitialized: hasInitialized.current,
+        hasInitialized,
         isInitializing: isInitializing.current,
         shouldInitialize,
         lastStatus: lastSignedInStatus.current,
@@ -278,19 +296,19 @@ export default function TabLayout() {
 
     // Update last known status
     lastSignedInStatus.current = status;
-  }, [status, initializeApp]); // Added initializeApp to dependencies
+  }, [status, hasInitialized, initializeApp]);
 
   // Handle app resuming from background - separate from initialization
   useEffect(() => {
     // Only trigger on state change, not on initial render
-    if (isActive && appState === 'active' && hasInitialized.current) {
+    if (isActive && appState === 'active' && hasInitialized) {
       const timer = setTimeout(() => {
         refreshDataFromBackground();
       }, 500); // Small delay to prevent multiple rapid calls
 
       return () => clearTimeout(timer);
     }
-  }, [isActive, appState, refreshDataFromBackground]);
+  }, [isActive, appState, hasInitialized, refreshDataFromBackground]);
 
   // Check for maintenance mode
   if (Env.MAINTENANCE_MODE) {
@@ -329,6 +347,26 @@ export default function TabLayout() {
     });
 
     return <Redirect href={'/login' as any} />;
+  }
+
+  // Show error state with retry if initialization failed
+  if (initError && !coreIsInitialized) {
+    logger.info({
+      message: 'App initialization failed, showing error state',
+      context: { initError },
+    });
+
+    return (
+      <View style={styles.container}>
+        <View className="flex-1 items-center justify-center bg-white px-6 dark:bg-gray-900">
+          <Text className="text-lg font-semibold text-gray-900 dark:text-white">{t('common.error')}</Text>
+          <Text className="mt-2 text-center text-gray-600 dark:text-gray-400">{initError}</Text>
+          <Button onPress={initializeApp} className="mt-6 bg-primary-600" testID="init-retry-button">
+            <ButtonText>{t('common.retry')}</ButtonText>
+          </Button>
+        </View>
+      </View>
+    );
   }
 
   // Show loading screen while app is initializing
@@ -418,11 +456,11 @@ const LayoutContent = ({ t, insets, isLandscape, coreIsInitialized, rights, pare
     <View style={styles.container}>
       {/* Top Navigation Bar */}
       <View className="flex-row items-center justify-between bg-primary-600 px-4" style={{ paddingTop: insets.top }}>
-        <CreateDrawerMenuButton openDrawer={openDrawer} isLandscape={isLandscape} />
+        <CreateDrawerMenuButton t={t} openDrawer={openDrawer} isLandscape={isLandscape} />
         <View className="flex-1 items-center">
           <Text className="text-lg font-semibold text-white">{t('app.title', 'Resgrid Responder')}</Text>
         </View>
-        {isHomePage && <DashboardControls router={router} />}
+        {isHomePage && <DashboardControls t={t} router={router} />}
       </View>
 
       <View className="flex-1 flex-row" ref={parentRef}>
@@ -449,10 +487,11 @@ const LayoutContent = ({ t, insets, isLandscape, coreIsInitialized, rights, pare
 };
 
 interface DashboardControlsProps {
+  t: any;
   router: any;
 }
 
-const DashboardControls = ({ router }: DashboardControlsProps) => {
+const DashboardControls = ({ t, router }: DashboardControlsProps) => {
   const { isEditMode, setEditMode, setShowAddMenu, widgets } = useDashboardStore();
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
@@ -469,6 +508,18 @@ const DashboardControls = ({ router }: DashboardControlsProps) => {
   const maxY = widgets.length > 0 ? Math.max(...widgets.map((w) => w.y + (w.h || 1))) : 0;
   const totalCells = maxY * numColumns;
 
+  const handleToggleEditMode = useCallback(() => {
+    setEditMode(!isEditMode);
+  }, [setEditMode, isEditMode]);
+
+  const handleConfigurePress = useCallback(() => {
+    router.push('/(app)/configure');
+  }, [router]);
+
+  const handleAddPress = useCallback(() => {
+    setShowAddMenu(true);
+  }, [setShowAddMenu]);
+
   return (
     <View className="flex-row items-center gap-2">
       {isEditMode && (
@@ -478,13 +529,13 @@ const DashboardControls = ({ router }: DashboardControlsProps) => {
           </Text>
         </View>
       )}
-      <Pressable onPress={() => setEditMode(!isEditMode)} className={`rounded px-3 py-1.5 ${isEditMode ? 'bg-blue-500' : 'bg-primary-700'}`} testID="dashboard-edit-button">
+      <Pressable onPress={handleToggleEditMode} className={`rounded px-3 py-1.5 ${isEditMode ? 'bg-blue-500' : 'bg-primary-700'}`} testID="dashboard-edit-button">
         <Text className="text-sm font-medium text-white">{isEditMode ? 'Done' : 'Edit'}</Text>
       </Pressable>
-      <Pressable onPress={() => router.push('/(app)/configure')} className="rounded bg-primary-700 p-1.5" testID="dashboard-configure-button">
+      <Pressable onPress={handleConfigurePress} className="rounded bg-primary-700 p-1.5" testID="dashboard-configure-button" accessibilityLabel={t('tabs.settings')} accessibilityRole="button">
         <Settings size={20} color="white" />
       </Pressable>
-      <Pressable onPress={() => setShowAddMenu(true)} className="rounded bg-primary-700 p-1.5" testID="dashboard-add-button">
+      <Pressable onPress={handleAddPress} className="rounded bg-primary-700 p-1.5" testID="dashboard-add-button" accessibilityLabel={t('common.add')} accessibilityRole="button">
         <Plus size={20} color="white" />
       </Pressable>
     </View>
@@ -492,13 +543,14 @@ const DashboardControls = ({ router }: DashboardControlsProps) => {
 };
 
 interface CreateDrawerMenuButtonProps {
+  t: any;
   openDrawer: () => void;
   isLandscape: boolean;
 }
 
-const CreateDrawerMenuButton = ({ openDrawer, isLandscape }: CreateDrawerMenuButtonProps) => {
+const CreateDrawerMenuButton = ({ t, openDrawer, isLandscape }: CreateDrawerMenuButtonProps) => {
   return (
-    <Pressable className="p-2" onPress={openDrawer}>
+    <Pressable className="p-2" onPress={openDrawer} accessibilityLabel="Menu" accessibilityRole="button">
       <Menu size={24} color="white" />
     </Pressable>
   );
@@ -515,11 +567,15 @@ const CreateNotificationButton = ({
   userId: string | null;
   departmentCode: string | undefined;
 }) => {
+  const handleNotificationsPress = useCallback(() => {
+    setIsNotificationsOpen(true);
+  }, [setIsNotificationsOpen]);
+
   if (!userId || !config || !config.NovuApplicationId || !config.NovuBackendApiUrl || !config.NovuSocketUrl || !departmentCode) {
     return null;
   }
 
-  return <NotificationButton onPress={() => setIsNotificationsOpen(true)} />;
+  return <NotificationButton onPress={handleNotificationsPress} />;
 };
 
 const styles = StyleSheet.create({

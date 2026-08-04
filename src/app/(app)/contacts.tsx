@@ -9,6 +9,7 @@ import { ContactCard } from '@/components/contacts/contact-card';
 import { ContactDetailsSheet } from '@/components/contacts/contact-details-sheet';
 import { FocusAwareStatusBar } from '@/components/ui';
 import { Box } from '@/components/ui/box';
+import { Button, ButtonText } from '@/components/ui/button';
 import { FlatList } from '@/components/ui/flat-list';
 import { Input, InputField, InputIcon, InputSlot } from '@/components/ui/input';
 import { View } from '@/components/ui/view';
@@ -17,7 +18,7 @@ import { useContactsStore } from '@/stores/contacts/store';
 
 export default function Contacts() {
   const { t } = useTranslation();
-  const { contacts, searchQuery, setSearchQuery, selectContact, isLoading, fetchContacts } = useContactsStore();
+  const { contacts, searchQuery, setSearchQuery, selectContact, isLoading, error, fetchContacts } = useContactsStore();
   const { trackEvent } = useAnalytics();
   const [refreshing, setRefreshing] = React.useState(false);
 
@@ -91,6 +92,12 @@ export default function Contacts() {
             contentContainerStyle={{ paddingBottom: 100 }}
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
           />
+        ) : error && contacts.length === 0 ? (
+          <ZeroState isError heading={t('common.errorOccurred')} description={error}>
+            <Button variant="solid" size="md" onPress={() => fetchContacts(true)} testID="contacts-retry-button">
+              <ButtonText>{t('common.retry')}</ButtonText>
+            </Button>
+          </ZeroState>
         ) : (
           <ZeroState icon={ContactIcon} heading={t('contacts.empty')} description={t('contacts.emptyDescription')} />
         )}

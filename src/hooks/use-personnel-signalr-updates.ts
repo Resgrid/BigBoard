@@ -8,12 +8,16 @@ import { useSignalRStore } from '@/stores/signalr/signalr-store';
  */
 export const usePersonnelSignalRUpdates = () => {
   const lastUpdateTimestamp = useSignalRStore((state) => state.lastUpdateTimestamp);
-  const { fetchPersonnel } = usePersonnelStore();
+  const fetchPersonnel = usePersonnelStore((state) => state.fetchPersonnel);
 
   useEffect(() => {
     if (lastUpdateTimestamp > 0) {
-      // Refresh personnel data when SignalR update is received
-      fetchPersonnel();
+      // Debounce bursts of SignalR messages into a single refresh
+      const timer = setTimeout(() => {
+        fetchPersonnel();
+      }, 1500);
+
+      return () => clearTimeout(timer);
     }
   }, [lastUpdateTimestamp, fetchPersonnel]);
 };

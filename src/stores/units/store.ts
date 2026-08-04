@@ -23,7 +23,7 @@ export const useUnitsStore = create<UnitsState>((set) => ({
     try {
       const unitsResponse = await getUnitsInfos('');
       const unitStatusesResponse = await getAllUnitStatuses();
-      set({ units: unitsResponse.Data, unitStatuses: unitStatusesResponse.Data, isLoading: false });
+      set({ units: unitsResponse.Data ?? [], unitStatuses: unitStatusesResponse.Data ?? [], isLoading: false });
     } catch (error) {
       set({ error: 'Failed to fetch units', isLoading: false });
     }

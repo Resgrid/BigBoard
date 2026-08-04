@@ -19,6 +19,7 @@ export function getItem<T>(key: string): T | null {
     return value ? JSON.parse(value) : null;
   } catch (e) {
     console.error('Error reading from localStorage', e);
+    localStorage.removeItem(key);
     return null;
   }
 }

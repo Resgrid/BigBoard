@@ -18,7 +18,7 @@ jest.mock('@/services/location');
 jest.mock('@/hooks/use-map-signalr-updates', () => ({
   useMapSignalRUpdates: jest.fn(),
 }));
-jest.mock('@react-navigation/native', () => ({
+jest.mock('expo-router/react-navigation', () => ({
   useIsFocused: jest.fn(() => true),
   useNavigation: jest.fn(() => ({
     navigate: jest.fn(),
@@ -66,6 +66,7 @@ jest.mock('react-i18next', () => ({
   }),
 }));
 jest.mock('nativewind', () => ({
+  styled: jest.fn((Component: any) => Component),
   useColorScheme: jest.fn(() => ({
     colorScheme: 'light',
   })),

@@ -1,25 +1,20 @@
+// Values must match the Resgrid Core backend (Resgrid.Model.WeatherAlertSeverity):
+// lower number = higher severity, Unknown is the lowest priority.
 export enum WeatherAlertSeverity {
-  Unknown = 0,
-  Minor = 1,
+  Extreme = 0,
+  Severe = 1,
   Moderate = 2,
-  Severe = 3,
-  Extreme = 4,
+  Minor = 3,
+  Unknown = 4,
 }
 
+// Values must match the Resgrid Core backend (Resgrid.Model.WeatherAlertCategory).
 export enum WeatherAlertCategory {
-  Unknown = 0,
-  Geo = 1,
-  Met = 2,
-  Safety = 3,
-  Security = 4,
-  Rescue = 5,
-  Fire = 6,
-  Health = 7,
-  Env = 8,
-  Transport = 9,
-  Infra = 10,
-  CBRNE = 11,
-  Other = 12,
+  Met = 0,
+  Fire = 1,
+  Health = 2,
+  Env = 3,
+  Other = 4,
 }
 
 export enum WeatherAlertUrgency {

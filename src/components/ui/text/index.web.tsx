@@ -1,29 +1,14 @@
-import type { VariantProps } from '@gluestack-ui/nativewind-utils';
+import type { VariantProps } from '@gluestack-ui/utils/nativewind-utils';
 import React from 'react';
+import { Platform } from 'react-native';
 
 import { textStyle } from './styles';
 
-type ITextProps = React.ComponentProps<'span'> &
-  VariantProps<typeof textStyle> & {
-    numberOfLines?: number;
-  };
+type ITextProps = React.ComponentProps<'span'> & VariantProps<typeof textStyle> & { testID?: string };
 
 const Text = React.forwardRef<React.ElementRef<'span'>, ITextProps>(
-  ({ className, isTruncated, bold, underline, strikeThrough, size = 'md', sub, italic, highlight, numberOfLines, ...props }: { className?: string } & ITextProps, ref) => {
-    // Convert numberOfLines to web-compatible CSS styles
-    const webStyle = React.useMemo(() => {
-      if (numberOfLines) {
-        return {
-          display: '-webkit-box',
-          WebkitLineClamp: numberOfLines,
-          WebkitBoxOrient: 'vertical' as const,
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          ...props.style,
-        };
-      }
-      return props.style;
-    }, [numberOfLines, props.style]);
+  ({ className, isTruncated, bold, underline, strikeThrough, size = 'md', sub, italic, highlight, testID, ...props }: { className?: string } & ITextProps, ref) => {
+    const testProps = Platform.OS === 'web' && testID ? { 'data-testid': testID } : testID ? { testID } : {};
 
     return (
       <span
@@ -38,8 +23,8 @@ const Text = React.forwardRef<React.ElementRef<'span'>, ITextProps>(
           highlight,
           class: className,
         })}
+        {...testProps}
         {...props}
-        style={webStyle}
         ref={ref}
       />
     );

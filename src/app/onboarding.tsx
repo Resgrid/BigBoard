@@ -7,7 +7,7 @@ import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-na
 
 import { FocusAwareStatusBar, SafeAreaView, View } from '@/components/ui';
 import { Button, ButtonText } from '@/components/ui/button';
-import { FlatList } from '@/components/ui/flat-list';
+import { type FlashListRef, FlatList } from '@/components/ui/flat-list';
 import { Pressable } from '@/components/ui/pressable';
 import { Text } from '@/components/ui/text';
 import { useAuthStore } from '@/lib/auth';
@@ -66,7 +66,7 @@ export default function Onboarding() {
   const { status, setIsOnboarding } = useAuthStore();
   const router = useRouter();
   const [currentIndex, setCurrentIndex] = useState(0);
-  const flatListRef = useRef<FlatList<OnboardingItemProps>>(null);
+  const flatListRef = useRef<FlashListRef<OnboardingItemProps>>(null);
   const buttonOpacity = useSharedValue(0);
   const { colorScheme } = useColorScheme();
 

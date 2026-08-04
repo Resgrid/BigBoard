@@ -12,6 +12,7 @@ import { AutoScrollingDispatches } from '../auto-scrolling-dispatches';
 // ---------------------------------------------------------------------------
 
 jest.mock('nativewind', () => ({
+  styled: jest.fn((Component: any) => Component),
   useColorScheme: () => ({ colorScheme: 'light' }),
   cssInterop: jest.fn(),
 }));
@@ -44,7 +45,7 @@ const triggerLayout = (getByTestId: ReturnType<typeof render>['getByTestId'], wi
 
 describe('AutoScrollingDispatches', () => {
   describe('animation behaviour', () => {
-    let timingSpy: jest.SpyInstance;
+    let timingSpy: jest.Spied<typeof Animated.timing>;
     let startMock: jest.Mock;
     let stopMock: jest.Mock;
 

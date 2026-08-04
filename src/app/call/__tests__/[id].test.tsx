@@ -366,7 +366,7 @@ jest.mock('expo-navigation-bar', () => ({
 }));
 
 // Mock @react-navigation/native
-jest.mock('@react-navigation/native', () => ({
+jest.mock('expo-router/react-navigation', () => ({
   useIsFocused: jest.fn(() => true),
   useNavigation: jest.fn(),
   useFocusEffect: jest.fn(),

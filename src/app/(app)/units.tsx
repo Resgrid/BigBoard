@@ -1,5 +1,5 @@
-import { useFocusEffect } from '@react-navigation/native';
 import { FlashList } from '@shopify/flash-list';
+import { useFocusEffect } from 'expo-router/react-navigation';
 import { Filter, Search, Truck, X } from 'lucide-react-native';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
