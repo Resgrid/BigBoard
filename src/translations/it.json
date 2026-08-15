@@ -287,7 +287,8 @@
     "what3words_invalid_format": "Formato what3words non valido. Utilizzare il formato: parola.parola.parola",
     "what3words_not_found": "Indirizzo what3words non trovato, provare con un indirizzo diverso",
     "what3words_placeholder": "Inserisci indirizzo what3words (es. filled.count.soap)",
-    "what3words_required": "Inserire un indirizzo what3words per la ricerca"
+    "what3words_required": "Inserire un indirizzo what3words per la ricerca",
+    "required_fields_missing": "Il tuo dipartimento richiede questi campi prima di poter creare una chiamata: {{fields}}"
   },
   "common": {
     "add": "Aggiungi",
@@ -429,7 +430,8 @@
     "width_grid_units": "Larghezza (unità griglia): {{value}}",
     "yellow_threshold": "Soglia gialla: {{value}} min",
     "zoom_level": "Livello di zoom: {{value}}",
-    "zoom_out_show_all": "Rimpicciolisci per mostrare tutti i segnaposto"
+    "zoom_out_show_all": "Rimpicciolisci per mostrare tutti i segnaposto",
+    "unit_alerts_widget": "Avvisi unita"
   },
   "contacts": {
     "add": "Aggiungi contatto",
@@ -724,6 +726,7 @@
     "general": "Generale",
     "generale": "Generale",
     "german": "Tedesco",
+    "greek": "Greco",
     "github": "Github",
     "help_center": "Centro assistenza",
     "italian": "Italiano",

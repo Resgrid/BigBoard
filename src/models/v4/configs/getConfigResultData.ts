@@ -16,4 +16,15 @@ export class GetConfigResultData {
   public NovuApplicationId: string = '';
   public AnalyticsApiKey: string = '';
   public AnalyticsHost: string = '';
+  /** Department default map center latitude — every map opens here when it has nothing better. */
+  public MapCenterLatitude: number = 0;
+  /** Department default map center longitude. */
+  public MapCenterLongitude: number = 0;
+  /** Zoom level for department-wide maps. */
+  public MapCenterZoomLevel: number = 9;
+  /**
+   * Time-in-status thresholds keyed by the status's canonical base type. Empty means the department
+   * has configured none and nothing on the board is flagged.
+   */
+  public UnitStatusThresholds: { BaseType: number; WarnSeconds: number; AlertSeconds: number }[] = [];
 }

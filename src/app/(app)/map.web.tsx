@@ -18,11 +18,14 @@ import { useCoreStore } from '@/stores/app/core-store';
 import { useLocationStore } from '@/stores/app/location-store';
 import useAuthStore from '@/stores/auth/store';
 import { useToastStore } from '@/stores/toast/store';
+import { getDepartmentMapCenter } from '@/lib/map-center';
 
 // Helper function to get icon path from ImagePath
 const getIconPath = (imagePath: string): string => {
   const iconKey = imagePath?.toLowerCase() as keyof typeof MAP_ICONS;
-  const icon = MAP_ICONS[iconKey] || MAP_ICONS['call'];
+  // Never fall back to the call icon: it is a flame, and an unknown POI drawn as a structure fire
+  // reads as a real incident on the board.
+  const icon = MAP_ICONS[iconKey] || MAP_ICONS['flag'];
   return `/assets/mapping/${icon.imgName}.png`;
 };
 
@@ -100,7 +103,7 @@ export default function Map() {
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: getMapStyle(),
-      center: [-98.5795, 39.8283],
+      center: [getDepartmentMapCenter().longitude, getDepartmentMapCenter().latitude],
       zoom: 3,
     });
 
@@ -377,7 +380,7 @@ export default function Map() {
           markerContainer.insertBefore(fallbackIcon, markerContainer.firstChild);
         };
 
-        iconEl.src = getIconPath(pin.ImagePath || 'call');
+        iconEl.src = getIconPath(pin.ImagePath || 'flag');
 
         const titleEl = document.createElement('div');
         titleEl.className = 'marker-title';

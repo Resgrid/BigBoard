@@ -12,6 +12,7 @@ import { PersonnelStatusSummaryWidget } from './PersonnelStatusSummaryWidget';
 import { PersonnelWidget } from './PersonnelWidget';
 import { ScheduledCallsWidget } from './ScheduledCallsWidget';
 import { TimeWidget } from './TimeWidget';
+import { UnitAlertsWidget } from './UnitAlertsWidget';
 import { UnitsSummaryWidget } from './UnitsSummaryWidget';
 import { UnitsWidget } from './UnitsWidget';
 import { WeatherAlertsWidget } from './WeatherAlertsWidget';
@@ -55,6 +56,8 @@ export const WidgetRenderer: React.FC<WidgetRendererProps> = ({ widget, onRemove
       return <WeatherAlertsWidget onRemove={onRemove} isEditMode={isEditMode} width={w} height={h} containerWidth={containerWidth} containerHeight={containerHeight} />;
     case WidgetType.SCHEDULED_CALLS:
       return <ScheduledCallsWidget onRemove={onRemove} isEditMode={isEditMode} width={w} height={h} containerWidth={containerWidth} containerHeight={containerHeight} />;
+    case WidgetType.UNIT_ALERTS:
+      return <UnitAlertsWidget onRemove={onRemove} isEditMode={isEditMode} width={w} height={h} containerWidth={containerWidth} containerHeight={containerHeight} />;
     default:
       return null;
   }

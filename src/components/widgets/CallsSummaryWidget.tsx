@@ -35,14 +35,14 @@ export const CallsSummaryWidget: React.FC<CallsWidgetProps> = ({ onRemove, isEdi
   const callsData = React.useMemo(() => {
     const total = calls.length;
 
-    // Count by priority
+    // Keyed by priority id, not name: two priorities can share a display name, and the id is what
+    // the call actually carries.
     const priorityCounts = callPriorities.reduce(
       (acc, priority) => {
-        const count = calls.filter((c) => c.Priority === priority.Id).length;
-        acc[priority.Name] = count;
+        acc[priority.Id] = calls.filter((c) => c.Priority === priority.Id).length;
         return acc;
       },
-      {} as Record<string, number>
+      {} as Record<number, number>
     );
 
     // Get the most recent call time
@@ -50,6 +50,16 @@ export const CallsSummaryWidget: React.FC<CallsWidgetProps> = ({ onRemove, isEdi
 
     return { total, priorityCounts, recentCall };
   }, [calls, callPriorities]);
+
+  // Every department priority by default. Truncating to the first few meant a call on a custom
+  // priority was invisible here: the board showed 1 active call and 0 against every row displayed.
+  const visiblePriorities = React.useMemo(() => {
+    const selectedIds = callsSummary.priorityIds ?? [];
+    const selected = selectedIds.length > 0 ? selectedIds.map((id) => callPriorities.find((p) => p.Id === id)).filter((p): p is (typeof callPriorities)[number] => !!p) : callPriorities;
+
+    const limit = callsSummary.maxPrioritiesToShow;
+    return limit > 0 ? selected.slice(0, limit) : selected;
+  }, [callPriorities, callsSummary.priorityIds, callsSummary.maxPrioritiesToShow]);
 
   if (error) {
     return (
@@ -93,13 +103,13 @@ export const CallsSummaryWidget: React.FC<CallsWidgetProps> = ({ onRemove, isEdi
           </Box>
         )}
         {callsSummary.showPriorityCounts &&
-          callPriorities.slice(0, callsSummary.maxPrioritiesToShow).map((priority) => (
+          visiblePriorities.map((priority) => (
             <Box key={priority.Id} className="flex-row items-center justify-between">
               <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`} style={{ fontSize: callsSummary.fontSize * 0.85 }}>
                 {priority.Name}
               </Text>
               <Text className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`} style={{ fontSize: callsSummary.fontSize }}>
-                {callsData.priorityCounts[priority.Name] || 0}
+                {callsData.priorityCounts[priority.Id] || 0}
               </Text>
             </Box>
           ))}

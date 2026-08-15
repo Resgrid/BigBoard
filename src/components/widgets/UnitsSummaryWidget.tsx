@@ -6,6 +6,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
 import { useUnitsSignalRUpdates } from '@/hooks/use-units-signalr-updates';
+import { AVAILABLE_BASE_TYPES, isBaseTypeIn, ON_SCENE_BASE_TYPES, RESPONDING_BASE_TYPES } from '@/lib/unit-status';
 import { useUnitsStore } from '@/stores/units/store';
 import { useWidgetSettingsStore } from '@/stores/widget-settings/store';
 
@@ -31,12 +32,14 @@ export const UnitsSummaryWidget: React.FC<UnitsWidgetProps> = ({ onRemove, isEdi
     fetchUnits();
   }, [fetchUnits]);
 
-  // Calculate unit stats
+  // Counts come off the status's canonical base type, not the unit's TypeId. The previous version
+  // compared a `State` getter that returned TypeId (the unit *type*) and that never survived JSON
+  // deserialization anyway, so every counter sat at zero no matter what the units were doing.
   const unitsData = React.useMemo(() => {
     const total = units.length;
-    const available = units.filter((u) => u.State === 0).length; // Available = State 0
-    const responding = units.filter((u) => u.State === 2 || u.State === 3).length; // Responding/En Route
-    const onScene = units.filter((u) => u.State === 4).length; // On Scene
+    const available = units.filter((u) => isBaseTypeIn(u.CurrentStatusBaseType, AVAILABLE_BASE_TYPES)).length;
+    const responding = units.filter((u) => isBaseTypeIn(u.CurrentStatusBaseType, RESPONDING_BASE_TYPES)).length;
+    const onScene = units.filter((u) => isBaseTypeIn(u.CurrentStatusBaseType, ON_SCENE_BASE_TYPES)).length;
 
     return { total, available, responding, onScene };
   }, [units]);

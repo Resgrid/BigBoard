@@ -23,7 +23,7 @@ import { useWidgetSettingsStore } from '@/stores/widget-settings/store';
 import { DEFAULT_UNITS_COLUMN_ORDER, UNITS_COLUMN_LABELS, type UnitsColumnKey, useUnitsSettingsStore } from '@/stores/widget-settings/units-settings-store';
 import { WidgetType } from '@/types/widget';
 
-type TabType = 'personnel' | 'map' | 'weather' | 'units' | 'calls' | 'notes' | 'time' | 'personnelStatusSummary' | 'personnelStaffingSummary' | 'unitsSummary' | 'callsSummary' | 'weatherAlerts' | 'scheduledCalls';
+type TabType = 'personnel' | 'map' | 'weather' | 'units' | 'calls' | 'notes' | 'time' | 'personnelStatusSummary' | 'personnelStaffingSummary' | 'unitsSummary' | 'callsSummary' | 'weatherAlerts' | 'scheduledCalls' | 'unitAlerts';
 
 interface WidgetSizeSectionProps {
   widgetType: string;
@@ -264,6 +264,7 @@ export default function Configure() {
     { key: 'callsSummary', label: t('configure.calls_summary_widget'), widgetType: WidgetType.CALLS_SUMMARY },
     { key: 'weatherAlerts', label: t('weatherAlerts.title'), widgetType: WidgetType.WEATHER_ALERTS },
     { key: 'scheduledCalls', label: t('scheduledCalls.title'), widgetType: WidgetType.SCHEDULED_CALLS },
+    { key: 'unitAlerts', label: t('configure.unit_alerts_widget'), widgetType: WidgetType.UNIT_ALERTS },
   ];
 
   const renderTabContent = () => {
@@ -791,12 +792,12 @@ export default function Configure() {
               </HStack>
 
               <VStack space="sm">
-                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Max Priorities to Show: {fontSizes.callsSummaryMaxPriorities}</Text>
+                <Text className={isDark ? 'text-gray-300' : 'text-gray-700'}>Max Priorities to Show: {fontSizes.callsSummaryMaxPriorities === 0 ? 'All' : fontSizes.callsSummaryMaxPriorities}</Text>
                 <Slider
                   value={fontSizes.callsSummaryMaxPriorities}
                   onChange={(value) => setFontSizes((prev) => ({ ...prev, callsSummaryMaxPriorities: Math.round(value) }))}
                   onChangeEnd={(value) => updateCallsSummarySettings({ maxPrioritiesToShow: Math.round(value) })}
-                  minValue={1}
+                  minValue={0}
                   maxValue={10}
                   step={1}
                   className="w-full"

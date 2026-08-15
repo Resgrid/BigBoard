@@ -8,6 +8,8 @@ import { Spinner } from '@/components/ui/spinner';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
 import { useUnitsSignalRUpdates } from '@/hooks/use-units-signalr-updates';
+import { normalizeStatusColor, secondsInStatus } from '@/lib/unit-status';
+import { alertRowStyle, alertSortWeight, evaluateUnitStatusAlert, formatElapsed, useUnitStatusThresholds } from '@/lib/unit-status-thresholds';
 import { useUnitsStore } from '@/stores/units/store';
 import { DEFAULT_UNITS_COLUMN_ORDER, type UnitsColumnKey, useUnitsSettingsStore } from '@/stores/widget-settings/units-settings-store';
 
@@ -35,6 +37,8 @@ export const UnitsWidget: React.FC<UnitsWidgetProps> = ({ onRemove, isEditMode, 
     fetchUnits();
   }, [fetchUnits]);
 
+  const thresholds = useUnitStatusThresholds();
+
   const filteredUnits = useMemo(() => {
     return units.filter((unit) => {
       // Check if group is hidden
@@ -45,11 +49,39 @@ export const UnitsWidget: React.FC<UnitsWidgetProps> = ({ onRemove, isEditMode, 
     });
   }, [units, settings.hideGroups]);
 
+  // Every unit is evaluated against a single instant, so two units a millisecond apart can never
+  // disagree about which side of a threshold they are on. Breaching units sort to the top: the
+  // point of the feature is that a dispatcher spots them without reading the whole board.
+  const displayedUnits = useMemo(() => {
+    const now = Date.now();
+
+    const annotated = filteredUnits.map((unit) => ({
+      unit,
+      alert: evaluateUnitStatusAlert(unit, thresholds, now),
+    }));
+
+    if (thresholds.length === 0) {
+      return annotated;
+    }
+
+    return annotated.sort((a, b) => {
+      const weight = alertSortWeight(a.alert.level) - alertSortWeight(b.alert.level);
+
+      if (weight !== 0) {
+        return weight;
+      }
+
+      // Within a level, longest overdue first.
+      return (b.alert.secondsInStatus ?? 0) - (a.alert.secondsInStatus ?? 0);
+    });
+  }, [filteredUnits, thresholds]);
+
   const getTimeago = (date: string) => {
-    if (!date) return '';
-    const now = new Date();
-    const past = new Date(date);
-    const diffInSeconds = Math.floor((now.getTime() - past.getTime()) / 1000);
+    // secondsInStatus treats a zone-less timestamp as UTC. `new Date(...)` read it as local time, so
+    // a status set a minute ago showed as hours old in any department that is not on UTC.
+    const diffInSeconds = secondsInStatus(date);
+
+    if (diffInSeconds === null) return '';
 
     if (diffInSeconds < 60) return '1 minute ago';
     if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
@@ -125,7 +157,7 @@ export const UnitsWidget: React.FC<UnitsWidgetProps> = ({ onRemove, isEditMode, 
       case 'state':
         return (
           <Box key={col} style={{ flex: columnFlex[col] }}>
-            <Text className="text-xs" style={{ fontSize, color: unit.CurrentStatusColor ? `#${unit.CurrentStatusColor}` : '#888888' }} numberOfLines={1}>
+            <Text className="text-xs" style={{ fontSize, color: normalizeStatusColor(unit.CurrentStatusColor) }} numberOfLines={1}>
               {unit.CurrentStatus || 'Unknown'}
             </Text>
           </Box>
@@ -173,11 +205,28 @@ export const UnitsWidget: React.FC<UnitsWidgetProps> = ({ onRemove, isEditMode, 
           </HStack>
 
           {/* Data Rows */}
-          {filteredUnits.map((unit, index) => (
-            <HStack key={unit.UnitId} space="sm" className={`py-1 ${index % 2 === 0 ? (isDark ? 'bg-gray-800/30' : 'bg-gray-100/50') : ''}`}>
-              {columnOrder.map((col) => renderDataCell(col, unit))}
-            </HStack>
-          ))}
+          {displayedUnits.map(({ unit, alert }, index) => {
+            const rowStyle = alertRowStyle(alert.level, isDark);
+
+            return (
+              <HStack
+                key={unit.UnitId}
+                space="sm"
+                className={`py-1 ${alert.level === 'none' && index % 2 === 0 ? (isDark ? 'bg-gray-800/30' : 'bg-gray-100/50') : ''}`}
+                style={rowStyle.backgroundColor ? { backgroundColor: rowStyle.backgroundColor, borderLeftWidth: 3, borderLeftColor: rowStyle.borderLeftColor } : undefined}
+                testID={alert.level !== 'none' ? `unit-row-${alert.level}` : undefined}
+              >
+                {columnOrder.map((col) => renderDataCell(col, unit))}
+                {alert.level !== 'none' ? (
+                  <Box>
+                    <Text className="text-xs font-semibold" style={{ fontSize, color: rowStyle.borderLeftColor }} numberOfLines={1}>
+                      {formatElapsed(alert.secondsInStatus)}
+                    </Text>
+                  </Box>
+                ) : null}
+              </HStack>
+            );
+          })}
 
           {filteredUnits.length === 0 && (
             <Box className="flex-1 items-center justify-center py-8">

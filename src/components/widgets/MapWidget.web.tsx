@@ -11,6 +11,7 @@ import { logger } from '@/lib/logging';
 import { type MapMakerInfoData } from '@/models/v4/mapping/getMapDataAndMarkersData';
 import { useCoreStore } from '@/stores/app/core-store';
 import useAuthStore from '@/stores/auth/store';
+import { getDepartmentMapCenter } from '@/lib/map-center';
 
 import MapPins from '../maps/map-pins.web';
 import { WidgetContainer } from './WidgetContainer';
@@ -62,7 +63,7 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ onRemove, isEditMode, widt
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: styleURL,
-      center: [-98.5795, 39.8283], // Default center (USA)
+      center: [getDepartmentMapCenter().longitude, getDepartmentMapCenter().latitude], // Default center (USA)
       zoom: 10,
       attributionControl: false,
     });

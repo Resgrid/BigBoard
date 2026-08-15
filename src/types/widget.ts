@@ -13,6 +13,7 @@ export enum WidgetType {
   CALLS_SUMMARY = 'calls_summary',
   WEATHER_ALERTS = 'weather_alerts',
   SCHEDULED_CALLS = 'scheduled_calls',
+  UNIT_ALERTS = 'unit_alerts',
 }
 
 export interface WidgetLayout {
@@ -46,6 +47,7 @@ export const DEFAULT_WIDGET_SIZES: Record<WidgetType, { w: number; h: number }> 
   [WidgetType.CALLS_SUMMARY]: { w: 1, h: 1 },
   [WidgetType.WEATHER_ALERTS]: { w: 1, h: 1 },
   [WidgetType.SCHEDULED_CALLS]: { w: 1, h: 1 },
+  [WidgetType.UNIT_ALERTS]: { w: 1, h: 1 },
 };
 
 export type PlatformCategory = 'phone' | 'tablet' | 'desktop';

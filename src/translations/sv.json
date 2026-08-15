@@ -287,7 +287,8 @@
     "what3words_invalid_format": "Ogiltigt what3words-format. Använd formatet: ord.ord.ord",
     "what3words_not_found": "what3words-adress hittades inte, försök med en annan adress",
     "what3words_placeholder": "Ange what3words-adress (t.ex. filled.count.soap)",
-    "what3words_required": "Vänligen ange en what3words-adress att söka efter"
+    "what3words_required": "Vänligen ange en what3words-adress att söka efter",
+    "required_fields_missing": "Din avdelning kräver dessa fält innan ett ärende kan skapas: {{fields}}"
   },
   "common": {
     "add": "Lägg till",
@@ -429,7 +430,8 @@
     "width_grid_units": "Bredd (rutnätsenheter): {{value}}",
     "yellow_threshold": "Gult tröskelvärde: {{value}} min",
     "zoom_level": "Zoomnivå: {{value}}",
-    "zoom_out_show_all": "Zooma ut för att visa alla markörer"
+    "zoom_out_show_all": "Zooma ut för att visa alla markörer",
+    "unit_alerts_widget": "Enhetslarm"
   },
   "contacts": {
     "add": "Lägg till kontakt",
@@ -724,6 +726,7 @@
     "general": "Allmänt",
     "generale": "Allmänt",
     "german": "Tyska",
+    "greek": "Grekiska",
     "github": "Github",
     "help_center": "Hjälpcenter",
     "italian": "Italienska",

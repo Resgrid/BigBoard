@@ -100,7 +100,18 @@ export interface CallsSummarySettings {
   fontSize: number;
   showRecentCall: boolean;
   showPriorityCounts: boolean;
+  /**
+   * How many priority rows to show. 0 means "all of them", which is the default: departments define
+   * their own priorities, and truncating to the first few meant an active call on a custom priority
+   * was counted against a row that was never rendered — the board read 1 active call and 0 of every
+   * priority shown.
+   */
   maxPrioritiesToShow: number;
+  /**
+   * Priority ids to show, in this order. Empty means every department priority. Lets a board pick
+   * the urgency levels that matter to it instead of taking whatever came back first.
+   */
+  priorityIds: number[];
 }
 
 export interface WeatherAlertsWidgetSettings {
@@ -244,7 +255,8 @@ const defaultCallsSummarySettings: CallsSummarySettings = {
   fontSize: 14,
   showRecentCall: true,
   showPriorityCounts: true,
-  maxPrioritiesToShow: 3,
+  maxPrioritiesToShow: 0,
+  priorityIds: [],
 };
 
 const defaultWeatherAlertsSettings: WeatherAlertsWidgetSettings = {

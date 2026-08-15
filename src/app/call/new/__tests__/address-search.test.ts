@@ -118,6 +118,10 @@ describe('Address Search Logic', () => {
     NovuApplicationId: '',
     AnalyticsApiKey: '',
     AnalyticsHost: '',
+    MapCenterLatitude: 0,
+    MapCenterLongitude: 0,
+    MapCenterZoomLevel: 9,
+    UnitStatusThresholds: [],
   };
 
   beforeEach(() => {
@@ -166,6 +170,10 @@ describe('Address Search Logic', () => {
         NovuApplicationId: '',
         AnalyticsApiKey: '',
         AnalyticsHost: '',
+        MapCenterLatitude: 0,
+        MapCenterLongitude: 0,
+        MapCenterZoomLevel: 9,
+        UnitStatusThresholds: [],
       };
 
       const result = await performAddressSearch('123 Main St', configWithoutKey);

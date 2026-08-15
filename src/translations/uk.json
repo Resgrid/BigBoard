@@ -287,7 +287,8 @@
     "what3words_invalid_format": "Невірний формат what3words. Використовуйте формат: слово.слово.слово",
     "what3words_not_found": "Адресу what3words не знайдено, спробуйте іншу адресу",
     "what3words_placeholder": "Введіть адресу what3words (напр., filled.count.soap)",
-    "what3words_required": "Будь ласка, введіть адресу what3words для пошуку"
+    "what3words_required": "Будь ласка, введіть адресу what3words для пошуку",
+    "required_fields_missing": "Ваш відділ вимагає ці поля перед створенням виклику: {{fields}}"
   },
   "common": {
     "add": "Додати",
@@ -429,7 +430,8 @@
     "width_grid_units": "Ширина (одиниці сітки): {{value}}",
     "yellow_threshold": "Жовтий поріг: {{value}} хв",
     "zoom_level": "Рівень масштабування: {{value}}",
-    "zoom_out_show_all": "Зменшити масштаб, щоб показати всі маркери"
+    "zoom_out_show_all": "Зменшити масштаб, щоб показати всі маркери",
+    "unit_alerts_widget": "Сповіщення підрозділів"
   },
   "contacts": {
     "add": "Додати контакт",
@@ -724,6 +726,7 @@
     "general": "Загальне",
     "generale": "Загальне",
     "german": "Німецька",
+    "greek": "Грецька",
     "github": "Github",
     "help_center": "Центр допомоги",
     "italian": "Італійська",
