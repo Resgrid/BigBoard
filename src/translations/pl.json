@@ -288,7 +288,8 @@
     "what3words_not_found": "Nie znaleziono adresu what3words, spróbuj podać inny adres",
     "what3words_placeholder": "Wprowadź adres what3words (np. filled.count.soap)",
     "what3words_required": "Proszę podać adres what3words do wyszukania",
-    "required_fields_missing": "Twoja jednostka wymaga tych pól przed utworzeniem zdarzenia: {{fields}}"
+    "required_fields_missing": "Twoja jednostka wymaga tych pól przed utworzeniem zgłoszenia: {{fields}}",
+    "field_policy_loading": "Ustawienia zgłoszeń Twojej jednostki są jeszcze wczytywane, spróbuj ponownie za chwilę"
   },
   "common": {
     "add": "Dodaj",

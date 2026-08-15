@@ -288,7 +288,8 @@
     "what3words_not_found": "لم يتم العثور على عنوان what3words، جرب عنوان آخر",
     "what3words_placeholder": "أدخل عنوان what3words (مثال: filled.count.soap)",
     "what3words_required": "يرجى إدخال عنوان what3words للبحث",
-    "required_fields_missing": "يطلب قسمك هذه الحقول قبل إنشاء البلاغ: {{fields}}"
+    "required_fields_missing": "يطلب قسمك هذه الحقول قبل إنشاء البلاغ: {{fields}}",
+    "field_policy_loading": "لا يزال يتم تحميل إعدادات البلاغات في قسمك، يرجى المحاولة مرة أخرى بعد لحظات"
   },
   "common": {
     "add": "إضافة",

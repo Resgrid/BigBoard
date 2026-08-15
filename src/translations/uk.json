@@ -288,7 +288,8 @@
     "what3words_not_found": "Адресу what3words не знайдено, спробуйте іншу адресу",
     "what3words_placeholder": "Введіть адресу what3words (напр., filled.count.soap)",
     "what3words_required": "Будь ласка, введіть адресу what3words для пошуку",
-    "required_fields_missing": "Ваш відділ вимагає ці поля перед створенням виклику: {{fields}}"
+    "required_fields_missing": "Ваш відділ вимагає ці поля перед створенням виклику: {{fields}}",
+    "field_policy_loading": "Налаштування викликів вашого відділу ще завантажуються, спробуйте ще раз за мить"
   },
   "common": {
     "add": "Додати",

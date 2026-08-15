@@ -288,7 +288,8 @@
     "what3words_not_found": "Indirizzo what3words non trovato, provare con un indirizzo diverso",
     "what3words_placeholder": "Inserisci indirizzo what3words (es. filled.count.soap)",
     "what3words_required": "Inserire un indirizzo what3words per la ricerca",
-    "required_fields_missing": "Il tuo dipartimento richiede questi campi prima di poter creare una chiamata: {{fields}}"
+    "required_fields_missing": "Il tuo dipartimento richiede questi campi prima di poter creare una chiamata: {{fields}}",
+    "field_policy_loading": "Le impostazioni delle chiamate del tuo dipartimento sono ancora in caricamento, riprova tra un momento"
   },
   "common": {
     "add": "Aggiungi",

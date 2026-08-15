@@ -288,7 +288,8 @@
     "what3words_not_found": "what3words address not found, please try a different address",
     "what3words_placeholder": "Enter what3words address (e.g., filled.count.soap)",
     "what3words_required": "Please enter a what3words address to search",
-    "required_fields_missing": "Your department requires these fields before a call can be created: {{fields}}"
+    "required_fields_missing": "Your department requires these fields before a call can be created: {{fields}}",
+    "field_policy_loading": "Still loading your department's call settings, please try again in a moment"
   },
   "common": {
     "add": "Add",

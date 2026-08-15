@@ -288,7 +288,8 @@
     "what3words_not_found": "Dirección what3words no encontrada, intente con otra dirección",
     "what3words_placeholder": "Introduce dirección what3words (ej: filled.count.soap)",
     "what3words_required": "Por favor introduce una dirección what3words para buscar",
-    "required_fields_missing": "Tu departamento exige estos campos antes de poder crear un aviso: {{fields}}"
+    "required_fields_missing": "Tu departamento exige estos campos antes de poder crear un aviso: {{fields}}",
+    "field_policy_loading": "Aún se están cargando los ajustes de avisos de tu departamento, inténtalo de nuevo en un momento"
   },
   "common": {
     "add": "Añadir",

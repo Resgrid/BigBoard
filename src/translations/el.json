@@ -288,7 +288,8 @@
     "what3words_not_found": "Η διεύθυνση what3words δεν βρέθηκε, δοκιμάστε διαφορετική διεύθυνση",
     "what3words_placeholder": "Εισαγάγετε διεύθυνση what3words (π.χ., filled.count.soap)",
     "what3words_required": "Εισαγάγετε μια διεύθυνση what3words για αναζήτηση",
-    "required_fields_missing": "Το τμήμα σας απαιτεί αυτά τα πεδία πριν δημιουργηθεί κλήση: {{fields}}"
+    "required_fields_missing": "Το τμήμα σας απαιτεί αυτά τα πεδία πριν δημιουργηθεί κλήση: {{fields}}",
+    "field_policy_loading": "Οι ρυθμίσεις κλήσεων του τμήματός σας φορτώνονται ακόμη, δοκιμάστε ξανά σε λίγο"
   },
   "common": {
     "add": "Προσθήκη",

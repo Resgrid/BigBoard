@@ -288,7 +288,8 @@
     "what3words_not_found": "what3words-Adresse nicht gefunden, bitte versuchen Sie eine andere Adresse",
     "what3words_placeholder": "what3words-Adresse eingeben (z. B. filled.count.soap)",
     "what3words_required": "Bitte geben Sie eine what3words-Adresse zur Suche ein",
-    "required_fields_missing": "Ihre Abteilung benötigt diese Felder, bevor ein Einsatz angelegt werden kann: {{fields}}"
+    "required_fields_missing": "Ihre Abteilung benötigt diese Felder, bevor ein Einsatz angelegt werden kann: {{fields}}",
+    "field_policy_loading": "Die Einsatzeinstellungen Ihrer Abteilung werden noch geladen, bitte versuchen Sie es gleich erneut"
   },
   "common": {
     "add": "Hinzufügen",

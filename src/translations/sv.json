@@ -288,7 +288,8 @@
     "what3words_not_found": "what3words-adress hittades inte, försök med en annan adress",
     "what3words_placeholder": "Ange what3words-adress (t.ex. filled.count.soap)",
     "what3words_required": "Vänligen ange en what3words-adress att söka efter",
-    "required_fields_missing": "Din avdelning kräver dessa fält innan ett ärende kan skapas: {{fields}}"
+    "required_fields_missing": "Din avdelning kräver dessa fält innan en insats kan skapas: {{fields}}",
+    "field_policy_loading": "Din avdelnings insatsinställningar laddas fortfarande, försök igen om ett ögonblick"
   },
   "common": {
     "add": "Lägg till",
