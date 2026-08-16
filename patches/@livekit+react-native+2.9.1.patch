@@ -1,0 +1,20 @@
+diff --git a/node_modules/@livekit/react-native/android/build.gradle b/node_modules/@livekit/react-native/android/build.gradle
+index bf04cea..f953baf 100644
+--- a/node_modules/@livekit/react-native/android/build.gradle
++++ b/node_modules/@livekit/react-native/android/build.gradle
+@@ -5,7 +5,6 @@ buildscript {
+   repositories {
+     google()
+     mavenCentral()
+-    jcenter()
+   }
+ 
+   dependencies {
+@@ -53,7 +52,6 @@ android {
+ 
+ repositories {
+   mavenCentral()
+-  jcenter()
+   google()
+   maven { url 'https://jitpack.io' }
+ 
