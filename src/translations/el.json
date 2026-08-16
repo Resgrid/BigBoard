@@ -224,6 +224,7 @@
     "edit_call": "Επεξεργασία Κλήσης",
     "edit_call_description": "Ενημέρωση πληροφοριών κλήσης",
     "everyone": "Όλοι",
+    "field_policy_loading": "Οι ρυθμίσεις κλήσεων του τμήματός σας φορτώνονται ακόμη, δοκιμάστε ξανά σε λίγο",
     "files": {
       "no_files": "Δεν υπάρχουν διαθέσιμα αρχεία",
       "no_files_description": "Δεν έχουν προστεθεί ακόμη αρχεία σε αυτή την κλήση",
@@ -259,6 +260,7 @@
     "plus_code_required": "Εισαγάγετε ένα plus code για αναζήτηση",
     "priority": "Προτεραιότητα",
     "priority_placeholder": "Επιλέξτε την προτεραιότητα της κλήσης",
+    "required_fields_missing": "Το τμήμα σας απαιτεί αυτά τα πεδία πριν δημιουργηθεί κλήση: {{fields}}",
     "roles": "Ρόλοι",
     "search": "Αναζήτηση κλήσεων...",
     "select_active_call": "Επιλογή Ενεργής Κλήσης",
@@ -287,9 +289,7 @@
     "what3words_invalid_format": "Μη έγκυρη μορφή what3words. Χρησιμοποιήστε τη μορφή: λέξη.λέξη.λέξη",
     "what3words_not_found": "Η διεύθυνση what3words δεν βρέθηκε, δοκιμάστε διαφορετική διεύθυνση",
     "what3words_placeholder": "Εισαγάγετε διεύθυνση what3words (π.χ., filled.count.soap)",
-    "what3words_required": "Εισαγάγετε μια διεύθυνση what3words για αναζήτηση",
-    "required_fields_missing": "Το τμήμα σας απαιτεί αυτά τα πεδία πριν δημιουργηθεί κλήση: {{fields}}",
-    "field_policy_loading": "Οι ρυθμίσεις κλήσεων του τμήματός σας φορτώνονται ακόμη, δοκιμάστε ξανά σε λίγο"
+    "what3words_required": "Εισαγάγετε μια διεύθυνση what3words για αναζήτηση"
   },
   "common": {
     "add": "Προσθήκη",
@@ -418,6 +418,7 @@
     "time_widget": "Widget Ώρας",
     "timestamp": "Χρονική Σήμανση",
     "unavailable_text_placeholder": "Κείμενο Μη Διαθεσιμότητας",
+    "unit_alerts_widget": "Ειδοποιήσεις μονάδων",
     "unit_ids": "Αναγνωριστικά Μονάδων",
     "units_summary_widget": "Widget Σύνοψης Μονάδων",
     "units_widget": "Widget Μονάδων",
@@ -431,8 +432,7 @@
     "width_grid_units": "Πλάτος (μονάδες πλέγματος): {{value}}",
     "yellow_threshold": "Κίτρινο όριο: {{value}} λεπτά",
     "zoom_level": "Επίπεδο Ζουμ: {{value}}",
-    "zoom_out_show_all": "Σμίκρυνση για Εμφάνιση Όλων των Πινεζών",
-    "unit_alerts_widget": "Ειδοποιήσεις μονάδων"
+    "zoom_out_show_all": "Σμίκρυνση για Εμφάνιση Όλων των Πινεζών"
   },
   "contacts": {
     "add": "Προσθήκη Επαφής",
@@ -727,8 +727,8 @@
     "general": "Γενικά",
     "generale": "Γενικά",
     "german": "Γερμανικά",
-    "greek": "Ελληνικά",
     "github": "Github",
+    "greek": "Ελληνικά",
     "help_center": "Κέντρο Βοήθειας",
     "italian": "Ιταλικά",
     "keep_alive": "Διατήρηση Ενεργού",

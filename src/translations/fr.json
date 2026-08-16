@@ -224,6 +224,7 @@
     "edit_call": "Modifier l'appel",
     "edit_call_description": "Mettre à jour les informations de l'appel",
     "everyone": "Tout le monde",
+    "field_policy_loading": "Les paramètres d'appel de votre département sont encore en cours de chargement, veuillez réessayer dans un instant",
     "files": {
       "no_files": "Aucun fichier disponible",
       "no_files_description": "Aucun fichier n'a encore été ajouté à cet appel",
@@ -259,6 +260,7 @@
     "plus_code_required": "Veuillez saisir un Plus Code à rechercher",
     "priority": "Priorité",
     "priority_placeholder": "Sélectionnez la priorité de l'appel",
+    "required_fields_missing": "Votre département exige ces champs avant qu'un appel puisse être créé : {{fields}}",
     "roles": "Rôles",
     "search": "Rechercher des appels...",
     "select_active_call": "Sélectionner l'appel actif",
@@ -287,9 +289,7 @@
     "what3words_invalid_format": "Format what3words invalide. Veuillez utiliser le format : mot.mot.mot",
     "what3words_not_found": "Adresse what3words introuvable, veuillez essayer une autre adresse",
     "what3words_placeholder": "Saisissez l'adresse what3words (ex. : filled.count.soap)",
-    "what3words_required": "Veuillez saisir une adresse what3words à rechercher",
-    "required_fields_missing": "Votre département exige ces champs avant qu'un appel puisse être créé : {{fields}}",
-    "field_policy_loading": "Les paramètres d'appel de votre département sont encore en cours de chargement, veuillez réessayer dans un instant"
+    "what3words_required": "Veuillez saisir une adresse what3words à rechercher"
   },
   "common": {
     "add": "Ajouter",
@@ -418,6 +418,7 @@
     "time_widget": "Widget de l'heure",
     "timestamp": "Horodatage",
     "unavailable_text_placeholder": "Texte d'indisponibilité",
+    "unit_alerts_widget": "Alertes unites",
     "unit_ids": "IDs d'unités",
     "units_summary_widget": "Widget de résumé des unités",
     "units_widget": "Widget des unités",
@@ -431,8 +432,7 @@
     "width_grid_units": "Largeur (unités de grille) : {{value}}",
     "yellow_threshold": "Seuil jaune : {{value}} min",
     "zoom_level": "Niveau de zoom : {{value}}",
-    "zoom_out_show_all": "Dézoomer pour afficher tous les marqueurs",
-    "unit_alerts_widget": "Alertes unites"
+    "zoom_out_show_all": "Dézoomer pour afficher tous les marqueurs"
   },
   "contacts": {
     "add": "Ajouter un contact",
@@ -727,8 +727,8 @@
     "general": "Général",
     "generale": "Général",
     "german": "Allemand",
-    "greek": "Grec",
     "github": "Github",
+    "greek": "Grec",
     "help_center": "Centre d'aide",
     "italian": "Italien",
     "keep_alive": "Maintien en activité",

@@ -23,7 +23,21 @@ import { useWidgetSettingsStore } from '@/stores/widget-settings/store';
 import { DEFAULT_UNITS_COLUMN_ORDER, UNITS_COLUMN_LABELS, type UnitsColumnKey, useUnitsSettingsStore } from '@/stores/widget-settings/units-settings-store';
 import { WidgetType } from '@/types/widget';
 
-type TabType = 'personnel' | 'map' | 'weather' | 'units' | 'calls' | 'notes' | 'time' | 'personnelStatusSummary' | 'personnelStaffingSummary' | 'unitsSummary' | 'callsSummary' | 'weatherAlerts' | 'scheduledCalls' | 'unitAlerts';
+type TabType =
+  | 'personnel'
+  | 'map'
+  | 'weather'
+  | 'units'
+  | 'calls'
+  | 'notes'
+  | 'time'
+  | 'personnelStatusSummary'
+  | 'personnelStaffingSummary'
+  | 'unitsSummary'
+  | 'callsSummary'
+  | 'weatherAlerts'
+  | 'scheduledCalls'
+  | 'unitAlerts';
 
 interface WidgetSizeSectionProps {
   widgetType: string;
@@ -45,13 +59,18 @@ const WidgetSizeSection: React.FC<WidgetSizeSectionProps> = ({ widgetType, defau
   const [localW, setLocalW] = useState(() => Math.min(widget?.w ?? defaultW, maxW));
   const [localH, setLocalH] = useState(() => Math.min(widget?.h ?? defaultH, maxH));
 
+  const widgetId = widget?.id;
+  const widgetW = widget?.w;
+  const widgetH = widget?.h;
+
   // Keep local slider state in sync with the store (e.g., after migration or external update)
   useEffect(() => {
-    if (widget) {
-      setLocalW(Math.min(widget.w || 1, maxW));
-      setLocalH(Math.min(widget.h || 1, maxH));
+    if (!widgetId) {
+      return;
     }
-  }, [widget?.id, widget?.w, widget?.h, maxW, maxH]);
+    setLocalW(Math.min(widgetW || 1, maxW));
+    setLocalH(Math.min(widgetH || 1, maxH));
+  }, [widgetId, widgetW, widgetH, maxW, maxH]);
 
   if (!widget) {
     return null;

@@ -8,10 +8,10 @@ import { Spinner } from '@/components/ui/spinner';
 import { useMapSignalRUpdates } from '@/hooks/use-map-signalr-updates';
 import { Env } from '@/lib/env';
 import { logger } from '@/lib/logging';
+import { getDepartmentMapCenter } from '@/lib/map-center';
 import { type MapMakerInfoData } from '@/models/v4/mapping/getMapDataAndMarkersData';
 import { useCoreStore } from '@/stores/app/core-store';
 import useAuthStore from '@/stores/auth/store';
-import { getDepartmentMapCenter } from '@/lib/map-center';
 
 import MapPins from '../maps/map-pins.web';
 import { WidgetContainer } from './WidgetContainer';

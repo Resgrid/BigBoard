@@ -157,37 +157,44 @@ async function createWindow() {
 }
 
 // Create window when Electron is ready
-app.whenReady().then(async () => {
-  await createWindow();
+app
+  .whenReady()
+  .then(async () => {
+    await createWindow();
 
-  // IPC handlers — registered after BrowserWindow is created
-  ipcMain.handle('get-version', () => app.getVersion());
+    // IPC handlers — registered after BrowserWindow is created
+    ipcMain.handle('get-version', () => app.getVersion());
 
-  ipcMain.on('window-minimize', (event) => {
-    BrowserWindow.fromWebContents(event.sender)?.minimize();
+    ipcMain.on('window-minimize', (event) => {
+      BrowserWindow.fromWebContents(event.sender)?.minimize();
+    });
+
+    ipcMain.on('window-maximize', (event) => {
+      const win = BrowserWindow.fromWebContents(event.sender);
+      if (win) {
+        if (win.isMaximized()) {
+          win.unmaximize();
+        } else {
+          win.maximize();
+        }
+      }
+    });
+
+    ipcMain.on('window-close', (event) => {
+      BrowserWindow.fromWebContents(event.sender)?.close();
+    });
+
+    // macOS: recreate window when dock icon clicked
+    app.on('activate', () => {
+      if (BrowserWindow.getAllWindows().length === 0) {
+        createWindow().catch((err) => console.error('Failed to create window on activate:', err));
+      }
+    });
+  })
+  .catch((err) => {
+    console.error('Failed to initialize app:', err);
+    app.quit();
   });
-
-  ipcMain.on('window-maximize', (event) => {
-    const win = BrowserWindow.fromWebContents(event.sender);
-    if (win) {
-      win.isMaximized() ? win.unmaximize() : win.maximize();
-    }
-  });
-
-  ipcMain.on('window-close', (event) => {
-    BrowserWindow.fromWebContents(event.sender)?.close();
-  });
-
-  // macOS: recreate window when dock icon clicked
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow().catch((err) => console.error('Failed to create window on activate:', err));
-    }
-  });
-}).catch((err) => {
-  console.error('Failed to initialize app:', err);
-  app.quit();
-});
 
 // Quit when all windows closed (except macOS)
 app.on('window-all-closed', () => {

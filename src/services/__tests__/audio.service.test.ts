@@ -13,11 +13,9 @@ const mockAsset = {
   uri: 'mock://uri',
 } as any;
 
-// Mock expo-modules-core first to prevent NativeUnimoduleProxy errors
-jest.mock('expo-modules-core', () => ({
-  NativeModulesProxy: {},
-  requireNativeModule: jest.fn(),
-}));
+// NOTE: expo-modules-core is deliberately NOT mocked here. jest-expo's preset already
+// mocks it; replacing it with a stub breaks expo's lazy `globalThis.fetch` global
+// (`Cannot read properties of undefined (reading 'NativeResponse')`).
 
 // Mock expo-asset
 jest.mock('expo-asset', () => ({
