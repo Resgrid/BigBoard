@@ -43,11 +43,9 @@ jest.mock('expo-constants', () => ({
   },
 }));
 
-// Mock expo-modules-core
-jest.mock('expo-modules-core', () => ({
-  NativeModulesProxy: {},
-  NativeUnimoduleProxy: {},
-}));
+// NOTE: expo-modules-core is deliberately NOT mocked here. jest-expo's preset already
+// mocks it; replacing it with a stub breaks expo's lazy `globalThis.fetch` global
+// (`requireNativeModule is not a function`).
 
 // Mock storage
 jest.mock('@/lib/storage', () => ({

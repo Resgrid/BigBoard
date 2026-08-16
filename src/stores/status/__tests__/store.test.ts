@@ -1,11 +1,17 @@
 // Mock Platform first before any imports
-jest.mock('react-native', () => ({
-  Platform: {
+jest.mock('react-native', () => {
+  const actual = jest.requireActual('react-native') as object;
+  const platform = {
     OS: 'ios',
-    select: jest.fn((specifics) => specifics.ios || specifics.default),
+    select: jest.fn((specifics: any) => specifics.ios || specifics.default),
     Version: 17,
-  },
-}));
+  };
+  // Proxy rather than spread: spreading react-native eagerly evaluates every lazy
+  // getter on its index, which pulls in native-only modules (DevMenu) under Jest.
+  return new Proxy(actual, {
+    get: (target, prop) => (prop === 'Platform' ? platform : Reflect.get(target, prop)),
+  });
+});
 
 // Mock MMKV storage
 jest.mock('react-native-mmkv', () => ({

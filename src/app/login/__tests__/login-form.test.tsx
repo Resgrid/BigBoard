@@ -151,11 +151,10 @@ jest.mock('react-native', () => {
     Alert: RN.Alert,
     Keyboard: mockKeyboard,
     Settings: mockSettings,
-    // Mock TurboModuleRegistry to prevent any native module access
-    TurboModuleRegistry: {
-      getEnforcing: jest.fn(() => ({})),
-      get: jest.fn(() => ({})),
-    },
+    // NOTE: TurboModuleRegistry is deliberately left as the real one. Stubbing it to
+    // return `{}` breaks expo-modules-core's TurboModule proxy (`eventEmitter is not a
+    // function`) as soon as anything touches expo's lazy `globalThis.fetch`.
+    TurboModuleRegistry: RN.TurboModuleRegistry,
   };
 });
 

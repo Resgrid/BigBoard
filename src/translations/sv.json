@@ -224,6 +224,7 @@
     "edit_call": "Redigera insats",
     "edit_call_description": "Uppdatera insatsinformation",
     "everyone": "Alla",
+    "field_policy_loading": "Din avdelnings insatsinställningar laddas fortfarande, försök igen om ett ögonblick",
     "files": {
       "no_files": "Inga filer tillgängliga",
       "no_files_description": "Inga filer har lagts till denna insats ännu",
@@ -259,6 +260,7 @@
     "plus_code_required": "Vänligen ange en pluskod att söka efter",
     "priority": "Prioritet",
     "priority_placeholder": "Välj insatsens prioritet",
+    "required_fields_missing": "Din avdelning kräver dessa fält innan en insats kan skapas: {{fields}}",
     "roles": "Roller",
     "search": "Sök insatser...",
     "select_active_call": "Välj aktiv insats",
@@ -287,9 +289,7 @@
     "what3words_invalid_format": "Ogiltigt what3words-format. Använd formatet: ord.ord.ord",
     "what3words_not_found": "what3words-adress hittades inte, försök med en annan adress",
     "what3words_placeholder": "Ange what3words-adress (t.ex. filled.count.soap)",
-    "what3words_required": "Vänligen ange en what3words-adress att söka efter",
-    "required_fields_missing": "Din avdelning kräver dessa fält innan en insats kan skapas: {{fields}}",
-    "field_policy_loading": "Din avdelnings insatsinställningar laddas fortfarande, försök igen om ett ögonblick"
+    "what3words_required": "Vänligen ange en what3words-adress att söka efter"
   },
   "common": {
     "add": "Lägg till",
@@ -418,6 +418,7 @@
     "time_widget": "Tidswidget",
     "timestamp": "Tidsstämpel",
     "unavailable_text_placeholder": "Text för ej tillgänglig",
+    "unit_alerts_widget": "Enhetslarm",
     "unit_ids": "Enhets-ID:n",
     "units_summary_widget": "Widget för enhetsöversikt",
     "units_widget": "Enhetswidget",
@@ -431,8 +432,7 @@
     "width_grid_units": "Bredd (rutnätsenheter): {{value}}",
     "yellow_threshold": "Gult tröskelvärde: {{value}} min",
     "zoom_level": "Zoomnivå: {{value}}",
-    "zoom_out_show_all": "Zooma ut för att visa alla markörer",
-    "unit_alerts_widget": "Enhetslarm"
+    "zoom_out_show_all": "Zooma ut för att visa alla markörer"
   },
   "contacts": {
     "add": "Lägg till kontakt",
@@ -727,8 +727,8 @@
     "general": "Allmänt",
     "generale": "Allmänt",
     "german": "Tyska",
-    "greek": "Grekiska",
     "github": "Github",
+    "greek": "Grekiska",
     "help_center": "Hjälpcenter",
     "italian": "Italienska",
     "keep_alive": "Håll aktiv",

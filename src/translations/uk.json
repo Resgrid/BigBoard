@@ -224,6 +224,7 @@
     "edit_call": "Редагувати виклик",
     "edit_call_description": "Оновити інформацію про виклик",
     "everyone": "Усі",
+    "field_policy_loading": "Налаштування викликів вашого відділу ще завантажуються, спробуйте ще раз за мить",
     "files": {
       "no_files": "Файли відсутні",
       "no_files_description": "До цього виклику ще не додано файлів",
@@ -259,6 +260,7 @@
     "plus_code_required": "Будь ласка, введіть Plus Code для пошуку",
     "priority": "Пріоритет",
     "priority_placeholder": "Виберіть пріоритет виклику",
+    "required_fields_missing": "Ваш відділ вимагає ці поля перед створенням виклику: {{fields}}",
     "roles": "Ролі",
     "search": "Пошук викликів...",
     "select_active_call": "Вибрати активний виклик",
@@ -287,9 +289,7 @@
     "what3words_invalid_format": "Невірний формат what3words. Використовуйте формат: слово.слово.слово",
     "what3words_not_found": "Адресу what3words не знайдено, спробуйте іншу адресу",
     "what3words_placeholder": "Введіть адресу what3words (напр., filled.count.soap)",
-    "what3words_required": "Будь ласка, введіть адресу what3words для пошуку",
-    "required_fields_missing": "Ваш відділ вимагає ці поля перед створенням виклику: {{fields}}",
-    "field_policy_loading": "Налаштування викликів вашого відділу ще завантажуються, спробуйте ще раз за мить"
+    "what3words_required": "Будь ласка, введіть адресу what3words для пошуку"
   },
   "common": {
     "add": "Додати",
@@ -418,6 +418,7 @@
     "time_widget": "Віджет часу",
     "timestamp": "Час",
     "unavailable_text_placeholder": "Текст недоступності",
+    "unit_alerts_widget": "Сповіщення підрозділів",
     "unit_ids": "ID підрозділів",
     "units_summary_widget": "Віджет зведення підрозділів",
     "units_widget": "Віджет підрозділів",
@@ -431,8 +432,7 @@
     "width_grid_units": "Ширина (одиниці сітки): {{value}}",
     "yellow_threshold": "Жовтий поріг: {{value}} хв",
     "zoom_level": "Рівень масштабування: {{value}}",
-    "zoom_out_show_all": "Зменшити масштаб, щоб показати всі маркери",
-    "unit_alerts_widget": "Сповіщення підрозділів"
+    "zoom_out_show_all": "Зменшити масштаб, щоб показати всі маркери"
   },
   "contacts": {
     "add": "Додати контакт",
@@ -727,8 +727,8 @@
     "general": "Загальне",
     "generale": "Загальне",
     "german": "Німецька",
-    "greek": "Грецька",
     "github": "Github",
+    "greek": "Грецька",
     "help_center": "Центр допомоги",
     "italian": "Італійська",
     "keep_alive": "Тримати активним",

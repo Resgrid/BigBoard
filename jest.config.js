@@ -1,3 +1,5 @@
+const expoPreset = require('jest-expo/jest-preset');
+
 module.exports = {
   preset: 'jest-expo',
   // Reanimated v4 worklets: resolve to the non-native builds in Jest
@@ -10,7 +12,10 @@ module.exports = {
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   moduleDirectories: ['node_modules', '<rootDir>/'],
   transformIgnorePatterns: [
-    'node_modules/(?!((jest-)?react-native|@react-native(-community)?|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@sentry/react-native|native-base|react-native-svg|@legendapp/motion|@gluestack-ui|nativewind|react-native-css|expo-audio|@aptabase/.*|@shopify/flash-list|@dev-plugins/.*))',
+    'node_modules/(?!((jest-)?react-native|@react-native(-community)?|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@sentry/react-native|native-base|standard-navigation|react-native-svg|@legendapp/motion|@gluestack-ui|nativewind|react-native-css|expo-audio|@aptabase/.*|@shopify/flash-list|@dev-plugins/.*))',
+    // Keep the two exclusions jest-expo's preset adds — replacing transformIgnorePatterns drops them.
+    '/node_modules/react-native-reanimated/plugin/',
+    '/node_modules/@react-native/babel-preset/',
   ],
   coverageReporters: ['json-summary', ['text', { file: 'coverage.txt' }], 'cobertura'],
   reporters: [
@@ -31,7 +36,10 @@ module.exports = {
     ],
   ],
   coverageDirectory: '<rootDir>/coverage/',
+  // Extend the preset's mapping (tsconfig paths, `react-native`, vector icons)
+  // instead of replacing it — a top-level `moduleNameMapper` overwrites the preset's.
   moduleNameMapper: {
+    ...expoPreset.moduleNameMapper,
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
   },
 };

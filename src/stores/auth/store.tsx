@@ -4,12 +4,12 @@ import { MMKV } from 'react-native-mmkv';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
+import { cacheManager } from '@/lib/cache/cache-manager';
+import { clearCacheScope, setCacheScope } from '@/lib/cache/cache-scope';
 import { logger } from '@/lib/logging';
 
 import { externalTokenRequest, loginRequest, refreshTokenRequest } from '../../lib/auth/api';
 import type { AuthState, LoginCredentials, ProfileModel, SsoLoginCredentials } from '../../lib/auth/types';
-import { cacheManager } from '@/lib/cache/cache-manager';
-import { clearCacheScope, setCacheScope } from '@/lib/cache/cache-scope';
 
 // Create MMKV storage instance for auth persistence
 const authStorage = new MMKV({

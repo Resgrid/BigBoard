@@ -224,6 +224,7 @@
     "edit_call": "تعديل المكالمة",
     "edit_call_description": "تحديث معلومات المكالمة",
     "everyone": "الجميع",
+    "field_policy_loading": "لا يزال يتم تحميل إعدادات البلاغات في قسمك، يرجى المحاولة مرة أخرى بعد لحظات",
     "files": {
       "no_files": "لا توجد ملفات متاحة",
       "no_files_description": "لم تتم إضافة أي ملفات إلى هذه المكالمة بعد",
@@ -259,6 +260,7 @@
     "plus_code_required": "يرجى إدخال رمز Plus للبحث",
     "priority": "الأولوية",
     "priority_placeholder": "اختر أولوية المكالمة",
+    "required_fields_missing": "يطلب قسمك هذه الحقول قبل إنشاء البلاغ: {{fields}}",
     "roles": "الأدوار",
     "search": "البحث في المكالمات...",
     "select_active_call": "اختر مكالمة نشطة",
@@ -287,9 +289,7 @@
     "what3words_invalid_format": "تنسيق what3words غير صحيح. استخدم التنسيق: كلمة.كلمة.كلمة",
     "what3words_not_found": "لم يتم العثور على عنوان what3words، جرب عنوان آخر",
     "what3words_placeholder": "أدخل عنوان what3words (مثال: filled.count.soap)",
-    "what3words_required": "يرجى إدخال عنوان what3words للبحث",
-    "required_fields_missing": "يطلب قسمك هذه الحقول قبل إنشاء البلاغ: {{fields}}",
-    "field_policy_loading": "لا يزال يتم تحميل إعدادات البلاغات في قسمك، يرجى المحاولة مرة أخرى بعد لحظات"
+    "what3words_required": "يرجى إدخال عنوان what3words للبحث"
   },
   "common": {
     "add": "إضافة",
@@ -418,6 +418,7 @@
     "time_widget": "أداة الوقت",
     "timestamp": "الطابع الزمني",
     "unavailable_text_placeholder": "نص غير متاح",
+    "unit_alerts_widget": "تنبيهات الوحدات",
     "unit_ids": "معرّفات الوحدات",
     "units_summary_widget": "أداة ملخص الوحدات",
     "units_widget": "أداة الوحدات",
@@ -431,8 +432,7 @@
     "width_grid_units": "العرض (وحدات الشبكة): {{value}}",
     "yellow_threshold": "عتبة الأصفر: {{value}} دقيقة",
     "zoom_level": "مستوى التكبير: {{value}}",
-    "zoom_out_show_all": "تصغير لعرض جميع الدبابيس",
-    "unit_alerts_widget": "تنبيهات الوحدات"
+    "zoom_out_show_all": "تصغير لعرض جميع الدبابيس"
   },
   "contacts": {
     "add": "إضافة جهة اتصال",
@@ -727,8 +727,8 @@
     "general": "عام",
     "generale": "عام",
     "german": "الألمانية",
-    "greek": "اليونانية",
     "github": "جيثب",
+    "greek": "اليونانية",
     "help_center": "مركز المساعدة",
     "italian": "الإيطالية",
     "keep_alive": "إبقاء الجهاز نشطاً",

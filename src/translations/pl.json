@@ -224,6 +224,7 @@
     "edit_call": "Edytuj zgłoszenie",
     "edit_call_description": "Zaktualizuj informacje o zgłoszeniu",
     "everyone": "Wszyscy",
+    "field_policy_loading": "Ustawienia zgłoszeń Twojej jednostki są jeszcze wczytywane, spróbuj ponownie za chwilę",
     "files": {
       "no_files": "Brak dostępnych plików",
       "no_files_description": "Do tego zgłoszenia nie dodano jeszcze żadnych plików",
@@ -259,6 +260,7 @@
     "plus_code_required": "Proszę podać Plus Code do wyszukania",
     "priority": "Priorytet",
     "priority_placeholder": "Wybierz priorytet zgłoszenia",
+    "required_fields_missing": "Twoja jednostka wymaga tych pól przed utworzeniem zgłoszenia: {{fields}}",
     "roles": "Role",
     "search": "Szukaj zgłoszeń...",
     "select_active_call": "Wybierz aktywne zgłoszenie",
@@ -287,9 +289,7 @@
     "what3words_invalid_format": "Nieprawidłowy format what3words. Użyj formatu: słowo.słowo.słowo",
     "what3words_not_found": "Nie znaleziono adresu what3words, spróbuj podać inny adres",
     "what3words_placeholder": "Wprowadź adres what3words (np. filled.count.soap)",
-    "what3words_required": "Proszę podać adres what3words do wyszukania",
-    "required_fields_missing": "Twoja jednostka wymaga tych pól przed utworzeniem zgłoszenia: {{fields}}",
-    "field_policy_loading": "Ustawienia zgłoszeń Twojej jednostki są jeszcze wczytywane, spróbuj ponownie za chwilę"
+    "what3words_required": "Proszę podać adres what3words do wyszukania"
   },
   "common": {
     "add": "Dodaj",
@@ -418,6 +418,7 @@
     "time_widget": "Widget czasu",
     "timestamp": "Znacznik czasu",
     "unavailable_text_placeholder": "Tekst niedostępności",
+    "unit_alerts_widget": "Alerty jednostek",
     "unit_ids": "ID jednostek",
     "units_summary_widget": "Widget podsumowania jednostek",
     "units_widget": "Widget jednostek",
@@ -431,8 +432,7 @@
     "width_grid_units": "Szerokość (jednostki siatki): {{value}}",
     "yellow_threshold": "Próg żółty: {{value}} min",
     "zoom_level": "Poziom przybliżenia: {{value}}",
-    "zoom_out_show_all": "Oddal, aby pokazać wszystkie pinezki",
-    "unit_alerts_widget": "Alerty jednostek"
+    "zoom_out_show_all": "Oddal, aby pokazać wszystkie pinezki"
   },
   "contacts": {
     "add": "Dodaj kontakt",
@@ -727,8 +727,8 @@
     "general": "Ogólne",
     "generale": "Ogólne",
     "german": "Niemiecki",
-    "greek": "Grecki",
     "github": "Github",
+    "greek": "Grecki",
     "help_center": "Centrum pomocy",
     "italian": "Włoski",
     "keep_alive": "Utrzymuj aktywność",

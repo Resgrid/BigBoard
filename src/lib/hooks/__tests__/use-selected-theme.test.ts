@@ -74,7 +74,7 @@ describe('loadSelectedTheme', () => {
 
     loadSelectedTheme();
 
-    // RN 0.81: null clears the override (coerced to 'unspecified' at runtime).
-    expect(setColorSchemeSpy).toHaveBeenCalledWith(null);
+    // RN 0.85 / NativeWind v5: 'unspecified' is the value that clears the override.
+    expect(setColorSchemeSpy).toHaveBeenCalledWith('unspecified');
   });
 });
