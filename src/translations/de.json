@@ -837,6 +837,12 @@
     "settings": "Einstellungen",
     "shifts": "Schichten"
   },
+  "unitAlerts": {
+    "errorLoading": "Laden fehlgeschlagen",
+    "noThresholds": "Keine Statuszeitgeber konfiguriert",
+    "title": "Einheitenwarnungen",
+    "withinThresholds": "Alle Einheiten innerhalb ihrer Statuszeitgeber"
+  },
   "weatherAlerts": {
     "category": {
       "cbrne": "CBRNE",
@@ -928,6 +934,7 @@
     "personnel_status_summary": "Personalstatusübersicht",
     "scheduled_calls": "Geplante Einsätze",
     "time": "Zeit",
+    "unit_alerts": "Einheitenwarnungen",
     "units": "Einheiten",
     "units_summary": "Einheitenübersicht",
     "weather": "Wetter",

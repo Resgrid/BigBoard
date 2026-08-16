@@ -1180,6 +1180,17 @@ export default function Configure() {
           </VStack>
         );
 
+      case 'unitAlerts':
+        return (
+          <VStack space="lg" className="p-4" testID="configure-unitAlerts-content">
+            <Text className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>{t('configure.unit_alerts_widget')}</Text>
+
+            {/* The alert thresholds themselves are department settings pulled from Core, not board
+                settings — the only thing configurable here is how much of the board the panel takes. */}
+            <WidgetSizeSection widgetType="unit_alerts" defaultW={1} defaultH={1} isDark={isDark} />
+          </VStack>
+        );
+
       default:
         return null;
     }

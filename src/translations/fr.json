@@ -837,6 +837,12 @@
     "settings": "Paramètres",
     "shifts": "Gardes"
   },
+  "unitAlerts": {
+    "errorLoading": "Échec du chargement",
+    "noThresholds": "Aucun minuteur de statut configuré",
+    "title": "Alertes des unités",
+    "withinThresholds": "Toutes les unités dans les limites de leurs minuteurs de statut"
+  },
   "weatherAlerts": {
     "category": {
       "cbrne": "NRBC",
@@ -928,6 +934,7 @@
     "personnel_status_summary": "Résumé du statut du personnel",
     "scheduled_calls": "Appels planifiés",
     "time": "Heure",
+    "unit_alerts": "Alertes des unités",
     "units": "Unités",
     "units_summary": "Résumé des unités",
     "weather": "Météo",

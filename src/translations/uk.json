@@ -837,6 +837,12 @@
     "settings": "Налаштування",
     "shifts": "Зміни"
   },
+  "unitAlerts": {
+    "errorLoading": "Не вдалося завантажити",
+    "noThresholds": "Таймери статусів не налаштовано",
+    "title": "Сповіщення підрозділів",
+    "withinThresholds": "Усі підрозділи в межах своїх таймерів статусу"
+  },
   "weatherAlerts": {
     "category": {
       "cbrne": "ХБРЯ",
@@ -928,6 +934,7 @@
     "personnel_status_summary": "Зведення статусу персоналу",
     "scheduled_calls": "Заплановані виклики",
     "time": "Час",
+    "unit_alerts": "Сповіщення підрозділів",
     "units": "Підрозділи",
     "units_summary": "Зведення підрозділів",
     "weather": "Погода",

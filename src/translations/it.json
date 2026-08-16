@@ -837,6 +837,12 @@
     "settings": "Impostazioni",
     "shifts": "Turni"
   },
+  "unitAlerts": {
+    "errorLoading": "Caricamento non riuscito",
+    "noThresholds": "Nessun timer di stato configurato",
+    "title": "Avvisi unità",
+    "withinThresholds": "Tutte le unità entro i loro timer di stato"
+  },
   "weatherAlerts": {
     "category": {
       "cbrne": "CBRNE",
@@ -928,6 +934,7 @@
     "personnel_status_summary": "Riepilogo stato del personale",
     "scheduled_calls": "Chiamate programmate",
     "time": "Ora",
+    "unit_alerts": "Avvisi unità",
     "units": "Unità",
     "units_summary": "Riepilogo unità",
     "weather": "Meteo",

@@ -837,6 +837,12 @@
     "settings": "Settings",
     "shifts": "Shifts"
   },
+  "unitAlerts": {
+    "errorLoading": "Failed to load",
+    "noThresholds": "No status timers configured",
+    "title": "Unit Alerts",
+    "withinThresholds": "All units within their status timers"
+  },
   "weatherAlerts": {
     "category": {
       "cbrne": "CBRNE",
@@ -928,6 +934,7 @@
     "personnel_status_summary": "Personnel Status Summary",
     "scheduled_calls": "Scheduled Calls",
     "time": "Time",
+    "unit_alerts": "Unit Alerts",
     "units": "Units",
     "units_summary": "Units Summary",
     "weather": "Weather",

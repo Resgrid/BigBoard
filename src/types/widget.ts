@@ -69,6 +69,7 @@ export function getDefaultWidgetSizes(platform: PlatformCategory): Record<Widget
       [WidgetType.CALLS_SUMMARY]: { w: 2, h: 2 },
       [WidgetType.WEATHER_ALERTS]: { w: 2, h: 2 },
       [WidgetType.SCHEDULED_CALLS]: { w: 3, h: 3 },
+      [WidgetType.UNIT_ALERTS]: { w: 2, h: 2 },
     };
   }
 
@@ -87,6 +88,7 @@ export function getDefaultWidgetSizes(platform: PlatformCategory): Record<Widget
     [WidgetType.CALLS_SUMMARY]: { w: 1, h: 1 },
     [WidgetType.WEATHER_ALERTS]: { w: 1, h: 1 },
     [WidgetType.SCHEDULED_CALLS]: { w: 2, h: 2 },
+    [WidgetType.UNIT_ALERTS]: { w: 1, h: 1 },
   };
 }
 
@@ -105,4 +107,5 @@ export const WIDGET_LABEL_KEYS: Record<WidgetType, string> = {
   [WidgetType.CALLS_SUMMARY]: 'widgets.calls_summary',
   [WidgetType.WEATHER_ALERTS]: 'widgets.weather_alerts',
   [WidgetType.SCHEDULED_CALLS]: 'widgets.scheduled_calls',
+  [WidgetType.UNIT_ALERTS]: 'widgets.unit_alerts',
 };

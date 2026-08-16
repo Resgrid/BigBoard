@@ -837,6 +837,12 @@
     "settings": "Ρυθμίσεις",
     "shifts": "Βάρδιες"
   },
+  "unitAlerts": {
+    "errorLoading": "Αποτυχία φόρτωσης",
+    "noThresholds": "Δεν έχουν ρυθμιστεί χρονόμετρα κατάστασης",
+    "title": "Ειδοποιήσεις μονάδων",
+    "withinThresholds": "Όλες οι μονάδες εντός των χρονομέτρων κατάστασής τους"
+  },
   "weatherAlerts": {
     "category": {
       "cbrne": "CBRNE",
@@ -928,6 +934,7 @@
     "personnel_status_summary": "Σύνοψη Κατάστασης Προσωπικού",
     "scheduled_calls": "Προγραμματισμένες Κλήσεις",
     "time": "Ώρα",
+    "unit_alerts": "Ειδοποιήσεις μονάδων",
     "units": "Μονάδες",
     "units_summary": "Σύνοψη Μονάδων",
     "weather": "Καιρός",

@@ -1,5 +1,5 @@
 import { useColorScheme } from 'nativewind';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { ScrollView } from 'react-native';
 
 import { Box } from '@/components/ui/box';
@@ -14,6 +14,10 @@ import { useUnitsStore } from '@/stores/units/store';
 import { DEFAULT_UNITS_COLUMN_ORDER, type UnitsColumnKey, useUnitsSettingsStore } from '@/stores/widget-settings/units-settings-store';
 
 import { WidgetContainer } from './WidgetContainer';
+
+// Matches UnitAlertsWidget: a unit crosses its threshold through the passage of time, not through
+// anything the server sends, so the evaluation instant has to advance on its own.
+const REEVALUATE_INTERVAL_MS = 15000;
 
 interface UnitsWidgetProps {
   onRemove?: () => void;
@@ -39,6 +43,21 @@ export const UnitsWidget: React.FC<UnitsWidgetProps> = ({ onRemove, isEditMode, 
 
   const thresholds = useUnitStatusThresholds();
 
+  // The instant every unit is measured against. Held in state rather than read inside the memo so
+  // the passage of time is an explicit input — otherwise the memo only recomputes when the unit
+  // list or the thresholds change, and a unit sitting still never crosses its threshold.
+  const [evaluatedAt, setEvaluatedAt] = useState(() => Date.now());
+
+  useEffect(() => {
+    if (thresholds.length === 0) {
+      return;
+    }
+
+    const interval = setInterval(() => setEvaluatedAt(Date.now()), REEVALUATE_INTERVAL_MS);
+
+    return () => clearInterval(interval);
+  }, [thresholds.length]);
+
   const filteredUnits = useMemo(() => {
     return units.filter((unit) => {
       // Check if group is hidden
@@ -53,11 +72,9 @@ export const UnitsWidget: React.FC<UnitsWidgetProps> = ({ onRemove, isEditMode, 
   // disagree about which side of a threshold they are on. Breaching units sort to the top: the
   // point of the feature is that a dispatcher spots them without reading the whole board.
   const displayedUnits = useMemo(() => {
-    const now = Date.now();
-
     const annotated = filteredUnits.map((unit) => ({
       unit,
-      alert: evaluateUnitStatusAlert(unit, thresholds, now),
+      alert: evaluateUnitStatusAlert(unit, thresholds, evaluatedAt),
     }));
 
     if (thresholds.length === 0) {
@@ -74,7 +91,7 @@ export const UnitsWidget: React.FC<UnitsWidgetProps> = ({ onRemove, isEditMode, 
       // Within a level, longest overdue first.
       return (b.alert.secondsInStatus ?? 0) - (a.alert.secondsInStatus ?? 0);
     });
-  }, [filteredUnits, thresholds]);
+  }, [filteredUnits, thresholds, evaluatedAt]);
 
   const getTimeago = (date: string) => {
     // secondsInStatus treats a zone-less timestamp as UTC. `new Date(...)` read it as local time, so

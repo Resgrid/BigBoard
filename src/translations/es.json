@@ -837,6 +837,12 @@
     "settings": "Configuración",
     "shifts": "Turnos"
   },
+  "unitAlerts": {
+    "errorLoading": "Error al cargar",
+    "noThresholds": "No hay temporizadores de estado configurados",
+    "title": "Alertas de unidades",
+    "withinThresholds": "Todas las unidades dentro de sus temporizadores de estado"
+  },
   "weatherAlerts": {
     "category": {
       "cbrne": "NBQR",
@@ -928,6 +934,7 @@
     "personnel_status_summary": "Resumen de estado del personal",
     "scheduled_calls": "Llamadas programadas",
     "time": "Hora",
+    "unit_alerts": "Alertas de unidades",
     "units": "Unidades",
     "units_summary": "Resumen de unidades",
     "weather": "Clima",

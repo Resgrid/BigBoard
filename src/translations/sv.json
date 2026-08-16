@@ -837,6 +837,12 @@
     "settings": "Inställningar",
     "shifts": "Skift"
   },
+  "unitAlerts": {
+    "errorLoading": "Kunde inte ladda",
+    "noThresholds": "Inga statustimers konfigurerade",
+    "title": "Enhetslarm",
+    "withinThresholds": "Alla enheter inom sina statustimers"
+  },
   "weatherAlerts": {
     "category": {
       "cbrne": "CBRNE",
@@ -928,6 +934,7 @@
     "personnel_status_summary": "Sammanfattning av personalstatus",
     "scheduled_calls": "Schemalagda samtal",
     "time": "Tid",
+    "unit_alerts": "Enhetslarm",
     "units": "Enheter",
     "units_summary": "Enhetssammanfattning",
     "weather": "Väder",

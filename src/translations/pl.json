@@ -837,6 +837,12 @@
     "settings": "Ustawienia",
     "shifts": "Zmiany"
   },
+  "unitAlerts": {
+    "errorLoading": "Nie udało się załadować",
+    "noThresholds": "Nie skonfigurowano liczników statusu",
+    "title": "Alerty jednostek",
+    "withinThresholds": "Wszystkie jednostki mieszczą się w swoich licznikach statusu"
+  },
   "weatherAlerts": {
     "category": {
       "cbrne": "CBRNE",
@@ -928,6 +934,7 @@
     "personnel_status_summary": "Podsumowanie statusu personelu",
     "scheduled_calls": "Zaplanowane wezwania",
     "time": "Czas",
+    "unit_alerts": "Alerty jednostek",
     "units": "Jednostki",
     "units_summary": "Podsumowanie jednostek",
     "weather": "Pogoda",

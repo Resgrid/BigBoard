@@ -837,84 +837,90 @@
     "settings": "الإعدادات",
     "shifts": "المناوبات"
   },
+  "unitAlerts": {
+    "errorLoading": "فشل في التحميل",
+    "noThresholds": "لم يتم تكوين مؤقتات الحالة",
+    "title": "تنبيهات الوحدات",
+    "withinThresholds": "جميع الوحدات ضمن مؤقتات حالتها"
+  },
   "weatherAlerts": {
     "category": {
       "cbrne": "CBRNE",
-      "env": "Environmental",
-      "fire": "Fire",
-      "health": "Health",
-      "met": "Meteorological",
-      "other": "Other",
-      "rescue": "Rescue",
-      "security": "Security"
+      "env": "بيئي",
+      "fire": "حريق",
+      "health": "صحي",
+      "met": "أرصاد جوية",
+      "other": "أخرى",
+      "rescue": "إنقاذ",
+      "security": "أمني"
     },
     "certainty": {
-      "likely": "Likely",
-      "observed": "Observed",
-      "possible": "Possible",
-      "unknown": "Unknown",
-      "unlikely": "Unlikely"
+      "likely": "مرجّح",
+      "observed": "مُلاحَظ",
+      "possible": "محتمل",
+      "unknown": "غير معروف",
+      "unlikely": "غير مرجّح"
     },
     "detail": {
-      "affectedArea": "Affected Area",
-      "certainty": "Certainty",
-      "description": "Description",
-      "details": "Details",
-      "effective": "Effective",
-      "expires": "Expires",
-      "headline": "Headline",
-      "instructions": "Instructions",
-      "onset": "Onset",
-      "sender": "Sender",
-      "timing": "Timing",
-      "urgency": "Urgency"
+      "affectedArea": "المنطقة المتأثرة",
+      "certainty": "درجة اليقين",
+      "description": "الوصف",
+      "details": "التفاصيل",
+      "effective": "بدء السريان",
+      "expires": "ينتهي",
+      "headline": "العنوان",
+      "instructions": "التعليمات",
+      "onset": "بداية التأثير",
+      "sender": "المُرسِل",
+      "timing": "التوقيت",
+      "urgency": "درجة الإلحاح"
     },
     "errorLoading": "فشل في تحميل تنبيهات الطقس",
-    "expired": "Expired",
+    "expired": "منتهي الصلاحية",
     "filter": {
-      "all": "All",
-      "extreme": "Extreme",
-      "minor": "Minor",
-      "moderate": "Moderate",
-      "severe": "Severe"
+      "all": "الكل",
+      "extreme": "بالغ الخطورة",
+      "minor": "طفيف",
+      "moderate": "متوسط",
+      "severe": "شديد"
     },
-    "loadingDetail": "Loading alert details...",
-    "moreAlerts": "+{{count}} more alerts",
-    "noActiveAlerts": "No active alerts",
-    "notEnabled": "Weather alerts not enabled",
-    "remaining": "remaining",
+    "loadingDetail": "جارٍ تحميل تفاصيل التنبيه...",
+    "moreAlerts": "+{{count}} تنبيهات إضافية",
+    "noActiveAlerts": "لا توجد تنبيهات نشطة",
+    "notEnabled": "تنبيهات الطقس غير مفعّلة",
+    "remaining": "متبقٍ",
     "severity": {
-      "extreme": "Extreme",
-      "minor": "Minor",
-      "moderate": "Moderate",
-      "severe": "Severe",
-      "unknown": "Unknown"
+      "extreme": "بالغ الخطورة",
+      "minor": "طفيف",
+      "moderate": "متوسط",
+      "severe": "شديد",
+      "unknown": "غير معروف"
     },
     "sort": {
-      "expiresSoonest": "Expires soonest",
-      "label": "Sort:",
-      "newest": "Newest",
-      "severity": "Severity"
+      "expiresSoonest": "الأقرب انتهاءً",
+      "label": "الترتيب:",
+      "newest": "الأحدث",
+      "severity": "الخطورة"
     },
     "status": {
-      "actual": "Actual",
-      "draft": "Draft",
-      "exercise": "Exercise",
-      "system": "System",
-      "test": "Test",
-      "unknown": "Unknown"
+      "actual": "فعلي",
+      "draft": "مسودة",
+      "exercise": "تمرين",
+      "system": "نظام",
+      "test": "اختبار",
+      "unknown": "غير معروف"
     },
     "time_days_hours": "{{days}}ي {{hours}}س",
     "time_hours_minutes": "{{hours}}س {{minutes}}د",
     "time_minutes": "{{minutes}}د",
-    "title": "Weather Alerts",
-    "tryChangingFilter": "Try changing your filter",
+    "title": "تنبيهات الطقس",
+    "tryChangingFilter": "جرّب تغيير عامل التصفية",
     "urgency": {
-      "expected": "Expected",
-      "future": "Future",
-      "immediate": "Immediate",
-      "past": "Past",
-      "unknown": "Unknown"
+      "expected": "متوقع",
+      "future": "مستقبلي",
+      "immediate": "فوري",
+      "past": "منقضٍ",
+      "unknown": "غير معروف"
     }
   },
   "welcome": "مرحبًا بك في موقع تطبيق obytes",
@@ -928,6 +934,7 @@
     "personnel_status_summary": "ملخص حالة الأفراد",
     "scheduled_calls": "المكالمات المجدولة",
     "time": "الوقت",
+    "unit_alerts": "تنبيهات الوحدات",
     "units": "الوحدات",
     "units_summary": "ملخص الوحدات",
     "weather": "الطقس",

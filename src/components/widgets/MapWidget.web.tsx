@@ -46,6 +46,9 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ onRemove, isEditMode, widt
   useEffect(() => {
     if (map.current) return; // initialize map only once
     if (!mapContainer.current) return;
+    // Building the map before config lands pins it on the fallback centre permanently: the guard
+    // above means this effect never constructs a second time once a map exists.
+    if (!isInitialized) return;
 
     mapboxgl.accessToken = Env.MAPBOX_PUBKEY;
 
@@ -60,11 +63,13 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ onRemove, isEditMode, widt
 
     const styleURL = isDark ? 'mapbox://styles/mapbox/dark-v11' : 'mapbox://styles/mapbox/streets-v12';
 
+    const center = getDepartmentMapCenter();
+
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: styleURL,
-      center: [getDepartmentMapCenter().longitude, getDepartmentMapCenter().latitude], // Default center (USA)
-      zoom: 10,
+      center: [center.longitude, center.latitude],
+      zoom: center.zoomLevel,
       attributionControl: false,
     });
 
@@ -79,7 +84,7 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ onRemove, isEditMode, widt
       // Reset loaded flag when map is cleaned up
       setHasLoadedInitialData(false);
     };
-  }, [isDark]);
+  }, [isDark, isInitialized]);
 
   // Load initial map data when conditions are met
   useEffect(() => {

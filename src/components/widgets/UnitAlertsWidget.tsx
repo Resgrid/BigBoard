@@ -1,6 +1,7 @@
 import { AlertTriangleIcon } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
 import React, { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ScrollView } from 'react-native';
 
 import { Box } from '@/components/ui/box';
@@ -36,6 +37,7 @@ interface UnitAlertsWidgetProps {
 const REEVALUATE_INTERVAL_MS = 15000;
 
 export const UnitAlertsWidget: React.FC<UnitAlertsWidgetProps> = ({ onRemove, isEditMode, containerWidth, containerHeight }) => {
+  const { t } = useTranslation();
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
   const { units, isLoading, error, fetchUnits } = useUnitsStore();
@@ -82,9 +84,9 @@ export const UnitAlertsWidget: React.FC<UnitAlertsWidgetProps> = ({ onRemove, is
 
   if (error) {
     return (
-      <WidgetContainer title="Unit Alerts" onRemove={onRemove} isEditMode={isEditMode} testID="unit-alerts-widget" width={containerWidth} height={containerHeight}>
+      <WidgetContainer title={t('unitAlerts.title')} onRemove={onRemove} isEditMode={isEditMode} testID="unit-alerts-widget" width={containerWidth} height={containerHeight}>
         <Box className="flex-1 items-center justify-center">
-          <Text className={`text-sm ${isDark ? 'text-red-400' : 'text-red-600'}`}>Failed to load</Text>
+          <Text className={`text-sm ${isDark ? 'text-red-400' : 'text-red-600'}`}>{t('unitAlerts.errorLoading')}</Text>
         </Box>
       </WidgetContainer>
     );
@@ -92,7 +94,7 @@ export const UnitAlertsWidget: React.FC<UnitAlertsWidgetProps> = ({ onRemove, is
 
   if (isLoading) {
     return (
-      <WidgetContainer title="Unit Alerts" onRemove={onRemove} isEditMode={isEditMode} testID="unit-alerts-widget" width={containerWidth} height={containerHeight}>
+      <WidgetContainer title={t('unitAlerts.title')} onRemove={onRemove} isEditMode={isEditMode} testID="unit-alerts-widget" width={containerWidth} height={containerHeight}>
         <Box className="flex-1 items-center justify-center">
           <Spinner size="small" />
         </Box>
@@ -101,7 +103,7 @@ export const UnitAlertsWidget: React.FC<UnitAlertsWidgetProps> = ({ onRemove, is
   }
 
   return (
-    <WidgetContainer title="Unit Alerts" onRemove={onRemove} isEditMode={isEditMode} testID="unit-alerts-widget" width={containerWidth} height={containerHeight}>
+    <WidgetContainer title={t('unitAlerts.title')} onRemove={onRemove} isEditMode={isEditMode} testID="unit-alerts-widget" width={containerWidth} height={containerHeight}>
       <ScrollView style={{ flex: 1 }}>
         <VStack space="xs">
           {breaching.map(({ unit, alert }) => {
@@ -121,7 +123,7 @@ export const UnitAlertsWidget: React.FC<UnitAlertsWidgetProps> = ({ onRemove, is
                     {unit.Name}
                   </Text>
                   <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`} numberOfLines={1}>
-                    {unit.CurrentStatus || 'Unknown'}
+                    {unit.CurrentStatus || t('common.unknown')}
                     {unit.GroupName ? ` · ${unit.GroupName}` : ''}
                   </Text>
                 </VStack>
@@ -137,7 +139,7 @@ export const UnitAlertsWidget: React.FC<UnitAlertsWidgetProps> = ({ onRemove, is
               {/* Two genuinely different situations: nothing is being timed, versus everything is
                   within its time. Saying "all units within thresholds" when none are configured
                   would be a false reassurance on a screen dispatchers trust. */}
-              <Text className={`text-center text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{thresholds.length === 0 ? 'No status timers configured' : 'All units within their status timers'}</Text>
+              <Text className={`text-center text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{thresholds.length === 0 ? t('unitAlerts.noThresholds') : t('unitAlerts.withinThresholds')}</Text>
             </Box>
           ) : null}
         </VStack>
