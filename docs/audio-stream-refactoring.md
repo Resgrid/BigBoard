@@ -2,69 +2,83 @@
 
 ## Overview
 
-The audio stream store has been refactored to use `expo-av` instead of `expo-audio` to resolve issues with playing remote MP3 streams over the internet in the new Expo architecture.
+The audio stream store uses `expo-audio`. It was briefly moved to `expo-av` to work around remote MP3
+streaming issues under the new architecture, but `expo-av` was removed from the Expo SDK and no longer
+compiles against `expo-modules-core@56` (its legacy `EXEventEmitter.h` header is gone), so the store —
+and `src/services/audio.service.ts` — were migrated back to `expo-audio`.
 
 ## Key Changes
 
-### 1. Replaced expo-audio with expo-av
+### 1. Replaced expo-av with expo-audio
 
 **Before:**
 ```typescript
-import { type AudioPlayer, createAudioPlayer } from 'expo-audio';
+import { Audio, type AVPlaybackSource, type AVPlaybackStatus } from 'expo-av';
 ```
 
 **After:**
 ```typescript
-import { Audio, type AVPlaybackSource, type AVPlaybackStatus } from 'expo-av';
+import { type AudioPlayer, type AudioStatus, createAudioPlayer, setAudioModeAsync } from 'expo-audio';
 ```
 
 ### 2. Updated Audio Player Management
 
 **Before:**
-- Used `createAudioPlayer()` function
-- Audio player instance stored as `AudioPlayer`
-
-**After:**
-- Uses `Audio.Sound.createAsync()` method
+- Used `Audio.Sound.createAsync()`, which returned `{ sound }` and took a status callback
 - Audio player instance stored as `Audio.Sound`
 
-### 3. Enhanced Audio Configuration
+**After:**
+- Uses the synchronous `createAudioPlayer()` function
+- Audio player instance stored as `AudioPlayer`
+- Status updates arrive through `player.addListener('playbackStatusUpdate', ...)`; the returned
+  subscription is removed in `stopStream()` before `player.remove()`
 
-Added proper audio mode configuration for streaming:
+### 3. Audio Configuration
+
+`setAudioModeAsync` is now a top-level export and its option names changed:
 
 ```typescript
-await Audio.setAudioModeAsync({
-  allowsRecordingIOS: false,
-  staysActiveInBackground: true,
-  playsInSilentModeIOS: true,
-  shouldDuckAndroid: true,
-  playThroughEarpieceAndroid: false,
+await setAudioModeAsync({
+  allowsRecording: false,
+  shouldPlayInBackground: true,
+  playsInSilentMode: true,
+  interruptionMode: 'duckOthers',
+  shouldRouteThroughEarpiece: false,
 });
 ```
 
-### 4. Improved State Management
+| expo-av | expo-audio |
+| --- | --- |
+| `allowsRecordingIOS` | `allowsRecording` |
+| `staysActiveInBackground` | `shouldPlayInBackground` |
+| `playsInSilentModeIOS` | `playsInSilentMode` |
+| `shouldDuckAndroid` / `interruptionModeIOS` | `interruptionMode` (`'mixWithOthers' \| 'doNotMix' \| 'duckOthers'`) |
+| `playThroughEarpieceAndroid` | `shouldRouteThroughEarpiece` (applies on iOS too when `allowsRecording` is `true`) |
 
-Added new state properties for better stream status tracking:
+### 4. Playback Method Mapping
+
+| expo-av | expo-audio |
+| --- | --- |
+| `sound.playAsync()` | `player.play()` (synchronous) |
+| `sound.pauseAsync()` | `player.pause()` (synchronous) |
+| `sound.setPositionAsync(0)` | `await player.seekTo(0)` |
+| `sound.replayAsync()` | `await player.seekTo(0)` then `player.play()` |
+| `sound.unloadAsync()` | `player.remove()` (synchronous) |
+| status `isPlaying` | status `playing` |
+| status `!isLoaded` as error signal | status `error` (a `string \| null`) |
+
+`isLoaded` is `false` while a source is still loading in `expo-audio`, so error handling keys off
+`status.error` rather than treating "not loaded" as a failure.
+
+### 5. State Management
 
 ```typescript
 interface AudioStreamState {
   // ... existing properties
   isLoading: boolean;        // Track loading state
   isBuffering: boolean;      // Track buffering state
-  soundObject: Audio.Sound | null; // Sound instance
+  soundObject: AudioPlayer | null; // Player instance
 }
-```
-
-### 5. Better Error Handling
-
-Enhanced error handling with proper cleanup and status updates.
-
-## Installation
-
-Make sure you have `expo-av` installed:
-
-```bash
-yarn add expo-av
 ```
 
 ## Usage Example
@@ -101,28 +115,18 @@ const MyComponent = () => {
 };
 ```
 
-## Benefits
-
-1. **Better Remote Streaming Support**: `expo-av` provides more robust support for remote MP3 streams
-2. **Improved Audio Configuration**: Proper audio mode settings for background playback and silent mode
-3. **Enhanced Error Handling**: Better error recovery and cleanup
-4. **Loading States**: More granular loading and buffering states for better UX
-5. **Memory Management**: Proper cleanup of audio resources
-
 ## Migration Notes
 
-If you were using the previous audio stream store:
-
-1. Replace any direct `audioPlayer` references with `soundObject`
-2. Update any custom audio handling code to use `expo-av` APIs
-3. The store API remains largely the same, so most usage code should work without changes
+1. The store API is unchanged — `soundObject` is still the exposed field, it just holds an `AudioPlayer`
+2. `expo-av` is no longer a dependency; do not reintroduce it, it cannot build on SDK 56
+3. Tests mock `expo-audio` (`createAudioPlayer`, `setAudioModeAsync`); a default player mock lives in `jest-setup.ts`
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. **Audio not playing on iOS in silent mode**: Make sure `playsInSilentModeIOS: true` is set
-2. **Buffering issues**: The store now properly tracks buffering state - use `isBuffering` to show loading indicators
+1. **Audio not playing on iOS in silent mode**: Make sure `playsInSilentMode: true` is set
+2. **Buffering issues**: The store tracks buffering state — use `isBuffering` to show loading indicators
 3. **Background playback**: Ensure your app has proper background audio permissions configured
 
 ### Audio Permissions

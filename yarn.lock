@@ -8195,11 +8195,6 @@ expo-auth-session@~56.0.16:
     expo-web-browser "~56.0.6"
     invariant "^2.2.4"
 
-expo-av@~16.0.8:
-  version "16.0.8"
-  resolved "https://registry.yarnpkg.com/expo-av/-/expo-av-16.0.8.tgz#b1671127f3b2ecaeb9c69fc2301cf791d4504dd6"
-  integrity sha512-cmVPftGR/ca7XBgs7R6ky36lF3OC0/MM/lpgX/yXqfv0jASTsh7AYX9JxHCwFmF+Z6JEB1vne9FDx4GiLcGreQ==
-
 expo-build-properties@~56.0.24:
   version "56.0.24"
   resolved "https://registry.yarnpkg.com/expo-build-properties/-/expo-build-properties-56.0.24.tgz#3285ff60e87fc9f23b6ee35a44da7fe82edf3cb0"

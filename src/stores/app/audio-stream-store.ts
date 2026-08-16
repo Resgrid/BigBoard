@@ -1,4 +1,5 @@
-import { Audio, type AVPlaybackSource, type AVPlaybackStatus } from 'expo-av';
+import { type AudioPlayer, type AudioStatus, createAudioPlayer, setAudioModeAsync } from 'expo-audio';
+import { type EventSubscription } from 'expo-modules-core';
 import { create } from 'zustand';
 
 import { getDepartmentAudioStreams } from '@/api/voice';
@@ -6,6 +7,7 @@ import { logger } from '@/lib/logging';
 import { type DepartmentAudioResultStreamData } from '@/models/v4/voice/departmentAudioResultStreamData';
 
 let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+let statusSubscription: EventSubscription | null = null;
 
 interface AudioStreamState {
   // Available streams
@@ -14,7 +16,7 @@ interface AudioStreamState {
 
   // Current stream
   currentStream: DepartmentAudioResultStreamData | null;
-  soundObject: Audio.Sound | null;
+  soundObject: AudioPlayer | null;
   isPlaying: boolean;
   isLoading: boolean;
   isBuffering: boolean;
@@ -94,81 +96,78 @@ export const useAudioStreamStore = create<AudioStreamState>((set, get) => ({
       });
 
       // Configure audio mode for streaming
-      await Audio.setAudioModeAsync({
-        allowsRecordingIOS: false,
-        staysActiveInBackground: true,
-        playsInSilentModeIOS: true,
-        shouldDuckAndroid: true,
-        playThroughEarpieceAndroid: false,
+      await setAudioModeAsync({
+        allowsRecording: false,
+        shouldPlayInBackground: true,
+        playsInSilentMode: true,
+        interruptionMode: 'duckOthers',
+        shouldRouteThroughEarpiece: false,
       });
 
-      // Create new sound object
-      const { sound } = await Audio.Sound.createAsync(
-        { uri: stream.Url } as AVPlaybackSource,
-        {
-          shouldPlay: false,
-          isLooping: false,
-          volume: 1.0,
-          isMuted: false,
-          progressUpdateIntervalMillis: 1000,
-        },
-        (status: AVPlaybackStatus) => {
-          if (status.isLoaded) {
-            const { isPlaying, isBuffering } = get();
+      // Create new player
+      const sound = createAudioPlayer({ uri: stream.Url }, { updateInterval: 1000 });
+      sound.loop = false;
+      sound.muted = false;
+      sound.volume = 1.0;
 
-            if (status.isPlaying !== isPlaying) {
-              set({ isPlaying: status.isPlaying });
+      statusSubscription = sound.addListener('playbackStatusUpdate', (status: AudioStatus) => {
+        if (status.error) {
+          // Handle error state
+          logger.error({
+            message: 'Audio playback error',
+            context: { error: status.error, streamName: stream.Name },
+          });
+          set({
+            soundObject: null,
+            currentStream: null,
+            isPlaying: false,
+            isLoading: false,
+            isBuffering: false,
+          });
+          return;
+        }
+
+        const { isPlaying, isBuffering } = get();
+
+        if (status.playing !== isPlaying) {
+          set({ isPlaying: status.playing });
+        }
+
+        if (status.isBuffering !== isBuffering) {
+          set({ isBuffering: status.isBuffering });
+        }
+
+        // Handle stream ended scenarios
+        if (status.didJustFinish) {
+          logger.info({
+            message: 'Audio stream finished',
+            context: { streamName: stream.Name },
+          });
+
+          // For live streams, try to reconnect
+          const { currentStream } = get();
+          if (currentStream?.Id === stream.Id) {
+            if (reconnectTimer) {
+              clearTimeout(reconnectTimer);
             }
-
-            if (status.isBuffering !== isBuffering) {
-              set({ isBuffering: status.isBuffering });
-            }
-
-            // Handle stream ended/error scenarios
-            if (status.didJustFinish) {
-              logger.info({
-                message: 'Audio stream finished',
-                context: { streamName: stream.Name },
-              });
-
-              // For live streams, try to reconnect
-              const { currentStream } = get();
-              if (currentStream?.Id === stream.Id) {
-                if (reconnectTimer) {
-                  clearTimeout(reconnectTimer);
-                }
-                reconnectTimer = setTimeout(async () => {
-                  reconnectTimer = null;
-                  try {
-                    await sound.replayAsync();
-                  } catch (replayError) {
-                    logger.error({
-                      message: 'Failed to restart audio stream',
-                      context: { error: replayError, streamName: stream.Name },
-                    });
-                  }
-                }, 1000);
+            reconnectTimer = setTimeout(async () => {
+              reconnectTimer = null;
+              try {
+                await sound.seekTo(0);
+                sound.play();
+              } catch (replayError) {
+                logger.error({
+                  message: 'Failed to restart audio stream',
+                  context: { error: replayError, streamName: stream.Name },
+                });
               }
-            }
-          } else {
-            // Handle error state
-            logger.error({
-              message: 'Audio playback error',
-              context: { error: 'Failed to load audio', streamName: stream.Name },
-            });
-            set({
-              soundObject: null,
-              currentStream: null,
-              isPlaying: false,
-              isLoading: false,
-              isBuffering: false,
-            });
+            }, 1000);
           }
         }
-      );
+      });
 
       // Start playing
-      await sound.playAsync();
+      sound.play();
 
       logger.info({
         message: 'Audio stream started successfully',
@@ -207,9 +206,14 @@ export const useAudioStreamStore = create<AudioStreamState>((set, get) => ({
         reconnectTimer = null;
       }
 
+      if (statusSubscription) {
+        statusSubscription.remove();
+        statusSubscription = null;
+      }
+
       if (soundObject) {
-        await soundObject.pauseAsync();
-        await soundObject.unloadAsync();
+        soundObject.pause();
+        soundObject.remove();
 
         logger.info({
           message: 'Audio stream stopped',

@@ -88,7 +88,6 @@
     "expo-asset": "~56.0.21",
     "expo-audio": "~56.0.13",
     "expo-auth-session": "~56.0.16",
-    "expo-av": "~16.0.8",
     "expo-build-properties": "~56.0.24",
     "expo-constants": "~56.0.22",
     "expo-crypto": "~56.0.4",

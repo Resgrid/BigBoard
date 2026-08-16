@@ -33,13 +33,13 @@ Added web fallback implementations for components and services that depend on na
 
 #### Created Files:
 - **src/services/audio.service.web.ts**
-  - Uses Web Audio API instead of expo-av
+  - Uses Web Audio API instead of expo-audio
   - Loads audio from public assets
   - Provides same interface as native audio service
   - Handles audio playback for UI sounds
 
 - **src/stores/app/audio-stream-store.web.ts**
-  - Uses HTML5 Audio element instead of expo-av
+  - Uses HTML5 Audio element instead of expo-audio
   - Supports audio streaming for web
   - Maintains same state management interface
   - Handles buffering, playing, paused states
@@ -62,7 +62,7 @@ Added web fallback implementations for components and services that depend on na
 
 ### Native-Only Dependencies (Handled via Platform Checks):
 1. **@rnmapbox/maps** - Web fallback created using Mapbox GL JS
-2. **expo-audio / expo-av** - Web fallback created using Web Audio API
+2. **expo-audio** - Web fallback created using Web Audio API
 3. **expo-keep-awake** - Already has platform checks
 4. **expo-navigation-bar** - Already has platform checks (Android only)
 5. **@notifee/react-native** - Now has platform checks (Android only)

@@ -1,10 +1,12 @@
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 
-const mockSound = {
-  setPositionAsync: jest.fn(),
-  playAsync: jest.fn(),
-  unloadAsync: jest.fn(),
-  getStatusAsync: jest.fn(),
+const mockPlayer = {
+  seekTo: jest.fn(),
+  play: jest.fn(),
+  pause: jest.fn(),
+  remove: jest.fn(),
+  loop: false,
+  volume: 1,
 } as any;
 
 const mockAsset = {
@@ -25,19 +27,10 @@ jest.mock('expo-asset', () => ({
   },
 }));
 
-// Mock expo-av
-jest.mock('expo-av', () => ({
-  Audio: {
-    setAudioModeAsync: jest.fn(),
-    Sound: {
-      createAsync: jest.fn(),
-    },
-  },
-  InterruptionModeIOS: {
-    DoNotMix: 'doNotMix',
-    DuckOthers: 'duckOthers',
-    MixWithOthers: 'mixWithOthers',
-  },
+// Mock expo-audio
+jest.mock('expo-audio', () => ({
+  createAudioPlayer: jest.fn(),
+  setAudioModeAsync: jest.fn(),
 }));
 
 // Mock react-native
@@ -66,14 +59,14 @@ jest.mock('@assets/audio/ui/software_interface_start.mp3', () => 'mocked-connect
 jest.mock('@assets/audio/ui/software_interface_back.mp3', () => 'mocked-disconnected-from-audio-room-sound', { virtual: true });
 
 import { Asset } from 'expo-asset';
-import { Audio, InterruptionModeIOS } from 'expo-av';
+import { createAudioPlayer, setAudioModeAsync } from 'expo-audio';
 import { Platform } from 'react-native';
 import { logger } from '@/lib/logging';
 
 const mockAssetLoadAsync = Asset.loadAsync as jest.MockedFunction<typeof Asset.loadAsync>;
 const mockAssetFromModule = Asset.fromModule as jest.MockedFunction<typeof Asset.fromModule>;
-const mockAudioSetAudioModeAsync = Audio.setAudioModeAsync as jest.MockedFunction<typeof Audio.setAudioModeAsync>;
-const mockSoundCreateAsync = Audio.Sound.createAsync as jest.MockedFunction<typeof Audio.Sound.createAsync>;
+const mockSetAudioModeAsync = setAudioModeAsync as jest.MockedFunction<typeof setAudioModeAsync>;
+const mockCreateAudioPlayer = createAudioPlayer as jest.MockedFunction<typeof createAudioPlayer>;
 
 describe('AudioService', () => {
   let audioService: any;
@@ -84,13 +77,12 @@ describe('AudioService', () => {
     // Set up mocks with proper return values BEFORE importing the service
     mockAssetLoadAsync.mockResolvedValue([] as any);
     mockAssetFromModule.mockReturnValue(mockAsset);
-    (mockAudioSetAudioModeAsync as jest.MockedFunction<any>).mockResolvedValue(undefined);
-    (mockSoundCreateAsync as jest.MockedFunction<any>).mockResolvedValue({ sound: mockSound, status: {} });
+    (mockSetAudioModeAsync as jest.MockedFunction<any>).mockResolvedValue(undefined);
+    (mockCreateAudioPlayer as jest.MockedFunction<any>).mockReturnValue(mockPlayer);
     mockAsset.downloadAsync.mockResolvedValue(undefined);
-    mockSound.setPositionAsync.mockResolvedValue({} as any);
-    mockSound.playAsync.mockResolvedValue({} as any);
-    mockSound.unloadAsync.mockResolvedValue({} as any);
-    mockSound.getStatusAsync.mockResolvedValue({ isLoaded: true } as any);
+    mockPlayer.seekTo.mockResolvedValue(undefined);
+    mockPlayer.play.mockReturnValue(undefined);
+    mockPlayer.remove.mockReturnValue(undefined);
 
     // Clear the module cache to ensure fresh imports
     delete require.cache[require.resolve('../audio.service')];
@@ -112,14 +104,14 @@ describe('AudioService', () => {
     });
 
     it('should set audio mode correctly', () => {
-      expect(mockAudioSetAudioModeAsync).toHaveBeenCalledWith({
-        allowsRecordingIOS: true,
-        staysActiveInBackground: true,
-        playsInSilentModeIOS: true,
-        shouldDuckAndroid: true,
-        playThroughEarpieceAndroid: true,
-        interruptionModeIOS: 'doNotMix',
+      expect(mockSetAudioModeAsync).toHaveBeenCalledWith({
+        allowsRecording: true,
+        shouldPlayInBackground: true,
+        playsInSilentMode: true,
+        interruptionMode: 'doNotMix',
+        shouldRouteThroughEarpiece: false,
       });
+      expect(Platform.OS).toBe('ios');
     });
 
     it('should preload all audio assets', () => {
@@ -128,7 +120,7 @@ describe('AudioService', () => {
 
     it('should load all audio files', () => {
       expect(mockAssetFromModule).toHaveBeenCalledTimes(5);
-      expect(mockSoundCreateAsync).toHaveBeenCalledTimes(5);
+      expect(mockCreateAudioPlayer).toHaveBeenCalledTimes(5);
     });
   });
 
@@ -138,13 +130,15 @@ describe('AudioService', () => {
 
       await audioService.playStartTransmittingSound();
 
-      expect(mockSound.setPositionAsync).toHaveBeenCalledWith(0);
-      expect(mockSound.playAsync).toHaveBeenCalled();
+      expect(mockPlayer.seekTo).toHaveBeenCalledWith(0);
+      expect(mockPlayer.play).toHaveBeenCalled();
     });
 
     it('should handle start transmitting sound playback errors', async () => {
       jest.clearAllMocks();
-      mockSound.playAsync.mockRejectedValueOnce(new Error('Playback failed'));
+      mockPlayer.play.mockImplementationOnce(() => {
+        throw new Error('Playback failed');
+      });
 
       await audioService.playStartTransmittingSound();
 
@@ -161,13 +155,15 @@ describe('AudioService', () => {
 
       await audioService.playStopTransmittingSound();
 
-      expect(mockSound.setPositionAsync).toHaveBeenCalledWith(0);
-      expect(mockSound.playAsync).toHaveBeenCalled();
+      expect(mockPlayer.seekTo).toHaveBeenCalledWith(0);
+      expect(mockPlayer.play).toHaveBeenCalled();
     });
 
     it('should handle stop transmitting sound playback errors', async () => {
       jest.clearAllMocks();
-      mockSound.playAsync.mockRejectedValueOnce(new Error('Playback failed'));
+      mockPlayer.play.mockImplementationOnce(() => {
+        throw new Error('Playback failed');
+      });
 
       await audioService.playStopTransmittingSound();
 
@@ -184,13 +180,15 @@ describe('AudioService', () => {
 
       await audioService.playConnectedDeviceSound();
 
-      expect(mockSound.setPositionAsync).toHaveBeenCalledWith(0);
-      expect(mockSound.playAsync).toHaveBeenCalled();
+      expect(mockPlayer.seekTo).toHaveBeenCalledWith(0);
+      expect(mockPlayer.play).toHaveBeenCalled();
     });
 
     it('should handle connected device sound playback errors', async () => {
       jest.clearAllMocks();
-      mockSound.playAsync.mockRejectedValueOnce(new Error('Playback failed'));
+      mockPlayer.play.mockImplementationOnce(() => {
+        throw new Error('Playback failed');
+      });
 
       await audioService.playConnectedDeviceSound();
 
@@ -207,13 +205,15 @@ describe('AudioService', () => {
 
       await audioService.playConnectToAudioRoomSound();
 
-      expect(mockSound.setPositionAsync).toHaveBeenCalledWith(0);
-      expect(mockSound.playAsync).toHaveBeenCalled();
+      expect(mockPlayer.seekTo).toHaveBeenCalledWith(0);
+      expect(mockPlayer.play).toHaveBeenCalled();
     });
 
     it('should handle connect to audio room sound playback errors', async () => {
       jest.clearAllMocks();
-      mockSound.playAsync.mockRejectedValueOnce(new Error('Playback failed'));
+      mockPlayer.play.mockImplementationOnce(() => {
+        throw new Error('Playback failed');
+      });
 
       await audioService.playConnectToAudioRoomSound();
 
@@ -230,13 +230,15 @@ describe('AudioService', () => {
 
       await audioService.playDisconnectedFromAudioRoomSound();
 
-      expect(mockSound.setPositionAsync).toHaveBeenCalledWith(0);
-      expect(mockSound.playAsync).toHaveBeenCalled();
+      expect(mockPlayer.seekTo).toHaveBeenCalledWith(0);
+      expect(mockPlayer.play).toHaveBeenCalled();
     });
 
     it('should handle disconnected from audio room sound playback errors', async () => {
       jest.clearAllMocks();
-      mockSound.playAsync.mockRejectedValueOnce(new Error('Playback failed'));
+      mockPlayer.play.mockImplementationOnce(() => {
+        throw new Error('Playback failed');
+      });
 
       await audioService.playDisconnectedFromAudioRoomSound();
 
@@ -253,7 +255,7 @@ describe('AudioService', () => {
 
       await audioService.cleanup();
 
-      expect(mockSound.unloadAsync).toHaveBeenCalledTimes(5);
+      expect(mockPlayer.remove).toHaveBeenCalledTimes(5);
       expect(logger.info).toHaveBeenCalledWith({
         message: 'Audio service cleaned up',
       });
@@ -262,7 +264,6 @@ describe('AudioService', () => {
     it('should handle cleanup errors gracefully', async () => {
       // Set up a fresh service instance for this test
       jest.clearAllMocks();
-      mockSound.unloadAsync.mockRejectedValueOnce(new Error('Unload failed'));
 
       // Clear module cache and re-import to get fresh instance
       delete require.cache[require.resolve('../audio.service')];
@@ -270,6 +271,10 @@ describe('AudioService', () => {
       const testService = AudioServiceModule.audioService;
       (testService as any).isInitialized = false;
       await testService.initialize();
+
+      mockPlayer.remove.mockImplementationOnce(() => {
+        throw new Error('Release failed');
+      });
 
       await testService.cleanup();
 
@@ -282,12 +287,12 @@ describe('AudioService', () => {
 
   describe('error handling', () => {
     it('should handle null sound objects gracefully', async () => {
-      // Create a new service instance with createAsync that doesn't return sound
+      // Create a new service instance where player creation fails
       jest.clearAllMocks();
       delete require.cache[require.resolve('../audio.service')];
 
-      // Mock createAsync to return null sound to simulate failed sound creation
-      (mockSoundCreateAsync as jest.MockedFunction<any>).mockResolvedValue({ sound: null, status: {} });
+      // Mock createAudioPlayer to return null to simulate failed player creation
+      (mockCreateAudioPlayer as jest.MockedFunction<any>).mockReturnValue(null);
 
       const AudioServiceModule = require('../audio.service');
       const testService = AudioServiceModule.audioService;
@@ -303,7 +308,7 @@ describe('AudioService', () => {
 
     it('should handle initialization failures', async () => {
       jest.clearAllMocks();
-      (mockAudioSetAudioModeAsync as jest.MockedFunction<any>).mockRejectedValueOnce(new Error('Audio mode failed'));
+      (mockSetAudioModeAsync as jest.MockedFunction<any>).mockRejectedValueOnce(new Error('Audio mode failed'));
 
       // Re-import to trigger new initialization
       delete require.cache[require.resolve('../audio.service')];
