@@ -11,7 +11,7 @@ import { HStack } from '@/components/ui/hstack';
 import { Spinner } from '@/components/ui/spinner';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
-import { SEVERITY_COLORS, SEVERITY_LABELS, WeatherAlertCertainty, WeatherAlertSeverity, WeatherAlertUrgency } from '@/models/v4/weatherAlerts/weatherAlertEnums';
+import { SEVERITY_COLORS, SEVERITY_LABEL_KEYS, WeatherAlertCertainty, WeatherAlertSeverity, WeatherAlertUrgency } from '@/models/v4/weatherAlerts/weatherAlertEnums';
 import { useWeatherAlertsStore } from '@/stores/weatherAlerts/store';
 
 const URGENCY_KEYS: Record<number, string> = {
@@ -73,7 +73,7 @@ export default function WeatherAlertDetailScreen() {
 
   const alert = selectedAlert;
   const severityColor = SEVERITY_COLORS[alert.Severity as WeatherAlertSeverity] || SEVERITY_COLORS[WeatherAlertSeverity.Unknown];
-  const severityLabel = SEVERITY_LABELS[alert.Severity as WeatherAlertSeverity] || t('weatherAlerts.severity.unknown');
+  const severityLabel = t(SEVERITY_LABEL_KEYS[alert.Severity as WeatherAlertSeverity] || 'weatherAlerts.severity.unknown');
 
   return (
     <Box className={`flex-1 ${isDark ? 'bg-gray-900' : 'bg-gray-100'}`} testID="weather-alert-detail-screen">

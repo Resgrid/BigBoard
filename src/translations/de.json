@@ -287,7 +287,9 @@
     "what3words_invalid_format": "Ungültiges what3words-Format. Bitte verwenden Sie das Format: wort.wort.wort",
     "what3words_not_found": "what3words-Adresse nicht gefunden, bitte versuchen Sie eine andere Adresse",
     "what3words_placeholder": "what3words-Adresse eingeben (z. B. filled.count.soap)",
-    "what3words_required": "Bitte geben Sie eine what3words-Adresse zur Suche ein"
+    "what3words_required": "Bitte geben Sie eine what3words-Adresse zur Suche ein",
+    "required_fields_missing": "Ihre Abteilung benötigt diese Felder, bevor ein Einsatz angelegt werden kann: {{fields}}",
+    "field_policy_loading": "Die Einsatzeinstellungen Ihrer Abteilung werden noch geladen, bitte versuchen Sie es gleich erneut"
   },
   "common": {
     "add": "Hinzufügen",
@@ -429,7 +431,8 @@
     "width_grid_units": "Breite (Rastereinheiten): {{value}}",
     "yellow_threshold": "Gelber Schwellenwert: {{value}} Min.",
     "zoom_level": "Zoomstufe: {{value}}",
-    "zoom_out_show_all": "Herauszoomen, um alle Markierungen anzuzeigen"
+    "zoom_out_show_all": "Herauszoomen, um alle Markierungen anzuzeigen",
+    "unit_alerts_widget": "Einheiten-Warnungen"
   },
   "contacts": {
     "add": "Kontakt hinzufügen",
@@ -724,6 +727,7 @@
     "general": "Allgemein",
     "generale": "Allgemein",
     "german": "Deutsch",
+    "greek": "Griechisch",
     "github": "Github",
     "help_center": "Hilfecenter",
     "italian": "Italienisch",
@@ -833,6 +837,12 @@
     "settings": "Einstellungen",
     "shifts": "Schichten"
   },
+  "unitAlerts": {
+    "errorLoading": "Laden fehlgeschlagen",
+    "noThresholds": "Keine Statuszeitgeber konfiguriert",
+    "title": "Einheitenwarnungen",
+    "withinThresholds": "Alle Einheiten innerhalb ihrer Statuszeitgeber"
+  },
   "weatherAlerts": {
     "category": {
       "cbrne": "CBRNE",
@@ -924,6 +934,7 @@
     "personnel_status_summary": "Personalstatusübersicht",
     "scheduled_calls": "Geplante Einsätze",
     "time": "Zeit",
+    "unit_alerts": "Einheitenwarnungen",
     "units": "Einheiten",
     "units_summary": "Einheitenübersicht",
     "weather": "Wetter",

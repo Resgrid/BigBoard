@@ -10,7 +10,7 @@ import { HStack } from '@/components/ui/hstack';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
 import { translate } from '@/lib/i18n';
-import { SEVERITY_COLORS, SEVERITY_LABELS, WeatherAlertSeverity } from '@/models/v4/weatherAlerts/weatherAlertEnums';
+import { SEVERITY_COLORS, SEVERITY_LABEL_KEYS, WeatherAlertSeverity } from '@/models/v4/weatherAlerts/weatherAlertEnums';
 import { type WeatherAlertResultData } from '@/models/v4/weatherAlerts/weatherAlertResultData';
 import { useWeatherAlertsStore } from '@/stores/weatherAlerts/store';
 
@@ -100,7 +100,7 @@ export default function WeatherAlertsScreen() {
 
   const renderAlertCard = ({ item }: { item: WeatherAlertResultData }) => {
     const severityColor = SEVERITY_COLORS[item.Severity as WeatherAlertSeverity] || SEVERITY_COLORS[WeatherAlertSeverity.Unknown];
-    const severityLabel = SEVERITY_LABELS[item.Severity as WeatherAlertSeverity] || translate('common.unknown');
+    const severityLabel = translate(SEVERITY_LABEL_KEYS[item.Severity as WeatherAlertSeverity] || 'weatherAlerts.severity.unknown');
 
     return (
       <Pressable

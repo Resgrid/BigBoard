@@ -287,7 +287,9 @@
     "what3words_invalid_format": "Nieprawidłowy format what3words. Użyj formatu: słowo.słowo.słowo",
     "what3words_not_found": "Nie znaleziono adresu what3words, spróbuj podać inny adres",
     "what3words_placeholder": "Wprowadź adres what3words (np. filled.count.soap)",
-    "what3words_required": "Proszę podać adres what3words do wyszukania"
+    "what3words_required": "Proszę podać adres what3words do wyszukania",
+    "required_fields_missing": "Twoja jednostka wymaga tych pól przed utworzeniem zgłoszenia: {{fields}}",
+    "field_policy_loading": "Ustawienia zgłoszeń Twojej jednostki są jeszcze wczytywane, spróbuj ponownie za chwilę"
   },
   "common": {
     "add": "Dodaj",
@@ -429,7 +431,8 @@
     "width_grid_units": "Szerokość (jednostki siatki): {{value}}",
     "yellow_threshold": "Próg żółty: {{value}} min",
     "zoom_level": "Poziom przybliżenia: {{value}}",
-    "zoom_out_show_all": "Oddal, aby pokazać wszystkie pinezki"
+    "zoom_out_show_all": "Oddal, aby pokazać wszystkie pinezki",
+    "unit_alerts_widget": "Alerty jednostek"
   },
   "contacts": {
     "add": "Dodaj kontakt",
@@ -724,6 +727,7 @@
     "general": "Ogólne",
     "generale": "Ogólne",
     "german": "Niemiecki",
+    "greek": "Grecki",
     "github": "Github",
     "help_center": "Centrum pomocy",
     "italian": "Włoski",
@@ -833,6 +837,12 @@
     "settings": "Ustawienia",
     "shifts": "Zmiany"
   },
+  "unitAlerts": {
+    "errorLoading": "Nie udało się załadować",
+    "noThresholds": "Nie skonfigurowano liczników statusu",
+    "title": "Alerty jednostek",
+    "withinThresholds": "Wszystkie jednostki mieszczą się w swoich licznikach statusu"
+  },
   "weatherAlerts": {
     "category": {
       "cbrne": "CBRNE",
@@ -924,6 +934,7 @@
     "personnel_status_summary": "Podsumowanie statusu personelu",
     "scheduled_calls": "Zaplanowane wezwania",
     "time": "Czas",
+    "unit_alerts": "Alerty jednostek",
     "units": "Jednostki",
     "units_summary": "Podsumowanie jednostek",
     "weather": "Pogoda",

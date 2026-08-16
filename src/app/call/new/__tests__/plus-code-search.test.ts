@@ -91,6 +91,10 @@ describe('Plus Code Search Logic', () => {
     NovuApplicationId: '',
     AnalyticsApiKey: '',
     AnalyticsHost: '',
+    MapCenterLatitude: 0,
+    MapCenterLongitude: 0,
+    MapCenterZoomLevel: 9,
+    UnitStatusThresholds: [],
   };
 
   beforeEach(() => {
@@ -139,6 +143,10 @@ describe('Plus Code Search Logic', () => {
         NovuApplicationId: '',
         AnalyticsApiKey: '',
         AnalyticsHost: '',
+        MapCenterLatitude: 0,
+        MapCenterLongitude: 0,
+        MapCenterZoomLevel: 9,
+        UnitStatusThresholds: [],
       };
 
       const result = await performPlusCodeSearch('849VCWC8+R9', configWithoutKey);

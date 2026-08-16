@@ -287,7 +287,9 @@
     "what3words_invalid_format": "Formato what3words inválido. Use el formato: palabra.palabra.palabra",
     "what3words_not_found": "Dirección what3words no encontrada, intente con otra dirección",
     "what3words_placeholder": "Introduce dirección what3words (ej: filled.count.soap)",
-    "what3words_required": "Por favor introduce una dirección what3words para buscar"
+    "what3words_required": "Por favor introduce una dirección what3words para buscar",
+    "required_fields_missing": "Tu departamento exige estos campos antes de poder crear un aviso: {{fields}}",
+    "field_policy_loading": "Aún se están cargando los ajustes de avisos de tu departamento, inténtalo de nuevo en un momento"
   },
   "common": {
     "add": "Añadir",
@@ -429,7 +431,8 @@
     "width_grid_units": "Ancho (unidades de cuadrícula): {{value}}",
     "yellow_threshold": "Umbral amarillo: {{value}} min",
     "zoom_level": "Nivel de zoom: {{value}}",
-    "zoom_out_show_all": "Alejar para mostrar todos los marcadores"
+    "zoom_out_show_all": "Alejar para mostrar todos los marcadores",
+    "unit_alerts_widget": "Alertas de unidades"
   },
   "contacts": {
     "add": "Añadir contacto",
@@ -724,6 +727,7 @@
     "general": "General",
     "generale": "General",
     "german": "Alemán",
+    "greek": "Griego",
     "github": "Github",
     "help_center": "Centro de ayuda",
     "italian": "Italiano",
@@ -833,6 +837,12 @@
     "settings": "Configuración",
     "shifts": "Turnos"
   },
+  "unitAlerts": {
+    "errorLoading": "Error al cargar",
+    "noThresholds": "No hay temporizadores de estado configurados",
+    "title": "Alertas de unidades",
+    "withinThresholds": "Todas las unidades dentro de sus temporizadores de estado"
+  },
   "weatherAlerts": {
     "category": {
       "cbrne": "NBQR",
@@ -924,6 +934,7 @@
     "personnel_status_summary": "Resumen de estado del personal",
     "scheduled_calls": "Llamadas programadas",
     "time": "Hora",
+    "unit_alerts": "Alertas de unidades",
     "units": "Unidades",
     "units_summary": "Resumen de unidades",
     "weather": "Clima",

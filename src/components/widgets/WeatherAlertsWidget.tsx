@@ -2,6 +2,7 @@ import { useRouter } from 'expo-router';
 import { AlertTriangle, CheckCircle, ShieldAlert } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
 import React, { useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView } from 'react-native';
 
 import { Box } from '@/components/ui/box';
@@ -9,7 +10,8 @@ import { HStack } from '@/components/ui/hstack';
 import { Spinner } from '@/components/ui/spinner';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
-import { SEVERITY_COLORS, SEVERITY_LABELS, WeatherAlertCategory, WeatherAlertSeverity } from '@/models/v4/weatherAlerts/weatherAlertEnums';
+import { translate } from '@/lib/i18n';
+import { SEVERITY_COLORS, SEVERITY_LABEL_KEYS, WeatherAlertCategory, WeatherAlertSeverity } from '@/models/v4/weatherAlerts/weatherAlertEnums';
 import { type WeatherAlertResultData } from '@/models/v4/weatherAlerts/weatherAlertResultData';
 import { useWeatherAlertsStore } from '@/stores/weatherAlerts/store';
 import { useWidgetSettingsStore, type WeatherAlertsWidgetSettings } from '@/stores/widget-settings/store';
@@ -25,20 +27,19 @@ interface WeatherAlertsWidgetProps {
   containerHeight?: number;
 }
 
+// Kept in step with the same helper on the full weather-alerts screen, so the widget and the screen
+// it opens never disagree about how long an alert has left.
 const formatExpiry = (expiresUtc: string): string => {
   if (!expiresUtc) return '';
   const expires = new Date(expiresUtc);
   const now = new Date();
   const diffMs = expires.getTime() - now.getTime();
-  if (diffMs <= 0) return 'Expired';
+  if (diffMs <= 0) return translate('weatherAlerts.expired');
   const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
   const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-  if (diffHours > 24) {
-    const days = Math.floor(diffHours / 24);
-    return `${days}d remaining`;
-  }
-  if (diffHours > 0) return `${diffHours}h ${diffMins}m remaining`;
-  return `${diffMins}m remaining`;
+  if (diffHours > 24) return `${translate('weatherAlerts.time_days_hours', { days: Math.floor(diffHours / 24), hours: diffHours % 24 })} ${translate('weatherAlerts.remaining')}`;
+  if (diffHours > 0) return `${translate('weatherAlerts.time_hours_minutes', { hours: diffHours, minutes: diffMins })} ${translate('weatherAlerts.remaining')}`;
+  return `${translate('weatherAlerts.time_minutes', { minutes: diffMins })} ${translate('weatherAlerts.remaining')}`;
 };
 
 const isSeverityVisible = (severity: number, ws: WeatherAlertsWidgetSettings): boolean => {
@@ -83,8 +84,9 @@ interface AlertCardProps {
 }
 
 const AlertCard: React.FC<AlertCardProps> = ({ alert, isDark, showHeadline, showArea, showExpiry, fontSize }) => {
+  const { t } = useTranslation();
   const severityColor = SEVERITY_COLORS[alert.Severity as WeatherAlertSeverity] || SEVERITY_COLORS[WeatherAlertSeverity.Unknown];
-  const severityLabel = SEVERITY_LABELS[alert.Severity as WeatherAlertSeverity] || 'Unknown';
+  const severityLabel = t(SEVERITY_LABEL_KEYS[alert.Severity as WeatherAlertSeverity] || 'weatherAlerts.severity.unknown');
 
   return (
     <HStack className="mb-1.5 overflow-hidden rounded" style={{ minHeight: 44 }}>
@@ -119,6 +121,7 @@ const AlertCard: React.FC<AlertCardProps> = ({ alert, isDark, showHeadline, show
 };
 
 export const WeatherAlertsWidget: React.FC<WeatherAlertsWidgetProps> = ({ onRemove, isEditMode, containerWidth, containerHeight }) => {
+  const { t } = useTranslation();
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
   const router = useRouter();
@@ -145,10 +148,10 @@ export const WeatherAlertsWidget: React.FC<WeatherAlertsWidgetProps> = ({ onRemo
   // Disabled state
   if (settings && settings.WeatherAlertsEnabled === false) {
     return (
-      <WidgetContainer title="Weather Alerts" onRemove={onRemove} isEditMode={isEditMode} testID="weather-alerts-widget" width={containerWidth} height={containerHeight}>
+      <WidgetContainer title={t('weatherAlerts.title')} onRemove={onRemove} isEditMode={isEditMode} testID="weather-alerts-widget" width={containerWidth} height={containerHeight}>
         <Box className="flex-1 items-center justify-center">
           <ShieldAlert size={24} color={isDark ? '#6B7280' : '#9CA3AF'} />
-          <Text className={`mt-2 text-center text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Weather alerts not enabled</Text>
+          <Text className={`mt-2 text-center text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('weatherAlerts.notEnabled')}</Text>
         </Box>
       </WidgetContainer>
     );
@@ -157,7 +160,7 @@ export const WeatherAlertsWidget: React.FC<WeatherAlertsWidgetProps> = ({ onRemo
   // Loading state
   if (isLoading) {
     return (
-      <WidgetContainer title="Weather Alerts" onRemove={onRemove} isEditMode={isEditMode} testID="weather-alerts-widget" width={containerWidth} height={containerHeight}>
+      <WidgetContainer title={t('weatherAlerts.title')} onRemove={onRemove} isEditMode={isEditMode} testID="weather-alerts-widget" width={containerWidth} height={containerHeight}>
         <Box className="flex-1 items-center justify-center">
           <Spinner size="small" />
         </Box>
@@ -168,12 +171,12 @@ export const WeatherAlertsWidget: React.FC<WeatherAlertsWidgetProps> = ({ onRemo
   // Error state
   if (error) {
     return (
-      <WidgetContainer title="Weather Alerts" onRemove={onRemove} isEditMode={isEditMode} testID="weather-alerts-widget" width={containerWidth} height={containerHeight}>
+      <WidgetContainer title={t('weatherAlerts.title')} onRemove={onRemove} isEditMode={isEditMode} testID="weather-alerts-widget" width={containerWidth} height={containerHeight}>
         <Box className="flex-1 items-center justify-center">
           <AlertTriangle size={24} color={isDark ? '#EF4444' : '#DC2626'} />
-          <Text className={`mt-2 text-center text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Failed to load alerts</Text>
+          <Text className={`mt-2 text-center text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('weatherAlerts.errorLoading')}</Text>
           <Pressable onPress={() => fetchActiveAlerts()} className="mt-2" testID="weather-alerts-retry">
-            <Text className={`text-xs font-semibold ${isDark ? 'text-blue-400' : 'text-blue-600'}`}>Retry</Text>
+            <Text className={`text-xs font-semibold ${isDark ? 'text-blue-400' : 'text-blue-600'}`}>{t('common.retry')}</Text>
           </Pressable>
         </Box>
       </WidgetContainer>
@@ -183,11 +186,11 @@ export const WeatherAlertsWidget: React.FC<WeatherAlertsWidgetProps> = ({ onRemo
   // Empty state
   if (filteredAlerts.length === 0) {
     return (
-      <WidgetContainer title="Weather Alerts" onRemove={onRemove} isEditMode={isEditMode} testID="weather-alerts-widget" width={containerWidth} height={containerHeight}>
+      <WidgetContainer title={t('weatherAlerts.title')} onRemove={onRemove} isEditMode={isEditMode} testID="weather-alerts-widget" width={containerWidth} height={containerHeight}>
         <Pressable onPress={handlePress} style={{ flex: 1 }}>
           <Box className="flex-1 items-center justify-center">
             <CheckCircle size={24} color={isDark ? '#22C55E' : '#16A34A'} />
-            <Text className={`mt-2 text-center text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>No active alerts</Text>
+            <Text className={`mt-2 text-center text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('weatherAlerts.noActiveAlerts')}</Text>
           </Box>
         </Pressable>
       </WidgetContainer>
@@ -198,7 +201,7 @@ export const WeatherAlertsWidget: React.FC<WeatherAlertsWidgetProps> = ({ onRemo
   const remaining = filteredAlerts.length - displayAlerts.length;
 
   return (
-    <WidgetContainer title={`Weather Alerts (${filteredAlerts.length})`} onRemove={onRemove} isEditMode={isEditMode} testID="weather-alerts-widget" width={containerWidth} height={containerHeight}>
+    <WidgetContainer title={`${t('weatherAlerts.title')} (${filteredAlerts.length})`} onRemove={onRemove} isEditMode={isEditMode} testID="weather-alerts-widget" width={containerWidth} height={containerHeight}>
       <Pressable onPress={handlePress} style={{ flex: 1 }}>
         <ScrollView showsVerticalScrollIndicator={false}>
           {displayAlerts.map((alert) => (
@@ -215,7 +218,7 @@ export const WeatherAlertsWidget: React.FC<WeatherAlertsWidgetProps> = ({ onRemo
           {remaining > 0 && (
             <HStack className="items-center justify-center py-1">
               <AlertTriangle size={12} color={isDark ? '#F59E0B' : '#D97706'} />
-              <Text className={`ml-1 text-xs font-medium ${isDark ? 'text-amber-400' : 'text-amber-600'}`}>+{remaining} more alerts</Text>
+              <Text className={`ml-1 text-xs font-medium ${isDark ? 'text-amber-400' : 'text-amber-600'}`}>{t('weatherAlerts.moreAlerts', { count: remaining })}</Text>
             </HStack>
           )}
         </ScrollView>

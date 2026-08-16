@@ -57,10 +57,17 @@ export const SEVERITY_COLORS: Record<WeatherAlertSeverity, string> = {
   [WeatherAlertSeverity.Unknown]: '#6B7280',
 };
 
-export const SEVERITY_LABELS: Record<WeatherAlertSeverity, string> = {
-  [WeatherAlertSeverity.Extreme]: 'Extreme',
-  [WeatherAlertSeverity.Severe]: 'Severe',
-  [WeatherAlertSeverity.Moderate]: 'Moderate',
-  [WeatherAlertSeverity.Minor]: 'Minor',
-  [WeatherAlertSeverity.Unknown]: 'Unknown',
-};
+/**
+ * Translation keys rather than labels: severity is shown to dispatchers on every alert surface, and
+ * a table of English strings here silently overrode the translations the dictionaries already
+ * carried. Resolve with t()/translate() at render time so the label follows the chosen language.
+ */
+// `as const` keeps these as literal types so they satisfy translate()'s TxKeyPath; `satisfies`
+// still enforces that every severity has one.
+export const SEVERITY_LABEL_KEYS = {
+  [WeatherAlertSeverity.Extreme]: 'weatherAlerts.severity.extreme',
+  [WeatherAlertSeverity.Severe]: 'weatherAlerts.severity.severe',
+  [WeatherAlertSeverity.Moderate]: 'weatherAlerts.severity.moderate',
+  [WeatherAlertSeverity.Minor]: 'weatherAlerts.severity.minor',
+  [WeatherAlertSeverity.Unknown]: 'weatherAlerts.severity.unknown',
+} as const satisfies Record<WeatherAlertSeverity, string>;

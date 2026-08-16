@@ -18,11 +18,14 @@ import { useCoreStore } from '@/stores/app/core-store';
 import { useLocationStore } from '@/stores/app/location-store';
 import useAuthStore from '@/stores/auth/store';
 import { useToastStore } from '@/stores/toast/store';
+import { getDepartmentMapCenter } from '@/lib/map-center';
 
 // Helper function to get icon path from ImagePath
 const getIconPath = (imagePath: string): string => {
   const iconKey = imagePath?.toLowerCase() as keyof typeof MAP_ICONS;
-  const icon = MAP_ICONS[iconKey] || MAP_ICONS['call'];
+  // Never fall back to the call icon: it is a flame, and an unknown POI drawn as a structure fire
+  // reads as a real incident on the board.
+  const icon = MAP_ICONS[iconKey] || MAP_ICONS['flag'];
   return `/assets/mapping/${icon.imgName}.png`;
 };
 
@@ -85,6 +88,9 @@ export default function Map() {
   useEffect(() => {
     if (map.current) return;
     if (!mapContainer.current) return;
+    // Building the map before config lands pins it on the fallback centre permanently: the guard
+    // above means this effect never constructs a second time once a map exists.
+    if (!isInitialized) return;
 
     mapboxgl.accessToken = Env.MAPBOX_PUBKEY;
 
@@ -97,11 +103,13 @@ export default function Map() {
       document.head.appendChild(link);
     }
 
+    const center = getDepartmentMapCenter();
+
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: getMapStyle(),
-      center: [-98.5795, 39.8283],
-      zoom: 3,
+      center: [center.longitude, center.latitude],
+      zoom: center.zoomLevel,
     });
 
     // Track user interactions - only register if user manually moved map and it's not locked
@@ -139,7 +147,7 @@ export default function Map() {
       setIsMapReady(false);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getMapStyle]);
+  }, [getMapStyle, isInitialized]);
 
   // Update map style when theme changes
   useEffect(() => {
@@ -377,7 +385,7 @@ export default function Map() {
           markerContainer.insertBefore(fallbackIcon, markerContainer.firstChild);
         };
 
-        iconEl.src = getIconPath(pin.ImagePath || 'call');
+        iconEl.src = getIconPath(pin.ImagePath || 'flag');
 
         const titleEl = document.createElement('div');
         titleEl.className = 'marker-title';

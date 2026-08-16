@@ -287,7 +287,9 @@
     "what3words_invalid_format": "Format what3words invalide. Veuillez utiliser le format : mot.mot.mot",
     "what3words_not_found": "Adresse what3words introuvable, veuillez essayer une autre adresse",
     "what3words_placeholder": "Saisissez l'adresse what3words (ex. : filled.count.soap)",
-    "what3words_required": "Veuillez saisir une adresse what3words à rechercher"
+    "what3words_required": "Veuillez saisir une adresse what3words à rechercher",
+    "required_fields_missing": "Votre département exige ces champs avant qu'un appel puisse être créé : {{fields}}",
+    "field_policy_loading": "Les paramètres d'appel de votre département sont encore en cours de chargement, veuillez réessayer dans un instant"
   },
   "common": {
     "add": "Ajouter",
@@ -429,7 +431,8 @@
     "width_grid_units": "Largeur (unités de grille) : {{value}}",
     "yellow_threshold": "Seuil jaune : {{value}} min",
     "zoom_level": "Niveau de zoom : {{value}}",
-    "zoom_out_show_all": "Dézoomer pour afficher tous les marqueurs"
+    "zoom_out_show_all": "Dézoomer pour afficher tous les marqueurs",
+    "unit_alerts_widget": "Alertes unites"
   },
   "contacts": {
     "add": "Ajouter un contact",
@@ -724,6 +727,7 @@
     "general": "Général",
     "generale": "Général",
     "german": "Allemand",
+    "greek": "Grec",
     "github": "Github",
     "help_center": "Centre d'aide",
     "italian": "Italien",
@@ -833,6 +837,12 @@
     "settings": "Paramètres",
     "shifts": "Gardes"
   },
+  "unitAlerts": {
+    "errorLoading": "Échec du chargement",
+    "noThresholds": "Aucun minuteur de statut configuré",
+    "title": "Alertes des unités",
+    "withinThresholds": "Toutes les unités dans les limites de leurs minuteurs de statut"
+  },
   "weatherAlerts": {
     "category": {
       "cbrne": "NRBC",
@@ -924,6 +934,7 @@
     "personnel_status_summary": "Résumé du statut du personnel",
     "scheduled_calls": "Appels planifiés",
     "time": "Heure",
+    "unit_alerts": "Alertes des unités",
     "units": "Unités",
     "units_summary": "Résumé des unités",
     "weather": "Météo",
