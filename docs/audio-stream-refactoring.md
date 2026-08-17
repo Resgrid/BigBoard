@@ -42,10 +42,15 @@ await setAudioModeAsync({
   allowsRecording: false,
   shouldPlayInBackground: true,
   playsInSilentMode: true,
-  interruptionMode: 'duckOthers',
+  interruptionMode: 'doNotMix',
   shouldRouteThroughEarpiece: false,
 });
 ```
+
+`interruptionMode` must be `'doNotMix'` for the OS to associate lock screen controls with the player.
+The store calls `player.setActiveForLockScreen(true, { title: stream.Name })` before `play()` and
+`player.clearLockScreenControls()` in `stopStream()` — without the lock screen session, Android stops
+background playback after roughly three minutes.
 
 | expo-av | expo-audio |
 | --- | --- |

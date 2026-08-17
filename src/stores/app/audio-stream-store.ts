@@ -95,12 +95,15 @@ export const useAudioStreamStore = create<AudioStreamState>((set, get) => ({
         context: { streamName: stream.Name, streamUrl: stream.Url },
       });
 
-      // Configure audio mode for streaming
+      // Configure audio mode for streaming. `doNotMix` is required for the OS to
+      // associate lock screen controls with this player (see setActiveForLockScreen
+      // below), which in turn is what keeps Android background playback alive past
+      // the ~3 minute foreground-service limit.
       await setAudioModeAsync({
         allowsRecording: false,
         shouldPlayInBackground: true,
         playsInSilentMode: true,
-        interruptionMode: 'duckOthers',
+        interruptionMode: 'doNotMix',
         shouldRouteThroughEarpiece: false,
       });
 
@@ -117,6 +120,32 @@ export const useAudioStreamStore = create<AudioStreamState>((set, get) => ({
             message: 'Audio playback error',
             context: { error: status.error, streamName: stream.Name },
           });
+
+          // The store is about to drop its reference to this player, so stopStream()
+          // could no longer reach it. Tear down the exact player that failed here.
+          if (reconnectTimer) {
+            clearTimeout(reconnectTimer);
+            reconnectTimer = null;
+          }
+
+          if (statusSubscription) {
+            statusSubscription.remove();
+            statusSubscription = null;
+          }
+
+          try {
+            try {
+              sound.clearLockScreenControls();
+            } finally {
+              sound.remove();
+            }
+          } catch (disposeError) {
+            logger.error({
+              message: 'Failed to release failed audio stream player',
+              context: { error: disposeError, streamName: stream.Name },
+            });
+          }
+
           set({
             soundObject: null,
             currentStream: null,
@@ -166,6 +195,17 @@ export const useAudioStreamStore = create<AudioStreamState>((set, get) => ({
         }
       });
 
+      // Sustained background playback requires the player to own the lock screen
+      // controls. Failing to claim them must not stop the stream from starting.
+      try {
+        sound.setActiveForLockScreen(true, { title: stream.Name });
+      } catch (lockScreenError) {
+        logger.warn({
+          message: 'Failed to activate lock screen controls for audio stream',
+          context: { error: lockScreenError, streamName: stream.Name },
+        });
+      }
+
       // Start playing
       sound.play();
 
@@ -198,9 +238,9 @@ export const useAudioStreamStore = create<AudioStreamState>((set, get) => ({
   },
 
   stopStream: async () => {
-    try {
-      const { soundObject, currentStream } = get();
+    const { soundObject, currentStream } = get();
 
+    try {
       if (reconnectTimer) {
         clearTimeout(reconnectTimer);
         reconnectTimer = null;
@@ -212,26 +252,32 @@ export const useAudioStreamStore = create<AudioStreamState>((set, get) => ({
       }
 
       if (soundObject) {
-        soundObject.pause();
-        soundObject.remove();
+        try {
+          soundObject.pause();
+          soundObject.clearLockScreenControls();
+        } finally {
+          // The player must be released even if pausing or releasing the lock
+          // screen session throws, otherwise it keeps playing with no handle to it.
+          soundObject.remove();
+        }
 
         logger.info({
           message: 'Audio stream stopped',
           context: { streamName: currentStream?.Name },
         });
       }
-
+    } catch (error) {
+      logger.error({
+        message: 'Failed to stop audio stream',
+        context: { error },
+      });
+    } finally {
       set({
         soundObject: null,
         currentStream: null,
         isPlaying: false,
         isLoading: false,
         isBuffering: false,
-      });
-    } catch (error) {
-      logger.error({
-        message: 'Failed to stop audio stream',
-        context: { error },
       });
     }
   },

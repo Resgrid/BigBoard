@@ -7,6 +7,7 @@ jest.mock('@/lib/logging', () => ({
   logger: {
     debug: jest.fn(),
     info: jest.fn(),
+    warn: jest.fn(),
     error: jest.fn(),
   },
 }));
@@ -44,6 +45,8 @@ describe('AudioStreamStore', () => {
     remove: jest.fn(),
     seekTo: jest.fn(() => Promise.resolve()),
     addListener: jest.fn(() => mockSubscription),
+    setActiveForLockScreen: jest.fn(),
+    clearLockScreenControls: jest.fn(),
     loop: false,
     muted: false,
     volume: 1,
@@ -70,6 +73,8 @@ describe('AudioStreamStore', () => {
     mockSoundObject.remove.mockImplementation(() => undefined);
     mockSoundObject.seekTo.mockImplementation(() => Promise.resolve());
     mockSoundObject.addListener.mockImplementation(() => mockSubscription);
+    mockSoundObject.setActiveForLockScreen.mockImplementation(() => undefined);
+    mockSoundObject.clearLockScreenControls.mockImplementation(() => undefined);
 
     // Mock expo-audio methods
     (mockSetAudioModeAsync as jest.MockedFunction<any>).mockResolvedValue(undefined);
@@ -217,12 +222,13 @@ describe('AudioStreamStore', () => {
         allowsRecording: false,
         shouldPlayInBackground: true,
         playsInSilentMode: true,
-        interruptionMode: 'duckOthers',
+        interruptionMode: 'doNotMix',
         shouldRouteThroughEarpiece: false,
       });
 
       expect(mockCreateAudioPlayer).toHaveBeenCalledWith({ uri: mockStream.Url }, { updateInterval: 1000 });
       expect(mockSoundObject.addListener).toHaveBeenCalledWith('playbackStatusUpdate', expect.any(Function));
+      expect(mockSoundObject.setActiveForLockScreen).toHaveBeenCalledWith(true, { title: mockStream.Name });
 
       expect(mockSoundObject.play).toHaveBeenCalled();
       
@@ -235,6 +241,41 @@ describe('AudioStreamStore', () => {
         message: 'Audio stream started successfully',
         context: { streamName: mockStream.Name },
       });
+    });
+
+    it('should dispose the player and its listener when playback reports an error', async () => {
+      await useAudioStreamStore.getState().playStream(mockStream);
+
+      const statusCallback = mockSoundObject.addListener.mock.calls[0][1] as (status: any) => void;
+
+      mockSubscription.remove.mockClear();
+      mockSoundObject.remove.mockClear();
+
+      statusCallback({
+        isLoaded: false,
+        playing: false,
+        isBuffering: false,
+        didJustFinish: false,
+        error: 'Stream unavailable',
+      });
+
+      expect(mockLogger.error).toHaveBeenCalledWith({
+        message: 'Audio playback error',
+        context: { error: 'Stream unavailable', streamName: mockStream.Name },
+      });
+
+      // The failed player is unreachable from the store afterwards, so it must be
+      // torn down here rather than left to stopStream()
+      expect(mockSubscription.remove).toHaveBeenCalled();
+      expect(mockSoundObject.clearLockScreenControls).toHaveBeenCalled();
+      expect(mockSoundObject.remove).toHaveBeenCalled();
+
+      const state = useAudioStreamStore.getState();
+      expect(state.soundObject).toBeNull();
+      expect(state.currentStream).toBeNull();
+      expect(state.isPlaying).toBe(false);
+      expect(state.isLoading).toBe(false);
+      expect(state.isBuffering).toBe(false);
     });
 
     it('should stop current stream before playing new one', async () => {
@@ -294,6 +335,7 @@ describe('AudioStreamStore', () => {
       expect(state.isBuffering).toBe(false);
       
       expect(mockSoundObject.pause).toHaveBeenCalled();
+      expect(mockSoundObject.clearLockScreenControls).toHaveBeenCalled();
       expect(mockSoundObject.remove).toHaveBeenCalled();
 
       expect(mockLogger.info).toHaveBeenCalledWith({
@@ -315,11 +357,21 @@ describe('AudioStreamStore', () => {
       });
       
       await useAudioStreamStore.getState().stopStream();
-      
+
       expect(mockLogger.error).toHaveBeenCalledWith({
         message: 'Failed to stop audio stream',
         context: { error: mockError },
       });
+
+      // A failed pause must still release the player and reset the store
+      expect(mockSoundObject.remove).toHaveBeenCalled();
+
+      const state = useAudioStreamStore.getState();
+      expect(state.soundObject).toBeNull();
+      expect(state.currentStream).toBeNull();
+      expect(state.isPlaying).toBe(false);
+      expect(state.isLoading).toBe(false);
+      expect(state.isBuffering).toBe(false);
     });
 
     it('should handle null sound object', async () => {

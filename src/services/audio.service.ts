@@ -230,39 +230,29 @@ class AudioService {
     }
   }
 
+  private releasePlayer(player: AudioPlayer | null, soundName: string): void {
+    if (!player) {
+      return;
+    }
+
+    try {
+      player.remove();
+    } catch (error) {
+      // A failure releasing one player must not strand the others.
+      logger.error({
+        message: 'Failed to release audio player',
+        context: { soundName, error },
+      });
+    }
+  }
+
   async cleanup(): Promise<void> {
     try {
-      // Release start transmitting sound
-      if (this.startTransmittingSound) {
-        this.startTransmittingSound.remove();
-        this.startTransmittingSound = null;
-      }
-
-      // Release stop transmitting sound
-      if (this.stopTransmittingSound) {
-        this.stopTransmittingSound.remove();
-        this.stopTransmittingSound = null;
-      }
-
-      // Release connected device sound
-      if (this.connectedDeviceSound) {
-        this.connectedDeviceSound.remove();
-        this.connectedDeviceSound = null;
-      }
-
-      // Release connect to audio room sound
-      if (this.connectToAudioRoomSound) {
-        this.connectToAudioRoomSound.remove();
-        this.connectToAudioRoomSound = null;
-      }
-
-      // Release disconnect from audio room sound
-      if (this.disconnectedFromAudioRoomSound) {
-        this.disconnectedFromAudioRoomSound.remove();
-        this.disconnectedFromAudioRoomSound = null;
-      }
-
-      this.isInitialized = false;
+      this.releasePlayer(this.startTransmittingSound, 'startTransmitting');
+      this.releasePlayer(this.stopTransmittingSound, 'stopTransmitting');
+      this.releasePlayer(this.connectedDeviceSound, 'connectedDevice');
+      this.releasePlayer(this.connectToAudioRoomSound, 'connectedToAudioRoom');
+      this.releasePlayer(this.disconnectedFromAudioRoomSound, 'disconnectedFromAudioRoom');
 
       logger.info({
         message: 'Audio service cleaned up',
@@ -272,6 +262,13 @@ class AudioService {
         message: 'Error during audio service cleanup',
         context: { error },
       });
+    } finally {
+      this.startTransmittingSound = null;
+      this.stopTransmittingSound = null;
+      this.connectedDeviceSound = null;
+      this.connectToAudioRoomSound = null;
+      this.disconnectedFromAudioRoomSound = null;
+      this.isInitialized = false;
     }
   }
 }
