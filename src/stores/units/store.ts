@@ -2,6 +2,7 @@ import { create } from 'zustand';
 
 import { getAllUnitStatuses } from '@/api/satuses';
 import { getUnitsInfos } from '@/api/units/units';
+import { singleFlight } from '@/lib/single-flight';
 import { type UnitTypeStatusResultData } from '@/models/v4/statuses/unitTypeStatusResultData';
 import { type UnitInfoResultData } from '@/models/v4/units/unitInfoResultData';
 
@@ -18,7 +19,7 @@ export const useUnitsStore = create<UnitsState>((set) => ({
   unitStatuses: [],
   isLoading: false,
   error: null,
-  fetchUnits: async () => {
+  fetchUnits: singleFlight(async () => {
     set({ isLoading: true, error: null });
     try {
       const unitsResponse = await getUnitsInfos('');
@@ -27,5 +28,5 @@ export const useUnitsStore = create<UnitsState>((set) => ({
     } catch (error) {
       set({ error: 'Failed to fetch units', isLoading: false });
     }
-  },
+  }),
 }));

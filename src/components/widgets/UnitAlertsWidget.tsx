@@ -40,7 +40,10 @@ export const UnitAlertsWidget: React.FC<UnitAlertsWidgetProps> = ({ onRemove, is
   const { t } = useTranslation();
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
-  const { units, isLoading, error, fetchUnits } = useUnitsStore();
+  const units = useUnitsStore((state) => state.units);
+  const isLoading = useUnitsStore((state) => state.isLoading);
+  const error = useUnitsStore((state) => state.error);
+  const fetchUnits = useUnitsStore((state) => state.fetchUnits);
   const thresholds = useUnitStatusThresholds();
   // The instant every unit is measured against. Held in state rather than read inside the memo
   // so the passage of time is an explicit input — it is the only thing that moves a unit across its

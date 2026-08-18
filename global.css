@@ -695,3 +695,31 @@
   --shadow-soft-4: 0px 0px 40px rgba(38, 38, 38, 0.1);
 }
 
+
+/* ─── Web-only keyframes ──────────────────────────────────────────
+   react-native-web has no native animated module, so every RN
+   `Animated` value is driven from JS at 60fps and writes inline
+   styles to the DOM each frame. Long-running loops (marquees,
+   pulses) are handed to CSS instead so they run on the compositor
+   and cost the main thread nothing. */
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.75;
+  }
+}
+
+/* The marquee track holds two identical halves, so translating it by
+   -50% of its own width advances exactly one half and lands back on a
+   pixel-identical frame -- seamless without measuring anything in JS. */
+@keyframes dispatch-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}

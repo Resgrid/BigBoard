@@ -22,7 +22,10 @@ interface NotesWidgetProps {
 export const NotesWidget: React.FC<NotesWidgetProps> = ({ onRemove, isEditMode, width = 2, height = 1, containerWidth, containerHeight }) => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
-  const { notes, isLoading, error, fetchNotes } = useNotesStore();
+  const notes = useNotesStore((state) => state.notes);
+  const isLoading = useNotesStore((state) => state.isLoading);
+  const error = useNotesStore((state) => state.error);
+  const fetchNotes = useNotesStore((state) => state.fetchNotes);
 
   useEffect(() => {
     fetchNotes();

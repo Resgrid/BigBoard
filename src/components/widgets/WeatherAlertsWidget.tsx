@@ -125,7 +125,11 @@ export const WeatherAlertsWidget: React.FC<WeatherAlertsWidgetProps> = ({ onRemo
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
   const router = useRouter();
-  const { alerts, isLoading, error, settings, fetchActiveAlerts } = useWeatherAlertsStore();
+  const alerts = useWeatherAlertsStore((state) => state.alerts);
+  const isLoading = useWeatherAlertsStore((state) => state.isLoading);
+  const error = useWeatherAlertsStore((state) => state.error);
+  const settings = useWeatherAlertsStore((state) => state.settings);
+  const fetchActiveAlerts = useWeatherAlertsStore((state) => state.fetchActiveAlerts);
   const widgetSettings = useWidgetSettingsStore((s) => s.weatherAlerts);
 
   useEffect(() => {

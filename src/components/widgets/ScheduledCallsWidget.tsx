@@ -34,10 +34,17 @@ interface ScheduledCallsWidgetProps {
 export const ScheduledCallsWidget: React.FC<ScheduledCallsWidgetProps> = ({ onRemove, isEditMode, containerWidth, containerHeight }) => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
-  const { scheduledCalls, callPriorities, callExtraDataMap, isLoading, error, init } = useScheduledCallsStore();
-  const { settings } = useScheduledCallsSettingsStore();
-  const { personnel, init: initPersonnel } = usePersonnelStore();
-  const { units, fetchUnits } = useUnitsStore();
+  const scheduledCalls = useScheduledCallsStore((state) => state.scheduledCalls);
+  const callPriorities = useScheduledCallsStore((state) => state.callPriorities);
+  const callExtraDataMap = useScheduledCallsStore((state) => state.callExtraDataMap);
+  const isLoading = useScheduledCallsStore((state) => state.isLoading);
+  const error = useScheduledCallsStore((state) => state.error);
+  const init = useScheduledCallsStore((state) => state.init);
+  const settings = useScheduledCallsSettingsStore((state) => state.settings);
+  const personnel = usePersonnelStore((state) => state.personnel);
+  const initPersonnel = usePersonnelStore((state) => state.init);
+  const units = useUnitsStore((state) => state.units);
+  const fetchUnits = useUnitsStore((state) => state.fetchUnits);
   const [groups, setGroups] = useState<GroupResultData[]>([]);
   const [roles, setRoles] = useState<RecipientsResultData[]>([]);
 

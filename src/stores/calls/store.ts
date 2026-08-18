@@ -4,6 +4,7 @@ import { getCallPriorities } from '@/api/calls/callPriorities';
 import { getCallExtraData, getCalls } from '@/api/calls/calls';
 import { getCallTypes } from '@/api/calls/callTypes';
 import { logger } from '@/lib/logging';
+import { singleFlight } from '@/lib/single-flight';
 import { type CallPriorityResultData } from '@/models/v4/callPriorities/callPriorityResultData';
 import { type CallExtraDataResultData } from '@/models/v4/calls/callExtraDataResultData';
 import { type CallResultData } from '@/models/v4/calls/callResultData';
@@ -32,7 +33,7 @@ export const useCallsStore = create<CallsState>((set, get) => ({
   lastCallExtraDataFetchId: 0,
   isLoading: false,
   error: null,
-  init: async () => {
+  init: singleFlight(async () => {
     set({ isLoading: true, error: null });
 
     try {
@@ -73,7 +74,7 @@ export const useCallsStore = create<CallsState>((set, get) => ({
       set({ error: 'Failed to initialize calls store', isLoading: false });
       // Don't re-throw on error, allow initialization to continue
     }
-  },
+  }),
   fetchCalls: async () => {
     set({ isLoading: true, error: null });
     try {

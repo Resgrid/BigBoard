@@ -68,6 +68,14 @@ axiosInstance.interceptors.response.use(
           });
       }
 
+      // Once a refresh has definitively failed the auth store drops the refresh token, so there is
+      // nothing left to refresh with. The in-flight guard above only collapses *concurrent* callers;
+      // the startup chain awaits each store in turn, so without this every one of them would fire
+      // its own doomed refresh round-trip and its own logout. Fail fast with the original 401.
+      if (!useAuthStore.getState().refreshToken) {
+        return Promise.reject(error);
+      }
+
       // Add _retry property to request config type
       (originalRequest as InternalAxiosRequestConfig & { _retry: boolean })._retry = true;
       isRefreshing = true;

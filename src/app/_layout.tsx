@@ -24,7 +24,7 @@ import { PushNotificationModal } from '@/components/push-notification/push-notif
 import { ToastContainer } from '@/components/toast/toast-container';
 import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
 import { loadKeepAliveState } from '@/lib/hooks/use-keep-alive';
-import { loadSelectedTheme } from '@/lib/hooks/use-selected-theme';
+import { loadSelectedTheme, useSelectedTheme } from '@/lib/hooks/use-selected-theme';
 import { logger } from '@/lib/logging';
 import { sentryService } from '@/lib/sentry';
 import { getDeviceUuid, setDeviceUuid } from '@/lib/storage/app';
@@ -210,11 +210,17 @@ function RootLayout() {
 }
 
 function Providers({ children }: { children: React.ReactNode }) {
-  const colorScheme = useColorScheme();
+  const osScheme = useColorScheme();
+  // The stored preference is the source of truth. On native it also lands in
+  // Appearance, so useColorScheme() alone would do -- but web has no Appearance
+  // override, and the web GluestackUIProvider writes the <html> class straight
+  // from `mode`, so feeding it the OS scheme would undo the selected theme.
+  const { selectedTheme } = useSelectedTheme();
+  const colorScheme: 'light' | 'dark' = selectedTheme === 'system' ? (osScheme === 'dark' ? 'dark' : 'light') : selectedTheme;
 
   const renderContent = () => (
     <APIProvider>
-      <GluestackUIProvider mode={(colorScheme ?? 'light') as 'light' | 'dark'}>
+      <GluestackUIProvider mode={colorScheme}>
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
           <BottomSheetModalProvider>
             {children}

@@ -260,7 +260,9 @@ export default function Map() {
   }, [isMapReady, isAuthenticated, isInitialized, isActive, hasUserMovedMap, location.isMapLocked]);
 
   useEffect(() => {
-    Animated.loop(
+    // Held in a local so the loop can be stopped on unmount -- without that it keeps running (and
+    // on web, keeps a JS rAF loop burning) for the rest of the session after leaving this screen.
+    const pulse = Animated.loop(
       Animated.sequence([
         Animated.timing(pulseAnim, {
           toValue: 1.2,
@@ -273,7 +275,13 @@ export default function Map() {
           useNativeDriver: true,
         }),
       ])
-    ).start();
+    );
+
+    pulse.start();
+
+    return () => {
+      pulse.stop();
+    };
   }, [pulseAnim]);
 
   // Track when map view is rendered

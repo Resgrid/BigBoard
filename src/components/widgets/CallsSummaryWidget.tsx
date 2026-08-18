@@ -21,8 +21,12 @@ interface CallsWidgetProps {
 export const CallsSummaryWidget: React.FC<CallsWidgetProps> = ({ onRemove, isEditMode, width = 2, height = 2 }) => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
-  const { calls, callPriorities, isLoading, error, init } = useCallsStore();
-  const { callsSummary } = useWidgetSettingsStore();
+  const calls = useCallsStore((state) => state.calls);
+  const callPriorities = useCallsStore((state) => state.callPriorities);
+  const isLoading = useCallsStore((state) => state.isLoading);
+  const error = useCallsStore((state) => state.error);
+  const init = useCallsStore((state) => state.init);
+  const callsSummary = useWidgetSettingsStore((state) => state.callsSummary);
 
   // Enable real-time updates via SignalR
   useCallsSignalRUpdates();
