@@ -44,7 +44,11 @@ export const storage: any = {
       }
       return keys;
     }, []),
-  clearAll: () => safe(() => localStorage.clear(), undefined),
+  // No clearAll(). MMKV's clears one named instance; the only web equivalent, localStorage.clear(),
+  // is origin-wide and would also wipe keys this adapter never wrote -- SELECTED_THEME and the i18n
+  // language, both written straight to localStorage. Scoping it to `api_cache_` instead would leave
+  // every persisted store behind under a name that promises otherwise. Nothing calls it, so the
+  // honest option is to not offer it until a caller defines what it should actually clear.
 };
 
 const IS_FIRST_TIME = 'IS_FIRST_TIME';
