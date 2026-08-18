@@ -7,11 +7,11 @@ import { useSignalRStore } from '@/stores/signalr/signalr-store';
  * Hook to listen for SignalR updates and refresh calls widget data
  */
 export const useCallsSignalRUpdates = () => {
-  const lastUpdateTimestamp = useSignalRStore((state) => state.lastUpdateTimestamp);
+  const lastCallsTimestamp = useSignalRStore((state) => state.lastCallsTimestamp);
   const init = useCallsStore((state) => state.init);
 
   useEffect(() => {
-    if (lastUpdateTimestamp > 0) {
+    if (lastCallsTimestamp > 0) {
       // Debounce bursts of SignalR messages into a single refresh
       const timer = setTimeout(() => {
         init();
@@ -19,5 +19,5 @@ export const useCallsSignalRUpdates = () => {
 
       return () => clearTimeout(timer);
     }
-  }, [lastUpdateTimestamp, init]);
+  }, [lastCallsTimestamp, init]);
 };

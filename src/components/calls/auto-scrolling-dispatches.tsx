@@ -30,10 +30,16 @@ const DISPATCH_TYPE_COLORS: Record<string, string> = {
 
 const SEPARATOR_WIDTH = 40;
 
+const IS_WEB = Platform.OS === 'web';
+
 export const AutoScrollingDispatches: React.FC<AutoScrollingDispatchesProps> = ({ dispatches, resolveDisplayName, scrollSpeed, fontSize }) => {
   const scrollX = useRef(new Animated.Value(0)).current;
   const animRef = useRef<Animated.CompositeAnimation | null>(null);
   const [primaryWidth, setPrimaryWidth] = useState(0);
+
+  const loopWidth = primaryWidth + SEPARATOR_WIDTH;
+  const isScrolling = scrollSpeed > 0 && primaryWidth > 0;
+  const durationMs = isScrolling ? (loopWidth / scrollSpeed) * 1000 : 0;
 
   useEffect(() => {
     // Stop any running animation and reset position whenever deps change
@@ -41,14 +47,20 @@ export const AutoScrollingDispatches: React.FC<AutoScrollingDispatchesProps> = (
     animRef.current = null;
     scrollX.setValue(0);
 
+    // Web drives this from CSS instead -- see the track style below. react-native-web has no
+    // native animated module, so the JS path here would repaint from a 60fps rAF loop, and one
+    // of these renders per dispatched call.
+    if (IS_WEB) {
+      return;
+    }
+
     if (scrollSpeed <= 0 || primaryWidth <= 0) {
       return;
     }
 
     // Scroll the whole loopWidth (primary + gap) — the duplicate copy placed right
     // after fills the gap so the transition is seamless.
-    const loopWidth = primaryWidth + SEPARATOR_WIDTH;
-    const duration = (loopWidth / scrollSpeed) * 1000;
+    const duration = durationMs;
 
     let active = true;
 
@@ -62,7 +74,7 @@ export const AutoScrollingDispatches: React.FC<AutoScrollingDispatchesProps> = (
       const timing = Animated.timing(scrollX, {
         toValue: -loopWidth,
         duration,
-        useNativeDriver: Platform.OS !== 'web',
+        useNativeDriver: true,
         isInteraction: false,
       });
       animRef.current = timing;
@@ -78,7 +90,7 @@ export const AutoScrollingDispatches: React.FC<AutoScrollingDispatchesProps> = (
       animRef.current?.stop();
       animRef.current = null;
     };
-  }, [primaryWidth, scrollSpeed, scrollX]);
+  }, [primaryWidth, scrollSpeed, scrollX, durationMs, loopWidth]);
 
   if (dispatches.length === 0) return null;
 
@@ -107,9 +119,17 @@ export const AutoScrollingDispatches: React.FC<AutoScrollingDispatchesProps> = (
       );
     });
 
+  // On web the whole track is one compositor-driven CSS animation, so it renders as a plain View
+  // with no Animated wrapper and no per-frame JS. -50% of the track equals one half, which is why
+  // the duplicate copy below gets its own trailing separator on web: the two halves must match.
+  const Track = IS_WEB ? View : Animated.View;
+  const trackStyle = IS_WEB
+    ? [styles.row, isScrolling ? ({ animation: `dispatch-marquee ${durationMs}ms linear infinite`, willChange: 'transform' } as never) : null]
+    : [styles.row, { transform: [{ translateX: scrollX }] }];
+
   return (
     <View style={styles.container}>
-      <Animated.View style={[styles.row, { transform: [{ translateX: scrollX }] }]}>
+      <Track style={trackStyle}>
         {/* Primary copy — measure width to drive the animation */}
         <View
           testID="auto-scroll-primary"
@@ -129,9 +149,11 @@ export const AutoScrollingDispatches: React.FC<AutoScrollingDispatchesProps> = (
             <View style={styles.row} accessible={false} accessibilityElementsHidden={true} importantForAccessibility="no-hide-descendants">
               {renderChips(dispatches, 'b')}
             </View>
+            {/* Trailing gap so the two halves are identical and -50% lands seamlessly (web only) */}
+            {IS_WEB ? <View style={{ width: SEPARATOR_WIDTH, flexShrink: 0 }} accessible={false} /> : null}
           </>
         ) : null}
-      </Animated.View>
+      </Track>
     </View>
   );
 };

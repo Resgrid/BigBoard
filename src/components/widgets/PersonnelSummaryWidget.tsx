@@ -20,7 +20,10 @@ interface PersonnelWidgetProps {
 export const PersonnelSummaryWidget: React.FC<PersonnelWidgetProps> = ({ onRemove, isEditMode, width = 2, height = 2 }) => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
-  const { personnel, isLoading, error, init } = usePersonnelStore();
+  const personnel = usePersonnelStore((state) => state.personnel);
+  const isLoading = usePersonnelStore((state) => state.isLoading);
+  const error = usePersonnelStore((state) => state.error);
+  const init = usePersonnelStore((state) => state.init);
 
   // Enable real-time updates via SignalR
   usePersonnelSignalRUpdates();

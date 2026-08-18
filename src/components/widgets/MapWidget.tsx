@@ -48,7 +48,7 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ onRemove, isEditMode, widt
   const isAuthenticated = !!accessToken;
 
   // Get map store
-  const { setMapData } = useMapStore();
+  const setMapData = useMapStore((state) => state.setMapData);
 
   // Use SignalR updates to refresh map pins
   useMapSignalRUpdates(setMapPins);

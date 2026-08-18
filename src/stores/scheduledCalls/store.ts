@@ -3,6 +3,7 @@ import { create } from 'zustand';
 import { getCallPriorities } from '@/api/calls/callPriorities';
 import { getScheduledCallExtraData, getScheduledCalls } from '@/api/scheduledCalls/scheduledCalls';
 import { logger } from '@/lib/logging';
+import { singleFlight } from '@/lib/single-flight';
 import { type CallPriorityResultData } from '@/models/v4/callPriorities/callPriorityResultData';
 import { type CallExtraDataResultData } from '@/models/v4/calls/callExtraDataResultData';
 import { type CallResultData } from '@/models/v4/calls/callResultData';
@@ -25,7 +26,7 @@ export const useScheduledCallsStore = create<ScheduledCallsState>((set, get) => 
   lastCallExtraDataFetchId: 0,
   isLoading: false,
   error: null,
-  init: async () => {
+  init: singleFlight(async () => {
     set({ isLoading: true, error: null });
 
     try {
@@ -62,7 +63,7 @@ export const useScheduledCallsStore = create<ScheduledCallsState>((set, get) => 
       });
       set({ error: 'Failed to load scheduled calls', isLoading: false });
     }
-  },
+  }),
   fetchScheduledCalls: async () => {
     set({ isLoading: true, error: null });
     try {

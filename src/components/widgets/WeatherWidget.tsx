@@ -31,9 +31,12 @@ interface WeatherWidgetProps {
 export const WeatherWidget: React.FC<WeatherWidgetProps> = ({ onRemove, isEditMode, width = 2, height = 2, containerWidth, containerHeight, metadata }) => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
-  const { config } = useCoreStore();
-  const { latitude, longitude, setLocation } = useLocationStore();
-  const { mapData, fetchMapData } = useMapStore();
+  const config = useCoreStore((state) => state.config);
+  const latitude = useLocationStore((state) => state.latitude);
+  const longitude = useLocationStore((state) => state.longitude);
+  const setLocation = useLocationStore((state) => state.setLocation);
+  const mapData = useMapStore((state) => state.mapData);
+  const fetchMapData = useMapStore((state) => state.fetchMapData);
   const units = useWidgetSettingsStore((state) => state.weather.units);
   const [weatherData, setWeatherData] = useState<WeatherOutlook | null>(null);
   const [isLoading, setIsLoading] = useState(true);

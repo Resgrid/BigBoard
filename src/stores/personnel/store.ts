@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 
 import { getAllPersonnelInfos, getPersonnelFilterOptions } from '@/api/personnel/personnel';
+import { singleFlight } from '@/lib/single-flight';
 import { loadPersonnelFilterOptions, savePersonnelFilterOptions } from '@/lib/storage/personnel-filter';
 import { type FilterResultData } from '@/models/v4/personnel/filterResultData';
 import { type PersonnelInfoResultData } from '@/models/v4/personnel/personnelInfoResultData';
@@ -49,7 +50,7 @@ export const usePersonnelStore = create<PersonnelState>((set, get) => ({
   isFilterSheetOpen: false,
   isLoadingFilters: false,
 
-  fetchPersonnel: async () => {
+  fetchPersonnel: singleFlight(async () => {
     try {
       set({ isLoading: true, error: null });
       const { selectedFilters } = get();
@@ -62,7 +63,7 @@ export const usePersonnelStore = create<PersonnelState>((set, get) => ({
         isLoading: false,
       });
     }
-  },
+  }),
 
   setSearchQuery: (query: string) => {
     set({ searchQuery: query });

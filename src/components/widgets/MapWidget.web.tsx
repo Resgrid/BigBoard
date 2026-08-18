@@ -33,6 +33,7 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ onRemove, isEditMode, widt
   const [hasLoadedInitialData, setHasLoadedInitialData] = useState(false);
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
+  const hasCenteredRef = useRef(false);
 
   // Get auth and core store states
   const accessToken = useAuthStore((state) => state.accessToken);
@@ -83,6 +84,8 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ onRemove, isEditMode, widt
       map.current = null;
       // Reset loaded flag when map is cleaned up
       setHasLoadedInitialData(false);
+      // A rebuilt map starts on the fallback centre again, so let it re-centre once
+      hasCenteredRef.current = false;
     };
   }, [isDark, isInitialized]);
 
@@ -129,16 +132,20 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ onRemove, isEditMode, widt
     loadInitialData();
   }, [isMapReady, isAuthenticated, isInitialized, hasLoadedInitialData]);
 
-  // Center on first pin when pins are loaded
+  // Center on the first pin once. Every SignalR-driven refresh hands back a fresh array even when
+  // the pins are unchanged, so re-running this per update meant a 1000ms WebGL fly animation on
+  // every department event -- and a board that never stopped moving.
   useEffect(() => {
-    if (map.current && isMapReady && mapPins.length > 0) {
-      const firstPin = mapPins[0];
-      map.current.flyTo({
-        center: [firstPin.Longitude, firstPin.Latitude],
-        zoom: 12,
-        duration: 1000,
-      });
-    }
+    if (hasCenteredRef.current) return;
+    if (!map.current || !isMapReady || mapPins.length === 0) return;
+
+    hasCenteredRef.current = true;
+    const firstPin = mapPins[0];
+    map.current.flyTo({
+      center: [firstPin.Longitude, firstPin.Latitude],
+      zoom: 12,
+      duration: 1000,
+    });
   }, [mapPins, isMapReady]);
 
   return (

@@ -22,8 +22,11 @@ interface UnitsWidgetProps {
 export const UnitsSummaryWidget: React.FC<UnitsWidgetProps> = ({ onRemove, isEditMode, width = 2, height = 2 }) => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
-  const { units, isLoading, error, fetchUnits } = useUnitsStore();
-  const { unitsSummary } = useWidgetSettingsStore();
+  const units = useUnitsStore((state) => state.units);
+  const isLoading = useUnitsStore((state) => state.isLoading);
+  const error = useUnitsStore((state) => state.error);
+  const fetchUnits = useUnitsStore((state) => state.fetchUnits);
+  const unitsSummary = useWidgetSettingsStore((state) => state.unitsSummary);
 
   // Enable real-time updates via SignalR
   useUnitsSignalRUpdates();

@@ -22,9 +22,14 @@ interface PersonnelStaffingSummaryWidgetProps {
 export const PersonnelStaffingSummaryWidget: React.FC<PersonnelStaffingSummaryWidgetProps> = ({ onRemove, isEditMode, width = 2, height = 2 }) => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
-  const { personnel, isLoading: isLoadingPersonnel, error: personnelError, init } = usePersonnelStore();
-  const { availableStaffings, isLoadingOptions, fetchStatusOptions } = useHomeStore();
-  const { personnelStaffingSummary } = useWidgetSettingsStore();
+  const personnel = usePersonnelStore((state) => state.personnel);
+  const isLoadingPersonnel = usePersonnelStore((state) => state.isLoading);
+  const personnelError = usePersonnelStore((state) => state.error);
+  const init = usePersonnelStore((state) => state.init);
+  const availableStaffings = useHomeStore((state) => state.availableStaffings);
+  const isLoadingOptions = useHomeStore((state) => state.isLoadingOptions);
+  const fetchStatusOptions = useHomeStore((state) => state.fetchStatusOptions);
+  const personnelStaffingSummary = useWidgetSettingsStore((state) => state.personnelStaffingSummary);
 
   // Enable real-time updates via SignalR
   usePersonnelSignalRUpdates();

@@ -15,7 +15,15 @@ let updateHubStateCallbackHandle: SignalRConnectionStateCallbacks | null = null;
 interface SignalRState {
   isUpdateHubConnected: boolean;
   lastUpdateMessage: unknown;
+  /** Bumped by every update-hub message. Only for consumers that genuinely care about all of them. */
   lastUpdateTimestamp: number;
+  /**
+   * Per-domain stamps. Widgets subscribe to the one domain they render, so a personnel status
+   * change no longer refetches calls, units and everything else on the board.
+   */
+  lastCallsTimestamp: number;
+  lastUnitsTimestamp: number;
+  lastPersonnelTimestamp: number;
   isGeolocationHubConnected: boolean;
   lastGeolocationMessage: unknown;
   lastGeolocationTimestamp: number;
@@ -32,6 +40,9 @@ export const useSignalRStore = create<SignalRState>((set, get) => ({
   isUpdateHubConnected: false,
   lastUpdateMessage: null,
   lastUpdateTimestamp: 0,
+  lastCallsTimestamp: 0,
+  lastUnitsTimestamp: 0,
+  lastPersonnelTimestamp: 0,
   isGeolocationHubConnected: false,
   lastGeolocationMessage: null,
   lastGeolocationTimestamp: 0,
@@ -143,21 +154,21 @@ export const useSignalRStore = create<SignalRState>((set, get) => ({
           logger.info({
             message: 'personnelStatusUpdated',
           });
-          set({ lastUpdateMessage: JSON.stringify(message), lastUpdateTimestamp: Date.now() });
+          set({ lastUpdateMessage: JSON.stringify(message), lastUpdateTimestamp: Date.now(), lastPersonnelTimestamp: Date.now() });
         });
 
         signalRService.on('personnelStaffingUpdated', (message) => {
           logger.info({
             message: 'personnelStaffingUpdated',
           });
-          set({ lastUpdateMessage: JSON.stringify(message), lastUpdateTimestamp: Date.now() });
+          set({ lastUpdateMessage: JSON.stringify(message), lastUpdateTimestamp: Date.now(), lastPersonnelTimestamp: Date.now() });
         });
 
         signalRService.on('unitStatusUpdated', (message) => {
           logger.info({
             message: 'unitStatusUpdated',
           });
-          set({ lastUpdateMessage: JSON.stringify(message), lastUpdateTimestamp: Date.now() });
+          set({ lastUpdateMessage: JSON.stringify(message), lastUpdateTimestamp: Date.now(), lastUnitsTimestamp: Date.now() });
         });
 
         signalRService.on('callsUpdated', (message) => {
@@ -167,21 +178,21 @@ export const useSignalRStore = create<SignalRState>((set, get) => ({
             message: 'callsUpdated',
             context: { now },
           });
-          set({ lastUpdateMessage: JSON.stringify(message), lastUpdateTimestamp: now });
+          set({ lastUpdateMessage: JSON.stringify(message), lastUpdateTimestamp: now, lastCallsTimestamp: now });
         });
 
         signalRService.on('callAdded', (message) => {
           logger.info({
             message: 'callAdded',
           });
-          set({ lastUpdateMessage: JSON.stringify(message), lastUpdateTimestamp: Date.now() });
+          set({ lastUpdateMessage: JSON.stringify(message), lastUpdateTimestamp: Date.now(), lastCallsTimestamp: Date.now() });
         });
 
         signalRService.on('callClosed', (message) => {
           logger.info({
             message: 'callClosed',
           });
-          set({ lastUpdateMessage: JSON.stringify(message), lastUpdateTimestamp: Date.now() });
+          set({ lastUpdateMessage: JSON.stringify(message), lastUpdateTimestamp: Date.now(), lastCallsTimestamp: Date.now() });
         });
 
         signalRService.on('weatherAlertReceived', (message) => {

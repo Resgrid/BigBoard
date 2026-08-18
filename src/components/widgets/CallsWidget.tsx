@@ -32,10 +32,17 @@ interface CallsWidgetProps {
 export const CallsWidget: React.FC<CallsWidgetProps> = ({ onRemove, isEditMode, containerWidth, containerHeight }) => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
-  const { calls, callPriorities, callExtraDataMap, isLoading, error, init } = useCallsStore();
-  const { settings } = useCallsSettingsStore();
-  const { personnel, init: initPersonnel } = usePersonnelStore();
-  const { units, fetchUnits } = useUnitsStore();
+  const calls = useCallsStore((state) => state.calls);
+  const callPriorities = useCallsStore((state) => state.callPriorities);
+  const callExtraDataMap = useCallsStore((state) => state.callExtraDataMap);
+  const isLoading = useCallsStore((state) => state.isLoading);
+  const error = useCallsStore((state) => state.error);
+  const init = useCallsStore((state) => state.init);
+  const settings = useCallsSettingsStore((state) => state.settings);
+  const personnel = usePersonnelStore((state) => state.personnel);
+  const initPersonnel = usePersonnelStore((state) => state.init);
+  const units = useUnitsStore((state) => state.units);
+  const fetchUnits = useUnitsStore((state) => state.fetchUnits);
   const [groups, setGroups] = useState<GroupResultData[]>([]);
   const [roles, setRoles] = useState<RecipientsResultData[]>([]);
 

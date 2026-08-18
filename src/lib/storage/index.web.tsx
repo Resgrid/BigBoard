@@ -1,14 +1,54 @@
 import { useState } from 'react';
 import { type StateStorage } from 'zustand/middleware';
 
-// Mock MMKV class for web to satisfy type requirements if needed,
-// but we won't export 'storage' as MMKV type to avoid importing the native library if possible.
-// However, other files might expect 'storage' to be exported.
-// Let's export a dummy object or just 'any'.
+/**
+ * Web stand-in for the native MMKV instance.  It has to mirror the slice of the
+ * MMKV surface the app actually calls -- getAllKeys() in particular, which the
+ * cache manager uses to drop every `api_cache_*` entry when the signed-in
+ * identity changes.  A missing method there throws inside an auth subscriber
+ * and silently leaves the previous account's cached payloads in localStorage.
+ */
+const safe = <T,>(fn: () => T, fallback: T): T => {
+  try {
+    return fn();
+  } catch (e) {
+    console.error('Local storage access failed', e);
+    return fallback;
+  }
+};
+
 export const storage: any = {
-  getString: (key: string) => localStorage.getItem(key),
-  set: (key: string, value: string) => localStorage.setItem(key, value),
-  delete: (key: string) => localStorage.removeItem(key),
+  getString: (key: string): string | undefined => safe(() => localStorage.getItem(key) ?? undefined, undefined),
+  getNumber: (key: string): number | undefined =>
+    safe(() => {
+      const raw = localStorage.getItem(key);
+      if (raw === null) return undefined;
+      const parsed = Number(raw);
+      return Number.isNaN(parsed) ? undefined : parsed;
+    }, undefined),
+  getBoolean: (key: string): boolean | undefined =>
+    safe(() => {
+      const raw = localStorage.getItem(key);
+      if (raw === null) return undefined;
+      return raw === 'true' || raw === '1';
+    }, undefined),
+  set: (key: string, value: string | number | boolean) => safe(() => localStorage.setItem(key, String(value)), undefined),
+  delete: (key: string) => safe(() => localStorage.removeItem(key), undefined),
+  contains: (key: string): boolean => safe(() => localStorage.getItem(key) !== null, false),
+  getAllKeys: (): string[] =>
+    safe(() => {
+      const keys: string[] = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key !== null) keys.push(key);
+      }
+      return keys;
+    }, []),
+  // No clearAll(). MMKV's clears one named instance; the only web equivalent, localStorage.clear(),
+  // is origin-wide and would also wipe keys this adapter never wrote -- SELECTED_THEME and the i18n
+  // language, both written straight to localStorage. Scoping it to `api_cache_` instead would leave
+  // every persisted store behind under a name that promises otherwise. Nothing calls it, so the
+  // honest option is to not offer it until a caller defines what it should actually clear.
 };
 
 const IS_FIRST_TIME = 'IS_FIRST_TIME';

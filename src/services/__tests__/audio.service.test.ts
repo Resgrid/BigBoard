@@ -279,9 +279,18 @@ describe('AudioService', () => {
       await testService.cleanup();
 
       expect(logger.error).toHaveBeenCalledWith({
-        message: 'Error during audio service cleanup',
-        context: { error: expect.any(Error) },
+        message: 'Failed to release audio player',
+        context: { soundName: 'startTransmitting', error: expect.any(Error) },
       });
+
+      // The failed release must not strand the remaining four players
+      expect(mockPlayer.remove).toHaveBeenCalledTimes(5);
+      expect((testService as any).startTransmittingSound).toBeNull();
+      expect((testService as any).stopTransmittingSound).toBeNull();
+      expect((testService as any).connectedDeviceSound).toBeNull();
+      expect((testService as any).connectToAudioRoomSound).toBeNull();
+      expect((testService as any).disconnectedFromAudioRoomSound).toBeNull();
+      expect((testService as any).isInitialized).toBe(false);
     });
   });
 

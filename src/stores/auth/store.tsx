@@ -174,6 +174,13 @@ const useAuthStore = create<AuthState>()(
           return refreshPromise;
         }
 
+        // A failed refresh clears the token, so a later caller has nothing to send. Returning here
+        // rather than falling into the request keeps the session from being torn down (and the API
+        // cache re-cleared) once per straggling 401 after the session has already expired.
+        if (!get().refreshToken) {
+          return;
+        }
+
         refreshPromise = (async () => {
           try {
             const { refreshToken } = get();
