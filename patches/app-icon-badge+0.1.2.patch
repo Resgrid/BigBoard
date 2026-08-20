@@ -1,0 +1,39 @@
+diff --git a/node_modules/app-icon-badge/dist/app.plugin.js b/node_modules/app-icon-badge/dist/app.plugin.js
+index 76e16ff..70a392e 100644
+--- a/node_modules/app-icon-badge/dist/app.plugin.js
++++ b/node_modules/app-icon-badge/dist/app.plugin.js
+@@ -230,7 +230,7 @@ function addBadge(_0) {
+     const resultFilename = dstPath ? dstPath : getResultPath({
+       icon
+     });
+-    resultImage.writeAsync(resultFilename);
++    yield resultImage.writeAsync(resultFilename);
+     return resultFilename;
+   });
+ }
+diff --git a/node_modules/app-icon-badge/dist/index.js b/node_modules/app-icon-badge/dist/index.js
+index 3a05b92..47571ae 100644
+--- a/node_modules/app-icon-badge/dist/index.js
++++ b/node_modules/app-icon-badge/dist/index.js
+@@ -240,7 +240,7 @@ function addBadge(_0) {
+     const resultFilename = dstPath ? dstPath : getResultPath({
+       icon
+     });
+-    resultImage.writeAsync(resultFilename);
++    yield resultImage.writeAsync(resultFilename);
+     return resultFilename;
+   });
+ }
+diff --git a/node_modules/app-icon-badge/dist/index.mjs b/node_modules/app-icon-badge/dist/index.mjs
+index 201b24c..8c7562e 100644
+--- a/node_modules/app-icon-badge/dist/index.mjs
++++ b/node_modules/app-icon-badge/dist/index.mjs
+@@ -207,7 +207,7 @@ function addBadge(_0) {
+     const resultFilename = dstPath ? dstPath : getResultPath({
+       icon
+     });
+-    resultImage.writeAsync(resultFilename);
++    yield resultImage.writeAsync(resultFilename);
+     return resultFilename;
+   });
+ }

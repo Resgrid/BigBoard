@@ -298,7 +298,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     'expo-web-browser',
     './customGradle.plugin.js',
     './customManifest.plugin.js',
-    ['app-icon-badge', appIconBadgeConfig],
+    ['./appIconBadge.plugin.js', appIconBadgeConfig],
   ],
   extra: {
     ...ClientEnv,
