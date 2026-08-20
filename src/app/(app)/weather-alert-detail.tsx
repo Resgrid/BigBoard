@@ -109,15 +109,15 @@ export default function WeatherAlertDetailScreen() {
           <VStack space="xs">
             <HStack className="items-center justify-between">
               <Text className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('weatherAlerts.detail.effective')}</Text>
-              <Text className={`text-sm font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>{formatDateTime(alert.EffectiveUtc)}</Text>
+              <Text className={`text-sm font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>{formatDateTime(alert.EffectiveOnUtc || alert.EffectiveUtc)}</Text>
             </HStack>
             <HStack className="items-center justify-between">
               <Text className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('weatherAlerts.detail.onset')}</Text>
-              <Text className={`text-sm font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>{formatDateTime(alert.OnsetUtc)}</Text>
+              <Text className={`text-sm font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>{formatDateTime(alert.OnsetOnUtc || alert.OnsetUtc)}</Text>
             </HStack>
             <HStack className="items-center justify-between">
               <Text className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('weatherAlerts.detail.expires')}</Text>
-              <Text className={`text-sm font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>{formatDateTime(alert.ExpiresUtc)}</Text>
+              <Text className={`text-sm font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>{formatDateTime(alert.ExpiresOnUtc || alert.ExpiresUtc)}</Text>
             </HStack>
           </VStack>
         </VStack>
@@ -168,10 +168,10 @@ export default function WeatherAlertDetailScreen() {
               <Text className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('weatherAlerts.detail.certainty')}</Text>
               <Text className={`text-sm font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>{t(CERTAINTY_KEYS[alert.Certainty] || 'weatherAlerts.certainty.unknown')}</Text>
             </HStack>
-            {alert.SenderName ? (
+            {alert.Sender ? (
               <HStack className="items-center justify-between">
                 <Text className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('weatherAlerts.detail.sender')}</Text>
-                <Text className={`text-sm font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>{alert.SenderName}</Text>
+                <Text className={`text-sm font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>{alert.Sender}</Text>
               </HStack>
             ) : null}
           </VStack>

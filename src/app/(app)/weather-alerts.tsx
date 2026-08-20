@@ -76,17 +76,17 @@ export default function WeatherAlertsScreen() {
 
     switch (sort) {
       case 'expires':
-        result.sort((a, b) => new Date(a.ExpiresUtc).getTime() - new Date(b.ExpiresUtc).getTime());
+        result.sort((a, b) => new Date(a.ExpiresOnUtc || a.ExpiresUtc).getTime() - new Date(b.ExpiresOnUtc || b.ExpiresUtc).getTime());
         break;
       case 'newest':
-        result.sort((a, b) => new Date(b.EffectiveUtc).getTime() - new Date(a.EffectiveUtc).getTime());
+        result.sort((a, b) => new Date(b.EffectiveOnUtc || b.EffectiveUtc).getTime() - new Date(a.EffectiveOnUtc || a.EffectiveUtc).getTime());
         break;
       case 'severity':
       default:
         result.sort((a, b) => {
           // Core enum: Extreme=0 is most severe, so ascending puts the worst alerts first.
           if (a.Severity !== b.Severity) return a.Severity - b.Severity;
-          return new Date(b.EffectiveUtc).getTime() - new Date(a.EffectiveUtc).getTime();
+          return new Date(b.EffectiveOnUtc || b.EffectiveUtc).getTime() - new Date(a.EffectiveOnUtc || a.EffectiveUtc).getTime();
         });
         break;
     }
@@ -129,9 +129,9 @@ export default function WeatherAlertsScreen() {
             </Text>
             <HStack className="items-center justify-between">
               <Text className={`text-xs ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>
-                {translate('weatherAlerts.detail.effective')}: {formatDateTime(item.EffectiveUtc)}
+                {translate('weatherAlerts.detail.effective')}: {formatDateTime(item.EffectiveOnUtc || item.EffectiveUtc)}
               </Text>
-              <Text className={`text-xs font-medium ${isDark ? 'text-amber-400' : 'text-amber-600'}`}>{formatExpiry(item.ExpiresUtc)}</Text>
+              <Text className={`text-xs font-medium ${isDark ? 'text-amber-400' : 'text-amber-600'}`}>{formatExpiry(item.ExpiresOnUtc || item.ExpiresUtc)}</Text>
             </HStack>
           </VStack>
         </HStack>
