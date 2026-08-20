@@ -112,7 +112,7 @@ const AlertCard: React.FC<AlertCardProps> = ({ alert, isDark, showHeadline, show
         ) : null}
         {showExpiry ? (
           <Text className={`${isDark ? 'text-gray-500' : 'text-gray-500'}`} style={{ fontSize: fontSize - 2 }}>
-            {formatExpiry(alert.ExpiresUtc)}
+            {formatExpiry(alert.ExpiresOnUtc || alert.ExpiresUtc)}
           </Text>
         ) : null}
       </VStack>
