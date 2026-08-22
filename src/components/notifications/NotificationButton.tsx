@@ -1,9 +1,9 @@
 import { useCounts } from '@novu/react-native';
-import { BellIcon } from 'lucide-react-native';
 import React from 'react';
 import { Platform } from 'react-native';
 
 import { ActivityIndicator, Pressable, View } from '@/components/ui';
+import { BellIcon } from '@/components/ui/lucide-icons';
 import { Text } from '@/components/ui/text';
 interface NotificationButtonProps {
   onPress: () => void;
