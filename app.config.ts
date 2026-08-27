@@ -47,7 +47,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       UIBackgroundModes: ['remote-notification', 'audio', 'bluetooth-central', 'voip'],
       ITSAppUsesNonExemptEncryption: false,
       UIViewControllerBasedStatusBarAppearance: false,
-      NSBluetoothAlwaysUsageDescription: 'Allow Resgrid Dispatch to connect to bluetooth devices for PTT.',
+      NSBluetoothAlwaysUsageDescription: 'Allow Resgrid BigBoard to connect to bluetooth devices for PTT.',
       LSApplicationQueriesSchemes: [Env.SCHEME.toLowerCase()],
     },
     entitlements: {
@@ -85,9 +85,12 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       'android.permission.POST_NOTIFICATIONS',
       'android.permission.FOREGROUND_SERVICE',
       'android.permission.FOREGROUND_SERVICE_MICROPHONE',
-      'android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE',
       'android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK',
     ],
+    // FOREGROUND_SERVICE_CONNECTED_DEVICE is blocked, not merely absent: Bluetooth PTT handsets
+    // route through the microphone FGS session, so the type is unused, and Play rejects any
+    // declared foreground-service type whose use case cannot be demonstrated in the app.
+    blockedPermissions: ['android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE'],
   },
   web: {
     favicon: './assets/favicon.png',
@@ -203,9 +206,17 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     [
       'expo-location',
       {
-        locationWhenInUsePermission: 'Allow Resgrid Dispatch to show current location on map.',
-        locationAlwaysAndWhenInUsePermission: 'Allow Resgrid Dispatch to use your location for department updates.',
-        locationAlwaysPermission: 'Resgrid Dispatch needs to track your location for department AVL.',
+        locationWhenInUsePermission:
+          'Resgrid BigBoard uses your location while you use the app to center the department status board map on this display. For example, the map opens on your station area instead of a default region.',
+        locationAlwaysAndWhenInUsePermission:
+          'Resgrid BigBoard uses your location, including in the background, to keep the department status board map centered on this display location. For example, a wall-mounted board keeps showing units and calls around the station while the app is not on screen.',
+        locationAlwaysPermission:
+          'Resgrid BigBoard uses your location in the background to keep the department status board map centered on this display location. For example, a wall-mounted board keeps showing units and calls around the station while the app is not on screen.',
+        // Required even though getMotionActivityAsync() is never called: expo-location links
+        // CoreMotion (MotionActivityPermissionRequester), and App Store static analysis rejects
+        // the binary with ITMS-90683 whenever the framework is referenced and the string is absent.
+        motionUsagePermission:
+          'Resgrid BigBoard uses motion data to improve the accuracy of the location shown on the department map. For example, while you are driving to a call, motion data helps distinguish travel from a stop so dispatchers see an accurate position and heading.',
         isIosBackgroundLocationEnabled: true,
         isAndroidBackgroundLocationEnabled: true,
         isAndroidForegroundServiceEnabled: true,
@@ -284,7 +295,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     [
       'expo-audio',
       {
-        microphonePermission: 'Allow Resgrid Dispatch to access the microphone for audio input used in PTT and calls.',
+        microphonePermission: 'Allow Resgrid BigBoard to access the microphone for audio input used in PTT and calls.',
       },
     ],
     'react-native-ble-manager',
