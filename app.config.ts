@@ -47,7 +47,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       UIBackgroundModes: ['remote-notification', 'audio', 'bluetooth-central', 'voip'],
       ITSAppUsesNonExemptEncryption: false,
       UIViewControllerBasedStatusBarAppearance: false,
-      NSBluetoothAlwaysUsageDescription: 'Allow Resgrid Dispatch to connect to bluetooth devices for PTT.',
+      NSBluetoothAlwaysUsageDescription:
+        'Resgrid BigBoard uses Bluetooth to connect to wireless headsets and speaker-microphone accessories for Push-to-Talk audio. For example, when you pair a Bluetooth speaker-mic, pressing its talk button transmits your voice to your department audio channel.',
       LSApplicationQueriesSchemes: [Env.SCHEME.toLowerCase()],
     },
     entitlements: {
@@ -203,10 +204,16 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     [
       'expo-location',
       {
-        locationWhenInUsePermission: 'Allow Resgrid Dispatch to show current location on map.',
-        locationAlwaysAndWhenInUsePermission: 'Allow Resgrid Dispatch to use your location for department updates.',
-        locationAlwaysPermission: 'Resgrid Dispatch needs to track your location for department AVL.',
-        isIosBackgroundLocationEnabled: true,
+        locationWhenInUsePermission:
+          'Resgrid BigBoard uses your location while you use the app to center the map when you pick the address for a new call and to show local weather conditions on the board. For example, when you create a new call, the map starts at your current position so you can quickly pin the incident location.',
+        // Background/Always location is not used: no location task or background
+        // permission request exists in src/. Omit the Always usage keys.
+        locationAlwaysAndWhenInUsePermission: false,
+        locationAlwaysPermission: false,
+        // Motion activity APIs (getMotionActivityAsync) are not used; omit NSMotionUsageDescription.
+        motionUsagePermission: false,
+        // No background location tracking on iOS — do not add 'location' to UIBackgroundModes.
+        isIosBackgroundLocationEnabled: false,
         isAndroidBackgroundLocationEnabled: true,
         isAndroidForegroundServiceEnabled: true,
         taskManager: {
@@ -266,6 +273,17 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       },
     ],
     [
+      // Listed explicitly (the module is otherwise autolinked) so the plugin's vague
+      // 'Allow $(PRODUCT_NAME) to access your photos/camera' defaults are replaced.
+      'expo-image-picker',
+      {
+        photosPermission:
+          'Resgrid BigBoard uses your photo library so you can attach existing photos to calls. For example, you can select a saved photo of an incident scene and attach it to the active call for dispatchers and responders to see.',
+        cameraPermission:
+          'Resgrid BigBoard uses the camera to take photos that you attach to calls. For example, you can photograph an incident scene and attach the image to the active call for dispatchers and responders to see.',
+      },
+    ],
+    [
       '@sentry/react-native/expo',
       {
         organization: 'sentry',
@@ -284,12 +302,21 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     [
       'expo-audio',
       {
-        microphonePermission: 'Allow Resgrid Dispatch to access the microphone for audio input used in PTT and calls.',
+        microphonePermission:
+          'Resgrid BigBoard uses the microphone to capture your voice for Push-to-Talk and voice calls with your department. For example, when you press and hold the talk button, your voice is transmitted live to other responders on the channel.',
       },
     ],
     'react-native-ble-manager',
     '@livekit/react-native-expo-plugin',
-    '@config-plugins/react-native-webrtc',
+    [
+      '@config-plugins/react-native-webrtc',
+      {
+        // Set explicitly so the plugin's vague 'Allow $(PRODUCT_NAME) to access your camera'
+        // default can never end up in the Info.plist.
+        cameraPermission:
+          'Resgrid BigBoard uses the camera to take photos that you attach to calls. For example, you can photograph an incident scene and attach the image to the active call for dispatchers and responders to see.',
+      },
+    ],
     '@config-plugins/react-native-callkeep',
     '@sentry/react-native',
     'expo-image',
