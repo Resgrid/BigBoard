@@ -11,6 +11,7 @@ import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
 import { useUnitsSignalRUpdates } from '@/hooks/use-units-signalr-updates';
 import { alertRowStyle, alertSortWeight, evaluateUnitStatusAlert, formatElapsed, useUnitStatusThresholds } from '@/lib/unit-status-thresholds';
+import { useCoreStore } from '@/stores/app/core-store';
 import { useUnitsStore } from '@/stores/units/store';
 
 import { WidgetContainer } from './WidgetContainer';
@@ -44,6 +45,8 @@ export const UnitAlertsWidget: React.FC<UnitAlertsWidgetProps> = ({ onRemove, is
   const isLoading = useUnitsStore((state) => state.isLoading);
   const error = useUnitsStore((state) => state.error);
   const fetchUnits = useUnitsStore((state) => state.fetchUnits);
+  const config = useCoreStore((state) => state.config);
+  const configError = useCoreStore((state) => state.error);
   const thresholds = useUnitStatusThresholds();
   // The instant every unit is measured against. Held in state rather than read inside the memo
   // so the passage of time is an explicit input — it is the only thing that moves a unit across its
@@ -85,7 +88,9 @@ export const UnitAlertsWidget: React.FC<UnitAlertsWidgetProps> = ({ onRemove, is
       });
   }, [units, thresholds, evaluatedAt]);
 
-  if (error) {
+  // Only an explicit empty list confirms that the department has no timers.
+  // Loading failures and responses from servers without timer support are unknown.
+  if (error || configError || (config && !Array.isArray(config.UnitStatusThresholds))) {
     return (
       <WidgetContainer title={t('unitAlerts.title')} onRemove={onRemove} isEditMode={isEditMode} testID="unit-alerts-widget" width={containerWidth} height={containerHeight}>
         <Box className="flex-1 items-center justify-center">
@@ -95,11 +100,11 @@ export const UnitAlertsWidget: React.FC<UnitAlertsWidgetProps> = ({ onRemove, is
     );
   }
 
-  if (isLoading) {
+  if (isLoading || !config) {
     return (
       <WidgetContainer title={t('unitAlerts.title')} onRemove={onRemove} isEditMode={isEditMode} testID="unit-alerts-widget" width={containerWidth} height={containerHeight}>
         <Box className="flex-1 items-center justify-center">
-          <Spinner size="small" />
+          <Spinner size="small" testID="unit-alerts-loading" />
         </Box>
       </WidgetContainer>
     );
