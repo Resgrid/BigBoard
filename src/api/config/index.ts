@@ -3,7 +3,10 @@ import { type GetSystemConfigResult } from '@/models/v4/configs/getSystemConfigR
 
 import { createApiEndpoint } from '../common';
 
-const getConfigApi = createApiEndpoint('/Config/GetConfig');
+// BigBoard loads config after sign-in and needs the department's timer settings.
+// The public bootstrap endpoint can succeed anonymously with an empty timer list;
+// the authenticated endpoint allows the API client to refresh an expired token.
+const getConfigApi = createApiEndpoint('/Config/GetDepartmentConfig');
 const getSystemConfigApi = createApiEndpoint('/Config/GetSystemConfig');
 
 export const getConfig = async (key: string) => {

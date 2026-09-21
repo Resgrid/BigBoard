@@ -1,4 +1,4 @@
-import notifee, { AndroidImportance } from '@notifee/react-native';
+import notifee, { AndroidForegroundServiceType, AndroidImportance } from '@notifee/react-native';
 import { getRecordingPermissionsAsync, requestRecordingPermissionsAsync } from 'expo-audio';
 import { Room, RoomEvent } from 'livekit-client';
 import { Platform } from 'react-native';
@@ -224,6 +224,9 @@ export const useLiveKitStore = create<LiveKitState>((set, get) => ({
             android: {
               channelId: 'notif',
               asForegroundService: true,
+              // microphone only: keeps mic capture legal while backgrounded (Android 14+).
+              // Playback of remote audio needs no FGS type — any running FGS keeps the process alive.
+              foregroundServiceTypes: [AndroidForegroundServiceType.FOREGROUND_SERVICE_TYPE_MICROPHONE],
               smallIcon: 'ic_launcher', // Ensure this icon exists in res/drawable
             },
           });
