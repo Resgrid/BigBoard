@@ -387,6 +387,39 @@ describe('ServerUrlBottomSheet', () => {
       });
     });
 
+    it('ends the old session before the new server is saved', async () => {
+      mockIsAuthenticated.mockReturnValue(true);
+
+      render(<ServerUrlBottomSheet {...defaultProps} />);
+      await waitForOptions();
+
+      fireEvent.press(screen.getByTestId('select-item-EU-Central'));
+      fireEvent.press(screen.getByText('Save'));
+
+      await waitFor(() => {
+        expect(mockSetUrl).toHaveBeenCalledWith('https://api-eu-central.resgrid.com/api/v4');
+      });
+      expect(mockOnUrlChanged.mock.invocationCallOrder[0]).toBeLessThan(mockSetUrl.mock.invocationCallOrder[0]);
+    });
+
+    it('keeps the current server when ending the session fails', async () => {
+      const { logger } = jest.requireMock('@/lib/logging') as { logger: { error: jest.Mock } };
+      mockIsAuthenticated.mockReturnValue(true);
+      mockOnUrlChanged.mockRejectedValueOnce(new Error('sign-out failed'));
+
+      render(<ServerUrlBottomSheet {...defaultProps} />);
+      await waitForOptions();
+
+      fireEvent.press(screen.getByTestId('select-item-EU-Central'));
+      fireEvent.press(screen.getByText('Save'));
+
+      await waitFor(() => {
+        expect(logger.error).toHaveBeenCalledWith(expect.objectContaining({ message: 'Failed to update server URL' }));
+      });
+      expect(mockSetUrl).not.toHaveBeenCalled();
+      expect(mockOnClose).not.toHaveBeenCalled();
+    });
+
     it('keeps the session when a signed-in user saves the server they are already on', async () => {
       mockIsAuthenticated.mockReturnValue(true);
       mockGetUrl.mockResolvedValueOnce('https://api.resgrid.com/api/v4');

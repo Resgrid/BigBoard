@@ -665,7 +665,8 @@ describe('useSignalRStore', () => {
       });
 
       expect(useSignalRStore.getState().liveLocations).toBe(before);
-      expect(logger.warn).toHaveBeenCalledTimes(2);
+      // These arrive every few seconds per tracker without a fix, so they must not be logged
+      expect(logger.warn).not.toHaveBeenCalled();
     });
 
     it('clears live locations', () => {

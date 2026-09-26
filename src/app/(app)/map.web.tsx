@@ -37,6 +37,36 @@ const hasCoordinates = (pin: MapMakerInfoData): boolean =>
 const hasSameAppearance = (a: MapMakerInfoData, b: MapMakerInfoData): boolean =>
   a.Title === b.Title && a.ImagePath === b.ImagePath && a.Color === b.Color && a.InfoWindowContent === b.InfoWindowContent && a.Type === b.Type;
 
+// `filter` also accepts url(), so only a bare angle may reach hue-rotate() -- anything else could load a remote resource.
+const CSS_ANGLE_PATTERN = /^-?\d+(\.\d+)?(deg|grad|rad|turn)$/i;
+
+// Pin text is user-entered (call names, POI names), so it goes in as text nodes, never as parsed HTML.
+const createPopupContent = (pin: MapMakerInfoData): HTMLElement => {
+  const content = document.createElement('div');
+  content.style.cssText = 'padding:12px;min-width:200px';
+
+  const titleEl = document.createElement('h3');
+  titleEl.style.cssText = 'margin:0 0 8px 0;font-weight:bold;font-size:14px';
+  titleEl.textContent = pin.Title || 'Unknown';
+  content.appendChild(titleEl);
+
+  if (pin.InfoWindowContent) {
+    const infoEl = document.createElement('div');
+    infoEl.style.cssText = 'margin:8px 0;font-size:12px';
+    infoEl.textContent = pin.InfoWindowContent;
+    content.appendChild(infoEl);
+  }
+
+  if (pin.Type) {
+    const typeEl = document.createElement('p');
+    typeEl.style.cssText = 'margin:4px 0 0 0;font-size:11px;color:#666';
+    typeEl.textContent = `Type: ${pin.Type}`;
+    content.appendChild(typeEl);
+  }
+
+  return content;
+};
+
 interface WebMarkerEntry {
   marker: mapboxgl.Marker;
   pin: MapMakerInfoData;
@@ -402,14 +432,18 @@ export default function Map() {
       iconEl.style.cssText = 'width:32px;height:32px;object-fit:contain';
       iconEl.alt = pin.Title || 'Marker';
 
-      if (pin.Color) {
-        markerContainer.style.filter = `hue-rotate(${pin.Color})`;
+      if (pin.Color && CSS_ANGLE_PATTERN.test(pin.Color.trim())) {
+        markerContainer.style.filter = `hue-rotate(${pin.Color.trim()})`;
       }
 
       iconEl.onerror = () => {
         iconEl.style.display = 'none';
         const fallbackIcon = document.createElement('div');
-        fallbackIcon.style.cssText = `width:32px;height:32px;border-radius:50%;background-color:${pin.Color || '#3b82f6'};border:3px solid white;box-shadow:0 2px 4px rgba(0,0,0,0.3)`;
+        fallbackIcon.style.cssText = 'width:32px;height:32px;border-radius:50%;background-color:#3b82f6;border:3px solid white;box-shadow:0 2px 4px rgba(0,0,0,0.3)';
+        if (pin.Color) {
+          // The property setter drops anything that is not a single valid color, so no extra declarations get in.
+          fallbackIcon.style.backgroundColor = pin.Color;
+        }
         markerContainer.insertBefore(fallbackIcon, markerContainer.firstChild);
       };
 
@@ -426,15 +460,7 @@ export default function Map() {
 
       const marker = new mapboxgl.Marker(markerContainer)
         .setLngLat([pin.Longitude, pin.Latitude])
-        .setPopup(
-          new mapboxgl.Popup({ offset: 25, closeButton: true, closeOnClick: false }).setHTML(
-            `<div style="padding:12px;min-width:200px">
-              <h3 style="margin:0 0 8px 0;font-weight:bold;font-size:14px">${pin.Title || 'Unknown'}</h3>
-              ${pin.InfoWindowContent ? `<div style="margin:8px 0;font-size:12px">${pin.InfoWindowContent}</div>` : ''}
-              ${pin.Type ? `<p style="margin:4px 0 0 0;font-size:11px;color:#666">Type: ${pin.Type}</p>` : ''}
-            </div>`
-          )
-        )
+        .setPopup(new mapboxgl.Popup({ offset: 25, closeButton: true, closeOnClick: false }).setDOMContent(createPopupContent(pin)))
         .addTo(currentMap);
 
       const entry: WebMarkerEntry = { marker, pin };

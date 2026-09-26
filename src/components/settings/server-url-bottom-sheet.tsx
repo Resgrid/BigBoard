@@ -29,7 +29,7 @@ interface ServerUrlForm {
 interface ServerUrlBottomSheetProps {
   isOpen: boolean;
   onClose: () => void;
-  /** Called after a signed-in user saves a different server, so the caller can end the old server's session. */
+  /** Called before a signed-in user's switch to a different server is saved, so the caller can end the old server's session. */
   onUrlChanged?: () => Promise<void>;
 }
 
@@ -150,12 +150,14 @@ export function ServerUrlBottomSheet({ isOpen, onClose, onUrlChanged }: ServerUr
       const nextApiUrl = buildApiUrl(resolvedBaseUrl);
       const hasChanged = nextApiUrl !== currentApiUrlRef.current;
 
-      await setUrl(nextApiUrl);
-      currentApiUrlRef.current = nextApiUrl;
-
+      // End the old server's session before the new URL is saved: if the sign-out fails, nothing is
+      // persisted, so its tokens are never sent to the new server.
       if (hasChanged && isAuthenticated && onUrlChanged) {
         await onUrlChanged();
       }
+
+      await setUrl(nextApiUrl);
+      currentApiUrlRef.current = nextApiUrl;
 
       logger.info({
         message: 'Server URL updated successfully',

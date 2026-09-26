@@ -26,7 +26,7 @@ jest.mock('mapbox-gl', () => ({
       return { on: jest.fn(), remove: jest.fn(), flyTo: jest.fn(), addControl: jest.fn(), setStyle: jest.fn(), fitBounds: jest.fn() };
     }),
     Marker: jest.fn().mockImplementation(() => ({ setLngLat: jest.fn().mockReturnThis(), setPopup: jest.fn().mockReturnThis(), addTo: jest.fn().mockReturnThis(), remove: jest.fn() })),
-    Popup: jest.fn().mockImplementation(() => ({ setHTML: jest.fn().mockReturnThis() })),
+    Popup: jest.fn().mockImplementation(() => ({ setDOMContent: jest.fn().mockReturnThis() })),
     LngLatBounds: jest.fn().mockImplementation(() => ({ extend: jest.fn() })),
     NavigationControl: jest.fn(),
     GeolocateControl: jest.fn(),
@@ -224,5 +224,37 @@ describe('map.web live pin updates', () => {
     expect(markerInstances()).toHaveLength(2);
     // The camera stays where the user left it
     expect(mapInstance().fitBounds).toHaveBeenCalledTimes(1);
+  });
+
+  it('puts pin text into the popup as text, never as markup', async () => {
+    const hostile = pin({
+      Id: 'c1',
+      Title: '<img src=x onerror=alert(1)>',
+      InfoWindowContent: '<script>alert(2)</script>',
+      Color: '0deg) url(https://evil.example/f.svg#x',
+    });
+    (getMapDataAndMarkers as jest.Mock).mockResolvedValue({ Data: { MapMakerInfos: [hostile], CenterLat: '', CenterLon: '', ZoomLevel: '' } });
+
+    renderMap();
+
+    const onLoad = mapInstance().on.mock.calls.find(([event]) => event === 'load')?.[1] as () => void;
+    act(() => {
+      onLoad();
+    });
+
+    await waitFor(() => {
+      expect(markerInstances()).toHaveLength(1);
+    });
+
+    const popup = (mapboxgl.Popup as unknown as jest.Mock).mock.results[0].value as { setDOMContent: jest.Mock };
+    const content = popup.setDOMContent.mock.calls[0][0] as HTMLElement;
+    expect(content.querySelector('img')).toBeNull();
+    expect(content.querySelector('script')).toBeNull();
+    expect(content.textContent).toContain('<img src=x onerror=alert(1)>');
+    expect(content.textContent).toContain('<script>alert(2)</script>');
+
+    // A color that is not a bare angle never reaches the CSS filter
+    const markerElement = (mapboxgl.Marker as unknown as jest.Mock).mock.calls[0][0] as HTMLElement;
+    expect(markerElement.style.filter).toBe('');
   });
 });

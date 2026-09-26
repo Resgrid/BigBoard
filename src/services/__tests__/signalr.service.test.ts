@@ -455,6 +455,25 @@ describe('SignalRService', () => {
 
       expect(options.accessTokenFactory()).toBe('refreshed-token');
     });
+
+    it('never falls back to the connect-time token once the session is cleared', async () => {
+      await signalRService.connectToHubWithEventingUrl({
+        name: 'geoHub',
+        eventingUrl: 'https://api.example.com/',
+        hubName: 'geolocationHub',
+        methods: ['onUnitLocationUpdated'],
+      });
+
+      const options = mockBuilderInstance.withUrl.mock.calls[0][1] as { accessTokenFactory: () => string };
+
+      // Signed out: an automatic reconnect must not authenticate as the previous user
+      mockGetState.mockReturnValue({
+        accessToken: null,
+        refreshAccessToken: mockRefreshAccessToken,
+      });
+
+      expect(options.accessTokenFactory()).toBe('');
+    });
   });
 
   describe('disconnectAll', () => {

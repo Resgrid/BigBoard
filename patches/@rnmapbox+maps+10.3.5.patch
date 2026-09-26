@@ -1,18 +1,33 @@
 diff --git a/node_modules/@rnmapbox/maps/android/src/main/mapbox-v11-compat/v11/com/rnmapbox/rnmbx/v11compat/Location.kt b/node_modules/@rnmapbox/maps/android/src/main/mapbox-v11-compat/v11/com/rnmapbox/rnmbx/v11compat/Location.kt
-index 8cda49e..05cbf87 100644
+index 8cda49e..f19a8fc 100644
 --- a/node_modules/@rnmapbox/maps/android/src/main/mapbox-v11-compat/v11/com/rnmapbox/rnmbx/v11compat/Location.kt
 +++ b/node_modules/@rnmapbox/maps/android/src/main/mapbox-v11-compat/v11/com/rnmapbox/rnmbx/v11compat/Location.kt
-@@ -73,17 +73,50 @@ fun LocationEngine.requestLocationUpdatesV11(callback: LocationEngineCallback, l
+@@ -45,7 +45,7 @@ interface LocationEngineCallback {
+   fun onFailure(e: Exception)
+ }
+ 
+-class LocationObserverAdapter(val callback: LocationEngineCallback): LocationObserver {
++class LocationObserverAdapter(val callback: LocationEngineCallback, val provider: DeviceLocationProvider): LocationObserver {
+   override fun onLocationUpdateReceived(locations: MutableList<com.mapbox.common.location.Location>) {
+     callback.onSuccess(LocationEngineResult(locations.last()))
+   }
+@@ -72,18 +72,55 @@ fun LocationEngine.requestLocationUpdatesV11(callback: LocationEngineCallback, l
+       Logger.e("RNMBXLocationEngine", "Failed to get location provider: ${newProvider.error!!.message}")
      }
    }
-   val observer = LocationObserverAdapter(callback)
+-  val observer = LocationObserverAdapter(callback)
 +  // Publish into `observers` *before* registering with the provider, and pin the provider we
 +  // register on. A concurrent `removeLocationUpdates` (same two threads described below) that
 +  // lands between the two steps would otherwise never see this observer and would leave it
 +  // registered — feeding location updates to a callback the caller already tore down, on a
 +  // provider instance the request refresh above may have replaced. Registration itself stays
 +  // outside the monitor: no Mapbox SDK call is ever made while holding it.
++  //
++  // The observer carries that provider, so every removal reaches the instance it is registered
++  // on even after a later request refresh swaps `locationProvider`. Removing an observer from a
++  // provider that does not hold it is a no-op, and the stale one would keep delivering updates.
 +  val provider = locationProvider
++  val observer = LocationObserverAdapter(callback, provider)
 +  synchronized(observers) {
 +    observers.add(observer)
 +  }
@@ -54,7 +69,7 @@ index 8cda49e..05cbf87 100644
 +    observers.removeAll(matched.toSet())
 +    matched
 +  }
-+  stale.forEach { locationProvider.removeLocationObserver(it) }
++  stale.forEach { it.provider.removeLocationObserver(it) }
  }
  
  fun LocationEngine.getLastLocation(callback: LocationEngineCallback) {

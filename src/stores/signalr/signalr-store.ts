@@ -558,9 +558,10 @@ export const useSignalRStore = create<SignalRState>((set, get) => ({
       if (!geolocationHubListenersRegistered) {
         geolocationHubListenersRegistered = true;
 
-        const applyLocationPush = (method: string, update: LiveLocation | null) => {
+        const applyLocationPush = (update: LiveLocation | null) => {
+          // Not logged: a tracker with no fix reports 0,0 on every push, which would flood the log
+          // the same way the service's per-message lines did (see UNLOGGED_HUB_METHODS).
           if (!update) {
-            logger.warn({ message: `${method}: ignoring payload without a usable id or coordinates` });
             return;
           }
 
@@ -576,11 +577,11 @@ export const useSignalRStore = create<SignalRState>((set, get) => ({
         };
 
         signalRService.on('onUnitLocationUpdated', (message) => {
-          applyLocationPush('onUnitLocationUpdated', parseUnitLocationUpdate(message));
+          applyLocationPush(parseUnitLocationUpdate(message));
         });
 
         signalRService.on('onPersonnelLocationUpdated', (message) => {
-          applyLocationPush('onPersonnelLocationUpdated', parsePersonnelLocationUpdate(message));
+          applyLocationPush(parsePersonnelLocationUpdate(message));
         });
 
         signalRService.on('onGeolocationConnect', (connectionId) => {

@@ -193,8 +193,9 @@ class SignalRService {
       const connectionBuilder = new HubConnectionBuilder()
         .withUrl(fullUrl, {
           // Read lazily: the automatic reconnect calls this again, and the hubs close the socket when
-          // the token expires. A token captured here would be the expired one on every retry.
-          accessTokenFactory: () => useAuthStore.getState().accessToken || token,
+          // the token expires. A token captured here would be the expired one on every retry -- and,
+          // after sign-out, the previous user's. No token means the reconnect fails, as it should.
+          accessTokenFactory: () => useAuthStore.getState().accessToken ?? '',
         })
         .withAutomaticReconnect([0, 2000, 5000, 10000, 30000])
         .configureLogging(LogLevel.Information);
@@ -330,7 +331,7 @@ class SignalRService {
 
       const connection = new HubConnectionBuilder()
         .withUrl(config.url, {
-          accessTokenFactory: () => useAuthStore.getState().accessToken || token,
+          accessTokenFactory: () => useAuthStore.getState().accessToken ?? '',
         })
         .withAutomaticReconnect([0, 2000, 5000, 10000, 30000])
         .configureLogging(LogLevel.Information)
