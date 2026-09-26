@@ -718,6 +718,7 @@
     "background_location": "Hintergrund-Standort",
     "contact_us": "Kontakt",
     "current_unit": "Aktuelle Einheit",
+    "custom": "Benutzerdefiniert",
     "english": "Englisch",
     "enter_password": "Passwort eingeben",
     "enter_server_url": "Resgrid API-URL eingeben (z. B. https://api.resgrid.com)",

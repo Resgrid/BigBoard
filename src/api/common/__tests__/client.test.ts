@@ -6,8 +6,9 @@ jest.mock('@/lib/logging', () => ({
   logger: { error: jest.fn(), warn: jest.fn(), info: jest.fn(), debug: jest.fn() },
 }));
 
+let mockBaseApiUrl = 'https://example.test/api/v4';
 jest.mock('@/lib/storage/app', () => ({
-  getBaseApiUrl: () => 'https://example.test/api/v4',
+  getBaseApiUrl: () => mockBaseApiUrl,
 }));
 
 jest.mock('@/stores/auth/store', () => ({
@@ -30,6 +31,27 @@ const unauthorized = (config: AxiosRequestConfig): AxiosError => {
   error.response = { status: 401, statusText: 'Unauthorized', data: {}, headers: {}, config: config as never };
   return error;
 };
+
+describe('api client base url', () => {
+  afterEach(() => {
+    mockBaseApiUrl = 'https://example.test/api/v4';
+  });
+
+  it('sends each request to the currently selected server without a reload', async () => {
+    getState.mockReturnValue({ accessToken: null, refreshToken: null, refreshAccessToken: mockRefreshAccessToken });
+    const baseUrls: (string | undefined)[] = [];
+    api.defaults.adapter = async (config) => {
+      baseUrls.push(config.baseURL);
+      return { data: {}, status: 200, statusText: 'OK', headers: {}, config } as never;
+    };
+
+    await api.get('/Calls/GetActiveCalls');
+    mockBaseApiUrl = 'https://api-eu-central.resgrid.com/api/v4';
+    await api.get('/Calls/GetActiveCalls');
+
+    expect(baseUrls).toEqual(['https://example.test/api/v4', 'https://api-eu-central.resgrid.com/api/v4']);
+  });
+});
 
 describe('api client 401 handling', () => {
   let adapterCalls: number;

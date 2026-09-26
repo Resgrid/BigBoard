@@ -201,7 +201,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     [
       '@rnmapbox/maps',
       {
-        RNMapboxMapsVersion: '11.8.0',
+        // Keep in step with the `mapbox` field of the installed @rnmapbox/maps — the JS
+        // bindings are generated against a specific native SDK, and pinning an older one
+        // makes style props the bindings emit (symbolZOffset and friends) trap natively.
+        RNMapboxMapsVersion: '11.23.1',
       },
     ],
     [
@@ -253,6 +256,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         },
         ios: {
           deploymentTarget: '18.1',
+          // Apps built with the iOS 27 SDK must adopt the UIKit scene life cycle or they are
+          // killed at launch. Remove once on SDK 58, whose template adopts it by default.
+          enableSceneSupport: true,
         },
       },
     ],
@@ -328,6 +334,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     'expo-web-browser',
     './customGradle.plugin.js',
     './customManifest.plugin.js',
+    './plugins/withResourceBundleDeploymentTarget.js',
     ['./appIconBadge.plugin.js', appIconBadgeConfig],
   ],
   extra: {

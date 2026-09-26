@@ -3,7 +3,7 @@ import { AppStateStatus } from 'react-native';
 
 import { useSignalRStore } from '@/stores/signalr/signalr-store';
 
-import { useSignalRLifecycle } from '../use-signalr-lifecycle';
+import { SIGNALR_WATCHDOG_INTERVAL_MS, useSignalRLifecycle } from '../use-signalr-lifecycle';
 
 // Mock the dependencies
 jest.mock('@/stores/signalr/signalr-store');
@@ -17,6 +17,8 @@ describe('useSignalRLifecycle', () => {
   const mockDisconnectUpdateHub = jest.fn();
   const mockConnectGeolocationHub = jest.fn();
   const mockDisconnectGeolocationHub = jest.fn();
+  const mockEnsureHubConnections = jest.fn();
+  const mockClearLiveLocations = jest.fn();
 
   // Create shared state for app lifecycle that can be updated
   let appLifecycleState = {
@@ -48,6 +50,8 @@ describe('useSignalRLifecycle', () => {
       disconnectUpdateHub: mockDisconnectUpdateHub,
       connectGeolocationHub: mockConnectGeolocationHub,
       disconnectGeolocationHub: mockDisconnectGeolocationHub,
+      ensureHubConnections: mockEnsureHubConnections,
+      clearLiveLocations: mockClearLiveLocations,
       isUpdateHubConnected: false,
       isGeolocationHubConnected: false,
     };
@@ -55,6 +59,7 @@ describe('useSignalRLifecycle', () => {
 
     // Mock useAppLifecycle to return shared state
     mockUseAppLifecycle.mockImplementation(() => appLifecycleState);
+    mockEnsureHubConnections.mockResolvedValue(undefined);
   });
 
   it('should disconnect SignalR when app goes to background', async () => {
@@ -70,8 +75,9 @@ describe('useSignalRLifecycle', () => {
       await result.current.handleAppBackground();
     });
 
-    // Verify that disconnect method was called (only UpdateHub is managed)
+    // Both hubs follow the app into the background
     expect(mockDisconnectUpdateHub).toHaveBeenCalled();
+    expect(mockDisconnectGeolocationHub).toHaveBeenCalled();
   });
 
   it('should reconnect SignalR when app becomes active from background', async () => {
@@ -87,8 +93,88 @@ describe('useSignalRLifecycle', () => {
       await result.current.handleAppResume();
     });
 
-    // Verify that connect method was called (only UpdateHub is managed)
+    // Both hubs come back on resume
     expect(mockConnectUpdateHub).toHaveBeenCalled();
+    expect(mockConnectGeolocationHub).toHaveBeenCalled();
+  });
+
+  it('still reconnects the geolocation hub when the update hub reconnect fails', async () => {
+    mockConnectUpdateHub.mockRejectedValueOnce(new Error('Update hub connect failed'));
+    const { result } = renderHook((props: { isSignedIn: boolean; hasInitialized: boolean }) => useSignalRLifecycle(props), {
+      initialProps: { isSignedIn: true, hasInitialized: true },
+    });
+
+    await act(async () => {
+      await result.current.handleAppResume();
+    });
+
+    expect(mockConnectGeolocationHub).toHaveBeenCalledTimes(1);
+  });
+
+  it('runs the connection watchdog on an interval while signed in and active', async () => {
+    renderHook((props: { isSignedIn: boolean; hasInitialized: boolean }) => useSignalRLifecycle(props), {
+      initialProps: { isSignedIn: true, hasInitialized: true },
+    });
+
+    expect(mockEnsureHubConnections).not.toHaveBeenCalled();
+
+    await act(async () => {
+      jest.advanceTimersByTime(SIGNALR_WATCHDOG_INTERVAL_MS);
+    });
+    expect(mockEnsureHubConnections).toHaveBeenCalledTimes(1);
+
+    await act(async () => {
+      jest.advanceTimersByTime(SIGNALR_WATCHDOG_INTERVAL_MS);
+    });
+    expect(mockEnsureHubConnections).toHaveBeenCalledTimes(2);
+  });
+
+  it('does not start a watchdog pass while the previous one is still running', async () => {
+    mockEnsureHubConnections.mockImplementation(() => new Promise(() => {}));
+    renderHook((props: { isSignedIn: boolean; hasInitialized: boolean }) => useSignalRLifecycle(props), {
+      initialProps: { isSignedIn: true, hasInitialized: true },
+    });
+
+    await act(async () => {
+      jest.advanceTimersByTime(SIGNALR_WATCHDOG_INTERVAL_MS * 3);
+    });
+
+    expect(mockEnsureHubConnections).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not run the watchdog when signed out, before initialization, or in the background', async () => {
+    const { rerender } = renderHook((props: { isSignedIn: boolean; hasInitialized: boolean }) => useSignalRLifecycle(props), {
+      initialProps: { isSignedIn: false, hasInitialized: true },
+    });
+    await act(async () => {
+      jest.advanceTimersByTime(SIGNALR_WATCHDOG_INTERVAL_MS * 2);
+    });
+
+    rerender({ isSignedIn: true, hasInitialized: false });
+    await act(async () => {
+      jest.advanceTimersByTime(SIGNALR_WATCHDOG_INTERVAL_MS * 2);
+    });
+
+    appLifecycleState = { appState: 'background' as AppStateStatus, isActive: false };
+    rerender({ isSignedIn: true, hasInitialized: true });
+    await act(async () => {
+      jest.advanceTimersByTime(SIGNALR_WATCHDOG_INTERVAL_MS * 2);
+    });
+
+    expect(mockEnsureHubConnections).not.toHaveBeenCalled();
+  });
+
+  it('disconnects both hubs and clears live locations on sign-out', async () => {
+    const { rerender } = renderHook((props: { isSignedIn: boolean; hasInitialized: boolean }) => useSignalRLifecycle(props), {
+      initialProps: { isSignedIn: true, hasInitialized: true },
+    });
+    expect(mockClearLiveLocations).not.toHaveBeenCalled();
+
+    rerender({ isSignedIn: false, hasInitialized: true });
+
+    expect(mockClearLiveLocations).toHaveBeenCalledTimes(1);
+    expect(mockDisconnectGeolocationHub).toHaveBeenCalledTimes(1);
+    expect(mockDisconnectUpdateHub).toHaveBeenCalledTimes(1);
   });
 
   it('should not manage SignalR when user is not signed in', async () => {

@@ -13,6 +13,7 @@ import PinDetailModal from '@/components/maps/pin-detail-modal';
 import { FocusAwareStatusBar } from '@/components/ui/focus-aware-status-bar';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { useAppLifecycle } from '@/hooks/use-app-lifecycle';
+import { useMapLiveLocations } from '@/hooks/use-map-live-locations';
 import { useMapSignalRUpdates } from '@/hooks/use-map-signalr-updates';
 import { Env } from '@/lib/env';
 import { logger } from '@/lib/logging';
@@ -65,7 +66,11 @@ export default function Map() {
   const [styleURL, setStyleURL] = useState({ styleURL: getMapStyle() });
 
   const pulseAnim = useRef(new Animated.Value(1)).current;
-  useMapSignalRUpdates(setMapPins);
+
+  // Realtime unit/personnel positions move pins in place; every REST snapshot goes through applySnapshot
+  const { applySnapshot } = useMapLiveLocations(mapPins, setMapPins);
+  const handleMarkersUpdate = useCallback((markers: MapMakerInfoData[], fetchStartedAt: number) => setMapPins(applySnapshot(markers, fetchStartedAt)), [applySnapshot]);
+  useMapSignalRUpdates(handleMarkersUpdate);
 
   // Update map style when theme changes
   useEffect(() => {
@@ -201,10 +206,11 @@ export default function Map() {
           },
         });
 
+        const fetchStartedAt = Date.now();
         const mapDataAndMarkers = await getMapDataAndMarkers(abortController.signal);
 
         if (mapDataAndMarkers && mapDataAndMarkers.Data) {
-          setMapPins(mapDataAndMarkers.Data.MapMakerInfos);
+          setMapPins(applySnapshot(mapDataAndMarkers.Data.MapMakerInfos ?? [], fetchStartedAt));
 
           // Center map on the coordinates from API if available and user hasn't moved the map
           if (mapDataAndMarkers.Data.CenterLat && mapDataAndMarkers.Data.CenterLon && !hasUserMovedMap && !location.isMapLocked) {
@@ -257,7 +263,7 @@ export default function Map() {
     return () => {
       abortController.abort();
     };
-  }, [isMapReady, isAuthenticated, isInitialized, isActive, hasUserMovedMap, location.isMapLocked]);
+  }, [isMapReady, isAuthenticated, isInitialized, isActive, hasUserMovedMap, location.isMapLocked, applySnapshot]);
 
   useEffect(() => {
     // Held in a local so the loop can be stopped on unmount -- without that it keeps running (and
@@ -320,10 +326,11 @@ export default function Map() {
     }
   };
 
-  const handlePinPress = (pin: MapMakerInfoData) => {
+  // Stable so the memoised pins only re-render when their own pin object changes
+  const handlePinPress = useCallback((pin: MapMakerInfoData) => {
     setSelectedPin(pin);
     setIsPinDetailModalOpen(true);
-  };
+  }, []);
 
   const handleSetAsCurrentCall = async (pin: MapMakerInfoData) => {
     try {

@@ -1,12 +1,13 @@
 import Mapbox from '@rnmapbox/maps';
 import { useColorScheme } from 'nativewind';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { StyleSheet } from 'react-native';
 
 import { getMapDataAndMarkers, getMapLayers } from '@/api/mapping/mapping';
 import { Box } from '@/components/ui/box';
 import { Spinner } from '@/components/ui/spinner';
 import { Text } from '@/components/ui/text';
+import { useMapLiveLocations } from '@/hooks/use-map-live-locations';
 import { useMapSignalRUpdates } from '@/hooks/use-map-signalr-updates';
 import { logger } from '@/lib/logging';
 import { type MapMakerInfoData } from '@/models/v4/mapping/getMapDataAndMarkersData';
@@ -41,6 +42,7 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ onRemove, isEditMode, widt
   const [isMapReady, setIsMapReady] = useState(false);
   const [hasLoadedInitialData, setHasLoadedInitialData] = useState(false);
   const cameraRef = useRef<Mapbox.Camera>(null);
+  const hasCenteredRef = useRef(false);
 
   // Get auth and core store states
   const accessToken = useAuthStore((state) => state.accessToken);
@@ -50,8 +52,12 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ onRemove, isEditMode, widt
   // Get map store
   const setMapData = useMapStore((state) => state.setMapData);
 
+  // Realtime unit/personnel positions move pins in place; every REST snapshot goes through applySnapshot
+  const { applySnapshot } = useMapLiveLocations(mapPins, setMapPins);
+  const handleMarkersUpdate = useCallback((markers: MapMakerInfoData[], fetchStartedAt: number) => setMapPins(applySnapshot(markers, fetchStartedAt)), [applySnapshot]);
+
   // Use SignalR updates to refresh map pins
-  useMapSignalRUpdates(setMapPins);
+  useMapSignalRUpdates(handleMarkersUpdate);
 
   // Load initial map data when conditions are met
   useEffect(() => {
@@ -64,6 +70,7 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ onRemove, isEditMode, widt
         logger.info({ message: 'MapWidget: Loading initial map data' });
 
         // Fetch both map data and layers
+        const fetchStartedAt = Date.now();
         const [mapDataResult, layersResult] = await Promise.all([
           getMapDataAndMarkers(),
           getMapLayers(0), // 0 = All layers
@@ -74,7 +81,7 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ onRemove, isEditMode, widt
             message: 'MapWidget: Initial map data loaded',
             context: { markerCount: mapDataResult.Data.MapMakerInfos.length },
           });
-          setMapPins(mapDataResult.Data.MapMakerInfos);
+          setMapPins(applySnapshot(mapDataResult.Data.MapMakerInfos, fetchStartedAt));
 
           // Store map data in the map store for other widgets to access
           setMapData(mapDataResult.Data);
@@ -98,11 +105,14 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ onRemove, isEditMode, widt
     };
 
     loadInitialData();
-  }, [isMapReady, isAuthenticated, isInitialized, hasLoadedInitialData, setMapData]);
+  }, [isMapReady, isAuthenticated, isInitialized, hasLoadedInitialData, setMapData, applySnapshot]);
 
-  // Center on first pin if available
+  // Center on the first pin ONCE. Pins change on every SignalR refresh and every realtime position
+  // update; re-centering each time would yank the camera (and any pan/zoom) around all day long.
   useEffect(() => {
+    if (hasCenteredRef.current) return;
     if (isMapReady && mapPins.length > 0 && cameraRef.current) {
+      hasCenteredRef.current = true;
       const firstPin = mapPins[0];
       cameraRef.current.setCamera({
         centerCoordinate: [firstPin.Longitude, firstPin.Latitude],

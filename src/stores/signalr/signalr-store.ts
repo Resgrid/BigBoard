@@ -2,6 +2,7 @@ import { create } from 'zustand';
 
 import { useAuthStore } from '@/lib';
 import { Env } from '@/lib/env';
+import { type LiveLocation, type LiveLocationMap, mergeLiveLocation, parsePersonnelLocationUpdate, parseUnitLocationUpdate } from '@/lib/live-locations';
 import { logger } from '@/lib/logging';
 import { type SignalRConnectionStateCallbacks, signalRService } from '@/services/signalr.service';
 
@@ -11,6 +12,51 @@ import { useWeatherAlertsStore } from '../weatherAlerts/store';
 
 let updateHubListenersRegistered = false;
 let updateHubStateCallbackHandle: SignalRConnectionStateCallbacks | null = null;
+
+/** Messages the geolocation hub pushes. `onGeolocationConnect` is the reply to `GeolocationConnect`. */
+export const GEOLOCATION_HUB_METHODS = ['onUnitLocationUpdated', 'onPersonnelLocationUpdated', 'onGeolocationConnect'];
+/** A push for a pin the map does not have waits this long so a burst of them costs one refetch. */
+export const UNKNOWN_PIN_REFRESH_DELAY_MS = 4000;
+/** Each unknown pin may cause at most one refetch per window (the viewer may simply not be allowed to see it). */
+export const UNKNOWN_PIN_REFRESH_COOLDOWN_MS = 5 * 60 * 1000;
+/** Watchdog repair backoff after a failed repair attempt: doubles from the base up to the cap. */
+export const HUB_REPAIR_BASE_BACKOFF_MS = 30 * 1000;
+export const HUB_REPAIR_MAX_BACKOFF_MS = 10 * 60 * 1000;
+
+let geolocationHubListenersRegistered = false;
+let geolocationHubStateCallbackHandle: SignalRConnectionStateCallbacks | null = null;
+
+// Whether the app currently wants each hub connected (set by connect*, cleared by disconnect*). The
+// watchdog only repairs hubs that are wanted, so it never resurrects one that was deliberately closed.
+let updateHubWanted = false;
+let geolocationHubWanted = false;
+
+// Group membership is per connection id: every new connection (initial, automatic reconnect, or the
+// service's rebuild after close) must invoke the join method again. These track the CURRENT connection.
+let updateHubJoined = false;
+let geolocationHubJoined = false;
+
+// Whether a join has ever succeeded in this session. Any later join is a RE-join after a gap, during
+// which messages were missed, so it triggers a one-off catch-up refetch.
+let updateHubHasJoined = false;
+let geolocationHubHasJoined = false;
+
+const unknownPinRefreshLog = new Map<string, number>();
+let unknownPinRefreshTimer: ReturnType<typeof setTimeout> | null = null;
+const hubRepairBackoff = new Map<string, { failures: number; nextAttemptAt: number }>();
+
+const canAttemptHubRepair = (hubName: string, now: number): boolean => (hubRepairBackoff.get(hubName)?.nextAttemptAt ?? 0) <= now;
+
+const recordHubRepairResult = (hubName: string, succeeded: boolean, now: number): void => {
+  if (succeeded) {
+    hubRepairBackoff.delete(hubName);
+    return;
+  }
+
+  const failures = (hubRepairBackoff.get(hubName)?.failures ?? 0) + 1;
+  const delay = Math.min(HUB_REPAIR_BASE_BACKOFF_MS * 2 ** (failures - 1), HUB_REPAIR_MAX_BACKOFF_MS);
+  hubRepairBackoff.set(hubName, { failures, nextAttemptAt: now + delay });
+};
 
 interface SignalRState {
   isUpdateHubConnected: boolean;
@@ -24,9 +70,19 @@ interface SignalRState {
   lastCallsTimestamp: number;
   lastUnitsTimestamp: number;
   lastPersonnelTimestamp: number;
+  /** True only once the server has confirmed the department-group join (`onGeolocationConnect`). */
   isGeolocationHubConnected: boolean;
   lastGeolocationMessage: unknown;
   lastGeolocationTimestamp: number;
+  /**
+   * Latest realtime position per unit/personnel, keyed by lower-cased REST pin id (`u12`,
+   * `p<guid>`). A per-entity map rather than a single "last message" slot: SignalR dispatches a
+   * frame's messages synchronously and React batches the resulting renders, so a single slot drops
+   * all but the last position of a burst.
+   */
+  liveLocations: LiveLocationMap;
+  /** Bumped to ask every live map for one background refetch of the REST pins. */
+  mapRefreshRequestTimestamp: number;
   error: Error | null;
   connectUpdateHub: () => Promise<void>;
   disconnectUpdateHub: () => Promise<void>;
@@ -34,7 +90,77 @@ interface SignalRState {
   connectGeolocationHub: () => Promise<void>;
   disconnectGeolocationHub: () => Promise<void>;
   checkConnectionState: () => boolean;
+  /** Ask the live maps to refetch their pins once (e.g. after a re-join, when pushes were missed). */
+  requestMapRefresh: () => void;
+  /** Report live locations that matched no pin; coalesced and rate-limited into map refetches. */
+  reportUnknownLivePins: (pinIds: string[]) => void;
+  /** Drop all live positions and the bookkeeping around them (sign-out). */
+  clearLiveLocations: () => void;
+  /** Watchdog: repair any wanted hub whose connection was lost for good or that is not in its group. */
+  ensureHubConnections: () => Promise<void>;
 }
+
+const markUpdateHubJoined = (): void => {
+  const isRejoin = updateHubHasJoined;
+  updateHubJoined = true;
+  updateHubHasJoined = true;
+
+  if (isRejoin) {
+    // Whatever was broadcast while this client was out of the group is gone. Nudge every widget to
+    // refetch once so a wall board does not sit on stale calls/units/personnel until the next event.
+    const now = Date.now();
+    useSignalRStore.setState({ lastUpdateTimestamp: now, lastCallsTimestamp: now, lastUnitsTimestamp: now, lastPersonnelTimestamp: now });
+  }
+};
+
+const rejoinUpdateHub = async (): Promise<void> => {
+  const departmentId = securityStore.getState().rights?.DepartmentId;
+  if (!departmentId) {
+    logger.warn({
+      message: 'DepartmentId not available, cannot re-join update hub after reconnect',
+    });
+    return;
+  }
+
+  try {
+    await signalRService.invoke(Env.CHANNEL_HUB_NAME, 'connect', parseInt(departmentId, 10));
+    markUpdateHubJoined();
+    logger.info({ message: 'Re-joined update hub department group after reconnect' });
+  } catch (error) {
+    // The watchdog retries the join while the connection is up but not in its group.
+    logger.error({
+      message: 'Failed to re-join update hub department group after reconnect',
+      context: { error },
+    });
+  }
+};
+
+const joinGeolocationHub = async (): Promise<void> => {
+  // Zero arguments: the server method takes none and SignalR rejects a count mismatch.
+  await signalRService.invoke(Env.REALTIME_GEO_HUB_NAME, 'GeolocationConnect');
+
+  const isRejoin = geolocationHubHasJoined;
+  geolocationHubJoined = true;
+  geolocationHubHasJoined = true;
+
+  if (isRejoin) {
+    // Positions sent while we were out of the group were missed; let the maps catch up once.
+    useSignalRStore.getState().requestMapRefresh();
+  }
+};
+
+const rejoinGeolocationHub = async (): Promise<void> => {
+  try {
+    await joinGeolocationHub();
+    logger.info({ message: 'Re-joined geolocation hub department group after reconnect' });
+  } catch (error) {
+    // The watchdog retries the join while the connection is up but not in its group.
+    logger.error({
+      message: 'Failed to re-join geolocation hub department group after reconnect',
+      context: { error },
+    });
+  }
+};
 
 export const useSignalRStore = create<SignalRState>((set, get) => ({
   isUpdateHubConnected: false,
@@ -46,10 +172,16 @@ export const useSignalRStore = create<SignalRState>((set, get) => ({
   isGeolocationHubConnected: false,
   lastGeolocationMessage: null,
   lastGeolocationTimestamp: 0,
+  liveLocations: {},
+  mapRefreshRequestTimestamp: 0,
   error: null,
   connectUpdateHub: async () => {
+    updateHubWanted = true;
+
     try {
-      if (get().isUpdateHubConnected) {
+      // Only a connection that is really up AND in its department group counts: a stale flag must
+      // never block a repair (the side menu syncs the flag from the transport state alone).
+      if (get().isUpdateHubConnected && updateHubJoined && signalRService.isHubConnected(Env.CHANNEL_HUB_NAME)) {
         return;
       }
 
@@ -145,6 +277,7 @@ export const useSignalRStore = create<SignalRState>((set, get) => ({
         });
       } else {
         await signalRService.invoke(Env.CHANNEL_HUB_NAME, 'connect', parseInt(departmentId, 10));
+        markUpdateHubJoined();
       }
 
       if (!updateHubListenersRegistered) {
@@ -245,19 +378,25 @@ export const useSignalRStore = create<SignalRState>((set, get) => ({
             logger.info({
               message: 'Update SignalR hub connection closed',
             });
+            updateHubJoined = false;
             set({ isUpdateHubConnected: false });
           },
           onReconnecting: () => {
             logger.info({
               message: 'Update SignalR hub reconnecting',
             });
+            updateHubJoined = false;
             set({ isUpdateHubConnected: false });
           },
           onReconnected: () => {
             logger.info({
               message: 'Update SignalR hub reconnected',
             });
+            // Fired for SignalR's automatic reconnect AND the service's rebuild after close. Either
+            // way this is a new connection id that is not in the department group yet.
+            updateHubJoined = false;
             set({ isUpdateHubConnected: true, error: null });
+            void rejoinUpdateHub();
           },
           onError: (error) => {
             logger.error({
@@ -278,6 +417,9 @@ export const useSignalRStore = create<SignalRState>((set, get) => ({
     }
   },
   disconnectUpdateHub: async () => {
+    updateHubWanted = false;
+    updateHubJoined = false;
+
     try {
       if (updateHubStateCallbackHandle) {
         signalRService.unregisterConnectionStateCallbacks(Env.CHANNEL_HUB_NAME, updateHubStateCallbackHandle);
@@ -339,8 +481,11 @@ export const useSignalRStore = create<SignalRState>((set, get) => ({
     return isActuallyConnected;
   },
   connectGeolocationHub: async () => {
+    geolocationHubWanted = true;
+
     try {
-      if (get().isGeolocationHubConnected) {
+      // A stale flag must never block a repair: only a live connection that is in its group counts.
+      if (get().isGeolocationHubConnected && geolocationHubJoined && signalRService.isHubConnected(Env.REALTIME_GEO_HUB_NAME)) {
         return;
       }
 
@@ -408,9 +553,89 @@ export const useSignalRStore = create<SignalRState>((set, get) => ({
         });
       }
 
-      // Connect to the geolocation hub (implementation depends on your SignalR service)
+      // Listeners first, so the join reply and the first pushes cannot slip past. The service's
+      // emitter is process-wide and outlives connections, so this happens once (idempotent).
+      if (!geolocationHubListenersRegistered) {
+        geolocationHubListenersRegistered = true;
+
+        const applyLocationPush = (method: string, update: LiveLocation | null) => {
+          if (!update) {
+            logger.warn({ message: `${method}: ignoring payload without a usable id or coordinates` });
+            return;
+          }
+
+          set((state) => {
+            const liveLocations = mergeLiveLocation(state.liveLocations, update);
+            if (liveLocations === state.liveLocations) {
+              // Older than the fix already held (replayed/reordered) or an exact duplicate.
+              return state;
+            }
+
+            return { liveLocations, lastGeolocationMessage: update, lastGeolocationTimestamp: update.receivedAt };
+          });
+        };
+
+        signalRService.on('onUnitLocationUpdated', (message) => {
+          applyLocationPush('onUnitLocationUpdated', parseUnitLocationUpdate(message));
+        });
+
+        signalRService.on('onPersonnelLocationUpdated', (message) => {
+          applyLocationPush('onPersonnelLocationUpdated', parsePersonnelLocationUpdate(message));
+        });
+
+        signalRService.on('onGeolocationConnect', (connectionId) => {
+          // A late reply for a connection we have since dropped must not claim we are connected.
+          if (!geolocationHubWanted || !signalRService.isHubConnected(Env.REALTIME_GEO_HUB_NAME)) {
+            return;
+          }
+
+          logger.info({
+            message: 'Joined geolocation hub department group',
+            context: { connectionId },
+          });
+          set({ isGeolocationHubConnected: true });
+        });
+      }
+
+      if (!geolocationHubStateCallbackHandle) {
+        geolocationHubStateCallbackHandle = signalRService.registerConnectionStateCallbacks(Env.REALTIME_GEO_HUB_NAME, {
+          onClose: () => {
+            logger.info({ message: 'Geolocation hub connection closed' });
+            geolocationHubJoined = false;
+            set({ isGeolocationHubConnected: false });
+          },
+          onReconnecting: () => {
+            logger.info({ message: 'Geolocation hub reconnecting' });
+            geolocationHubJoined = false;
+            set({ isGeolocationHubConnected: false });
+          },
+          onReconnected: () => {
+            // Automatic reconnect or the service's rebuild after close: a new connection id that is
+            // not in the department group until GeolocationConnect is invoked again.
+            logger.info({ message: 'Geolocation hub reconnected, re-joining department group' });
+            geolocationHubJoined = false;
+            set({ isGeolocationHubConnected: false });
+            void rejoinGeolocationHub();
+          },
+          onError: (error) => {
+            logger.warn({
+              message: 'Geolocation hub connection error',
+              context: { error },
+            });
+          },
+        });
+      }
+
+      await signalRService.connectToHubWithEventingUrl({
+        name: Env.REALTIME_GEO_HUB_NAME,
+        eventingUrl: eventingUrl,
+        hubName: Env.REALTIME_GEO_HUB_NAME,
+        methods: GEOLOCATION_HUB_METHODS,
+      });
+
+      await joinGeolocationHub();
+
       logger.info({ message: 'Geolocation hub connected' });
-      set({ isGeolocationHubConnected: true, error: null });
     } catch (error) {
       const err = error instanceof Error ? error : new Error('Unknown error occurred');
       logger.error({
@@ -421,8 +646,16 @@ export const useSignalRStore = create<SignalRState>((set, get) => ({
     }
   },
   disconnectGeolocationHub: async () => {
+    geolocationHubWanted = false;
+    geolocationHubJoined = false;
+
     try {
+      if (geolocationHubStateCallbackHandle) {
+        signalRService.unregisterConnectionStateCallbacks(Env.REALTIME_GEO_HUB_NAME, geolocationHubStateCallbackHandle);
+        geolocationHubStateCallbackHandle = null;
+      }
       set({ isGeolocationHubConnected: false, lastGeolocationMessage: null });
+      await signalRService.disconnectFromHub(Env.REALTIME_GEO_HUB_NAME);
       logger.info({ message: 'Geolocation hub disconnected' });
     } catch (error) {
       const err = error instanceof Error ? error : new Error('Unknown error occurred');
@@ -431,6 +664,86 @@ export const useSignalRStore = create<SignalRState>((set, get) => ({
         context: { error: err },
       });
       set({ error: err });
+    }
+  },
+  requestMapRefresh: () => {
+    // Strictly greater than both stamps the map hook watches, so the request is never swallowed by
+    // an update that landed in the same millisecond (or by a clock that stepped backwards).
+    set((state) => ({
+      mapRefreshRequestTimestamp: Math.max(Date.now(), state.mapRefreshRequestTimestamp + 1, state.lastUpdateTimestamp + 1),
+    }));
+  },
+  reportUnknownLivePins: (pinIds: string[]) => {
+    const now = Date.now();
+    let accepted = false;
+
+    for (const pinId of pinIds) {
+      const lastRequestedAt = unknownPinRefreshLog.get(pinId);
+      if (lastRequestedAt !== undefined && now - lastRequestedAt < UNKNOWN_PIN_REFRESH_COOLDOWN_MS) {
+        continue;
+      }
+
+      unknownPinRefreshLog.set(pinId, now);
+      accepted = true;
+    }
+
+    if (!accepted || unknownPinRefreshTimer) {
+      return;
+    }
+
+    // Keep the log from growing without bound on a long-running board.
+    unknownPinRefreshLog.forEach((requestedAt, pinId) => {
+      if (now - requestedAt >= UNKNOWN_PIN_REFRESH_COOLDOWN_MS) {
+        unknownPinRefreshLog.delete(pinId);
+      }
+    });
+
+    logger.debug({
+      message: 'Live location for a pin the map does not have, scheduling a map refetch',
+      context: { pinIds },
+    });
+
+    unknownPinRefreshTimer = setTimeout(() => {
+      unknownPinRefreshTimer = null;
+      get().requestMapRefresh();
+    }, UNKNOWN_PIN_REFRESH_DELAY_MS);
+  },
+  clearLiveLocations: () => {
+    unknownPinRefreshLog.clear();
+    if (unknownPinRefreshTimer) {
+      clearTimeout(unknownPinRefreshTimer);
+      unknownPinRefreshTimer = null;
+    }
+    geolocationHubHasJoined = false;
+    set({ liveLocations: {}, lastGeolocationMessage: null, lastGeolocationTimestamp: 0 });
+  },
+  ensureHubConnections: async () => {
+    const now = Date.now();
+
+    if (updateHubWanted) {
+      const hubName = Env.CHANNEL_HUB_NAME;
+      // "Not available" means no connection, no automatic reconnect and no scheduled rebuild: the
+      // service has given up (max attempts, or a rebuild that failed while the network was down).
+      const lost = !signalRService.isHubAvailable(hubName);
+      const notInGroup = signalRService.isHubConnected(hubName) && !updateHubJoined;
+
+      if ((lost || notInGroup) && canAttemptHubRepair(hubName, now)) {
+        logger.warn({ message: 'Update hub watchdog: repairing connection', context: { lost, notInGroup } });
+        await get().connectUpdateHub();
+        recordHubRepairResult(hubName, signalRService.isHubConnected(hubName) && updateHubJoined, now);
+      }
+    }
+
+    if (geolocationHubWanted) {
+      const hubName = Env.REALTIME_GEO_HUB_NAME;
+      const lost = !signalRService.isHubAvailable(hubName);
+      const notInGroup = signalRService.isHubConnected(hubName) && !geolocationHubJoined;
+
+      if ((lost || notInGroup) && canAttemptHubRepair(hubName, now)) {
+        logger.warn({ message: 'Geolocation hub watchdog: repairing connection', context: { lost, notInGroup } });
+        await get().connectGeolocationHub();
+        recordHubRepairResult(hubName, signalRService.isHubConnected(hubName) && geolocationHubJoined, now);
+      }
     }
   },
 }));

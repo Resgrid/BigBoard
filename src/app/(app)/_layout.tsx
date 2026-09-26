@@ -157,6 +157,18 @@ export default function TabLayout() {
           // Don't fail initialization if SignalR connection fails
         }
 
+        // Live unit/personnel positions for the maps. Not awaited: the board must not wait on (or fail
+        // because of) the location feed; the store logs failures and the lifecycle watchdog retries.
+        useSignalRStore
+          .getState()
+          .connectGeolocationHub()
+          .catch((error) => {
+            logger.error({
+              message: 'Failed to connect SignalR geolocation hub during initialization',
+              context: { error, platform: Platform.OS },
+            });
+          });
+
         try {
           await useWeatherAlertsStore.getState().init();
           logger.info({

@@ -144,25 +144,26 @@ jest.mock('@/stores/toast/store', () => ({
   }),
 }));
 
+// Pin ids and types as the Core map API sends them (calls are Type 0 with a `c` prefix).
 const mockCallPin = {
-  Id: '123',
+  Id: 'c123',
   Title: 'Medical Emergency',
   Latitude: 40.7128,
   Longitude: -74.0060,
   ImagePath: 'call',
-  Type: 1,
+  Type: 0,
   InfoWindowContent: 'Medical emergency at Main St',
   Color: '#ff0000',
   zIndex: '1',
 };
 
 const mockUnitPin = {
-  Id: '456',
+  Id: 'u456',
   Title: 'Engine 1',
   Latitude: 40.7580,
   Longitude: -73.9855,
   ImagePath: 'engine_available',
-  Type: 2,
+  Type: 1,
   InfoWindowContent: 'Engine 1 available',
   Color: '#00ff00',
   zIndex: '1',
@@ -366,6 +367,21 @@ describe('Pin Actions Integration Tests', () => {
       expect(mockOnClose).toHaveBeenCalledTimes(1);
     });
 
+    it('should navigate with a legacy unprefixed call pin id unchanged', () => {
+      render(
+        <PinDetailModal
+          pin={{ ...mockCallPin, Id: '123' }}
+          isOpen={true}
+          onClose={mockOnClose}
+          onSetAsCurrentCall={mockOnSetAsCurrentCall}
+        />
+      );
+
+      fireEvent.press(screen.getByText('map.view_call_details'));
+
+      expect(mockRouter.push).toHaveBeenCalledWith('/call/123');
+    });
+
     it('should not show call details button for non-call pins', () => {
       render(
         <PinDetailModal
@@ -413,10 +429,10 @@ describe('Pin Actions Integration Tests', () => {
   });
 
   describe('Pin type detection', () => {
-    it('should detect call pin by ImagePath', () => {
+    it('should detect call pin by Type', () => {
       const callPinByImagePath = {
         ...mockCallPin,
-        ImagePath: 'call',
+        ImagePath: 'other',
         Type: 0,
       };
 
@@ -433,9 +449,9 @@ describe('Pin Actions Integration Tests', () => {
       expect(screen.getByText('map.set_as_current_call')).toBeTruthy();
     });
 
-    it('should detect call pin by Type', () => {
+    it('should not treat a unit pin (Type 1) as a call pin', () => {
       const callPinByType = {
-        ...mockCallPin,
+        ...mockUnitPin,
         ImagePath: 'other',
         Type: 1,
       };
@@ -449,8 +465,8 @@ describe('Pin Actions Integration Tests', () => {
         />
       );
 
-      expect(screen.getByText('map.view_call_details')).toBeTruthy();
-      expect(screen.getByText('map.set_as_current_call')).toBeTruthy();
+      expect(screen.queryByText('map.view_call_details')).toBeFalsy();
+      expect(screen.queryByText('map.set_as_current_call')).toBeFalsy();
     });
 
     it('should detect non-call pin correctly', () => {

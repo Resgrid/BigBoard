@@ -42,6 +42,10 @@ jest.mock('@/hooks/use-map-signalr-updates', () => ({
   useMapSignalRUpdates: jest.fn(),
 }));
 
+jest.mock('@/hooks/use-map-live-locations', () => ({
+  useMapLiveLocations: () => ({ applySnapshot: (markers: unknown) => markers }),
+}));
+
 jest.mock('@/api/mapping/mapping', () => ({
   getMapDataAndMarkers: jest.fn().mockResolvedValue(null),
   getMapLayers: jest.fn().mockResolvedValue(null),

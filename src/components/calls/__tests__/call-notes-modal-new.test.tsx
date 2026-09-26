@@ -53,6 +53,13 @@ jest.mock('../../ui/focus-aware-status-bar', () => ({
   FocusAwareStatusBar: () => null,
 }));
 
+// Mock analytics so the async logger does not flush after the test finishes
+jest.mock('@/hooks/use-analytics', () => ({
+  useAnalytics: () => ({
+    trackEvent: jest.fn(),
+  }),
+}));
+
 // Mock react-native-keyboard-controller
 jest.mock('react-native-keyboard-controller', () => ({
   KeyboardAwareScrollView: ({ children }: any) => {

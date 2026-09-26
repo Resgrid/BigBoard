@@ -718,6 +718,7 @@
     "background_location": "Lokalizacja w tle",
     "contact_us": "Skontaktuj się z nami",
     "current_unit": "Bieżąca jednostka",
+    "custom": "Niestandardowy",
     "english": "Angielski",
     "enter_password": "Wprowadź swoje hasło",
     "enter_server_url": "Wprowadź adres URL API Resgrid (np. https://api.resgrid.com)",

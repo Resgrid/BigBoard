@@ -10,6 +10,7 @@ import PinDetailModal from '@/components/maps/pin-detail-modal';
 import { MAP_ICONS } from '@/constants/map-icons';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { useAppLifecycle } from '@/hooks/use-app-lifecycle';
+import { useMapLiveLocations } from '@/hooks/use-map-live-locations';
 import { useMapSignalRUpdates } from '@/hooks/use-map-signalr-updates';
 import { Env } from '@/lib/env';
 import { logger } from '@/lib/logging';
@@ -29,6 +30,18 @@ const getIconPath = (imagePath: string): string => {
   return `/assets/mapping/${icon.imgName}.png`;
 };
 
+const hasCoordinates = (pin: MapMakerInfoData): boolean =>
+  Number.isFinite(pin.Latitude) && Number.isFinite(pin.Longitude) && Math.abs(pin.Latitude) <= 90 && Math.abs(pin.Longitude) <= 180 && !(pin.Latitude === 0 && pin.Longitude === 0);
+
+// Anything but the position needs the marker element (icon, label, popup) rebuilt.
+const hasSameAppearance = (a: MapMakerInfoData, b: MapMakerInfoData): boolean =>
+  a.Title === b.Title && a.ImagePath === b.ImagePath && a.Color === b.Color && a.InfoWindowContent === b.InfoWindowContent && a.Type === b.Type;
+
+interface WebMarkerEntry {
+  marker: mapboxgl.Marker;
+  pin: MapMakerInfoData;
+}
+
 export default function Map() {
   const { t } = useTranslation();
   const { trackEvent } = useAnalytics();
@@ -41,7 +54,11 @@ export default function Map() {
   const [mapPins, setMapPins] = useState<MapMakerInfoData[]>([]);
   const [selectedPin, setSelectedPin] = useState<MapMakerInfoData | null>(null);
   const [isPinDetailModalOpen, setIsPinDetailModalOpen] = useState(false);
-  const markers = useRef<mapboxgl.Marker[]>([]);
+  // Keyed by pin id so a realtime position update is a setLngLat, not a rebuild of every marker.
+  const markers = useRef<globalThis.Map<string, WebMarkerEntry>>(new globalThis.Map());
+  // The camera fits the pins once per map instance; after that only the user (or the location
+  // follow/lock logic) moves it.
+  const hasFittedPinsRef = useRef(false);
   const { isActive } = useAppLifecycle();
   const accessToken = useAuthStore((state) => state.accessToken);
   const isAuthenticated = !!accessToken;
@@ -60,7 +77,11 @@ export default function Map() {
     context: { isMapReady, isAuthenticated, isInitialized, isActive },
   });
 
-  useMapSignalRUpdates(setMapPins);
+  // Realtime unit/personnel positions move pins in place; every REST snapshot goes through applySnapshot
+  const { applySnapshot } = useMapLiveLocations(mapPins, setMapPins);
+  const handleMarkersUpdate = useCallback((nextPins: MapMakerInfoData[], fetchStartedAt: number) => setMapPins(applySnapshot(nextPins, fetchStartedAt)), [applySnapshot]);
+
+  useMapSignalRUpdates(handleMarkersUpdate);
 
   // Track dependency changes
   useEffect(() => {
@@ -104,6 +125,8 @@ export default function Map() {
     }
 
     const center = getDepartmentMapCenter();
+    // The same Map instance for the component's lifetime (only its contents change)
+    const pinMarkers = markers.current;
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
@@ -142,6 +165,10 @@ export default function Map() {
     return () => {
       userLocationMarker.current?.remove();
       userLocationMarker.current = null;
+      // Pin markers belong to this map instance; a rebuilt map gets fresh ones (and one fit)
+      pinMarkers.forEach((entry) => entry.marker.remove());
+      pinMarkers.clear();
+      hasFittedPinsRef.current = false;
       map.current?.remove();
       map.current = null;
       setIsMapReady(false);
@@ -296,10 +323,11 @@ export default function Map() {
           context: { isMapReady, isAuthenticated, isInitialized, isActive },
         });
 
+        const fetchStartedAt = Date.now();
         const mapDataAndMarkers = await getMapDataAndMarkers(abortController.signal);
 
         if (mapDataAndMarkers && mapDataAndMarkers.Data) {
-          setMapPins(mapDataAndMarkers.Data.MapMakerInfos);
+          setMapPins(applySnapshot(mapDataAndMarkers.Data.MapMakerInfos ?? [], fetchStartedAt));
 
           logger.info({
             message: 'Map pins set from API response',
@@ -351,81 +379,113 @@ export default function Map() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMapReady, isAuthenticated, isInitialized, isActive]);
 
-  // Add markers to map when pins change
+  const handlePinPress = useCallback((pin: MapMakerInfoData) => {
+    setSelectedPin(pin);
+    setIsPinDetailModalOpen(true);
+  }, []);
+
+  // Sync markers with pins by id. A moved pin is a setLngLat on its existing marker, so realtime
+  // position updates and SignalR refreshes neither rebuild the layer nor touch the camera: the pins are
+  // fitted once per map instance, after that only the user (or the location follow logic) moves it.
   useEffect(() => {
     if (!map.current || !isMapReady) return;
-    if (mapPins.length === 0) {
-      // Clear existing markers if no pins
-      markers.current.forEach((marker) => marker.remove());
-      markers.current = [];
-      return;
-    }
 
-    markers.current.forEach((marker) => marker.remove());
-    markers.current = [];
+    const currentMap = map.current;
+    const entries = markers.current;
+
+    const createMarker = (pin: MapMakerInfoData): WebMarkerEntry => {
+      const markerContainer = document.createElement('div');
+      markerContainer.className = 'custom-marker-container';
+      markerContainer.style.cssText = 'display:flex;flex-direction:column;align-items:center;cursor:pointer';
+
+      const iconEl = document.createElement('img');
+      iconEl.style.cssText = 'width:32px;height:32px;object-fit:contain';
+      iconEl.alt = pin.Title || 'Marker';
+
+      if (pin.Color) {
+        markerContainer.style.filter = `hue-rotate(${pin.Color})`;
+      }
+
+      iconEl.onerror = () => {
+        iconEl.style.display = 'none';
+        const fallbackIcon = document.createElement('div');
+        fallbackIcon.style.cssText = `width:32px;height:32px;border-radius:50%;background-color:${pin.Color || '#3b82f6'};border:3px solid white;box-shadow:0 2px 4px rgba(0,0,0,0.3)`;
+        markerContainer.insertBefore(fallbackIcon, markerContainer.firstChild);
+      };
+
+      iconEl.src = getIconPath(pin.ImagePath || 'flag');
+
+      const titleEl = document.createElement('div');
+      titleEl.className = 'marker-title';
+      titleEl.textContent = pin.Title || '';
+      titleEl.style.cssText =
+        'margin-top:2px;font-size:10px;font-weight:600;text-align:center;color:#000;background-color:rgba(255,255,255,0.9);padding:2px 4px;border-radius:3px;max-width:100px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:0 1px 2px rgba(0,0,0,0.2)';
+
+      markerContainer.appendChild(iconEl);
+      markerContainer.appendChild(titleEl);
+
+      const marker = new mapboxgl.Marker(markerContainer)
+        .setLngLat([pin.Longitude, pin.Latitude])
+        .setPopup(
+          new mapboxgl.Popup({ offset: 25, closeButton: true, closeOnClick: false }).setHTML(
+            `<div style="padding:12px;min-width:200px">
+              <h3 style="margin:0 0 8px 0;font-weight:bold;font-size:14px">${pin.Title || 'Unknown'}</h3>
+              ${pin.InfoWindowContent ? `<div style="margin:8px 0;font-size:12px">${pin.InfoWindowContent}</div>` : ''}
+              ${pin.Type ? `<p style="margin:4px 0 0 0;font-size:11px;color:#666">Type: ${pin.Type}</p>` : ''}
+            </div>`
+          )
+        )
+        .addTo(currentMap);
+
+      const entry: WebMarkerEntry = { marker, pin };
+      // Read the entry's pin at click time: it is updated in place as the pin moves.
+      markerContainer.addEventListener('click', () => handlePinPress(entry.pin));
+      return entry;
+    };
+
+    const currentIds = new Set<string>();
 
     mapPins.forEach((pin) => {
-      if (pin.Latitude && pin.Longitude) {
-        const markerContainer = document.createElement('div');
-        markerContainer.className = 'custom-marker-container';
-        markerContainer.style.cssText = 'display:flex;flex-direction:column;align-items:center;cursor:pointer';
+      if (!pin || !hasCoordinates(pin)) return;
 
-        const iconEl = document.createElement('img');
-        iconEl.style.cssText = 'width:32px;height:32px;object-fit:contain';
-        iconEl.alt = pin.Title || 'Marker';
+      const id = String(pin.Id);
+      if (currentIds.has(id)) return; // Duplicate id: the first one wins, as a single marker.
+      currentIds.add(id);
 
-        if (pin.Color) {
-          markerContainer.style.filter = `hue-rotate(${pin.Color})`;
+      const existing = entries.get(id);
+      if (existing && existing.pin === pin) return;
+
+      if (existing && hasSameAppearance(existing.pin, pin)) {
+        if (existing.pin.Latitude !== pin.Latitude || existing.pin.Longitude !== pin.Longitude) {
+          existing.marker.setLngLat([pin.Longitude, pin.Latitude]);
         }
+        existing.pin = pin;
+        return;
+      }
 
-        iconEl.onerror = () => {
-          iconEl.style.display = 'none';
-          const fallbackIcon = document.createElement('div');
-          fallbackIcon.style.cssText = `width:32px;height:32px;border-radius:50%;background-color:${pin.Color || '#3b82f6'};border:3px solid white;box-shadow:0 2px 4px rgba(0,0,0,0.3)`;
-          markerContainer.insertBefore(fallbackIcon, markerContainer.firstChild);
-        };
+      existing?.marker.remove();
+      entries.set(id, createMarker(pin));
+    });
 
-        iconEl.src = getIconPath(pin.ImagePath || 'flag');
-
-        const titleEl = document.createElement('div');
-        titleEl.className = 'marker-title';
-        titleEl.textContent = pin.Title || '';
-        titleEl.style.cssText =
-          'margin-top:2px;font-size:10px;font-weight:600;text-align:center;color:#000;background-color:rgba(255,255,255,0.9);padding:2px 4px;border-radius:3px;max-width:100px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:0 1px 2px rgba(0,0,0,0.2)';
-
-        markerContainer.appendChild(iconEl);
-        markerContainer.appendChild(titleEl);
-
-        markerContainer.addEventListener('click', () => handlePinPress(pin));
-
-        const marker = new mapboxgl.Marker(markerContainer)
-          .setLngLat([pin.Longitude, pin.Latitude])
-          .setPopup(
-            new mapboxgl.Popup({ offset: 25, closeButton: true, closeOnClick: false }).setHTML(
-              `<div style="padding:12px;min-width:200px">
-                <h3 style="margin:0 0 8px 0;font-weight:bold;font-size:14px">${pin.Title || 'Unknown'}</h3>
-                ${pin.InfoWindowContent ? `<div style="margin:8px 0;font-size:12px">${pin.InfoWindowContent}</div>` : ''}
-                ${pin.Type ? `<p style="margin:4px 0 0 0;font-size:11px;color:#666">Type: ${pin.Type}</p>` : ''}
-              </div>`
-            )
-          )
-          .addTo(map.current!);
-
-        markers.current.push(marker);
+    entries.forEach((entry, id) => {
+      if (!currentIds.has(id)) {
+        entry.marker.remove();
+        entries.delete(id);
       }
     });
 
-    if (mapPins.length > 0) {
+    if (!hasFittedPinsRef.current && currentIds.size > 0) {
+      hasFittedPinsRef.current = true;
       const bounds = new mapboxgl.LngLatBounds();
       mapPins.forEach((pin) => {
-        if (pin.Latitude && pin.Longitude) {
+        if (pin && hasCoordinates(pin)) {
           bounds.extend([pin.Longitude, pin.Latitude]);
         }
       });
-      map.current.fitBounds(bounds, { padding: 50, maxZoom: 15 });
-      logger.info({ message: 'Markers added to web map', context: { markerCount: markers.current.length } });
+      currentMap.fitBounds(bounds, { padding: 50, maxZoom: 15 });
+      logger.info({ message: 'Markers added to web map', context: { markerCount: entries.size } });
     }
-  }, [mapPins, isMapReady]);
+  }, [mapPins, isMapReady, handlePinPress]);
 
   const handleRecenterMap = () => {
     if (map.current && location.latitude && location.longitude) {
@@ -439,11 +499,6 @@ export default function Map() {
       setHasUserMovedMap(false);
       logger.debug({ message: 'Map recentered to user location' });
     }
-  };
-
-  const handlePinPress = (pin: MapMakerInfoData) => {
-    setSelectedPin(pin);
-    setIsPinDetailModalOpen(true);
   };
 
   const handleSetAsCurrentCall = async (pin: MapMakerInfoData) => {

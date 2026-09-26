@@ -718,6 +718,7 @@
     "background_location": "Bakgrundsposition",
     "contact_us": "Kontakta oss",
     "current_unit": "Aktuell enhet",
+    "custom": "Anpassad",
     "english": "Engelska",
     "enter_password": "Ange ditt lösenord",
     "enter_server_url": "Ange Resgrid API-URL (t.ex. https://api.resgrid.com)",

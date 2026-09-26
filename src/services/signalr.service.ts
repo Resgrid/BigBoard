@@ -3,6 +3,12 @@ import { type HubConnection, HubConnectionBuilder, HubConnectionState, LogLevel 
 import { logger } from '@/lib/logging';
 import useAuthStore from '@/stores/auth/store';
 
+// Location pushes arrive every few seconds for every unit and person, so they are not logged at all:
+// a per-message line would flood the console and push useful breadcrumbs out of error reports.
+const UNLOGGED_HUB_METHODS = new Set(['onunitlocationupdated', 'onpersonnellocationupdated']);
+
+export const isUnloggedHubMethod = (method: string): boolean => UNLOGGED_HUB_METHODS.has(method.toLowerCase());
+
 export interface SignalRHubConfig {
   name: string;
   url: string;
@@ -186,7 +192,9 @@ class SignalRService {
 
       const connectionBuilder = new HubConnectionBuilder()
         .withUrl(fullUrl, {
-          accessTokenFactory: () => token,
+          // Read lazily: the automatic reconnect calls this again, and the hubs close the socket when
+          // the token expires. A token captured here would be the expired one on every retry.
+          accessTokenFactory: () => useAuthStore.getState().accessToken || token,
         })
         .withAutomaticReconnect([0, 2000, 5000, 10000, 30000])
         .configureLogging(LogLevel.Information);
@@ -226,10 +234,13 @@ class SignalRService {
         });
 
         connection.on(method, (data) => {
-          logger.info({
-            message: `Received ${method} message from hub: ${config.name}`,
-            context: { method },
-          });
+          // Never log payloads: they carry personal data (chat, call details, precise coordinates).
+          if (!isUnloggedHubMethod(method)) {
+            logger.debug({
+              message: `Received ${method} message from hub: ${config.name}`,
+              context: { method },
+            });
+          }
           this.handleMessage(config.name, method, data);
         });
       });
@@ -319,7 +330,7 @@ class SignalRService {
 
       const connection = new HubConnectionBuilder()
         .withUrl(config.url, {
-          accessTokenFactory: () => token,
+          accessTokenFactory: () => useAuthStore.getState().accessToken || token,
         })
         .withAutomaticReconnect([0, 2000, 5000, 10000, 30000])
         .configureLogging(LogLevel.Information)
@@ -358,10 +369,13 @@ class SignalRService {
         });
 
         connection.on(method, (data) => {
-          logger.info({
-            message: `Received ${method} message from hub: ${config.name}`,
-            context: { method },
-          });
+          // Never log payloads: they carry personal data (chat, call details, precise coordinates).
+          if (!isUnloggedHubMethod(method)) {
+            logger.debug({
+              message: `Received ${method} message from hub: ${config.name}`,
+              context: { method },
+            });
+          }
           this.handleMessage(config.name, method, data);
         });
       });
@@ -456,6 +470,11 @@ class SignalRService {
               logger.info({
                 message: `Successfully reconnected to hub: ${hubName} after ${currentAttempts} attempts`,
               });
+
+              // This is a brand-new connection (new connection id), so any server-side group
+              // membership is gone. Tell subscribers exactly as an automatic reconnect would, so they
+              // re-join their groups -- otherwise the hub is "connected" but receives nothing.
+              this.notifyConnectionStateCallbacks(hubName, 'onReconnected');
             } catch (reconnectionError) {
               // Clear reconnecting state on failed reconnection
               this.setHubState(hubName, HubConnectingState.IDLE);
@@ -499,10 +518,6 @@ class SignalRService {
   }
 
   private handleMessage(hubName: string, method: string, data: unknown): void {
-    logger.debug({
-      message: `Received message from hub: ${hubName}`,
-      context: { method },
-    });
     // Emit event for subscribers using the method name as the event name
     this.emit(method, data);
   }
@@ -551,7 +566,12 @@ class SignalRService {
     }
   }
 
-  public async invoke(hubName: string, method: string, data: unknown): Promise<void> {
+  /**
+   * Invokes a hub method with exactly the arguments given. SignalR matches the argument count against
+   * the server method, so `invoke(hub, 'GeolocationConnect')` sends zero arguments and
+   * `invoke(hub, 'connect', departmentId)` sends one.
+   */
+  public async invoke(hubName: string, method: string, ...args: unknown[]): Promise<void> {
     // Wait for any ongoing connection attempt to complete
     const existingLock = this.connectionLocks.get(hubName);
     if (existingLock) {
@@ -565,7 +585,7 @@ class SignalRService {
     const connection = this.connections.get(hubName);
     if (connection) {
       try {
-        return await connection.invoke(method, data);
+        return await connection.invoke(method, ...args);
       } catch (error) {
         logger.error({
           message: `Error invoking method ${method} from hub: ${hubName}`,
