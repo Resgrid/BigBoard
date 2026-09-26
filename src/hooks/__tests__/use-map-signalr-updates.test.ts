@@ -91,7 +91,7 @@ describe('useMapSignalRUpdates', () => {
       expect(mockGetMapDataAndMarkers).toHaveBeenCalledWith(expect.objectContaining({ aborted: false }));
     });
 
-    expect(mockOnMarkersUpdate).toHaveBeenCalledWith(mockMapData.Data.MapMakerInfos);
+    expect(mockOnMarkersUpdate).toHaveBeenCalledWith(mockMapData.Data.MapMakerInfos, expect.any(Number));
   });
 
   it('should debounce multiple rapid timestamp changes', async () => {
@@ -167,7 +167,7 @@ describe('useMapSignalRUpdates', () => {
     resolveFirstCall!(mockMapData);
 
     await waitFor(() => {
-      expect(mockOnMarkersUpdate).toHaveBeenCalledWith(mockMapData.Data.MapMakerInfos);
+      expect(mockOnMarkersUpdate).toHaveBeenCalledWith(mockMapData.Data.MapMakerInfos, expect.any(Number));
     });
 
     // Wait for the queued call to be processed
@@ -227,7 +227,7 @@ describe('useMapSignalRUpdates', () => {
     resolveFirstCall!(mockMapData);
 
     await waitFor(() => {
-      expect(mockOnMarkersUpdate).toHaveBeenCalledWith(mockMapData.Data.MapMakerInfos);
+      expect(mockOnMarkersUpdate).toHaveBeenCalledWith(mockMapData.Data.MapMakerInfos, expect.any(Number));
     });
 
     // Wait for the queued call to be processed (should be timestamp3, not timestamp2)
@@ -378,7 +378,7 @@ describe('useMapSignalRUpdates', () => {
       expect(mockGetMapDataAndMarkers).toHaveBeenCalledWith(expect.objectContaining({ aborted: false }));
     });
 
-    expect(mockOnMarkersUpdate).toHaveBeenCalledWith([]);
+    expect(mockOnMarkersUpdate).toHaveBeenCalledWith([], expect.any(Number));
   });
 
   it('should handle null API response', async () => {
@@ -514,6 +514,64 @@ describe('useMapSignalRUpdates', () => {
           markerCount: mockMapData.Data.MapMakerInfos.length,
           timestamp,
         },
+      });
+    });
+  });
+
+  describe('live location support', () => {
+    const renderWithStoreState = (state: { lastUpdateTimestamp: number; mapRefreshRequestTimestamp: number }) =>
+      renderHook(
+        (props) => {
+          mockUseSignalRStore.mockImplementation(((selector: (s: typeof props) => unknown) => selector(props)) as any);
+          return useMapSignalRUpdates(mockOnMarkersUpdate);
+        },
+        { initialProps: state }
+      );
+
+    it('passes the time the request STARTED, so pushes that arrive while it is in flight can be re-applied', async () => {
+      jest.setSystemTime(new Date('2026-09-25T12:00:00.000Z'));
+      const startedAt = Date.now() + 1000; // after the 1000ms debounce
+
+      let resolveCall: (value: GetMapDataAndMarkersResult) => void = () => {};
+      mockGetMapDataAndMarkers.mockReturnValueOnce(new Promise<GetMapDataAndMarkersResult>((resolve) => (resolveCall = resolve)));
+
+      renderWithStoreState({ lastUpdateTimestamp: Date.now(), mapRefreshRequestTimestamp: 0 });
+
+      jest.advanceTimersByTime(1000);
+      expect(mockGetMapDataAndMarkers).toHaveBeenCalledTimes(1);
+
+      // The response takes a while; the reported start time must not move with it.
+      jest.setSystemTime(startedAt + 5000);
+      resolveCall(mockMapData);
+
+      await waitFor(() => {
+        expect(mockOnMarkersUpdate).toHaveBeenCalledWith(mockMapData.Data.MapMakerInfos, startedAt);
+      });
+    });
+
+    it('refetches when a map refresh is requested without any update-hub event', async () => {
+      const { rerender } = renderWithStoreState({ lastUpdateTimestamp: 0, mapRefreshRequestTimestamp: 0 });
+
+      jest.runAllTimers();
+      expect(mockGetMapDataAndMarkers).not.toHaveBeenCalled();
+
+      rerender({ lastUpdateTimestamp: 0, mapRefreshRequestTimestamp: 5000 });
+      jest.runAllTimers();
+
+      await waitFor(() => {
+        expect(mockGetMapDataAndMarkers).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    it('treats an update event and a refresh request as one trigger when both are pending', async () => {
+      const { rerender } = renderWithStoreState({ lastUpdateTimestamp: 0, mapRefreshRequestTimestamp: 0 });
+
+      rerender({ lastUpdateTimestamp: 4000, mapRefreshRequestTimestamp: 0 });
+      rerender({ lastUpdateTimestamp: 4000, mapRefreshRequestTimestamp: 4001 });
+      jest.runAllTimers();
+
+      await waitFor(() => {
+        expect(mockGetMapDataAndMarkers).toHaveBeenCalledTimes(1);
       });
     });
   });

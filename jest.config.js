@@ -1,9 +1,14 @@
 const expoPreset = require('jest-expo/jest-preset');
 
+// Must be set before babel-preset-expo transforms modules (it inlines
+// EXPO_PUBLIC_* vars) — makes expo's winter runtime keep RN's fetch in tests.
+process.env.EXPO_PUBLIC_USE_RN_FETCH = '1';
+
 module.exports = {
   preset: 'jest-expo',
   // Reanimated v4 worklets: resolve to the non-native builds in Jest
   resolver: '<rootDir>/jest.resolver.js',
+  setupFiles: ['<rootDir>/jest-env-setup.js', ...(expoPreset.setupFiles ?? [])],
   setupFilesAfterEnv: ['<rootDir>/jest-setup.ts'],
   testMatch: ['**/?(*.)+(spec|test).ts?(x)'],
   testPathIgnorePatterns: ['<rootDir>/node_modules/', '\\.\\._.*'],

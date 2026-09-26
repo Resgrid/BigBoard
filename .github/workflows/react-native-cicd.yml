@@ -103,9 +103,11 @@ jobs:
           path: |
             ~/.cache/yarn
             node_modules
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          # node_modules is cached post-patch-package, so the patches must be part of the key;
+          # otherwise a changed patch is applied on top of the old one and the install fails.
+          key: ${{ runner.os }}-yarn-${{ hashFiles('patches/**') }}-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-yarn-
+            ${{ runner.os }}-yarn-${{ hashFiles('patches/**') }}-
 
       - name: 📦 Install dependencies
         run: yarn install --frozen-lockfile
@@ -178,9 +180,11 @@ jobs:
           path: |
             ~/.cache/yarn
             node_modules
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          # node_modules is cached post-patch-package, so the patches must be part of the key;
+          # otherwise a changed patch is applied on top of the old one and the install fails.
+          key: ${{ runner.os }}-yarn-${{ hashFiles('patches/**') }}-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-yarn-
+            ${{ runner.os }}-yarn-${{ hashFiles('patches/**') }}-
 
       - name: 📦 Install dependencies
         run: |

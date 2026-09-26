@@ -10,10 +10,22 @@ interface UseSignalRLifecycleOptions {
   hasInitialized: boolean;
 }
 
+/**
+ * How often the watchdog checks that the hubs the app wants are really connected and in their
+ * department groups. The service's own reconnect logic gives up after a bounded number of attempts
+ * (and a rebuild that fails while the network is still down is never retried), which on an unattended
+ * wall board means realtime updates silently stop until someone restarts the app.
+ */
+export const SIGNALR_WATCHDOG_INTERVAL_MS = 30 * 1000;
+
 export function useSignalRLifecycle({ isSignedIn, hasInitialized }: UseSignalRLifecycleOptions) {
   const { isActive, appState } = useAppLifecycle();
   const disconnectUpdateHub = useSignalRStore((state) => state.disconnectUpdateHub);
   const connectUpdateHub = useSignalRStore((state) => state.connectUpdateHub);
+  const disconnectGeolocationHub = useSignalRStore((state) => state.disconnectGeolocationHub);
+  const connectGeolocationHub = useSignalRStore((state) => state.connectGeolocationHub);
+  const ensureHubConnections = useSignalRStore((state) => state.ensureHubConnections);
+  const clearLiveLocations = useSignalRStore((state) => state.clearLiveLocations);
 
   // Track current values with refs for timer callbacks
   const currentIsActive = useRef(isActive);
@@ -76,13 +88,24 @@ export function useSignalRLifecycle({ isSignedIn, hasInitialized }: UseSignalRLi
         message: 'Unexpected error during SignalR disconnect on app background',
         context: { error },
       });
+    }
+
+    // The geolocation hub follows the update hub: whenever the board has its realtime feed, it also
+    // has live unit/personnel positions.
+    try {
+      await disconnectGeolocationHub();
+    } catch (error) {
+      logger.error({
+        message: 'Failed to disconnect geolocation hub on app background',
+        context: { error },
+      });
     } finally {
       if (controller === pendingOperations.current) {
         isProcessing.current = false;
         pendingOperations.current = null;
       }
     }
-  }, [disconnectUpdateHub]);
+  }, [disconnectUpdateHub, disconnectGeolocationHub]);
 
   const handleAppResume = useCallback(async () => {
     logger.debug({
@@ -125,13 +148,22 @@ export function useSignalRLifecycle({ isSignedIn, hasInitialized }: UseSignalRLi
         message: 'Unexpected error during SignalR reconnect on app resume',
         context: { error },
       });
+    }
+
+    try {
+      await connectGeolocationHub();
+    } catch (error) {
+      logger.error({
+        message: 'Failed to reconnect geolocation hub on app resume',
+        context: { error },
+      });
     } finally {
       if (controller === pendingOperations.current) {
         isProcessing.current = false;
         pendingOperations.current = null;
       }
     }
-  }, [connectUpdateHub]);
+  }, [connectUpdateHub, connectGeolocationHub]);
 
   // Clear timers helper
   const clearTimers = useCallback(() => {
@@ -228,6 +260,60 @@ export function useSignalRLifecycle({ isSignedIn, hasInitialized }: UseSignalRLi
 
     return clearTimers;
   }, [isActive, appState, isSignedIn, hasInitialized, handleAppResume, clearTimers]);
+
+  // Watchdog: while signed in and in the foreground, periodically repair any wanted hub whose
+  // connection the service has given up on, or that is connected but no longer in its group.
+  const isWatchdogRunning = useRef(false);
+  useEffect(() => {
+    if (!isSignedIn || !hasInitialized || !isActive) {
+      return;
+    }
+
+    const interval = setInterval(() => {
+      // Background/resume transitions own the connections while they run.
+      if (isProcessing.current || isWatchdogRunning.current) {
+        return;
+      }
+
+      isWatchdogRunning.current = true;
+      ensureHubConnections()
+        .catch((error) => {
+          logger.error({
+            message: 'SignalR watchdog failed to repair hub connections',
+            context: { error },
+          });
+        })
+        .finally(() => {
+          isWatchdogRunning.current = false;
+        });
+    }, SIGNALR_WATCHDOG_INTERVAL_MS);
+
+    return () => clearInterval(interval);
+  }, [isSignedIn, hasInitialized, isActive, ensureHubConnections]);
+
+  // On sign-out, close both hubs and drop live positions. Otherwise the connections stay in the
+  // previous department's groups, and signing in as another user would keep that membership.
+  const wasSignedIn = useRef(isSignedIn);
+  useEffect(() => {
+    const previouslySignedIn = wasSignedIn.current;
+    wasSignedIn.current = isSignedIn;
+
+    if (!previouslySignedIn || isSignedIn) {
+      return;
+    }
+
+    logger.info({
+      message: 'Signed out, disconnecting SignalR hubs and clearing live locations',
+    });
+
+    clearLiveLocations();
+    Promise.all([disconnectGeolocationHub(), disconnectUpdateHub()]).catch((error) => {
+      logger.error({
+        message: 'Failed to disconnect SignalR hubs on sign-out',
+        context: { error },
+      });
+    });
+  }, [isSignedIn, clearLiveLocations, disconnectGeolocationHub, disconnectUpdateHub]);
 
   // Cleanup on unmount
   useEffect(() => {

@@ -718,6 +718,7 @@
     "background_location": "Фонове місцезнаходження",
     "contact_us": "Зв'язатися з нами",
     "current_unit": "Поточний підрозділ",
+    "custom": "Власний",
     "english": "Англійська",
     "enter_password": "Введіть ваш пароль",
     "enter_server_url": "Введіть URL API Resgrid (напр., https://api.resgrid.com)",

@@ -29,6 +29,7 @@ jest.mock('react-hook-form', () => ({
     control: {},
     handleSubmit: jest.fn(),
     setValue: jest.fn(),
+    setError: jest.fn(),
     formState: { errors: {} },
   }),
   Controller: ({ render }: any) => render({ field: { onChange: jest.fn(), value: '' } }),
@@ -41,8 +42,18 @@ jest.mock('@/stores/app/server-url-store', () => ({
   }),
 }));
 
+jest.mock('@/stores/auth/store', () => ({
+  __esModule: true,
+  default: (selector: (state: { isAuthenticated: () => boolean }) => boolean) => selector({ isAuthenticated: () => false }),
+}));
+
+jest.mock('@/api/config', () => ({
+  getSystemConfig: jest.fn().mockResolvedValue({ Data: { Locations: [] } }),
+}));
+
+jest.mock('lucide-react-native', () => ({ ChevronDownIcon: 'ChevronDownIcon' }));
 jest.mock('@/lib/env', () => ({ Env: { API_VERSION: 'v4' } }));
-jest.mock('@/lib/logging', () => ({ logger: { info: jest.fn(), error: jest.fn() } }));
+jest.mock('@/lib/logging', () => ({ logger: { info: jest.fn(), warn: jest.fn(), error: jest.fn() } }));
 
 // Create mock UI component factory functions
 const createMockUIComponent = (displayName: string) => ({ children, testID, ...props }: any) => {
@@ -88,6 +99,18 @@ jest.mock('../../ui/hstack', () => ({ HStack: createMockUIComponent('HStack') })
 jest.mock('../../ui/input', () => ({
   Input: createMockUIComponent('Input'),
   InputField: createMockInputComponent,
+}));
+jest.mock('../../ui/select', () => ({
+  Select: createMockUIComponent('Select'),
+  SelectBackdrop: createMockUIComponent('SelectBackdrop'),
+  SelectContent: createMockUIComponent('SelectContent'),
+  SelectDragIndicator: createMockUIComponent('SelectDragIndicator'),
+  SelectDragIndicatorWrapper: createMockUIComponent('SelectDragIndicatorWrapper'),
+  SelectIcon: createMockUIComponent('SelectIcon'),
+  SelectInput: createMockUIComponent('SelectInput'),
+  SelectItem: createMockUIComponent('SelectItem'),
+  SelectPortal: createMockUIComponent('SelectPortal'),
+  SelectTrigger: createMockUIComponent('SelectTrigger'),
 }));
 jest.mock('../../ui/text', () => ({ Text: createMockTextComponent('Text') }));
 jest.mock('../../ui/vstack', () => ({ VStack: createMockUIComponent('VStack') }));

@@ -14,6 +14,7 @@ import { HStack } from '@/components/ui/hstack';
 import { Pressable } from '@/components/ui/pressable';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
+import { getPinEntityId, isCallPin as isCallMapPin } from '@/lib/map-pin-ids';
 import { openMapsWithDirections } from '@/lib/navigation';
 import { type MapMakerInfoData } from '@/models/v4/mapping/getMapDataAndMarkersData';
 import { useLocationStore } from '@/stores/app/location-store';
@@ -38,7 +39,7 @@ export const PinDetailModal: React.FC<PinDetailModalProps> = ({ pin, isOpen, onC
 
   if (!pin) return null;
 
-  const isCallPin = pin.ImagePath?.toLowerCase() === 'call' || pin.Type === 1;
+  const isCallPin = isCallMapPin(pin);
 
   const handleRouteToLocation = async () => {
     if (!pin.Latitude || !pin.Longitude) {
@@ -58,8 +59,10 @@ export const PinDetailModal: React.FC<PinDetailModalProps> = ({ pin, isOpen, onC
   };
 
   const handleViewCallDetails = () => {
-    if (isCallPin && pin.Id) {
-      router.push(`/call/${pin.Id}` as any);
+    const callId = getPinEntityId(pin);
+
+    if (isCallPin && callId) {
+      router.push(`/call/${callId}` as any);
       onClose();
     }
   };

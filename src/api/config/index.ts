@@ -16,7 +16,7 @@ export const getConfig = async (key: string) => {
   return response.data;
 };
 
-export const getSystemConfig = async () => {
-  const response = await getSystemConfigApi.get<GetSystemConfigResult>();
+export const getSystemConfig = async (signal?: AbortSignal) => {
+  const response = await getSystemConfigApi.get<GetSystemConfigResult>(undefined, signal);
   return response.data;
 };

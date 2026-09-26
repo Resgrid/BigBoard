@@ -42,6 +42,12 @@ export default function Settings() {
     return activeUnit?.Name || t('common.unknown');
   }, [activeUnit, t]);
 
+  // Tokens belong to the server that issued them, so moving to another server ends this session
+  const handleServerUrlChanged = React.useCallback(async () => {
+    trackEvent('settings_server_url_changed_logout');
+    await signOut();
+  }, [signOut, trackEvent]);
+
   const handleLoginInfoSubmit = async (data: { username: string; password: string }) => {
     logger.info({
       message: 'Updating login info',
@@ -116,7 +122,7 @@ export default function Settings() {
       </ScrollView>
 
       <LoginInfoBottomSheet isOpen={showLoginInfo} onClose={() => setShowLoginInfo(false)} onSubmit={handleLoginInfoSubmit} />
-      <ServerUrlBottomSheet isOpen={showServerUrl} onClose={() => setShowServerUrl(false)} />
+      <ServerUrlBottomSheet isOpen={showServerUrl} onClose={() => setShowServerUrl(false)} onUrlChanged={handleServerUrlChanged} />
     </Box>
   );
 }

@@ -34,6 +34,9 @@ const processQueue = (error: Error | null) => {
 // Request interceptor for API calls
 axiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
+    // Resolve per request so a server picked in the Server URL sheet takes effect without a reload
+    config.baseURL = getBaseApiUrl();
+
     const accessToken = useAuthStore.getState().accessToken;
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;

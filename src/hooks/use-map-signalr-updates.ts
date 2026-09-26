@@ -8,14 +8,24 @@ import { useSignalRStore } from '@/stores/signalr/signalr-store';
 // Debounce delay in milliseconds to prevent rapid consecutive API calls
 const DEBOUNCE_DELAY = 1000;
 
-export const useMapSignalRUpdates = (onMarkersUpdate: (markers: MapMakerInfoData[]) => void) => {
+/**
+ * @param onMarkersUpdate receives the fresh REST pins and the local time (epoch ms) at which that
+ *   request STARTED, so the caller can re-apply realtime positions that arrived while it was in flight
+ *   (the snapshot may be older than those).
+ */
+export const useMapSignalRUpdates = (onMarkersUpdate: (markers: MapMakerInfoData[], fetchStartedAt: number) => void) => {
   const lastProcessedTimestamp = useRef<number>(0);
   const isUpdating = useRef<boolean>(false);
   const pendingTimestamp = useRef<number | null>(null);
   const debounceTimer = useRef<number | null>(null);
   const abortController = useRef<AbortController | null>(null);
 
-  const lastUpdateTimestamp = useSignalRStore((state) => state.lastUpdateTimestamp);
+  const storeUpdateTimestamp = useSignalRStore((state) => state.lastUpdateTimestamp);
+  const mapRefreshRequestTimestamp = useSignalRStore((state) => state.mapRefreshRequestTimestamp);
+  // Refetch on any update-hub event, or on an explicit request (catch-up after a hub re-join, or a live
+  // position for a pin this map does not have yet). requestMapRefresh keeps its stamp strictly above
+  // lastUpdateTimestamp, so the max always moves when either does.
+  const lastUpdateTimestamp = Math.max(storeUpdateTimestamp || 0, mapRefreshRequestTimestamp || 0);
 
   const fetchAndUpdateMarkers = useCallback(
     async (requestedTimestamp?: number) => {
@@ -46,6 +56,7 @@ export const useMapSignalRUpdates = (onMarkersUpdate: (markers: MapMakerInfoData
           context: { timestamp: timestampToProcess },
         });
 
+        const fetchStartedAt = Date.now();
         const mapDataAndMarkers = await getMapDataAndMarkers(abortController.current.signal);
 
         // Check if request was aborted
@@ -67,7 +78,7 @@ export const useMapSignalRUpdates = (onMarkersUpdate: (markers: MapMakerInfoData
             },
           });
 
-          onMarkersUpdate(markers);
+          onMarkersUpdate(markers, fetchStartedAt);
         }
 
         // Update the last processed timestamp after successful API call

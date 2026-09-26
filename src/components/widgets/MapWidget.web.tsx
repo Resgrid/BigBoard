@@ -1,10 +1,11 @@
 import mapboxgl from 'mapbox-gl';
 import { useColorScheme } from 'nativewind';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { getMapDataAndMarkers, getMapLayers } from '@/api/mapping/mapping';
 import { Box } from '@/components/ui/box';
 import { Spinner } from '@/components/ui/spinner';
+import { useMapLiveLocations } from '@/hooks/use-map-live-locations';
 import { useMapSignalRUpdates } from '@/hooks/use-map-signalr-updates';
 import { Env } from '@/lib/env';
 import { logger } from '@/lib/logging';
@@ -40,8 +41,12 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ onRemove, isEditMode, widt
   const isInitialized = useCoreStore((state) => state.isInitialized);
   const isAuthenticated = !!accessToken;
 
+  // Realtime unit/personnel positions move pins in place; every REST snapshot goes through applySnapshot
+  const { applySnapshot } = useMapLiveLocations(mapPins, setMapPins);
+  const handleMarkersUpdate = useCallback((markers: MapMakerInfoData[], fetchStartedAt: number) => setMapPins(applySnapshot(markers, fetchStartedAt)), [applySnapshot]);
+
   // Use SignalR updates to refresh map pins
-  useMapSignalRUpdates(setMapPins);
+  useMapSignalRUpdates(handleMarkersUpdate);
 
   // Initialize map
   useEffect(() => {
@@ -100,6 +105,7 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ onRemove, isEditMode, widt
         logger.info({ message: 'MapWidget.web: Loading initial map data' });
 
         // Fetch both map data and layers
+        const fetchStartedAt = Date.now();
         const [mapDataResult, layersResult] = await Promise.all([
           getMapDataAndMarkers(),
           getMapLayers(0), // 0 = All layers
@@ -110,7 +116,7 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ onRemove, isEditMode, widt
             message: 'MapWidget.web: Initial map data loaded',
             context: { markerCount: mapDataResult.Data.MapMakerInfos.length },
           });
-          setMapPins(mapDataResult.Data.MapMakerInfos);
+          setMapPins(applySnapshot(mapDataResult.Data.MapMakerInfos, fetchStartedAt));
           setHasLoadedInitialData(true);
         }
 
@@ -130,7 +136,7 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ onRemove, isEditMode, widt
     };
 
     loadInitialData();
-  }, [isMapReady, isAuthenticated, isInitialized, hasLoadedInitialData]);
+  }, [isMapReady, isAuthenticated, isInitialized, hasLoadedInitialData, applySnapshot]);
 
   // Center on the first pin once. Every SignalR-driven refresh hands back a fresh array even when
   // the pins are unchanged, so re-running this per update meant a 1000ms WebGL fly animation on

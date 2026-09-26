@@ -65,8 +65,12 @@ Build outputs are placed in the `electron-dist/` directory.
 ### How It Works
 
 1. `expo export --platform web` builds the React Native app to static web files in `dist/`
-2. Electron loads these static files in a native desktop window
+2. Electron serves these static files from `http://127.0.0.1:29317` and loads them in a native desktop window
 3. All web-compatible features work identically to the browser
+
+The port is fixed because it is part of the page origin, and localStorage (sign-in, dashboard layout, preferences) is keyed by origin. Only one instance runs at a time; launching again focuses the open window. If another program already holds port 29317, the app falls back to a random port for that session, and data saved in earlier sessions is unavailable until the port is free again. The selected server URL is also kept in `settings.json` under the app's userData directory, so it survives even that case.
+
+The Resgrid API only allows cross-origin requests from origins on its CORS allowlist, so `http://127.0.0.1:29317` must be on that list for the desktop app to reach the API.
 
 ### Bluetooth on Desktop
 
