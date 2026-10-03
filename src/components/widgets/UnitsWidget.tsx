@@ -1,15 +1,21 @@
+import { BellOffIcon, CheckCircleIcon } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
 import React, { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ScrollView } from 'react-native';
 
 import { Box } from '@/components/ui/box';
 import { HStack } from '@/components/ui/hstack';
+import { Pressable } from '@/components/ui/pressable';
 import { Spinner } from '@/components/ui/spinner';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
+import { UnitAlertAcknowledgeSheet } from '@/components/units/unit-alert-acknowledge-sheet';
+import { useUnitAlertAcknowledgements } from '@/hooks/use-unit-alert-acknowledgements';
 import { useUnitsSignalRUpdates } from '@/hooks/use-units-signalr-updates';
 import { normalizeStatusColor, secondsInStatus } from '@/lib/unit-status';
-import { alertRowStyle, alertSortWeight, evaluateUnitStatusAlert, formatElapsed, useUnitStatusThresholds } from '@/lib/unit-status-thresholds';
+import { acknowledgedRowStyle, acknowledgedSortWeight, alertRowStyle, annotateUnitAlert, formatElapsed, useUnitStatusThresholds } from '@/lib/unit-status-thresholds';
+import { useSecurityStore } from '@/stores/security/store';
 import { useUnitsStore } from '@/stores/units/store';
 import { DEFAULT_UNITS_COLUMN_ORDER, type UnitsColumnKey, useUnitsSettingsStore } from '@/stores/widget-settings/units-settings-store';
 
@@ -29,6 +35,7 @@ interface UnitsWidgetProps {
 }
 
 export const UnitsWidget: React.FC<UnitsWidgetProps> = ({ onRemove, isEditMode, width = 2, height = 2, containerWidth, containerHeight }) => {
+  const { t } = useTranslation();
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
   const units = useUnitsStore((state) => state.units);
@@ -46,6 +53,9 @@ export const UnitsWidget: React.FC<UnitsWidgetProps> = ({ onRemove, isEditMode, 
   }, [fetchUnits]);
 
   const thresholds = useUnitStatusThresholds();
+  const acknowledgements = useUnitAlertAcknowledgements(thresholds.length > 0);
+  const { canUserCreateCalls } = useSecurityStore();
+  const [selectedUnitId, setSelectedUnitId] = useState<string | null>(null);
 
   // The instant every unit is measured against. Held in state rather than read inside the memo so
   // the passage of time is an explicit input — otherwise the memo only recomputes when the unit
@@ -74,11 +84,12 @@ export const UnitsWidget: React.FC<UnitsWidgetProps> = ({ onRemove, isEditMode, 
 
   // Every unit is evaluated against a single instant, so two units a millisecond apart can never
   // disagree about which side of a threshold they are on. Breaching units sort to the top: the
-  // point of the feature is that a dispatcher spots them without reading the whole board.
+  // point of the feature is that a dispatcher spots them without reading the whole board. Ones a
+  // dispatcher has acknowledged follow the unacknowledged ones; muted ones sit with the rest.
   const displayedUnits = useMemo(() => {
     const annotated = filteredUnits.map((unit) => ({
       unit,
-      alert: evaluateUnitStatusAlert(unit, thresholds, evaluatedAt),
+      ...annotateUnitAlert(unit, thresholds, acknowledgements, evaluatedAt),
     }));
 
     if (thresholds.length === 0) {
@@ -86,7 +97,7 @@ export const UnitsWidget: React.FC<UnitsWidgetProps> = ({ onRemove, isEditMode, 
     }
 
     return annotated.sort((a, b) => {
-      const weight = alertSortWeight(a.alert.level) - alertSortWeight(b.alert.level);
+      const weight = acknowledgedSortWeight(a.alert.level, a.acknowledgementState) - acknowledgedSortWeight(b.alert.level, b.acknowledgementState);
 
       if (weight !== 0) {
         return weight;
@@ -95,7 +106,9 @@ export const UnitsWidget: React.FC<UnitsWidgetProps> = ({ onRemove, isEditMode, 
       // Within a level, longest overdue first.
       return (b.alert.secondsInStatus ?? 0) - (a.alert.secondsInStatus ?? 0);
     });
-  }, [filteredUnits, thresholds, evaluatedAt]);
+  }, [filteredUnits, thresholds, acknowledgements, evaluatedAt]);
+
+  const selected = useMemo(() => displayedUnits.find((entry) => entry.unit.UnitId === selectedUnitId && entry.alert.level !== 'none') ?? null, [displayedUnits, selectedUnitId]);
 
   const getTimeago = (date: string) => {
     // secondsInStatus treats a zone-less timestamp as UTC. `new Date(...)` read it as local time, so
@@ -226,26 +239,47 @@ export const UnitsWidget: React.FC<UnitsWidgetProps> = ({ onRemove, isEditMode, 
           </HStack>
 
           {/* Data Rows */}
-          {displayedUnits.map(({ unit, alert }, index) => {
-            const rowStyle = alertRowStyle(alert.level, isDark);
+          {displayedUnits.map(({ unit, alert, acknowledgementState }, index) => {
+            const isMuted = acknowledgementState === 'muted';
+            const isAcknowledged = acknowledgementState === 'acknowledged';
+            // A muted unit is deliberately out of the way: plain row, with only the elapsed time and a muted mark.
+            const highlighted = alert.level !== 'none' && !isMuted;
+            const rowStyle = isAcknowledged ? acknowledgedRowStyle(alert.level, isDark) : alertRowStyle(highlighted ? alert.level : 'none', isDark);
+            const elapsedColor = alertRowStyle(alert.level, isDark).borderLeftColor;
+            const pressable = alert.level !== 'none' && !isEditMode && canUserCreateCalls === true && (unit.CurrentUnitStateId ?? 0) > 0;
 
-            return (
+            const row = (
               <HStack
                 key={unit.UnitId}
                 space="sm"
-                className={`py-1 ${alert.level === 'none' && index % 2 === 0 ? (isDark ? 'bg-gray-800/30' : 'bg-gray-100/50') : ''}`}
+                className={`py-1 ${!highlighted && index % 2 === 0 ? (isDark ? 'bg-gray-800/30' : 'bg-gray-100/50') : ''}`}
                 style={rowStyle.backgroundColor ? { backgroundColor: rowStyle.backgroundColor, borderLeftWidth: 3, borderLeftColor: rowStyle.borderLeftColor } : undefined}
-                testID={alert.level !== 'none' ? `unit-row-${alert.level}` : undefined}
+                testID={alert.level !== 'none' ? `unit-row-${alert.level}${isAcknowledged ? '-acknowledged' : ''}${isMuted ? '-muted' : ''}` : undefined}
               >
                 {columnOrder.map((col) => renderDataCell(col, unit))}
                 {alert.level !== 'none' ? (
-                  <Box>
-                    <Text className="text-xs font-semibold" style={{ fontSize, color: rowStyle.borderLeftColor }} numberOfLines={1}>
+                  <HStack space="xs" className="items-center">
+                    {isMuted ? <BellOffIcon size={fontSize} color={elapsedColor} /> : isAcknowledged ? <CheckCircleIcon size={fontSize} color={elapsedColor} /> : null}
+                    <Text className="text-xs font-semibold" style={{ fontSize, color: elapsedColor }} numberOfLines={1}>
                       {formatElapsed(alert.secondsInStatus)}
                     </Text>
-                  </Box>
+                  </HStack>
                 ) : null}
               </HStack>
+            );
+
+            return pressable ? (
+              <Pressable
+                key={unit.UnitId}
+                onPress={() => setSelectedUnitId(unit.UnitId)}
+                accessibilityRole="button"
+                accessibilityLabel={t('unitAlerts.openAcknowledge', { name: unit.Name })}
+                testID={`unit-row-press-${unit.UnitId}`}
+              >
+                {row}
+              </Pressable>
+            ) : (
+              row
             );
           })}
 
@@ -256,6 +290,15 @@ export const UnitsWidget: React.FC<UnitsWidgetProps> = ({ onRemove, isEditMode, 
           )}
         </VStack>
       </ScrollView>
+
+      <UnitAlertAcknowledgeSheet
+        isOpen={selected !== null}
+        onClose={() => setSelectedUnitId(null)}
+        unit={selected?.unit ?? null}
+        alert={selected?.alert ?? null}
+        acknowledgement={selected?.acknowledgement ?? null}
+        acknowledgementState={selected?.acknowledgementState ?? 'none'}
+      />
     </WidgetContainer>
   );
 };

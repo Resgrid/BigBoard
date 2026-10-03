@@ -22,7 +22,10 @@ export const useUnitsStore = create<UnitsState>((set) => ({
   fetchUnits: singleFlight(async () => {
     set({ isLoading: true, error: null });
     try {
-      const unitsResponse = await getUnitsInfos('');
+      // Always from the server. This runs on mount and after every unitStatusUpdated push; reading the
+      // cached copy here left a unit that had already departed shown as Dispatched, and counting up
+      // past its status timer, for as long as the cache lived.
+      const unitsResponse = await getUnitsInfos('', true);
       const unitStatusesResponse = await getAllUnitStatuses();
       set({ units: unitsResponse.Data ?? [], unitStatuses: unitStatusesResponse.Data ?? [], isLoading: false });
     } catch (error) {
