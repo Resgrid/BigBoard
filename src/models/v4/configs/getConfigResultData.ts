@@ -28,6 +28,8 @@ export class GetConfigResultData {
   public MapNightStyleUrl: string = '';
   /** Public Mapbox token (pk.) this app should use; empty means keep the built-in token. */
   public AppMapboxAccessToken: string = '';
+  /** True when the department's own Mapbox account (token and custom style) is in effect; its style then waits for that token. */
+  public IsDepartmentMapOverride: boolean = false;
   /**
    * Time-in-status thresholds keyed by the status's canonical base type. Empty means the department
    * has configured none and nothing on the board is flagged.

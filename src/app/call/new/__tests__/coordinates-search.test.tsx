@@ -134,6 +134,7 @@ describe('Coordinates Search Logic', () => {
     MapDayStyleUrl: '',
     MapNightStyleUrl: '',
     AppMapboxAccessToken: '',
+    IsDepartmentMapOverride: false,
     UnitStatusThresholds: [],
   };
 
@@ -285,6 +286,7 @@ describe('Coordinates Search Logic', () => {
         MapDayStyleUrl: '',
         MapNightStyleUrl: '',
         AppMapboxAccessToken: '',
+        IsDepartmentMapOverride: false,
         UnitStatusThresholds: [],
       };
 

@@ -77,6 +77,11 @@ export type MapboxTokenVerdict = 'valid' | 'invalid' | 'unknown';
 
 const REFUSED_CODES = ['TokenInvalid', 'TokenExpired', 'TokenRevoked', 'TokenMalformed'];
 
+// Bumped by every config load and every clear. A check still out when a newer config arrives, or when the
+// token is cleared (sign-out, server switch), must not write its verdict: it would bring back the previous
+// server's or department's token, or overwrite the token the newer config settled on.
+let tokenGeneration = 0;
+
 /** Asks Mapbox whether a token works. Network trouble is 'unknown', never 'invalid'. */
 export const verifyMapboxToken = async (token: string): Promise<MapboxTokenVerdict> => {
   try {
@@ -102,6 +107,7 @@ export const verifyMapboxToken = async (token: string): Promise<MapboxTokenVerdi
  * empty or missing token (an older server, or none configured) drops back to the built-in token.
  */
 export const applyServerMapboxToken = async (serverToken: string | null | undefined, now: number = Date.now()): Promise<void> => {
+  const generation = ++tokenGeneration;
   const candidate = typeof serverToken === 'string' ? serverToken.trim() : '';
   const state = useMapboxTokenStore.getState();
 
@@ -126,6 +132,10 @@ export const applyServerMapboxToken = async (serverToken: string | null | undefi
 
   const verdict = await verifyMapboxToken(candidate);
 
+  if (generation !== tokenGeneration) {
+    return;
+  }
+
   if (verdict === 'valid') {
     useMapboxTokenStore.setState({ token: candidate, verifiedAt: Date.now(), rejectedToken: null, rejectedAt: null });
   } else if (verdict === 'invalid') {
@@ -136,5 +146,6 @@ export const applyServerMapboxToken = async (serverToken: string | null | undefi
 
 /** Forget the server token (sign-out, server switch); the built-in token is used until config loads again. */
 export const clearMapboxToken = (): void => {
+  tokenGeneration++;
   useMapboxTokenStore.setState({ ...EMPTY_STATE });
 };

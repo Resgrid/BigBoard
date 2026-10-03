@@ -48,6 +48,20 @@ const mockFetchFailure = () => {
   (global as any).fetch = jest.fn().mockRejectedValue(new Error('Network request failed'));
 };
 
+/** Each check waits until the test answers it, so checks can finish in any order. */
+const mockFetchHeld = () => {
+  const answers: ((code: string) => void)[] = [];
+
+  (global as any).fetch = jest.fn(
+    () =>
+      new Promise((resolve) => {
+        answers.push((code) => resolve({ json: () => Promise.resolve({ code }) }));
+      })
+  );
+
+  return answers;
+};
+
 describe('mapbox-token', () => {
   const originalFetch = (global as any).fetch;
 
@@ -154,6 +168,42 @@ describe('mapbox-token', () => {
     await applyServerMapboxToken('');
 
     expect(getMapboxAccessToken()).toBe('pk.builtin.signature');
+  });
+
+  it('ignores a check that finishes after sign-out or a server switch', async () => {
+    const answers = mockFetchHeld();
+    const pending = applyServerMapboxToken(SERVER_TOKEN);
+
+    clearMapboxToken();
+    answers[0]('TokenValid');
+    await pending;
+
+    expect(getMapboxAccessToken()).toBe('pk.builtin.signature');
+    expect(mockStorage.get('mapbox-token-storage') ?? '').not.toContain(SERVER_TOKEN);
+  });
+
+  it('ignores a check that finishes after the server stopped sending its token', async () => {
+    const answers = mockFetchHeld();
+    const pending = applyServerMapboxToken(SERVER_TOKEN);
+
+    await applyServerMapboxToken('');
+    answers[0]('TokenValid');
+    await pending;
+
+    expect(getMapboxAccessToken()).toBe('pk.builtin.signature');
+  });
+
+  it('lets the newest config load decide when checks finish out of order', async () => {
+    const answers = mockFetchHeld();
+    const older = applyServerMapboxToken(SERVER_TOKEN);
+    const newer = applyServerMapboxToken(OTHER_TOKEN);
+
+    answers[1]('TokenValid');
+    await newer;
+    answers[0]('TokenValid');
+    await older;
+
+    expect(getMapboxAccessToken()).toBe(OTHER_TOKEN);
   });
 
   it('never checks or stores a secret token', async () => {

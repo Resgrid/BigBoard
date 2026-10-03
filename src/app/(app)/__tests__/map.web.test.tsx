@@ -228,7 +228,7 @@ describe('map.web base map style', () => {
     const CUSTOM = 'mapbox://styles/county-fire/ckcustom123';
     const SERVER_TOKEN = 'pk.eyJ1IjoiY291bnR5LWZpcmUifQ.server-signature';
     mockCoreState.isInitialized = true;
-    mockCoreState.config = { ...DEPARTMENT_CENTER, MapDayStyleUrl: CUSTOM, MapNightStyleUrl: CUSTOM, AppMapboxAccessToken: SERVER_TOKEN };
+    mockCoreState.config = { ...DEPARTMENT_CENTER, MapDayStyleUrl: CUSTOM, MapNightStyleUrl: CUSTOM, AppMapboxAccessToken: SERVER_TOKEN, IsDepartmentMapOverride: true };
 
     try {
       renderMap();

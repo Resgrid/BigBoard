@@ -97,6 +97,7 @@ describe('Plus Code Search Logic', () => {
     MapDayStyleUrl: '',
     MapNightStyleUrl: '',
     AppMapboxAccessToken: '',
+    IsDepartmentMapOverride: false,
     UnitStatusThresholds: [],
   };
 
@@ -152,6 +153,7 @@ describe('Plus Code Search Logic', () => {
         MapDayStyleUrl: '',
         MapNightStyleUrl: '',
         AppMapboxAccessToken: '',
+        IsDepartmentMapOverride: false,
         UnitStatusThresholds: [],
       };
 

@@ -124,6 +124,7 @@ describe('Address Search Logic', () => {
     MapDayStyleUrl: '',
     MapNightStyleUrl: '',
     AppMapboxAccessToken: '',
+    IsDepartmentMapOverride: false,
     UnitStatusThresholds: [],
   };
 
@@ -179,6 +180,7 @@ describe('Address Search Logic', () => {
         MapDayStyleUrl: '',
         MapNightStyleUrl: '',
         AppMapboxAccessToken: '',
+        IsDepartmentMapOverride: false,
         UnitStatusThresholds: [],
       };
 
