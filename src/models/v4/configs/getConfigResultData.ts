@@ -22,6 +22,12 @@ export class GetConfigResultData {
   public MapCenterLongitude: number = 0;
   /** Zoom level for department-wide maps. */
   public MapCenterZoomLevel: number = 9;
+  /** Department base map style (mapbox:// url) for the light theme. */
+  public MapDayStyleUrl: string = '';
+  /** Department base map style (mapbox:// url) for the dark theme. */
+  public MapNightStyleUrl: string = '';
+  /** Public Mapbox token (pk.) this app should use; empty means keep the built-in token. */
+  public AppMapboxAccessToken: string = '';
   /**
    * Time-in-status thresholds keyed by the status's canonical base type. Empty means the department
    * has configured none and nothing on the board is flagged.

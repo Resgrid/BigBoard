@@ -15,16 +15,16 @@ import { useAnalytics } from '@/hooks/use-analytics';
 import { useAppLifecycle } from '@/hooks/use-app-lifecycle';
 import { useMapLiveLocations } from '@/hooks/use-map-live-locations';
 import { useMapSignalRUpdates } from '@/hooks/use-map-signalr-updates';
-import { Env } from '@/lib/env';
 import { logger } from '@/lib/logging';
-import { onSortOptions } from '@/lib/utils';
+import { useDepartmentMapStyle } from '@/lib/map-style';
+import { getMapboxAccessToken } from '@/lib/mapbox-token';
 import { type MapMakerInfoData } from '@/models/v4/mapping/getMapDataAndMarkersData';
 import { useCoreStore } from '@/stores/app/core-store';
 import { useLocationStore } from '@/stores/app/location-store';
 import useAuthStore from '@/stores/auth/store';
 import { useToastStore } from '@/stores/toast/store';
 
-Mapbox.setAccessToken(Env.MAPBOX_PUBKEY);
+Mapbox.setAccessToken(getMapboxAccessToken());
 
 export default function Map() {
   const { t } = useTranslation();
@@ -49,21 +49,8 @@ export default function Map() {
     isMapLocked: state.isMapLocked,
   }));
 
-  const _mapOptions = Object.keys(Mapbox.StyleURL)
-    .map((key) => {
-      return {
-        label: key,
-        data: (Mapbox.StyleURL as any)[key],
-      };
-    })
-    .sort(onSortOptions);
-
-  // Get map style based on current theme
-  const getMapStyle = useCallback(() => {
-    return colorScheme === 'dark' ? Mapbox.StyleURL.Dark : Mapbox.StyleURL.Street;
-  }, [colorScheme]);
-
-  const [styleURL, setStyleURL] = useState({ styleURL: getMapStyle() });
+  // The department's day/night base map; follows config and the theme
+  const mapStyle = useDepartmentMapStyle();
 
   const pulseAnim = useRef(new Animated.Value(1)).current;
 
@@ -71,12 +58,6 @@ export default function Map() {
   const { applySnapshot } = useMapLiveLocations(mapPins, setMapPins);
   const handleMarkersUpdate = useCallback((markers: MapMakerInfoData[], fetchStartedAt: number) => setMapPins(applySnapshot(markers, fetchStartedAt)), [applySnapshot]);
   useMapSignalRUpdates(handleMarkersUpdate);
-
-  // Update map style when theme changes
-  useEffect(() => {
-    const newStyle = getMapStyle();
-    setStyleURL({ styleURL: newStyle });
-  }, [getMapStyle]);
 
   // Handle navigation focus - reset map state when user navigates back to map page
   useFocusEffect(
@@ -426,7 +407,7 @@ export default function Map() {
         <FocusAwareStatusBar />
         <Mapbox.MapView
           ref={mapRef}
-          styleURL={styleURL.styleURL}
+          styleURL={mapStyle}
           style={styles.map}
           onCameraChanged={onCameraChanged}
           onDidFinishLoadingMap={() => setIsMapReady(true)}

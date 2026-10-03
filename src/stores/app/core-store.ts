@@ -6,6 +6,7 @@ import { create } from 'zustand';
 import { getConfig } from '@/api/config';
 import { getUnits } from '@/api/units/units';
 import { logger } from '@/lib/logging';
+import { applyServerMapboxToken } from '@/lib/mapbox-token';
 import { type CallResultData } from '@/models/v4/calls/callResultData';
 import { type GetConfigResultData } from '@/models/v4/configs/getConfigResultData';
 import { type CustomStatusesResult } from '@/models/v4/customStatuses/customStatusesResult';
@@ -88,6 +89,11 @@ export const useCoreStore = create<CoreState>()((set, get) => ({
         error: null,
       });
 
+      // Fire and forget: the token is checked with Mapbox in the background and never holds up init
+      if (config.Data) {
+        void applyServerMapboxToken(config.Data.AppMapboxAccessToken);
+      }
+
       logger.info({
         message: 'Core store initialization completed successfully',
       });
@@ -125,6 +131,11 @@ export const useCoreStore = create<CoreState>()((set, get) => ({
       });
 
       set({ config: config.Data, error: null });
+
+      // Fire and forget: the token is checked with Mapbox in the background
+      if (config.Data) {
+        void applyServerMapboxToken(config.Data.AppMapboxAccessToken);
+      }
 
       logger.info({
         message: 'fetchConfig: Store updated with config',

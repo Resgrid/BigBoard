@@ -9,6 +9,8 @@ import Map from '../map.web';
 import { getMapDataAndMarkers } from '@/api/mapping/mapping';
 import { useMapSignalRUpdates } from '@/hooks/use-map-signalr-updates';
 import { FALLBACK_MAP_CENTER } from '@/lib/map-center';
+import { FALLBACK_DAY_MAP_STYLE } from '@/lib/map-style';
+import { clearMapboxToken, useMapboxTokenStore } from '@/lib/mapbox-token';
 import { type MapMakerInfoData } from '@/models/v4/mapping/getMapDataAndMarkersData';
 
 const DEPARTMENT_CENTER = { MapCenterLatitude: 50.8698, MapCenterLongitude: 3.8102, MapCenterZoomLevel: 14 };
@@ -16,6 +18,7 @@ const DEPARTMENT_CENTER = { MapCenterLatitude: 50.8698, MapCenterLongitude: 3.81
 const mockCoreState: { isInitialized: boolean; config: Record<string, unknown> | null } = { isInitialized: false, config: null };
 const mockGetState = jest.fn(() => mockCoreState);
 const mockMapConstructor = jest.fn();
+let mockColorScheme = 'light';
 
 jest.mock('mapbox-gl', () => ({
   __esModule: true,
@@ -101,7 +104,7 @@ jest.mock('react-i18next', () => ({
 
 jest.mock('nativewind', () => ({
   styled: jest.fn((Component: unknown) => Component),
-  useColorScheme: jest.fn(() => ({ colorScheme: 'light' })),
+  useColorScheme: jest.fn(() => ({ colorScheme: mockColorScheme })),
 }));
 
 // The container ref is a raw <div>; the test renderer hands back null for host refs unless one is
@@ -161,6 +164,96 @@ describe('map.web map initialization', () => {
         zoom: FALLBACK_MAP_CENTER.zoomLevel,
       })
     );
+  });
+});
+
+describe('map.web base map style', () => {
+  const SATELLITE = 'mapbox://styles/mapbox/satellite-v9';
+  const NAVIGATION_NIGHT = 'mapbox://styles/mapbox/navigation-night-v1';
+  const DEPARTMENT_STYLES = { ...DEPARTMENT_CENTER, MapDayStyleUrl: SATELLITE, MapNightStyleUrl: NAVIGATION_NIGHT };
+
+  const mapInstance = () => (mapboxgl.Map as unknown as jest.Mock).mock.results[0].value as { on: jest.Mock; setStyle: jest.Mock; remove: jest.Mock };
+  const fireLoad = () => {
+    const onLoad = mapInstance().on.mock.calls.find(([event]) => event === 'load')?.[1] as () => void;
+    act(() => {
+      onLoad();
+    });
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockGetState.mockImplementation(() => mockCoreState);
+    mockCoreState.isInitialized = false;
+    mockCoreState.config = null;
+    mockColorScheme = 'light';
+  });
+
+  it('constructs the map on the department day style once configuration lands', () => {
+    const { rerender } = renderMap();
+
+    mockCoreState.isInitialized = true;
+    mockCoreState.config = DEPARTMENT_STYLES;
+    rerender(<Map />);
+
+    expect(mockMapConstructor).toHaveBeenCalledTimes(1);
+    expect(mockMapConstructor).toHaveBeenCalledWith(expect.objectContaining({ style: SATELLITE }));
+  });
+
+  it('uses Streets when the department has no style', () => {
+    mockCoreState.isInitialized = true;
+    mockCoreState.config = DEPARTMENT_CENTER;
+    renderMap();
+
+    expect(mockMapConstructor).toHaveBeenCalledWith(expect.objectContaining({ style: FALLBACK_DAY_MAP_STYLE }));
+  });
+
+  it('restyles the live map to the night style on a theme flip without rebuilding it', () => {
+    mockCoreState.isInitialized = true;
+    mockCoreState.config = DEPARTMENT_STYLES;
+    const { rerender } = renderMap();
+    fireLoad();
+
+    expect(mapInstance().setStyle).not.toHaveBeenCalled();
+
+    mockColorScheme = 'dark';
+    rerender(<Map />);
+
+    expect(mapInstance().setStyle).toHaveBeenCalledTimes(1);
+    expect(mapInstance().setStyle).toHaveBeenCalledWith(NAVIGATION_NIGHT);
+    expect(mockMapConstructor).toHaveBeenCalledTimes(1);
+    expect(mapInstance().remove).not.toHaveBeenCalled();
+  });
+
+  it('holds a custom style back until its token is in use, and mapbox-gl is on that token before the restyle', () => {
+    const CUSTOM = 'mapbox://styles/county-fire/ckcustom123';
+    const SERVER_TOKEN = 'pk.eyJ1IjoiY291bnR5LWZpcmUifQ.server-signature';
+    mockCoreState.isInitialized = true;
+    mockCoreState.config = { ...DEPARTMENT_CENTER, MapDayStyleUrl: CUSTOM, MapNightStyleUrl: CUSTOM, AppMapboxAccessToken: SERVER_TOKEN };
+
+    try {
+      renderMap();
+      fireLoad();
+
+      // Built-in token (Env mock) in use: the custom style would load blank, so the default is shown
+      expect(mockMapConstructor).toHaveBeenCalledWith(expect.objectContaining({ style: FALLBACK_DAY_MAP_STYLE }));
+      expect(mapboxgl.accessToken).toBe('pk.test');
+
+      let tokenAtRestyle: string | null | undefined;
+      mapInstance().setStyle.mockImplementation(() => {
+        tokenAtRestyle = mapboxgl.accessToken;
+      });
+
+      // The server token is verified and adopted
+      act(() => {
+        useMapboxTokenStore.setState({ token: SERVER_TOKEN, verifiedAt: Date.now() });
+      });
+
+      expect(mapInstance().setStyle).toHaveBeenCalledWith(CUSTOM);
+      expect(tokenAtRestyle).toBe(SERVER_TOKEN);
+      expect(mockMapConstructor).toHaveBeenCalledTimes(1);
+    } finally {
+      clearMapboxToken();
+    }
   });
 });
 

@@ -12,6 +12,9 @@ const DEPARTMENT_CENTER = { MapCenterLatitude: 50.8698, MapCenterLongitude: 3.81
 const mockCoreState: { isInitialized: boolean; config: Record<string, unknown> | null } = { isInitialized: false, config: null };
 const mockGetState = jest.fn(() => mockCoreState);
 const mockMapConstructor = jest.fn();
+const mockSetStyle = jest.fn();
+const mockRemove = jest.fn();
+let mockColorScheme = 'light';
 
 jest.mock('mapbox-gl', () => ({
   __esModule: true,
@@ -19,7 +22,7 @@ jest.mock('mapbox-gl', () => ({
     accessToken: '',
     Map: jest.fn().mockImplementation((options: unknown) => {
       mockMapConstructor(options);
-      return { on: jest.fn(), remove: jest.fn(), flyTo: jest.fn(), addControl: jest.fn() };
+      return { on: jest.fn(), remove: mockRemove, flyTo: jest.fn(), addControl: jest.fn(), setStyle: mockSetStyle };
     }),
   },
 }));
@@ -66,7 +69,7 @@ jest.mock('../../maps/map-pins.web', () => ({
 
 jest.mock('nativewind', () => ({
   styled: jest.fn((Component: unknown) => Component),
-  useColorScheme: jest.fn(() => ({ colorScheme: 'light' })),
+  useColorScheme: jest.fn(() => ({ colorScheme: mockColorScheme })),
 }));
 
 // The container ref is a raw <div>; the test renderer hands back null for host refs unless one is
@@ -126,5 +129,45 @@ describe('MapWidget.web map initialization', () => {
         zoom: FALLBACK_MAP_CENTER.zoomLevel,
       })
     );
+  });
+});
+
+describe('MapWidget.web base map style', () => {
+  const SATELLITE = 'mapbox://styles/mapbox/satellite-v9';
+  const NAVIGATION_NIGHT = 'mapbox://styles/mapbox/navigation-night-v1';
+  const DEPARTMENT_STYLES = { ...DEPARTMENT_CENTER, MapDayStyleUrl: SATELLITE, MapNightStyleUrl: NAVIGATION_NIGHT };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockGetState.mockImplementation(() => mockCoreState);
+    mockCoreState.isInitialized = false;
+    mockCoreState.config = null;
+    mockColorScheme = 'light';
+  });
+
+  it('constructs the map on the department day style once configuration lands', () => {
+    const { rerender } = renderWidget();
+
+    mockCoreState.isInitialized = true;
+    mockCoreState.config = DEPARTMENT_STYLES;
+    rerender(<MapWidget />);
+
+    expect(mockMapConstructor).toHaveBeenCalledTimes(1);
+    expect(mockMapConstructor).toHaveBeenCalledWith(expect.objectContaining({ style: SATELLITE }));
+    expect(mockSetStyle).not.toHaveBeenCalled();
+  });
+
+  it('restyles the live map to the night style on a theme flip without rebuilding it', () => {
+    mockCoreState.isInitialized = true;
+    mockCoreState.config = DEPARTMENT_STYLES;
+    const { rerender } = renderWidget();
+
+    mockColorScheme = 'dark';
+    rerender(<MapWidget />);
+
+    expect(mockSetStyle).toHaveBeenCalledTimes(1);
+    expect(mockSetStyle).toHaveBeenCalledWith(NAVIGATION_NIGHT);
+    expect(mockMapConstructor).toHaveBeenCalledTimes(1);
+    expect(mockRemove).not.toHaveBeenCalled();
   });
 });
