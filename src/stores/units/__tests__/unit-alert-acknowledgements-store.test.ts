@@ -60,6 +60,36 @@ describe('useUnitAlertAcknowledgementsStore', () => {
     expect(useUnitAlertAcknowledgementsStore.getState().error).not.toBeNull();
   });
 
+  it('does not let a refresh that started before a save wipe the saved acknowledgement', async () => {
+    let resolveStale: (value: never) => void = () => undefined;
+    mockGet.mockImplementationOnce(() => new Promise((resolve) => (resolveStale = resolve))).mockResolvedValueOnce({ Data: [row({ Note: request.note })] } as never);
+    mockAcknowledge.mockResolvedValue({ Data: row({ Note: request.note }), Error: null } as never);
+
+    const fetching = useUnitAlertAcknowledgementsStore.getState().fetchAcknowledgements();
+    await useUnitAlertAcknowledgementsStore.getState().acknowledge(request);
+    resolveStale({ Data: [] } as never);
+    await fetching;
+
+    expect(mockGet).toHaveBeenCalledTimes(2);
+    expect(useUnitAlertAcknowledgementsStore.getState().acknowledgements['12']?.Note).toBe(request.note);
+    expect(useUnitAlertAcknowledgementsStore.getState().isLoading).toBe(false);
+  });
+
+  it('does not let a refresh that started before a clear bring the cleared acknowledgement back', async () => {
+    useUnitAlertAcknowledgementsStore.setState({ acknowledgements: { '12': row() } });
+    let resolveStale: (value: never) => void = () => undefined;
+    mockGet.mockImplementationOnce(() => new Promise((resolve) => (resolveStale = resolve))).mockResolvedValueOnce({ Data: [] } as never);
+    mockClear.mockResolvedValue({ Data: row({ ClearedOnUtc: '2026-10-02T12:00:00.000Z' }), Error: null } as never);
+
+    const fetching = useUnitAlertAcknowledgementsStore.getState().fetchAcknowledgements();
+    await useUnitAlertAcknowledgementsStore.getState().clear(row());
+    resolveStale({ Data: [row()] } as never);
+    await fetching;
+
+    expect(mockGet).toHaveBeenCalledTimes(2);
+    expect(useUnitAlertAcknowledgementsStore.getState().acknowledgements['12']).toBeUndefined();
+  });
+
   it('shows a saved acknowledgement straight away', async () => {
     mockAcknowledge.mockResolvedValue({ Data: row({ Note: request.note }), Error: null } as never);
 
@@ -67,7 +97,7 @@ describe('useUnitAlertAcknowledgementsStore', () => {
 
     expect(outcome).toEqual({ ok: true });
     expect(mockAcknowledge).toHaveBeenCalledWith(request);
-    expect(useUnitAlertAcknowledgementsStore.getState().acknowledgements['12'].Note).toBe(request.note);
+    expect(useUnitAlertAcknowledgementsStore.getState().acknowledgements['12']?.Note).toBe(request.note);
   });
 
   it('shows the colleague acknowledgement that won a race', async () => {
@@ -76,7 +106,7 @@ describe('useUnitAlertAcknowledgementsStore', () => {
     const outcome = await useUnitAlertAcknowledgementsStore.getState().acknowledge(request);
 
     expect(outcome).toEqual({ ok: false, error: 'unit_alert_conflict' });
-    expect(useUnitAlertAcknowledgementsStore.getState().acknowledgements['12'].UnitStatusAlertAcknowledgementId).toBe('theirs');
+    expect(useUnitAlertAcknowledgementsStore.getState().acknowledgements['12']?.UnitStatusAlertAcknowledgementId).toBe('theirs');
   });
 
   it.each(['unit_alert_status_changed', 'unit_alert_not_overdue'])('catches up with the unit when the server says %s', async (code) => {

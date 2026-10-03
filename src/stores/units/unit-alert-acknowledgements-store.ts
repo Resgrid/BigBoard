@@ -4,6 +4,7 @@ import { create } from 'zustand';
 import { acknowledgeUnitStatusAlert, type AcknowledgeUnitStatusAlertRequest, clearUnitStatusAlertAcknowledgement, getActiveUnitStatusAlertAcknowledgements } from '@/api/units/unitStatusAlerts';
 import { logger } from '@/lib/logging';
 import { singleFlight } from '@/lib/single-flight';
+import { type GetUnitStatusAlertAcknowledgementsResult } from '@/models/v4/unitStatusAlerts/getUnitStatusAlertAcknowledgementsResult';
 import { type SaveUnitStatusAlertAcknowledgementResult, type UnitStatusAlertAcknowledgementError } from '@/models/v4/unitStatusAlerts/saveUnitStatusAlertAcknowledgementResult';
 import { type UnitStatusAlertAcknowledgementResultData } from '@/models/v4/unitStatusAlerts/unitStatusAlertAcknowledgementResultData';
 
@@ -37,9 +38,17 @@ const refusalOf = (error: unknown): SaveUnitStatusAlertAcknowledgementResult | n
 };
 
 export const useUnitAlertAcknowledgementsStore = create<UnitAlertAcknowledgementsState>((set, get) => {
-  const upsert = (row: UnitStatusAlertAcknowledgementResultData) => set({ acknowledgements: { ...get().acknowledgements, [row.UnitId]: row } });
+  // Bumped by every local write. A fetch that started before one returns a list that predates it, and applying that
+  // list would bring back an alert the dispatcher just handled (or drop the one they just cleared).
+  let localWrites = 0;
+
+  const upsert = (row: UnitStatusAlertAcknowledgementResultData) => {
+    localWrites++;
+    set({ acknowledgements: { ...get().acknowledgements, [row.UnitId]: row } });
+  };
 
   const remove = (unitId: string) => {
+    localWrites++;
     const { [unitId]: _, ...rest } = get().acknowledgements;
     set({ acknowledgements: rest });
   };
@@ -48,7 +57,7 @@ export const useUnitAlertAcknowledgementsStore = create<UnitAlertAcknowledgement
     const refusal = refusalOf(error);
 
     if (!refusal?.Error) {
-      logger.error({ message: 'Failed to save unit status alert acknowledgement', context: { error } });
+      logger.error({ message: 'Failed to save unit status alert acknowledgement', context: { error, unitId } });
       return { ok: false, error: 'unknown' };
     }
 
@@ -71,7 +80,16 @@ export const useUnitAlertAcknowledgementsStore = create<UnitAlertAcknowledgement
     fetchAcknowledgements: singleFlight(async () => {
       set({ isLoading: true, error: null });
       try {
-        const response = await getActiveUnitStatusAlertAcknowledgements();
+        let writesAtStart: number;
+        let response: GetUnitStatusAlertAcknowledgementsResult;
+
+        // A write landed while the request was out: ask again for a list that includes it. The push from that same
+        // write may have been folded into this request by singleFlight, so dropping the stale list would not be enough.
+        do {
+          writesAtStart = localWrites;
+          response = await getActiveUnitStatusAlertAcknowledgements();
+        } while (writesAtStart !== localWrites);
+
         set({ acknowledgements: byUnit(response.Data ?? []), isLoading: false });
       } catch (error) {
         // Keep whatever was showing. An acknowledgement disappearing would bring an alert back that someone has handled.

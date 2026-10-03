@@ -21,7 +21,7 @@ import { type UnitAlertAcknowledgementOutcome, useUnitAlertAcknowledgementsStore
 export const MAX_ACKNOWLEDGEMENT_NOTE_LENGTH = 500;
 
 /** Mute choices in minutes. 0 is "until the unit changes status". */
-export const MUTE_OPTIONS = [0, 15, 30, 60];
+export const MUTE_OPTIONS = [0, 15, 30, 60] as const;
 
 interface UnitAlertAcknowledgeSheetProps {
   isOpen: boolean;
@@ -126,6 +126,9 @@ export const UnitAlertAcknowledgeSheet: React.FC<UnitAlertAcknowledgeSheetProps>
     [acknowledge, alert, muteMinutes, note, reportOutcome, t, unit]
   );
 
+  const handleMute = useCallback(() => submit(UnitStatusAlertAcknowledgementMode.Muted), [submit]);
+  const handleAcknowledge = useCallback(() => submit(UnitStatusAlertAcknowledgementMode.Acknowledged), [submit]);
+
   const handleClear = useCallback(async () => {
     if (!acknowledgement) {
       return;
@@ -213,10 +216,10 @@ export const UnitAlertAcknowledgeSheet: React.FC<UnitAlertAcknowledgeSheetProps>
           <Button variant="outline" className="flex-1" onPress={onClose} disabled={isSubmitting}>
             <ButtonText>{t('common.cancel')}</ButtonText>
           </Button>
-          <Button variant="outline" className="flex-1" onPress={() => submit(UnitStatusAlertAcknowledgementMode.Muted)} disabled={isSubmitting} testID="unit-alert-mute-button">
+          <Button variant="outline" className="flex-1" onPress={handleMute} disabled={isSubmitting} testID="unit-alert-mute-button">
             <ButtonText>{t('unitAlerts.mute')}</ButtonText>
           </Button>
-          <Button className="flex-1" onPress={() => submit(UnitStatusAlertAcknowledgementMode.Acknowledged)} disabled={isSubmitting} testID="unit-alert-acknowledge-button">
+          <Button className="flex-1" onPress={handleAcknowledge} disabled={isSubmitting} testID="unit-alert-acknowledge-button">
             <ButtonText>{t('unitAlerts.acknowledge')}</ButtonText>
           </Button>
         </HStack>

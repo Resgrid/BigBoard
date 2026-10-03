@@ -1,6 +1,6 @@
 import { BellOffIcon, CheckCircleIcon } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView } from 'react-native';
 
@@ -56,6 +56,7 @@ export const UnitsWidget: React.FC<UnitsWidgetProps> = ({ onRemove, isEditMode, 
   const acknowledgements = useUnitAlertAcknowledgements(thresholds.length > 0);
   const { canUserCreateCalls } = useSecurityStore();
   const [selectedUnitId, setSelectedUnitId] = useState<string | null>(null);
+  const closeSheet = useCallback(() => setSelectedUnitId(null), []);
 
   // The instant every unit is measured against. Held in state rather than read inside the memo so
   // the passage of time is an explicit input — otherwise the memo only recomputes when the unit
@@ -293,7 +294,7 @@ export const UnitsWidget: React.FC<UnitsWidgetProps> = ({ onRemove, isEditMode, 
 
       <UnitAlertAcknowledgeSheet
         isOpen={selected !== null}
-        onClose={() => setSelectedUnitId(null)}
+        onClose={closeSheet}
         unit={selected?.unit ?? null}
         alert={selected?.alert ?? null}
         acknowledgement={selected?.acknowledgement ?? null}

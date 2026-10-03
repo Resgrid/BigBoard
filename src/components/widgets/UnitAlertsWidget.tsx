@@ -1,6 +1,6 @@
 import { AlertTriangleIcon, BellOffIcon, CheckCircleIcon, ChevronDownIcon, ChevronRightIcon } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView } from 'react-native';
 
@@ -67,6 +67,8 @@ export const UnitAlertsWidget: React.FC<UnitAlertsWidgetProps> = ({ onRemove, is
   const [evaluatedAt, setEvaluatedAt] = useState(() => Date.now());
   const [showMuted, setShowMuted] = useState(false);
   const [selectedUnitId, setSelectedUnitId] = useState<string | null>(null);
+  const toggleMuted = useCallback(() => setShowMuted((value) => !value), []);
+  const closeSheet = useCallback(() => setSelectedUnitId(null), []);
 
   useUnitsSignalRUpdates();
 
@@ -198,7 +200,7 @@ export const UnitAlertsWidget: React.FC<UnitAlertsWidgetProps> = ({ onRemove, is
 
           {muted.length > 0 ? (
             <VStack space="xs">
-              <Pressable onPress={() => setShowMuted((value) => !value)} accessibilityRole="button" accessibilityState={{ expanded: showMuted }} testID="unit-alerts-muted-toggle">
+              <Pressable onPress={toggleMuted} accessibilityRole="button" accessibilityState={{ expanded: showMuted }} testID="unit-alerts-muted-toggle">
                 <HStack space="xs" className="items-center px-1 py-1">
                   {showMuted ? <ChevronDownIcon size={14} color={isDark ? '#9ca3af' : '#4b5563'} /> : <ChevronRightIcon size={14} color={isDark ? '#9ca3af' : '#4b5563'} />}
                   <Text className={`text-xs font-semibold ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('unitAlerts.mutedSection', { count: muted.length })}</Text>
@@ -221,7 +223,7 @@ export const UnitAlertsWidget: React.FC<UnitAlertsWidgetProps> = ({ onRemove, is
 
       <UnitAlertAcknowledgeSheet
         isOpen={selected !== null}
-        onClose={() => setSelectedUnitId(null)}
+        onClose={closeSheet}
         unit={selected?.unit ?? null}
         alert={selected?.alert ?? null}
         acknowledgement={selected?.acknowledgement ?? null}
