@@ -24,15 +24,18 @@ export const getUnits = async (forceRefresh = false) => {
   return response.data;
 };
 
-export const getUnitsInfos = async (filter: string) => {
+export const getUnitsInfos = async (filter: string, forceRefresh = false) => {
   if (filter) {
-    const response = await unitsInfosApi.get<UnitsInfoResult>({
-      activeFilter: encodeURIComponent(filter),
-    });
+    const response = await unitsInfosApi.get<UnitsInfoResult>(
+      {
+        activeFilter: encodeURIComponent(filter),
+      },
+      { forceRefresh }
+    );
     return response.data;
   }
 
-  const response = await unitsInfosApi.get<UnitsInfoResult>();
+  const response = await unitsInfosApi.get<UnitsInfoResult>(undefined, { forceRefresh });
   return response.data;
 };
 

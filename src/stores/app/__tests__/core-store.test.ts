@@ -58,12 +58,18 @@ jest.mock('@/lib/storage', () => ({
   },
 }));
 
+jest.mock('@/lib/mapbox-token', () => ({
+  applyServerMapboxToken: jest.fn(() => Promise.resolve()),
+}));
+
 // Import after mocks
 import { useCoreStore } from '../core-store';
 import { getConfig } from '@/api/config';
+import { applyServerMapboxToken } from '@/lib/mapbox-token';
 import { GetConfigResultData } from '@/models/v4/configs/getConfigResultData';
 
 const mockGetConfig = getConfig as jest.MockedFunction<typeof getConfig>;
+const mockApplyServerMapboxToken = applyServerMapboxToken as jest.MockedFunction<typeof applyServerMapboxToken>;
 
 describe('Core Store', () => {
   beforeEach(() => {
@@ -272,6 +278,71 @@ describe('Core Store', () => {
       });
 
       expect(result.current.config?.EventingUrl).toBe(eventingUrl);
+    });
+  });
+
+  describe('Mapbox token', () => {
+    const SERVER_TOKEN = 'pk.eyJ1IjoiY291bnR5In0.server-signature';
+
+    it('applies the server token from a successful init', async () => {
+      mockGetConfig.mockResolvedValue({
+        Data: { EventingUrl: 'https://eventing.example.com/', AppMapboxAccessToken: SERVER_TOKEN } as GetConfigResultData,
+      } as any);
+
+      const { result } = renderHook(() => useCoreStore());
+
+      await act(async () => {
+        await result.current.init();
+      });
+
+      expect(mockApplyServerMapboxToken).toHaveBeenCalledTimes(1);
+      expect(mockApplyServerMapboxToken).toHaveBeenCalledWith(SERVER_TOKEN);
+    });
+
+    it('applies the server token from a successful config refresh', async () => {
+      mockGetConfig.mockResolvedValue({
+        Data: { EventingUrl: 'https://eventing.example.com/', AppMapboxAccessToken: SERVER_TOKEN } as GetConfigResultData,
+      } as any);
+
+      const { result } = renderHook(() => useCoreStore());
+
+      await act(async () => {
+        await result.current.fetchConfig();
+      });
+
+      expect(mockApplyServerMapboxToken).toHaveBeenCalledTimes(1);
+      expect(mockApplyServerMapboxToken).toHaveBeenCalledWith(SERVER_TOKEN);
+    });
+
+    it('does not wait for the token check to finish initializing', async () => {
+      mockApplyServerMapboxToken.mockReturnValueOnce(new Promise<void>(() => {}));
+      mockGetConfig.mockResolvedValue({
+        Data: { EventingUrl: 'https://eventing.example.com/', AppMapboxAccessToken: SERVER_TOKEN } as GetConfigResultData,
+      } as any);
+
+      const { result } = renderHook(() => useCoreStore());
+
+      await act(async () => {
+        await result.current.init();
+      });
+
+      expect(result.current.isInitialized).toBe(true);
+      expect(result.current.config?.AppMapboxAccessToken).toBe(SERVER_TOKEN);
+    });
+
+    it('leaves the token alone when the config load fails', async () => {
+      mockGetConfig.mockRejectedValue(new Error('Config service unavailable'));
+
+      const { result } = renderHook(() => useCoreStore());
+
+      await act(async () => {
+        await result.current.init();
+      });
+      await act(async () => {
+        await result.current.fetchConfig().catch(() => undefined);
+      });
+
+      expect(mockApplyServerMapboxToken).not.toHaveBeenCalled();
     });
   });
 

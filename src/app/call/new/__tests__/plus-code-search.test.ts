@@ -94,6 +94,10 @@ describe('Plus Code Search Logic', () => {
     MapCenterLatitude: 0,
     MapCenterLongitude: 0,
     MapCenterZoomLevel: 9,
+    MapDayStyleUrl: '',
+    MapNightStyleUrl: '',
+    AppMapboxAccessToken: '',
+    IsDepartmentMapOverride: false,
     UnitStatusThresholds: [],
   };
 
@@ -146,6 +150,10 @@ describe('Plus Code Search Logic', () => {
         MapCenterLatitude: 0,
         MapCenterLongitude: 0,
         MapCenterZoomLevel: 9,
+        MapDayStyleUrl: '',
+        MapNightStyleUrl: '',
+        AppMapboxAccessToken: '',
+        IsDepartmentMapOverride: false,
         UnitStatusThresholds: [],
       };
 

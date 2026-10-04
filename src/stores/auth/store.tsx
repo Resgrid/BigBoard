@@ -7,6 +7,7 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 import { cacheManager } from '@/lib/cache/cache-manager';
 import { clearCacheScope, setCacheScope } from '@/lib/cache/cache-scope';
 import { logger } from '@/lib/logging';
+import { clearMapboxToken } from '@/lib/mapbox-token';
 
 import { externalTokenRequest, loginRequest, refreshTokenRequest } from '../../lib/auth/api';
 import type { AuthState, LoginCredentials, ProfileModel, SsoLoginCredentials } from '../../lib/auth/types';
@@ -155,6 +156,8 @@ const useAuthStore = create<AuthState>()(
         });
 
         clearRefreshTimer();
+        // The Mapbox token came from this session's config; the built-in one applies until the next config load
+        clearMapboxToken();
 
         set({
           accessToken: null,

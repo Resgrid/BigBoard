@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 
+import { UnitStatusAlertAcknowledgedLevel, UnitStatusAlertAcknowledgementMode, type UnitStatusAlertAcknowledgementResultData } from '@/models/v4/unitStatusAlerts/unitStatusAlertAcknowledgementResultData';
 import { useCoreStore } from '@/stores/app/core-store';
 
 import { secondsInStatus } from './unit-status';
@@ -81,6 +82,116 @@ export const evaluateUnitStatusAlert = (unit: EvaluableUnit, thresholds: UnitSta
   }
 
   return { level: 'none', secondsInStatus: elapsed, thresholdSeconds: null };
+};
+
+/**
+ * What a dispatcher's acknowledgement means for a unit right now.
+ *
+ * - `none`: nobody has acknowledged this alert, so it shows at full strength.
+ * - `acknowledged`: someone has seen it. It stays highlighted, marked with who saw it and their note.
+ * - `muted`: moved out of the way until the mute runs out or the unit changes status.
+ */
+export type UnitAlertAcknowledgementState = 'none' | 'acknowledged' | 'muted';
+
+const LEVEL_RANK: Record<UnitStatusAlertLevel, number> = { none: 0, warn: 1, alert: 2 };
+
+/** The server's level number for an alert the board is showing. */
+export const toAcknowledgedLevel = (level: UnitStatusAlertLevel): UnitStatusAlertAcknowledgedLevel => (level === 'alert' ? UnitStatusAlertAcknowledgedLevel.Alert : UnitStatusAlertAcknowledgedLevel.Warn);
+
+interface AcknowledgeableUnit {
+  CurrentUnitStateId?: number | null;
+}
+
+/**
+ * Whether an acknowledgement still covers a unit. These rules are the same as the server's
+ * `UnitStatusAlertEvaluator.Resolve`; keep the two in step.
+ *
+ * It does not cover the unit when the unit has reported a new status (a different CurrentUnitStateId), or when
+ * the unit has gone past the level that was acknowledged: a warning someone saw must not hide the alert that
+ * follows it. A mute that has run out falls back to acknowledged. Someone did see it, and the row coming back
+ * into view is the reminder.
+ */
+export const resolveAcknowledgement = (
+  acknowledgement: UnitStatusAlertAcknowledgementResultData | null | undefined,
+  unit: AcknowledgeableUnit | null | undefined,
+  level: UnitStatusAlertLevel,
+  now: number = Date.now()
+): UnitAlertAcknowledgementState => {
+  if (!acknowledgement || acknowledgement.ClearedOnUtc || level === 'none') {
+    return 'none';
+  }
+
+  const currentUnitStateId = unit?.CurrentUnitStateId;
+
+  if (typeof currentUnitStateId !== 'number' || currentUnitStateId <= 0 || acknowledgement.UnitStateId !== currentUnitStateId) {
+    return 'none';
+  }
+
+  if (LEVEL_RANK[level] > acknowledgement.Level) {
+    return 'none';
+  }
+
+  if (acknowledgement.Mode === UnitStatusAlertAcknowledgementMode.Muted) {
+    if (!acknowledgement.MutedUntilUtc) {
+      return 'muted';
+    }
+
+    const mutedUntil = Date.parse(acknowledgement.MutedUntilUtc);
+
+    // An end time we cannot read is treated as already passed. Hiding an alert on a guess is the worse mistake.
+    if (Number.isFinite(mutedUntil) && mutedUntil > now) {
+      return 'muted';
+    }
+  }
+
+  return 'acknowledged';
+};
+
+/**
+ * Sort weight once acknowledgements are taken into account: unacknowledged alerts, then unacknowledged
+ * warnings, then acknowledged rows, then everything else (including muted rows).
+ */
+export const acknowledgedSortWeight = (level: UnitStatusAlertLevel, acknowledgement: UnitAlertAcknowledgementState): number => {
+  if (level === 'none' || acknowledgement === 'muted') {
+    return 4;
+  }
+
+  if (acknowledgement === 'acknowledged') {
+    return level === 'alert' ? 2 : 3;
+  }
+
+  return alertSortWeight(level);
+};
+
+export interface AnnotatedUnitAlert {
+  alert: UnitStatusAlert;
+  /** The acknowledgement on file for the unit, whether or not it still covers the alert. */
+  acknowledgement: UnitStatusAlertAcknowledgementResultData | null;
+  acknowledgementState: UnitAlertAcknowledgementState;
+}
+
+/** Evaluates a unit's alert and what any acknowledgement on file means for it, against one instant. */
+export const annotateUnitAlert = (
+  unit: EvaluableUnit & AcknowledgeableUnit & { UnitId: string },
+  thresholds: UnitStatusThreshold[],
+  acknowledgements: Record<string, UnitStatusAlertAcknowledgementResultData>,
+  now: number
+): AnnotatedUnitAlert => {
+  const alert = evaluateUnitStatusAlert(unit, thresholds, now);
+  const acknowledgement = acknowledgements[unit.UnitId] ?? null;
+
+  return { alert, acknowledgement, acknowledgementState: resolveAcknowledgement(acknowledgement, unit, alert.level, now) };
+};
+
+/** Row colours for an acknowledged alert: the level's edge colour stays, the loud fill goes. */
+export const acknowledgedRowStyle = (level: UnitStatusAlertLevel, isDark: boolean): { backgroundColor: string | undefined; borderLeftColor: string | undefined } => {
+  const { borderLeftColor } = alertRowStyle(level, isDark);
+
+  if (!borderLeftColor) {
+    return { backgroundColor: undefined, borderLeftColor: undefined };
+  }
+
+  return { backgroundColor: isDark ? '#1f2937' : '#f3f4f6', borderLeftColor };
 };
 
 /** Sort weight: alerts first, then warnings, then everything else. */

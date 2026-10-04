@@ -1,5 +1,4 @@
 import Mapbox from '@rnmapbox/maps';
-import { useColorScheme } from 'nativewind';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { StyleSheet } from 'react-native';
 
@@ -10,6 +9,7 @@ import { Text } from '@/components/ui/text';
 import { useMapLiveLocations } from '@/hooks/use-map-live-locations';
 import { useMapSignalRUpdates } from '@/hooks/use-map-signalr-updates';
 import { logger } from '@/lib/logging';
+import { useDepartmentMapStyle } from '@/lib/map-style';
 import { type MapMakerInfoData } from '@/models/v4/mapping/getMapDataAndMarkersData';
 import { useCoreStore } from '@/stores/app/core-store';
 import useAuthStore from '@/stores/auth/store';
@@ -36,8 +36,8 @@ const styles = StyleSheet.create({
 });
 
 export const MapWidget: React.FC<MapWidgetProps> = ({ onRemove, isEditMode, width = 2, height = 3, containerWidth, containerHeight }) => {
-  const { colorScheme } = useColorScheme();
-  const isDark = colorScheme === 'dark';
+  // The department's day/night base map; follows config and the theme
+  const mapStyle = useDepartmentMapStyle();
   const [mapPins, setMapPins] = useState<MapMakerInfoData[]>([]);
   const [isMapReady, setIsMapReady] = useState(false);
   const [hasLoadedInitialData, setHasLoadedInitialData] = useState(false);
@@ -122,10 +122,6 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ onRemove, isEditMode, widt
     }
   }, [isMapReady, mapPins]);
 
-  const styleURL = {
-    styleURL: isDark ? 'mapbox://styles/mapbox/dark-v11' : 'mapbox://styles/mapbox/streets-v12',
-  };
-
   return (
     <WidgetContainer title="Map" onRemove={onRemove} isEditMode={isEditMode} testID="map-widget" width={containerWidth} height={containerHeight}>
       <Box className="relative flex-1">
@@ -134,7 +130,7 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ onRemove, isEditMode, widt
             <Spinner size="small" />
           </Box>
         )}
-        <Mapbox.MapView styleURL={styleURL.styleURL} style={styles.map} onDidFinishLoadingMap={() => setIsMapReady(true)}>
+        <Mapbox.MapView styleURL={mapStyle} style={styles.map} onDidFinishLoadingMap={() => setIsMapReady(true)}>
           <Mapbox.Camera ref={cameraRef} zoomLevel={10} animationDuration={0} />
           <MapPins pins={mapPins} />
         </Mapbox.MapView>

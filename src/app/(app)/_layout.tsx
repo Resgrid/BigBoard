@@ -25,6 +25,7 @@ import { useSignalRLifecycle } from '@/hooks/use-signalr-lifecycle';
 import { useAuthStore } from '@/lib/auth';
 import { Env } from '@/lib/env';
 import { logger } from '@/lib/logging';
+import { getMapboxAccessToken, onMapboxAccessTokenChange } from '@/lib/mapbox-token';
 import { useIsFirstTime } from '@/lib/storage';
 import { type GetConfigResultData } from '@/models/v4/configs/getConfigResultData';
 import { usePushNotifications } from '@/services/push-notification';
@@ -36,6 +37,16 @@ import { securityStore } from '@/stores/security/store';
 import { useSignalRStore } from '@/stores/signalr/signalr-store';
 import { useWeatherAlertsStore } from '@/stores/weatherAlerts/store';
 import { WidgetType } from '@/types/widget';
+
+// Keep the native Mapbox SDK on the token in use (server-supplied once verified, else built-in).
+// Registered once at module scope: store listeners run synchronously before React re-renders, so the
+// SDK has a new token before any map re-renders with a style that needs it. Web maps (mapbox-gl) read
+// the token themselves.
+if (Platform.OS !== 'web') {
+  onMapboxAccessTokenChange((token) => {
+    Mapbox.setAccessToken(token);
+  });
+}
 
 export default function TabLayout() {
   const { t } = useTranslation();
@@ -71,7 +82,7 @@ export default function TabLayout() {
   // On web, Mapbox GL JS is loaded separately and doesn't use this initialization
   useEffect(() => {
     if (Platform.OS !== 'web') {
-      Mapbox.setAccessToken(Env.MAPBOX_PUBKEY);
+      Mapbox.setAccessToken(getMapboxAccessToken());
       logger.info({
         message: 'Mapbox access token set',
         context: { platform: Platform.OS },

@@ -1,5 +1,4 @@
 import mapboxgl from 'mapbox-gl';
-import { useColorScheme } from 'nativewind';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { getMapDataAndMarkers, getMapLayers } from '@/api/mapping/mapping';
@@ -7,9 +6,10 @@ import { Box } from '@/components/ui/box';
 import { Spinner } from '@/components/ui/spinner';
 import { useMapLiveLocations } from '@/hooks/use-map-live-locations';
 import { useMapSignalRUpdates } from '@/hooks/use-map-signalr-updates';
-import { Env } from '@/lib/env';
 import { logger } from '@/lib/logging';
 import { getDepartmentMapCenter } from '@/lib/map-center';
+import { useDepartmentMapStyle } from '@/lib/map-style';
+import { getMapboxAccessToken, onMapboxAccessTokenChange } from '@/lib/mapbox-token';
 import { type MapMakerInfoData } from '@/models/v4/mapping/getMapDataAndMarkersData';
 import { useCoreStore } from '@/stores/app/core-store';
 import useAuthStore from '@/stores/auth/store';
@@ -27,14 +27,32 @@ interface MapWidgetProps {
 }
 
 export const MapWidget: React.FC<MapWidgetProps> = ({ onRemove, isEditMode, width = 2, height = 3, containerWidth, containerHeight }) => {
-  const { colorScheme } = useColorScheme();
-  const isDark = colorScheme === 'dark';
   const [mapPins, setMapPins] = useState<MapMakerInfoData[]>([]);
   const [isMapReady, setIsMapReady] = useState(false);
   const [hasLoadedInitialData, setHasLoadedInitialData] = useState(false);
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const hasCenteredRef = useRef(false);
+
+  // The department's day/night base map. It changes when config lands as well as when the theme
+  // flips, so construction reads it through a ref and a separate effect restyles the live map
+  // instead of tearing it (and its pins) down.
+  const mapStyle = useDepartmentMapStyle();
+  const mapStyleRef = useRef(mapStyle);
+  const appliedMapStyleRef = useRef<string | null>(null);
+  useEffect(() => {
+    mapStyleRef.current = mapStyle;
+  }, [mapStyle]);
+
+  // mapbox-gl reads its global token on every request. The listener runs inside the token store's
+  // update, before the re-render that may restyle the map with a style needing the new token.
+  useEffect(
+    () =>
+      onMapboxAccessTokenChange((token) => {
+        mapboxgl.accessToken = token;
+      }),
+    []
+  );
 
   // Get auth and core store states
   const accessToken = useAuthStore((state) => state.accessToken);
@@ -56,7 +74,7 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ onRemove, isEditMode, widt
     // above means this effect never constructs a second time once a map exists.
     if (!isInitialized) return;
 
-    mapboxgl.accessToken = Env.MAPBOX_PUBKEY;
+    mapboxgl.accessToken = getMapboxAccessToken();
 
     // Add CSS if not already added
     if (!document.getElementById('mapbox-gl-css')) {
@@ -67,13 +85,12 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ onRemove, isEditMode, widt
       document.head.appendChild(link);
     }
 
-    const styleURL = isDark ? 'mapbox://styles/mapbox/dark-v11' : 'mapbox://styles/mapbox/streets-v12';
-
     const center = getDepartmentMapCenter();
 
+    appliedMapStyleRef.current = mapStyleRef.current;
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: styleURL,
+      style: mapStyleRef.current,
       center: [center.longitude, center.latitude],
       zoom: center.zoomLevel,
       attributionControl: false,
@@ -87,12 +104,22 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ onRemove, isEditMode, widt
       // Clean up map
       map.current?.remove();
       map.current = null;
+      appliedMapStyleRef.current = null;
       // Reset loaded flag when map is cleaned up
       setHasLoadedInitialData(false);
       // A rebuilt map starts on the fallback centre again, so let it re-centre once
       hasCenteredRef.current = false;
     };
-  }, [isDark, isInitialized]);
+  }, [isInitialized]);
+
+  // Restyle the live map when the department style changes (config load or theme flip). Pins are
+  // DOM markers, so they survive setStyle.
+  useEffect(() => {
+    if (map.current && appliedMapStyleRef.current !== mapStyle) {
+      map.current.setStyle(mapStyle);
+      appliedMapStyleRef.current = mapStyle;
+    }
+  }, [mapStyle]);
 
   // Load initial map data when conditions are met
   useEffect(() => {

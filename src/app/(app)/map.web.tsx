@@ -12,9 +12,10 @@ import { useAnalytics } from '@/hooks/use-analytics';
 import { useAppLifecycle } from '@/hooks/use-app-lifecycle';
 import { useMapLiveLocations } from '@/hooks/use-map-live-locations';
 import { useMapSignalRUpdates } from '@/hooks/use-map-signalr-updates';
-import { Env } from '@/lib/env';
 import { logger } from '@/lib/logging';
 import { getDepartmentMapCenter } from '@/lib/map-center';
+import { useDepartmentMapStyle } from '@/lib/map-style';
+import { getMapboxAccessToken, onMapboxAccessTokenChange } from '@/lib/mapbox-token';
 import { type MapMakerInfoData } from '@/models/v4/mapping/getMapDataAndMarkersData';
 import { useCoreStore } from '@/stores/app/core-store';
 import { useLocationStore } from '@/stores/app/location-store';
@@ -130,10 +131,25 @@ export default function Map() {
     logger.debug({ message: 'isActive changed', context: { isActive } });
   }, [isActive]);
 
-  // Get map style based on current theme
-  const getMapStyle = useCallback(() => {
-    return colorScheme === 'dark' ? 'mapbox://styles/mapbox/dark-v11' : 'mapbox://styles/mapbox/streets-v12';
-  }, [colorScheme]);
+  // The department's day/night base map. It changes when config lands as well as when the theme
+  // flips, so construction reads it through a ref and a separate effect restyles the live map:
+  // a style change must never tear down the map (and its markers).
+  const mapStyle = useDepartmentMapStyle();
+  const mapStyleRef = useRef(mapStyle);
+  const appliedMapStyleRef = useRef<string | null>(null);
+  useEffect(() => {
+    mapStyleRef.current = mapStyle;
+  }, [mapStyle]);
+
+  // mapbox-gl reads its global token on every request. The listener runs inside the token store's
+  // update, before the re-render that may restyle the map with a style needing the new token.
+  useEffect(
+    () =>
+      onMapboxAccessTokenChange((token) => {
+        mapboxgl.accessToken = token;
+      }),
+    []
+  );
 
   // Initialize map
   useEffect(() => {
@@ -143,7 +159,7 @@ export default function Map() {
     // above means this effect never constructs a second time once a map exists.
     if (!isInitialized) return;
 
-    mapboxgl.accessToken = Env.MAPBOX_PUBKEY;
+    mapboxgl.accessToken = getMapboxAccessToken();
 
     // Add CSS if not already added
     if (!document.getElementById('mapbox-gl-css')) {
@@ -158,9 +174,10 @@ export default function Map() {
     // The same Map instance for the component's lifetime (only its contents change)
     const pinMarkers = markers.current;
 
+    appliedMapStyleRef.current = mapStyleRef.current;
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: getMapStyle(),
+      style: mapStyleRef.current,
       center: [center.longitude, center.latitude],
       zoom: center.zoomLevel,
     });
@@ -201,18 +218,21 @@ export default function Map() {
       hasFittedPinsRef.current = false;
       map.current?.remove();
       map.current = null;
+      appliedMapStyleRef.current = null;
       setIsMapReady(false);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getMapStyle, isInitialized]);
+  }, [isInitialized]);
 
-  // Update map style when theme changes
+  // Restyle the live map when the department style changes (config load or theme flip). Pins and
+  // the user marker are DOM markers, so they survive setStyle.
   useEffect(() => {
-    if (map.current && isMapReady) {
-      map.current.setStyle(getMapStyle());
-      logger.info({ message: 'Map style updated', context: { theme: colorScheme } });
+    if (map.current && isMapReady && appliedMapStyleRef.current !== mapStyle) {
+      map.current.setStyle(mapStyle);
+      appliedMapStyleRef.current = mapStyle;
+      logger.info({ message: 'Map style updated', context: { theme: colorScheme, style: mapStyle } });
     }
-  }, [colorScheme, getMapStyle, isMapReady]);
+  }, [colorScheme, mapStyle, isMapReady]);
 
   // Update user location marker and camera position
   useEffect(() => {

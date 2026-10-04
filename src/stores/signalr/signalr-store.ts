@@ -8,6 +8,7 @@ import { type SignalRConnectionStateCallbacks, signalRService } from '@/services
 
 import { useCoreStore } from '../app/core-store';
 import { securityStore, useSecurityStore } from '../security/store';
+import { useUnitAlertAcknowledgementsStore } from '../units/unit-alert-acknowledgements-store';
 import { useWeatherAlertsStore } from '../weatherAlerts/store';
 
 let updateHubListenersRegistered = false;
@@ -260,6 +261,7 @@ export const useSignalRStore = create<SignalRState>((set, get) => ({
           'personnelStatusUpdated',
           'personnelStaffingUpdated',
           'unitStatusUpdated',
+          'unitStatusAlertUpdated',
           'callsUpdated',
           'callAdded',
           'callClosed',
@@ -302,6 +304,15 @@ export const useSignalRStore = create<SignalRState>((set, get) => ({
             message: 'unitStatusUpdated',
           });
           set({ lastUpdateMessage: JSON.stringify(message), lastUpdateTimestamp: Date.now(), lastUnitsTimestamp: Date.now() });
+        });
+
+        // A dispatcher on any board acknowledged, muted or cleared a unit status timer alert.
+        signalRService.on('unitStatusAlertUpdated', (message) => {
+          logger.info({
+            message: 'unitStatusAlertUpdated',
+          });
+          useUnitAlertAcknowledgementsStore.getState().fetchAcknowledgements();
+          set({ lastUpdateMessage: JSON.stringify(message), lastUpdateTimestamp: Date.now() });
         });
 
         signalRService.on('callsUpdated', (message) => {

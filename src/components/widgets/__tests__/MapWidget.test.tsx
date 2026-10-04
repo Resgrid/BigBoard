@@ -3,15 +3,20 @@ import React from 'react';
 
 import { getMapDataAndMarkers } from '@/api/mapping/mapping';
 import { useMapSignalRUpdates } from '@/hooks/use-map-signalr-updates';
+import { FALLBACK_DAY_MAP_STYLE } from '@/lib/map-style';
 import { type MapMakerInfoData } from '@/models/v4/mapping/getMapDataAndMarkersData';
 
 import { MapWidget } from '../MapWidget';
 
 const mockSetCamera = jest.fn();
+const mockMapViewStyleURL = jest.fn();
+let mockCoreConfig: Record<string, unknown> | null = null;
+let mockColorScheme = 'light';
 
 jest.mock('@rnmapbox/maps', () => {
   const ReactActual = jest.requireActual('react');
-  const MapView = ({ children, onDidFinishLoadingMap }: { children: React.ReactNode; onDidFinishLoadingMap?: () => void }) => {
+  const MapView = ({ children, onDidFinishLoadingMap, styleURL }: { children: React.ReactNode; onDidFinishLoadingMap?: () => void; styleURL?: string }) => {
+    mockMapViewStyleURL(styleURL);
     ReactActual.useEffect(() => {
       onDidFinishLoadingMap?.();
     }, [onDidFinishLoadingMap]);
@@ -59,7 +64,7 @@ jest.mock('@/api/mapping/mapping', () => ({
 }));
 
 jest.mock('@/stores/app/core-store', () => ({
-  useCoreStore: (selector: (state: unknown) => unknown) => selector({ isInitialized: true }),
+  useCoreStore: (selector: (state: unknown) => unknown) => selector({ isInitialized: true, config: mockCoreConfig }),
 }));
 
 jest.mock('@/stores/auth/store', () => ({
@@ -80,7 +85,7 @@ jest.mock('@/lib/logging', () => ({
 
 jest.mock('nativewind', () => ({
   styled: jest.fn((Component: unknown) => Component),
-  useColorScheme: jest.fn(() => ({ colorScheme: 'light' })),
+  useColorScheme: jest.fn(() => ({ colorScheme: mockColorScheme })),
 }));
 
 const pin = (overrides: Partial<MapMakerInfoData>): MapMakerInfoData => ({
@@ -122,5 +127,52 @@ describe('MapWidget (native) camera', () => {
     });
 
     expect(mockSetCamera).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('MapWidget (native) base map style', () => {
+  const SATELLITE = 'mapbox://styles/mapbox/satellite-v9';
+  const NAVIGATION_NIGHT = 'mapbox://styles/mapbox/navigation-night-v1';
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    (getMapDataAndMarkers as jest.Mock).mockResolvedValue(null);
+  });
+
+  afterEach(() => {
+    mockCoreConfig = null;
+    mockColorScheme = 'light';
+  });
+
+  it('renders the department day style in a light theme', async () => {
+    mockCoreConfig = { MapDayStyleUrl: SATELLITE, MapNightStyleUrl: NAVIGATION_NIGHT };
+
+    render(<MapWidget />);
+
+    await waitFor(() => {
+      expect(mockMapViewStyleURL).toHaveBeenCalled();
+    });
+    expect(mockMapViewStyleURL).toHaveBeenLastCalledWith(SATELLITE);
+  });
+
+  it('renders the department night style in a dark theme', async () => {
+    mockCoreConfig = { MapDayStyleUrl: SATELLITE, MapNightStyleUrl: NAVIGATION_NIGHT };
+    mockColorScheme = 'dark';
+
+    render(<MapWidget />);
+
+    await waitFor(() => {
+      expect(mockMapViewStyleURL).toHaveBeenCalled();
+    });
+    expect(mockMapViewStyleURL).toHaveBeenLastCalledWith(NAVIGATION_NIGHT);
+  });
+
+  it('falls back to Streets before config loads', async () => {
+    render(<MapWidget />);
+
+    await waitFor(() => {
+      expect(mockMapViewStyleURL).toHaveBeenCalled();
+    });
+    expect(mockMapViewStyleURL).toHaveBeenLastCalledWith(FALLBACK_DAY_MAP_STYLE);
   });
 });

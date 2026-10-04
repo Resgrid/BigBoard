@@ -31,6 +31,11 @@ export class UnitInfoResultData {
    */
   public CurrentStatusBaseType: number | null = null;
   public CurrentStatusTimestampUtc: string = '';
+  /**
+   * Id of the unit's current status record, 0 when it has never reported one. A status timer acknowledgement
+   * names the record it covers, so this is how the board tells whether it still applies.
+   */
+  public CurrentUnitStateId: number = 0;
   public Latitude: string = '';
   public Longitude: string = '';
   public Note: string = '';
