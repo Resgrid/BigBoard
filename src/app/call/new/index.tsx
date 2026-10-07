@@ -30,6 +30,7 @@ import { Textarea, TextareaInput } from '@/components/ui/textarea';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { useNewCallFieldPolicy } from '@/hooks/use-new-call-field-policy';
 import { useToast } from '@/hooks/use-toast';
+import { formatGeolocation } from '@/lib/call-geolocation';
 import { type NewCallFieldKey, NewCallFieldKeys } from '@/models/v4/calls/newCallFieldPolicyResultData';
 import { useCoreStore } from '@/stores/app/core-store';
 import { useCallsStore } from '@/stores/calls/store';
@@ -223,9 +224,9 @@ export default function NewCall() {
       return;
     }
 
-    // A location on the equator or the prime meridian has a zero coordinate, which is a real
-    // place, not a blank field — test that both are finite rather than truthy.
-    const hasGeolocation = Number.isFinite(data.latitude) && Number.isFinite(data.longitude);
+    // The same value createCall sends, so "required" here and on the server agree on what counts
+    // as a location (a single zero coordinate does; a blank pair or 0,0 does not).
+    const geolocation = formatGeolocation(data.latitude, data.longitude);
 
     // The department may require fields beyond the built-in mandatory four. Enforced here for a
     // clear message, and again on the server so an old build cannot slip an incomplete call past.
@@ -239,7 +240,7 @@ export default function NewCall() {
     const missingFields = fieldPolicy
       .missingRequired({
         [NewCallFieldKeys.Address]: data.address,
-        [NewCallFieldKeys.Geolocation]: hasGeolocation ? `${data.latitude},${data.longitude}` : '',
+        [NewCallFieldKeys.Geolocation]: geolocation,
         [NewCallFieldKeys.What3Words]: data.what3words,
         [NewCallFieldKeys.PlusCode]: data.plusCode,
         [NewCallFieldKeys.Note]: data.note,

@@ -1,3 +1,4 @@
+import { formatGeolocation } from '@/lib/call-geolocation';
 import { type ActiveCallsResult } from '@/models/v4/calls/activeCallsResult';
 import { type CallExtraDataResult } from '@/models/v4/calls/callExtraDataResult';
 import { type CallResult } from '@/models/v4/calls/callResult';
@@ -111,7 +112,7 @@ export const createCall = async (callData: CreateCallRequest) => {
     Nature: callData.nature,
     Note: callData.note || '',
     Address: callData.address || '',
-    Geolocation: `${callData.latitude?.toString() || ''},${callData.longitude?.toString() || ''}`,
+    Geolocation: formatGeolocation(callData.latitude, callData.longitude),
     Priority: callData.priority,
     Type: callData.type || '',
     ContactName: callData.contactName || '',
@@ -159,7 +160,7 @@ export const updateCall = async (callData: UpdateCallRequest) => {
     Nature: callData.nature,
     Note: callData.note || '',
     Address: callData.address || '',
-    Geolocation: `${callData.latitude?.toString() || ''},${callData.longitude?.toString() || ''}`,
+    Geolocation: formatGeolocation(callData.latitude, callData.longitude),
     Priority: callData.priority,
     Type: callData.type || '',
     ContactName: callData.contactName || '',
