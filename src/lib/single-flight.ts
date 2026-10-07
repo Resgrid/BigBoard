@@ -1,31 +1,64 @@
 /**
- * Collapses concurrent calls into one in-flight execution.
+ * Collapses concurrent calls into one in-flight execution plus at most one trailing re-run.
  *
  * The dashboard mounts several widgets that render the same data set -- four personnel widgets,
  * three units widgets, two calls widgets -- and each one refreshes itself when SignalR reports a
  * change. Without this, a single status update fans out into one full refetch per widget, each
- * writing the same result into the same store. Wrapping the store action means every one of those
- * callers awaits the same request instead.
+ * writing the same result into the same store. Wrapping the store action means those callers share
+ * requests instead.
  *
- * Callers that arrive after the request settles start a fresh one, so this is deduplication, not
- * caching.
+ * A caller that arrives while a request is already out is not handed that request: it may be
+ * refreshing because of a change saved after the request left, and the in-flight answer would not
+ * include it (a unit status set mid-fetch stayed stale on the board until the next push). Instead it
+ * is queued behind one trailing run that starts as soon as the current one settles, and it resolves
+ * or rejects with that run's result. Every mid-flight caller shares the same trailing run, so a
+ * burst still costs at most two requests.
+ *
+ * Callers that arrive after everything settles start a fresh one, so this is deduplication, not
+ * caching. A rejected run releases the slot like a successful one, and a queued trailing run still
+ * goes out after a failure.
  */
 export function singleFlight<T>(fn: () => Promise<T>): () => Promise<T> {
   let inFlight: Promise<T> | null = null;
+  let trailing: Promise<T> | null = null;
+  let startTrailing: (() => void) | null = null;
 
-  return () => {
-    if (inFlight) {
-      return inFlight;
+  const start = (): Promise<T> => {
+    let result: Promise<T>;
+    try {
+      result = Promise.resolve(fn());
+    } catch (error) {
+      result = Promise.reject(error);
     }
 
-    inFlight = (async () => {
-      try {
-        return await fn();
-      } finally {
-        inFlight = null;
-      }
-    })();
+    const current = result.finally(() => {
+      inFlight = null;
 
-    return inFlight;
+      // Hand the slot straight to the queued run, in the same tick, so no other caller can slip in
+      // between and start a second concurrent request.
+      const next = startTrailing;
+      startTrailing = null;
+      trailing = null;
+      next?.();
+    });
+
+    inFlight = current;
+    return current;
+  };
+
+  return () => {
+    if (!inFlight) {
+      return start();
+    }
+
+    if (!trailing) {
+      trailing = new Promise<T>((resolve, reject) => {
+        startTrailing = () => {
+          start().then(resolve, reject);
+        };
+      });
+    }
+
+    return trailing;
   };
 }
