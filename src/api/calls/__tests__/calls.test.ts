@@ -13,7 +13,12 @@ import { createCall, updateCall } from '../calls';
 
 const posts = (jest.requireMock('@/api/common/client') as { __posts: Record<string, jest.Mock> }).__posts;
 
-const sentGeolocation = (endpoint: string): unknown => (posts[endpoint].mock.calls[0][0] as { Geolocation: unknown }).Geolocation;
+/** The Geolocation sent in the one save posted to `endpoint`; fails the test outright if that save never went out. */
+const sentGeolocation = (endpoint: string): unknown => {
+  const post = posts[endpoint];
+  expect(post).toHaveBeenCalledTimes(1);
+  return (post.mock.calls[0][0] as { Geolocation: unknown }).Geolocation;
+};
 
 describe('call save Geolocation', () => {
   beforeEach(() => {
