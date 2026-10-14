@@ -1,3 +1,4 @@
+import { ActionBaseTypes } from '../base-types';
 import { AVAILABLE_BASE_TYPES, isBaseTypeIn, normalizeStatusColor, ON_SCENE_BASE_TYPES, parseUtcTimestamp, RESPONDING_BASE_TYPES, secondsInStatus, UnitStatusBaseType } from '../unit-status';
 
 describe('normalizeStatusColor', () => {
@@ -69,6 +70,20 @@ describe('base type grouping', () => {
     expect(isBaseTypeIn(UnitStatusBaseType.AtPatient, ON_SCENE_BASE_TYPES)).toBe(true);
     expect(isBaseTypeIn(UnitStatusBaseType.Transporting, ON_SCENE_BASE_TYPES)).toBe(true);
     expect(isBaseTypeIn(UnitStatusBaseType.AtHospital, ON_SCENE_BASE_TYPES)).toBe(true);
+  });
+
+  it('counts In Quarters as available, like the server availability matrix', () => {
+    expect(UnitStatusBaseType.InQuarters).toBe(ActionBaseTypes.InQuarters);
+    expect(isBaseTypeIn(UnitStatusBaseType.InQuarters, AVAILABLE_BASE_TYPES)).toBe(true);
+    expect(isBaseTypeIn(UnitStatusBaseType.InQuarters, RESPONDING_BASE_TYPES)).toBe(false);
+  });
+
+  it('mirrors every ActionBaseTypes value', () => {
+    for (const [name, value] of Object.entries(ActionBaseTypes)) {
+      if (typeof value === 'number') {
+        expect(UnitStatusBaseType[name as keyof typeof UnitStatusBaseType]).toBe(value);
+      }
+    }
   });
 
   it('keeps the groups disjoint', () => {

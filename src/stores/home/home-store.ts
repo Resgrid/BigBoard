@@ -2,6 +2,7 @@ import { create } from 'zustand';
 
 import { getPersonnelInfo } from '@/api/personnel/personnel';
 import { getAllPersonnelStaffings, getAllPersonnelStatuses } from '@/api/satuses';
+import { isPersonInService } from '@/lib/personnel-status';
 import { type PersonnelInfoResultData } from '@/models/v4/personnel/personnelInfoResultData';
 import { type GetCurrentStaffingResultData } from '@/models/v4/personnelStaffing/getCurrentStaffingResultData';
 import { type GetCurrentStatusResultData } from '@/models/v4/personnelStatuses/getCurrentStatusResultData';
@@ -72,7 +73,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
 
       // Get personnel in service count
       const users = useRolesStore.getState().users;
-      const personnelInService = users.filter((user) => user.Status && user.Status !== 'Available' && user.Status !== 'Off Duty').length;
+      const personnelInService = users.filter(isPersonInService).length;
 
       // Get units in service count
       const units = useUnitsStore.getState().units;

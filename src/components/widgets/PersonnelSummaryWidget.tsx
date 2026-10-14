@@ -6,6 +6,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
 import { usePersonnelSignalRUpdates } from '@/hooks/use-personnel-signalr-updates';
+import { summarizePersonnel } from '@/lib/personnel-status';
 import { usePersonnelStore } from '@/stores/personnel/store';
 
 import { WidgetContainer } from './WidgetContainer';
@@ -32,15 +33,8 @@ export const PersonnelSummaryWidget: React.FC<PersonnelWidgetProps> = ({ onRemov
     init();
   }, [init]);
 
-  // Calculate personnel stats
-  const personnelData = React.useMemo(() => {
-    const total = personnel.length;
-    const onDuty = personnel.filter((p) => p.Staffing?.toLowerCase().includes('on duty')).length;
-    const available = personnel.filter((p) => p.Status?.toLowerCase().includes('available')).length;
-    const responding = personnel.filter((p) => p.Status?.toLowerCase().includes('responding')).length;
-
-    return { total, onDuty, available, responding };
-  }, [personnel]);
+  // Calculate personnel stats from what each status/staffing means (base types), not its name
+  const personnelData = React.useMemo(() => summarizePersonnel(personnel), [personnel]);
 
   if (error) {
     return (

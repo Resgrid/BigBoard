@@ -32,13 +32,14 @@ export enum UnitStatusBaseType {
   Maintenance = 20,
   OnBreak = 21,
   Completed = 22,
+  InQuarters = 23,
 }
 
 /**
  * In service and assignable. Mirrors the server's AvailabilityMatrix so the board agrees with
  * reporting and with the dispatch recommendation engine.
  */
-export const AVAILABLE_BASE_TYPES: number[] = [UnitStatusBaseType.Available, UnitStatusBaseType.Cleared, UnitStatusBaseType.OnPatrol, UnitStatusBaseType.Completed];
+export const AVAILABLE_BASE_TYPES: number[] = [UnitStatusBaseType.Available, UnitStatusBaseType.Cleared, UnitStatusBaseType.OnPatrol, UnitStatusBaseType.Completed, UnitStatusBaseType.InQuarters];
 
 /** Dispatched and moving, but not yet at the incident. */
 export const RESPONDING_BASE_TYPES: number[] = [UnitStatusBaseType.Dispatched, UnitStatusBaseType.Responding, UnitStatusBaseType.Enroute, UnitStatusBaseType.Staging];

@@ -12,6 +12,7 @@ import { HStack } from '@/components/ui/hstack';
 import { Spinner } from '@/components/ui/spinner';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
+import { compareCallPrioritiesAscending } from '@/lib/call-priority';
 import { type CallResultData } from '@/models/v4/calls/callResultData';
 import { type GroupResultData } from '@/models/v4/groups/groupsResultData';
 import { type RecipientsResultData } from '@/models/v4/messages/recipientsResultData';
@@ -118,6 +119,8 @@ export const ScheduledCallsWidget: React.FC<ScheduledCallsWidgetProps> = ({ onRe
     return priority?.Color ? `#${priority.Color}` : '#888888';
   };
 
+  const prioritiesById = useMemo(() => new Map(callPriorities.map((p) => [p.Id, p])), [callPriorities]);
+
   /** Parses server date strings as UTC when no timezone designator is present */
   const parseScheduledDate = (value: string | undefined): Date => {
     if (!value) return new Date(0);
@@ -223,7 +226,8 @@ export const ScheduledCallsWidget: React.FC<ScheduledCallsWidgetProps> = ({ onRe
           break;
         }
         case 'priority':
-          cmp = a.Priority - b.Priority;
+          // By what the priority means, not its raw id: department priority ids are creation order.
+          cmp = compareCallPrioritiesAscending(a.Priority, b.Priority, prioritiesById);
           break;
         case 'name':
           cmp = (a.Name || '').localeCompare(b.Name || '');
@@ -233,7 +237,7 @@ export const ScheduledCallsWidget: React.FC<ScheduledCallsWidgetProps> = ({ onRe
     });
 
     return result;
-  }, [scheduledCalls, callExtraDataMap, settings.filterGroupIds, settings.filterUnitIds, settings.filterPersonnelIds, settings.filterRoleIds, settings.sortBy, settings.sortOrder]);
+  }, [scheduledCalls, callExtraDataMap, prioritiesById, settings.filterGroupIds, settings.filterUnitIds, settings.filterPersonnelIds, settings.filterRoleIds, settings.sortBy, settings.sortOrder]);
 
   const fontSize = settings.fontSize || 12;
   const columnOrder: ScheduledCallsColumnKey[] = settings.columnOrder?.length ? settings.columnOrder : DEFAULT_SCHEDULED_CALLS_COLUMN_ORDER;

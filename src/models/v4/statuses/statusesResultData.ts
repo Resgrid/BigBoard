@@ -4,6 +4,7 @@ export class StatusesResultData {
   public StateId: number = 0; // State Id
   public Text: string = ''; // Button Text
   public BColor: string = ''; // Button Color
+  public BaseType?: number | null; // What the option means: ActionBaseTypes for statuses, StaffingBaseTypes for staffings; -1 unset, undefined from older servers
   public Color: string = ''; // Text Color
   public Gps: boolean = false; // Require GPS
   public Note: number = 0; // Note Type
