@@ -17,6 +17,15 @@ describe('labelHasPhrase', () => {
     expect(labelHasPhrase('Not on duty', 'on duty')).toBe(false);
   });
 
+  it('does not match after a hyphenated "not"', () => {
+    // `\b` matches after a hyphen, so "Not-Responding" read as responding when only "not <space>" was excluded.
+    expect(labelHasPhrase('Not-Responding', 'responding')).toBe(false);
+    expect(labelHasPhrase('NOT-AVAILABLE', 'available')).toBe(false);
+    expect(labelHasPhrase('Not - Available', 'available')).toBe(false);
+    expect(labelHasPhrase('Not-on duty', 'on duty')).toBe(false);
+    expect(isPersonResponding({ Status: 'Not-Responding' })).toBe(false);
+  });
+
   it('is false for a missing label', () => {
     expect(labelHasPhrase('', 'available')).toBe(false);
     expect(labelHasPhrase(null, 'available')).toBe(false);

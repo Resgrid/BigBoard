@@ -22,7 +22,7 @@ export interface PersonnelSummaryCounts {
   responding: number;
 }
 
-/** True when the label contains the phrase as whole words, case-insensitively, and not as "not <phrase>". */
+/** True when the label contains the phrase as whole words, case-insensitively, and not as "not <phrase>" or "not-<phrase>". */
 export const labelHasPhrase = (label: string | null | undefined, phrase: string): boolean => {
   const text = (label ?? '').trim().toLowerCase();
 
@@ -32,7 +32,7 @@ export const labelHasPhrase = (label: string | null | undefined, phrase: string)
 
   const words = phrase.trim().toLowerCase().split(/\s+/).join('\\s+');
 
-  return new RegExp(`\\b${words}\\b`).test(text) && !new RegExp(`\\bnot\\s+${words}\\b`).test(text);
+  return new RegExp(`\\b${words}\\b`).test(text) && !new RegExp(`\\bnot[\\s-]+${words}\\b`).test(text);
 };
 
 /** Available for another assignment (dispatch's rule: available or delayed). */
