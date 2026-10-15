@@ -146,7 +146,8 @@ export default function EditCall() {
   useEffect(() => {
     if (call) {
       const priority = callPriorities.find((p) => p.Id === call.Priority);
-      const type = callTypes.find((t) => t.Id === call.Type);
+      // TypeId survives a rename of the type; older servers send only the type's name in Type.
+      const type = callTypes.find((t) => t.Id === call.TypeId) ?? callTypes.find((t) => t.Id === call.Type || t.Name === call.Type);
 
       reset({
         name: call.Name || '',
