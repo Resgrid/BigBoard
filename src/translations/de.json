@@ -849,6 +849,7 @@
     "errorGeneric": "Speichern fehlgeschlagen. Bitte erneut versuchen.",
     "errorLoading": "Laden fehlgeschlagen",
     "errorNotOverdue": "Diese Einheit liegt nicht mehr über ihrem Statuszeitgeber.",
+    "errorNoteRequired": "Geben Sie eine Begründung ein, bevor Sie diese Warnung bestätigen oder stummschalten.",
     "errorStatusChanged": "Diese Einheit hat ihren Status geändert, die Warnung ist aufgehoben.",
     "inStatusFor": "{{status}} seit {{elapsed}}",
     "mute": "Stummschalten",
@@ -862,9 +863,12 @@
     "noThresholds": "Keine Statuszeitgeber konfiguriert",
     "note": "Notiz",
     "notePlaceholder": "Was ist los? z. B. technischer Defekt gemeldet",
+    "noteRequired": "Begründung (erforderlich)",
+    "noteRequiredHint": "Vor dem Bestätigen oder Stummschalten dieser Warnung ist eine Begründung erforderlich.",
     "openAcknowledge": "Warnung für {{name}} bestätigen",
     "sheetTitle": "Statuswarnung der Einheit",
     "title": "Einheitenwarnungen",
+    "unitsWithoutMeaning": "Einheiten in einem Status ohne Bedeutung: {{count}}. Für sie kann kein Timer gelten; geben Sie diesen Status unter Benutzerdefinierte Status eine Bedeutung.",
     "withinThresholds": "Alle Einheiten innerhalb ihrer Statuszeitgeber"
   },
   "weatherAlerts": {

@@ -849,6 +849,7 @@
     "errorGeneric": "No se pudo guardar. Inténtelo de nuevo.",
     "errorLoading": "Error al cargar",
     "errorNotOverdue": "Esta unidad ya no supera su temporizador de estado.",
+    "errorNoteRequired": "Introduzca un motivo antes de confirmar o silenciar esta alerta.",
     "errorStatusChanged": "Esta unidad cambió de estado, la alerta se ha borrado.",
     "inStatusFor": "{{status}} durante {{elapsed}}",
     "mute": "Silenciar",
@@ -862,9 +863,12 @@
     "noThresholds": "No hay temporizadores de estado configurados",
     "note": "Nota",
     "notePlaceholder": "¿Qué ocurre? p. ej., avería técnica reportada",
+    "noteRequired": "Motivo (obligatorio)",
+    "noteRequiredHint": "Se requiere un motivo antes de confirmar o silenciar esta alerta.",
     "openAcknowledge": "Confirmar alerta de {{name}}",
     "sheetTitle": "Alerta de estado de unidad",
     "title": "Alertas de unidades",
+    "unitsWithoutMeaning": "Unidades en un estado sin significado: {{count}}. No se les puede aplicar ningún temporizador; asigne un significado a esos estados en Estados personalizados.",
     "withinThresholds": "Todas las unidades dentro de sus temporizadores de estado"
   },
   "weatherAlerts": {

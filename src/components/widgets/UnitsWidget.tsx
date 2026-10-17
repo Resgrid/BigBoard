@@ -14,7 +14,7 @@ import { UnitAlertAcknowledgeSheet } from '@/components/units/unit-alert-acknowl
 import { useUnitAlertAcknowledgements } from '@/hooks/use-unit-alert-acknowledgements';
 import { useUnitsSignalRUpdates } from '@/hooks/use-units-signalr-updates';
 import { normalizeStatusColor, secondsInStatus } from '@/lib/unit-status';
-import { acknowledgedRowStyle, acknowledgedSortWeight, alertRowStyle, annotateUnitAlert, formatElapsed, useUnitStatusThresholds } from '@/lib/unit-status-thresholds';
+import { acknowledgedRowStyle, acknowledgedSortWeight, alertRowStyle, annotateUnitAlert, formatElapsed, useUnitAlertNoteRequirement, useUnitStatusThresholds } from '@/lib/unit-status-thresholds';
 import { useSecurityStore } from '@/stores/security/store';
 import { useUnitsStore } from '@/stores/units/store';
 import { DEFAULT_UNITS_COLUMN_ORDER, type UnitsColumnKey, useUnitsSettingsStore } from '@/stores/widget-settings/units-settings-store';
@@ -53,6 +53,7 @@ export const UnitsWidget: React.FC<UnitsWidgetProps> = ({ onRemove, isEditMode, 
   }, [fetchUnits]);
 
   const thresholds = useUnitStatusThresholds();
+  const noteRequirement = useUnitAlertNoteRequirement();
   const acknowledgements = useUnitAlertAcknowledgements(thresholds.length > 0);
   const { canUserCreateCalls } = useSecurityStore();
   const [selectedUnitId, setSelectedUnitId] = useState<string | null>(null);
@@ -299,6 +300,7 @@ export const UnitsWidget: React.FC<UnitsWidgetProps> = ({ onRemove, isEditMode, 
         alert={selected?.alert ?? null}
         acknowledgement={selected?.acknowledgement ?? null}
         acknowledgementState={selected?.acknowledgementState ?? 'none'}
+        noteRequirement={noteRequirement}
       />
     </WidgetContainer>
   );

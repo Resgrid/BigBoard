@@ -849,6 +849,7 @@
     "errorGeneric": "تعذر الحفظ. حاول مرة أخرى.",
     "errorLoading": "فشل في التحميل",
     "errorNotOverdue": "لم تعد هذه الوحدة تتجاوز مؤقت حالتها.",
+    "errorNoteRequired": "أدخل سببًا قبل تأكيد هذا التنبيه أو كتمه.",
     "errorStatusChanged": "غيّرت هذه الوحدة حالتها، لذا زال التنبيه.",
     "inStatusFor": "{{status}} منذ {{elapsed}}",
     "mute": "كتم",
@@ -862,9 +863,12 @@
     "noThresholds": "لم يتم تكوين مؤقتات الحالة",
     "note": "ملاحظة",
     "notePlaceholder": "ماذا يحدث؟ مثلاً: تم الإبلاغ عن عطل فني",
+    "noteRequired": "السبب (مطلوب)",
+    "noteRequiredHint": "يلزم إدخال سبب قبل تأكيد هذا التنبيه أو كتمه.",
     "openAcknowledge": "تأكيد التنبيه لـ {{name}}",
     "sheetTitle": "تنبيه حالة الوحدة",
     "title": "تنبيهات الوحدات",
+    "unitsWithoutMeaning": "وحدات في حالة بلا معنى: {{count}}. لا يمكن تطبيق أي مؤقت عليها؛ امنح هذه الحالات معنى في الحالات المخصصة.",
     "withinThresholds": "جميع الوحدات ضمن مؤقتات حالتها"
   },
   "weatherAlerts": {

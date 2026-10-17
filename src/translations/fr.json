@@ -849,6 +849,7 @@
     "errorGeneric": "Enregistrement impossible. Réessayez.",
     "errorLoading": "Échec du chargement",
     "errorNotOverdue": "Cette unité ne dépasse plus son minuteur de statut.",
+    "errorNoteRequired": "Saisissez un motif avant d'acquitter ou de mettre en sourdine cette alerte.",
     "errorStatusChanged": "Cette unité a changé de statut, l'alerte est levée.",
     "inStatusFor": "{{status}} depuis {{elapsed}}",
     "mute": "Mettre en sourdine",
@@ -862,9 +863,12 @@
     "noThresholds": "Aucun minuteur de statut configuré",
     "note": "Note",
     "notePlaceholder": "Que se passe-t-il ? ex. panne technique signalée",
+    "noteRequired": "Motif (obligatoire)",
+    "noteRequiredHint": "Un motif est requis avant d'acquitter ou de mettre en sourdine cette alerte.",
     "openAcknowledge": "Acquitter l'alerte de {{name}}",
     "sheetTitle": "Alerte de statut d'unité",
     "title": "Alertes des unités",
+    "unitsWithoutMeaning": "Unités dans un statut sans signification : {{count}}. Aucune minuterie ne peut s'y appliquer ; donnez une signification à ces statuts dans Statuts personnalisés.",
     "withinThresholds": "Toutes les unités dans les limites de leurs minuteurs de statut"
   },
   "weatherAlerts": {

@@ -13,7 +13,7 @@ import { VStack } from '@/components/ui/vstack';
 import { UnitAlertAcknowledgeSheet } from '@/components/units/unit-alert-acknowledge-sheet';
 import { useUnitAlertAcknowledgements } from '@/hooks/use-unit-alert-acknowledgements';
 import { useUnitsSignalRUpdates } from '@/hooks/use-units-signalr-updates';
-import { acknowledgedRowStyle, acknowledgedSortWeight, alertRowStyle, type AnnotatedUnitAlert, annotateUnitAlert, formatElapsed, useUnitStatusThresholds } from '@/lib/unit-status-thresholds';
+import { acknowledgedRowStyle, acknowledgedSortWeight, alertRowStyle, type AnnotatedUnitAlert, annotateUnitAlert, countUnitsWithoutMeaning, formatElapsed, useUnitStatusThresholds } from '@/lib/unit-status-thresholds';
 import { type UnitInfoResultData } from '@/models/v4/units/unitInfoResultData';
 import { useCoreStore } from '@/stores/app/core-store';
 import { useSecurityStore } from '@/stores/security/store';
@@ -108,6 +108,8 @@ export const UnitAlertsWidget: React.FC<UnitAlertsWidgetProps> = ({ onRemove, is
       muted: breaching.filter((entry) => entry.acknowledgementState === 'muted').sort(byUrgency),
     };
   }, [units, thresholds, acknowledgements, evaluatedAt]);
+
+  const unitsWithoutMeaning = useMemo(() => countUnitsWithoutMeaning(units, thresholds), [units, thresholds]);
 
   // Looked up from the live lists so the sheet follows the unit as it escalates or a colleague acts on it.
   const selected = useMemo(() => [...active, ...muted].find((entry) => entry.unit.UnitId === selectedUnitId) ?? null, [active, muted, selectedUnitId]);
@@ -210,12 +212,21 @@ export const UnitAlertsWidget: React.FC<UnitAlertsWidgetProps> = ({ onRemove, is
             </VStack>
           ) : null}
 
-          {active.length === 0 && muted.length === 0 ? (
+          {active.length === 0 && muted.length === 0 && unitsWithoutMeaning === 0 ? (
             <Box className="flex-1 items-center justify-center py-8">
               {/* Two genuinely different situations: nothing is being timed, versus everything is
                   within its time. Saying "all units within thresholds" when none are configured
                   would be a false reassurance on a screen dispatchers trust. */}
               <Text className={`text-center text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{thresholds.length === 0 ? t('unitAlerts.noThresholds') : t('unitAlerts.withinThresholds')}</Text>
+            </Box>
+          ) : null}
+
+          {/* Units in a status with no meaning can never be timed, so "all within their timers" would not be true of them. */}
+          {unitsWithoutMeaning > 0 ? (
+            <Box className={active.length === 0 && muted.length === 0 ? 'flex-1 items-center justify-center py-8' : 'px-1 pt-2'}>
+              <Text className={`text-center text-xs ${isDark ? 'text-amber-400' : 'text-amber-700'}`} testID="unit-alerts-without-meaning">
+                {t('unitAlerts.unitsWithoutMeaning', { count: unitsWithoutMeaning })}
+              </Text>
             </Box>
           ) : null}
         </VStack>
@@ -228,6 +239,7 @@ export const UnitAlertsWidget: React.FC<UnitAlertsWidgetProps> = ({ onRemove, is
         alert={selected?.alert ?? null}
         acknowledgement={selected?.acknowledgement ?? null}
         acknowledgementState={selected?.acknowledgementState ?? 'none'}
+        noteRequirement={config.UnitStatusAlertNoteRequirement}
       />
     </WidgetContainer>
   );

@@ -849,6 +849,7 @@
     "errorGeneric": "Could not save. Try again.",
     "errorLoading": "Failed to load",
     "errorNotOverdue": "This unit is no longer over its status timer.",
+    "errorNoteRequired": "Enter a reason before acknowledging or muting this alert.",
     "errorStatusChanged": "This unit has changed status, so the alert has cleared.",
     "inStatusFor": "{{status}} for {{elapsed}}",
     "mute": "Mute",
@@ -862,9 +863,12 @@
     "noThresholds": "No status timers configured",
     "note": "Note",
     "notePlaceholder": "What is happening? e.g. technical malfunction reported",
+    "noteRequired": "Reason (required)",
+    "noteRequiredHint": "A reason is required before this alert can be acknowledged or muted.",
     "openAcknowledge": "Acknowledge alert for {{name}}",
     "sheetTitle": "Unit status alert",
     "title": "Unit Alerts",
+    "unitsWithoutMeaning": "Units in a status with no meaning: {{count}}. No timer can apply to them; give those statuses a meaning in Custom Statuses.",
     "withinThresholds": "All units within their status timers"
   },
   "weatherAlerts": {

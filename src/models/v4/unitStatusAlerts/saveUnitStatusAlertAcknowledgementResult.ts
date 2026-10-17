@@ -9,7 +9,9 @@ export type UnitStatusAlertAcknowledgementError =
   | 'unit_alert_conflict'
   | 'unit_alert_invalid_mode'
   | 'unit_alert_invalid_level'
-  | 'unit_alert_note_too_long';
+  | 'unit_alert_note_too_long'
+  /** The department requires a reason at this alert level and none was given. */
+  | 'unit_alert_note_required';
 
 export class SaveUnitStatusAlertAcknowledgementResult extends BaseV4Request {
   /** Null on success. On unit_alert_conflict, Data holds the acknowledgement that got there first. */
