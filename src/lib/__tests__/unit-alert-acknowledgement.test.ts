@@ -1,5 +1,14 @@
 import { UnitStatusBaseType } from '@/lib/unit-status';
-import { acknowledgedSortWeight, annotateUnitAlert, resolveAcknowledgement, toAcknowledgedLevel, type UnitStatusThreshold } from '@/lib/unit-status-thresholds';
+import {
+  acknowledgedSortWeight,
+  annotateUnitAlert,
+  countUnitsWithoutMeaning,
+  requiresAcknowledgementNote,
+  resolveAcknowledgement,
+  toAcknowledgedLevel,
+  UnitStatusAlertNoteRequirement,
+  type UnitStatusThreshold,
+} from '@/lib/unit-status-thresholds';
 import {
   UnitStatusAlertAcknowledgedLevel,
   UnitStatusAlertAcknowledgementMode,
@@ -19,6 +28,41 @@ const ack = (overrides: Partial<UnitStatusAlertAcknowledgementResultData> = {}):
     Mode: UnitStatusAlertAcknowledgementMode.Acknowledged,
     ...overrides,
   });
+
+// Mirrors UnitStatusThresholdsTests.A_reason_is_required_only_at_the_levels_the_department_chose on the server.
+describe('requiresAcknowledgementNote', () => {
+  it.each([
+    [UnitStatusAlertNoteRequirement.Optional, 'warn', false],
+    [UnitStatusAlertNoteRequirement.Optional, 'alert', false],
+    [UnitStatusAlertNoteRequirement.AtAlert, 'warn', false],
+    [UnitStatusAlertNoteRequirement.AtAlert, 'alert', true],
+    [UnitStatusAlertNoteRequirement.Always, 'warn', true],
+    [UnitStatusAlertNoteRequirement.Always, 'alert', true],
+    [UnitStatusAlertNoteRequirement.Always, 'none', false],
+  ] as const)('requirement %s at %s -> %s', (requirement, level, expected) => {
+    expect(requiresAcknowledgementNote(requirement, level)).toBe(expected);
+  });
+
+  it('treats a missing or unknown requirement as optional (older servers send none)', () => {
+    expect(requiresAcknowledgementNote(undefined, 'alert')).toBe(false);
+    expect(requiresAcknowledgementNote(null, 'alert')).toBe(false);
+    expect(requiresAcknowledgementNote(9, 'alert')).toBe(false);
+  });
+});
+
+describe('countUnitsWithoutMeaning', () => {
+  const timers: UnitStatusThreshold[] = [{ BaseType: UnitStatusBaseType.Dispatched, WarnSeconds: 60, AlertSeconds: 120 }];
+
+  it('counts units whose status has no meaning, or none sent', () => {
+    const units = [{ CurrentStatusBaseType: UnitStatusBaseType.None }, { CurrentStatusBaseType: null }, { CurrentStatusBaseType: UnitStatusBaseType.Available }];
+
+    expect(countUnitsWithoutMeaning(units, timers)).toBe(2);
+  });
+
+  it('is zero while no timers are set', () => {
+    expect(countUnitsWithoutMeaning([{ CurrentStatusBaseType: UnitStatusBaseType.None }], [])).toBe(0);
+  });
+});
 
 describe('resolveAcknowledgement', () => {
   it('covers the episode it was made for', () => {

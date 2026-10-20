@@ -849,6 +849,7 @@
     "errorGeneric": "Kunde inte spara. Försök igen.",
     "errorLoading": "Kunde inte ladda",
     "errorNotOverdue": "Enheten överskrider inte längre sin statustimer.",
+    "errorNoteRequired": "Ange en orsak innan du kvitterar eller tystar larmet.",
     "errorStatusChanged": "Enheten har bytt status, larmet har upphört.",
     "inStatusFor": "{{status}} i {{elapsed}}",
     "mute": "Tysta",
@@ -862,9 +863,12 @@
     "noThresholds": "Inga statustimers konfigurerade",
     "note": "Anteckning",
     "notePlaceholder": "Vad händer? t.ex. tekniskt fel rapporterat",
+    "noteRequired": "Orsak (krävs)",
+    "noteRequiredHint": "En orsak krävs innan larmet kan kvitteras eller tystas.",
     "openAcknowledge": "Kvittera larm för {{name}}",
     "sheetTitle": "Statuslarm för enhet",
     "title": "Enhetslarm",
+    "unitsWithoutMeaning": "Enheter i en status utan betydelse: {{count}}. Ingen timer kan gälla för dem; ge de statusarna en betydelse under Anpassade statusar.",
     "withinThresholds": "Alla enheter inom sina statustimers"
   },
   "weatherAlerts": {

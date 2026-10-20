@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import React from 'react';
 
-import { type UnitStatusAlert } from '@/lib/unit-status-thresholds';
+import { UnitStatusAlertNoteRequirement, type UnitStatusAlert } from '@/lib/unit-status-thresholds';
 import { UnitStatusAlertAcknowledgedLevel, UnitStatusAlertAcknowledgementMode, UnitStatusAlertAcknowledgementResultData } from '@/models/v4/unitStatusAlerts/unitStatusAlertAcknowledgementResultData';
 import { UnitInfoResultData } from '@/models/v4/units/unitInfoResultData';
 
@@ -188,5 +188,60 @@ describe('UnitAlertAcknowledgeSheet', () => {
     renderSheet();
 
     expect(screen.getByTestId('unit-alert-note-input').props.maxLength).toBe(500);
+  });
+
+  describe('when the department requires a reason', () => {
+    it('holds Acknowledge and Mute until a reason is typed', async () => {
+      const { onClose } = renderSheet({ alert, noteRequirement: UnitStatusAlertNoteRequirement.AtAlert });
+
+      expect(screen.getByText('unitAlerts.noteRequired')).toBeTruthy();
+      expect(screen.getByTestId('unit-alert-note-required-hint')).toBeTruthy();
+      expect(screen.getByTestId('unit-alert-acknowledge-button').props.accessibilityState?.disabled).toBe(true);
+      expect(screen.getByTestId('unit-alert-mute-button').props.accessibilityState?.disabled).toBe(true);
+
+      fireEvent.changeText(screen.getByTestId('unit-alert-note-input'), '   ');
+      fireEvent.press(screen.getByTestId('unit-alert-acknowledge-button'));
+      expect(mockAcknowledge).not.toHaveBeenCalled();
+
+      fireEvent.changeText(screen.getByTestId('unit-alert-note-input'), 'Crew still at hospital handover');
+      expect(screen.queryByTestId('unit-alert-note-required-hint')).toBeNull();
+      fireEvent.press(screen.getByTestId('unit-alert-acknowledge-button'));
+
+      await waitFor(() => expect(onClose).toHaveBeenCalled());
+      expect(mockAcknowledge.mock.calls[0][0]).toMatchObject({ level: UnitStatusAlertAcknowledgedLevel.Alert, note: 'Crew still at hospital handover' });
+    });
+
+    it('does not ask for one on a warning when only alerts need it', async () => {
+      renderSheet({ alert: warn, noteRequirement: UnitStatusAlertNoteRequirement.AtAlert });
+
+      expect(screen.getByText('unitAlerts.note')).toBeTruthy();
+      expect(screen.queryByTestId('unit-alert-note-required-hint')).toBeNull();
+
+      fireEvent.press(screen.getByTestId('unit-alert-acknowledge-button'));
+
+      await waitFor(() => expect(mockAcknowledge).toHaveBeenCalled());
+    });
+
+    it('asks for one on a warning when warnings need it too', () => {
+      renderSheet({ alert: warn, noteRequirement: UnitStatusAlertNoteRequirement.Always });
+
+      expect(screen.getByTestId('unit-alert-note-required-hint')).toBeTruthy();
+    });
+
+    it('accepts the note already on the alert as the reason', () => {
+      renderSheet({ acknowledgement: existing, acknowledgementState: 'acknowledged', noteRequirement: UnitStatusAlertNoteRequirement.Always });
+
+      expect(screen.queryByTestId('unit-alert-note-required-hint')).toBeNull();
+    });
+
+    it('stays open and explains when the server asks for a reason this board did not know about', async () => {
+      mockAcknowledge.mockResolvedValue({ ok: false, error: 'unit_alert_note_required' });
+      const { onClose } = renderSheet();
+
+      fireEvent.press(screen.getByTestId('unit-alert-acknowledge-button'));
+
+      await waitFor(() => expect(mockShowToast).toHaveBeenCalledWith('error', 'unitAlerts.errorNoteRequired'));
+      expect(onClose).not.toHaveBeenCalled();
+    });
   });
 });

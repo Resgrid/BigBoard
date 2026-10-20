@@ -95,6 +95,29 @@ export type UnitAlertAcknowledgementState = 'none' | 'acknowledged' | 'muted';
 
 const LEVEL_RANK: Record<UnitStatusAlertLevel, number> = { none: 0, warn: 1, alert: 2 };
 
+/** Mirrors UnitStatusAlertNoteRequirements on the server: when acknowledging or muting an alert needs a reason. */
+export enum UnitStatusAlertNoteRequirement {
+  Optional = 0,
+  AtAlert = 1,
+  Always = 2,
+}
+
+/**
+ * Whether acknowledging or muting an alert at `level` needs a note. The same rule as the server's
+ * `UnitStatusThresholds.RequiresAcknowledgementNote`; keep the two in step. An unknown value is treated as optional,
+ * because the server is the one that enforces it.
+ */
+export const requiresAcknowledgementNote = (requirement: number | null | undefined, level: UnitStatusAlertLevel): boolean => {
+  switch (requirement) {
+    case UnitStatusAlertNoteRequirement.Always:
+      return level === 'warn' || level === 'alert';
+    case UnitStatusAlertNoteRequirement.AtAlert:
+      return level === 'alert';
+    default:
+      return false;
+  }
+};
+
 /** The server's level number for an alert the board is showing. */
 export const toAcknowledgedLevel = (level: UnitStatusAlertLevel): UnitStatusAlertAcknowledgedLevel => (level === 'alert' ? UnitStatusAlertAcknowledgedLevel.Alert : UnitStatusAlertAcknowledgedLevel.Warn);
 
@@ -219,6 +242,19 @@ export const alertRowStyle = (level: UnitStatusAlertLevel, isDark: boolean): { b
   return { backgroundColor: undefined, borderLeftColor: undefined };
 };
 
+/**
+ * Units no timer can ever apply to: their status has no meaning (base type None), or the server sent none. With timers set,
+ * these are why "all units within their status timers" would be the wrong thing to say. A department that dispatches to a
+ * custom status without a meaning has every dispatched unit here (customer report, 2026-10-17). Zero when no timers are set.
+ */
+export const countUnitsWithoutMeaning = (units: EvaluableUnit[], thresholds: UnitStatusThreshold[]): number => {
+  if (!thresholds || thresholds.length === 0 || !units) {
+    return 0;
+  }
+
+  return units.filter((unit) => typeof unit?.CurrentStatusBaseType !== 'number' || unit.CurrentStatusBaseType < 0).length;
+};
+
 /** Compact "4m" / "1h 12m" for the overdue duration. */
 export const formatElapsed = (seconds: number | null): string => {
   if (seconds === null || !Number.isFinite(seconds) || seconds < 0) {
@@ -244,3 +280,6 @@ export const useUnitStatusThresholds = (): UnitStatusThreshold[] => {
 
   return useMemo(() => config?.UnitStatusThresholds ?? [], [config?.UnitStatusThresholds]);
 };
+
+/** The department's UnitStatusAlertNoteRequirement from config. Optional until config loads; the server enforces it regardless. */
+export const useUnitAlertNoteRequirement = (): number => useCoreStore((state) => state.config?.UnitStatusAlertNoteRequirement ?? UnitStatusAlertNoteRequirement.Optional);

@@ -35,4 +35,9 @@ export class GetConfigResultData {
    * has configured none and nothing on the board is flagged.
    */
   public UnitStatusThresholds: { BaseType: number; WarnSeconds: number; AlertSeconds: number }[] = [];
+  /**
+   * When acknowledging or muting a status timer alert needs a reason (UnitStatusAlertNoteRequirement): 0 optional,
+   * 1 required at the alert level, 2 required for warnings and alerts. Missing on servers that predate it.
+   */
+  public UnitStatusAlertNoteRequirement?: number = 0;
 }

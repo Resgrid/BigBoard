@@ -849,6 +849,7 @@
     "errorGeneric": "Impossibile salvare. Riprova.",
     "errorLoading": "Caricamento non riuscito",
     "errorNotOverdue": "Questa unità non supera più il suo timer di stato.",
+    "errorNoteRequired": "Inserisci un motivo prima di confermare o silenziare questo avviso.",
     "errorStatusChanged": "Questa unità ha cambiato stato, l'avviso è stato rimosso.",
     "inStatusFor": "{{status}} da {{elapsed}}",
     "mute": "Silenzia",
@@ -862,9 +863,12 @@
     "noThresholds": "Nessun timer di stato configurato",
     "note": "Nota",
     "notePlaceholder": "Cosa succede? es. guasto tecnico segnalato",
+    "noteRequired": "Motivo (obbligatorio)",
+    "noteRequiredHint": "È richiesto un motivo prima di confermare o silenziare questo avviso.",
     "openAcknowledge": "Conferma avviso per {{name}}",
     "sheetTitle": "Avviso di stato unità",
     "title": "Avvisi unità",
+    "unitsWithoutMeaning": "Unità in uno stato senza significato: {{count}}. Nessun timer può applicarsi a loro; assegna un significato a questi stati in Stati personalizzati.",
     "withinThresholds": "Tutte le unità entro i loro timer di stato"
   },
   "weatherAlerts": {

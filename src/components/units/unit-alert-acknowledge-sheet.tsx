@@ -11,7 +11,7 @@ import { HStack } from '@/components/ui/hstack';
 import { Text } from '@/components/ui/text';
 import { Textarea, TextareaInput } from '@/components/ui/textarea';
 import { VStack } from '@/components/ui/vstack';
-import { formatElapsed, toAcknowledgedLevel, type UnitAlertAcknowledgementState, type UnitStatusAlert } from '@/lib/unit-status-thresholds';
+import { formatElapsed, requiresAcknowledgementNote, toAcknowledgedLevel, type UnitAlertAcknowledgementState, type UnitStatusAlert } from '@/lib/unit-status-thresholds';
 import { type UnitInfoResultData } from '@/models/v4/units/unitInfoResultData';
 import { UnitStatusAlertAcknowledgementMode, type UnitStatusAlertAcknowledgementResultData } from '@/models/v4/unitStatusAlerts/unitStatusAlertAcknowledgementResultData';
 import { useToastStore } from '@/stores/toast/store';
@@ -31,6 +31,8 @@ interface UnitAlertAcknowledgeSheetProps {
   /** The acknowledgement that currently covers the unit, if any. */
   acknowledgement: UnitStatusAlertAcknowledgementResultData | null;
   acknowledgementState: UnitAlertAcknowledgementState;
+  /** The department's UnitStatusAlertNoteRequirement. When it applies to this alert, Mute and Acknowledge wait for a reason. */
+  noteRequirement?: number;
 }
 
 const formatTime = (value: string | null): string => {
@@ -47,7 +49,7 @@ const formatTime = (value: string | null): string => {
  * Lets a dispatcher deal with a unit that has sat in a status past its timer: mark it as seen, mute it, and say
  * why ("MUG not departed, technical malfunction reported"). Every board in the department sees the result.
  */
-export const UnitAlertAcknowledgeSheet: React.FC<UnitAlertAcknowledgeSheetProps> = ({ isOpen, onClose, unit, alert, acknowledgement, acknowledgementState }) => {
+export const UnitAlertAcknowledgeSheet: React.FC<UnitAlertAcknowledgeSheetProps> = ({ isOpen, onClose, unit, alert, acknowledgement, acknowledgementState, noteRequirement }) => {
   const { t } = useTranslation();
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
@@ -59,6 +61,9 @@ export const UnitAlertAcknowledgeSheet: React.FC<UnitAlertAcknowledgeSheetProps>
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const isCovered = acknowledgementState !== 'none' && acknowledgement !== null;
+  // Judged at the level on screen, the level the server records. The server enforces it too.
+  const noteRequired = alert ? requiresAcknowledgementNote(noteRequirement, alert.level) : false;
+  const noteMissing = noteRequired && note.trim().length === 0;
   const initialNote = useRef('');
   initialNote.current = isCovered ? (acknowledgement?.Note ?? '') : '';
 
@@ -94,6 +99,10 @@ export const UnitAlertAcknowledgeSheet: React.FC<UnitAlertAcknowledgeSheetProps>
           showToast('info', t('unitAlerts.errorConflict'));
           onClose();
           break;
+        case 'unit_alert_note_required':
+          // Stays open: the department started asking for a reason after this board loaded its settings.
+          showToast('error', t('unitAlerts.errorNoteRequired'));
+          break;
         default:
           showToast('error', t('unitAlerts.errorGeneric'));
       }
@@ -103,7 +112,7 @@ export const UnitAlertAcknowledgeSheet: React.FC<UnitAlertAcknowledgeSheetProps>
 
   const submit = useCallback(
     async (mode: UnitStatusAlertAcknowledgementMode) => {
-      if (!unit || !alert || alert.level === 'none') {
+      if (!unit || !alert || alert.level === 'none' || noteMissing) {
         return;
       }
 
@@ -123,7 +132,7 @@ export const UnitAlertAcknowledgeSheet: React.FC<UnitAlertAcknowledgeSheetProps>
         setIsSubmitting(false);
       }
     },
-    [acknowledge, alert, muteMinutes, note, reportOutcome, t, unit]
+    [acknowledge, alert, muteMinutes, note, noteMissing, reportOutcome, t, unit]
   );
 
   const handleMute = useCallback(() => submit(UnitStatusAlertAcknowledgementMode.Muted), [submit]);
@@ -179,7 +188,7 @@ export const UnitAlertAcknowledgeSheet: React.FC<UnitAlertAcknowledgeSheetProps>
 
         <FormControl>
           <FormControlLabel>
-            <FormControlLabelText>{t('unitAlerts.note')}</FormControlLabelText>
+            <FormControlLabelText>{noteRequired ? t('unitAlerts.noteRequired') : t('unitAlerts.note')}</FormControlLabelText>
           </FormControlLabel>
           <Textarea>
             <TextareaInput
@@ -189,9 +198,14 @@ export const UnitAlertAcknowledgeSheet: React.FC<UnitAlertAcknowledgeSheetProps>
               maxLength={MAX_ACKNOWLEDGEMENT_NOTE_LENGTH}
               numberOfLines={3}
               testID="unit-alert-note-input"
-              accessibilityLabel={t('unitAlerts.note')}
+              accessibilityLabel={noteRequired ? t('unitAlerts.noteRequired') : t('unitAlerts.note')}
             />
           </Textarea>
+          {noteMissing ? (
+            <Text className={`mt-1 text-xs ${isDark ? 'text-amber-400' : 'text-amber-700'}`} testID="unit-alert-note-required-hint">
+              {t('unitAlerts.noteRequiredHint')}
+            </Text>
+          ) : null}
         </FormControl>
 
         <VStack space="xs">
@@ -216,10 +230,10 @@ export const UnitAlertAcknowledgeSheet: React.FC<UnitAlertAcknowledgeSheetProps>
           <Button variant="outline" className="flex-1" onPress={onClose} disabled={isSubmitting}>
             <ButtonText>{t('common.cancel')}</ButtonText>
           </Button>
-          <Button variant="outline" className="flex-1" onPress={handleMute} disabled={isSubmitting} testID="unit-alert-mute-button">
+          <Button variant="outline" className="flex-1" onPress={handleMute} disabled={isSubmitting || noteMissing} testID="unit-alert-mute-button">
             <ButtonText>{t('unitAlerts.mute')}</ButtonText>
           </Button>
-          <Button className="flex-1" onPress={handleAcknowledge} disabled={isSubmitting} testID="unit-alert-acknowledge-button">
+          <Button className="flex-1" onPress={handleAcknowledge} disabled={isSubmitting || noteMissing} testID="unit-alert-acknowledge-button">
             <ButtonText>{t('unitAlerts.acknowledge')}</ButtonText>
           </Button>
         </HStack>

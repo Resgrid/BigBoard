@@ -121,6 +121,63 @@ describe('UnitAlertsWidget configuration and timers', () => {
     expect(screen.getByTestId('unit-alert-alert')).toBeTruthy();
     expect(screen.queryByTestId('unit-alert-warn')).toBeNull();
   });
+
+  describe('units in a status with no meaning', () => {
+    // Customer report, 2026-10-17: units were dispatched to a custom status with no meaning, and the widget said every unit
+    // was within its timers.
+    const telefonisch = (unitId: string, name: string) =>
+      Object.assign(new UnitInfoResultData(), {
+        UnitId: unitId,
+        Name: name,
+        CurrentStatus: 'Telefonisch',
+        CurrentStatusBaseType: UnitStatusBaseType.None,
+        CurrentStatusTimestampUtc: '2026-09-21T11:00:00Z',
+      });
+
+    beforeEach(() => {
+      mockCoreState.config = Object.assign(new GetConfigResultData(), {
+        UnitStatusThresholds: [{ BaseType: UnitStatusBaseType.Dispatched, WarnSeconds: 60, AlertSeconds: 120 }],
+      });
+    });
+
+    it('says they cannot be timed instead of claiming every unit is within its timers', () => {
+      mockUnitsState.units = [telefonisch('1', 'PIT 1'), telefonisch('2', 'MUG 1')];
+
+      render(<UnitAlertsWidget />);
+
+      expect(screen.getByTestId('unit-alerts-without-meaning')).toBeTruthy();
+      expect(screen.getByText('unitAlerts.unitsWithoutMeaning')).toBeTruthy();
+      expect(screen.queryByText('unitAlerts.withinThresholds')).toBeNull();
+    });
+
+    it('notes them below the alerts that are firing', () => {
+      mockUnitsState.units = [
+        telefonisch('1', 'PIT 1'),
+        Object.assign(new UnitInfoResultData(), {
+          UnitId: '3',
+          Name: 'Ambulance 3',
+          CurrentStatus: 'Dispatched',
+          CurrentStatusBaseType: UnitStatusBaseType.Dispatched,
+          CurrentStatusTimestampUtc: '2026-09-21T11:58:00Z',
+        }),
+      ];
+
+      render(<UnitAlertsWidget />);
+
+      expect(screen.getByTestId('unit-alert-alert')).toBeTruthy();
+      expect(screen.getByTestId('unit-alerts-without-meaning')).toBeTruthy();
+    });
+
+    it('says nothing about meanings while no timers are set', () => {
+      mockCoreState.config = new GetConfigResultData();
+      mockUnitsState.units = [telefonisch('1', 'PIT 1')];
+
+      render(<UnitAlertsWidget />);
+
+      expect(screen.getByText('unitAlerts.noThresholds')).toBeTruthy();
+      expect(screen.queryByTestId('unit-alerts-without-meaning')).toBeNull();
+    });
+  });
 });
 
 describe('UnitAlertsWidget acknowledgements', () => {

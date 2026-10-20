@@ -849,6 +849,7 @@
     "errorGeneric": "Nie udało się zapisać. Spróbuj ponownie.",
     "errorLoading": "Nie udało się załadować",
     "errorNotOverdue": "Ta jednostka nie przekracza już swojego licznika statusu.",
+    "errorNoteRequired": "Podaj powód przed potwierdzeniem lub wyciszeniem tego alertu.",
     "errorStatusChanged": "Ta jednostka zmieniła status, alert został usunięty.",
     "inStatusFor": "{{status}} od {{elapsed}}",
     "mute": "Wycisz",
@@ -862,9 +863,12 @@
     "noThresholds": "Nie skonfigurowano liczników statusu",
     "note": "Notatka",
     "notePlaceholder": "Co się dzieje? np. zgłoszono usterkę techniczną",
+    "noteRequired": "Powód (wymagany)",
+    "noteRequiredHint": "Przed potwierdzeniem lub wyciszeniem tego alertu wymagany jest powód.",
     "openAcknowledge": "Potwierdź alert dla {{name}}",
     "sheetTitle": "Alert statusu jednostki",
     "title": "Alerty jednostek",
+    "unitsWithoutMeaning": "Jednostki w statusie bez znaczenia: {{count}}. Nie może ich objąć żaden licznik; nadaj tym statusom znaczenie w Statusach niestandardowych.",
     "withinThresholds": "Wszystkie jednostki mieszczą się w swoich licznikach statusu"
   },
   "weatherAlerts": {
