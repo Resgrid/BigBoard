@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView } from 'react-native';
 
+import { TypeIcon } from '@/components/common/type-icon';
 import { Box } from '@/components/ui/box';
 import { HStack } from '@/components/ui/hstack';
 import { Pressable } from '@/components/ui/pressable';
@@ -167,11 +168,15 @@ export const UnitsWidget: React.FC<UnitsWidgetProps> = ({ onRemove, isEditMode, 
     if (!columnVisible[col]) return null;
     switch (col) {
       case 'name':
+        // The unit type's icon (uploaded, else the built-in one it picked) so an Ambulance reads apart from a MUG at a glance.
         return (
           <Box key={col} style={{ flex: columnFlex[col] }}>
-            <Text className={`text-xs ${isDark ? 'text-gray-300' : 'text-gray-700'}`} style={{ fontSize }} numberOfLines={1}>
-              {unit.Name}
-            </Text>
+            <HStack space="xs" className="items-center">
+              <TypeIcon iconUrl={unit.TypeIconUrl} mapIcon={unit.TypeMapIcon} size={fontSize + 4} testID={`unit-type-icon-${unit.UnitId}`} />
+              <Text className={`text-xs ${isDark ? 'text-gray-300' : 'text-gray-700'}`} style={{ fontSize, flexShrink: 1 }} numberOfLines={1}>
+                {unit.Name}
+              </Text>
+            </HStack>
           </Box>
         );
       case 'station':

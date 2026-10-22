@@ -74,7 +74,7 @@ const MapPins: React.FC<MapPinsProps> = ({ map, pins, onPinPress, isMapReady }) 
 
     const entries = entriesRef.current;
     const renderPin = (entry: MarkerEntry) => {
-      entry.root.render(<PinMarker imagePath={entry.pin.ImagePath as MapIconKey} title={entry.pin.Title} size={32} onPress={() => onPinPressRef.current?.(entry.pin)} />);
+      entry.root.render(<PinMarker imagePath={entry.pin.ImagePath as MapIconKey} iconUrl={entry.pin.IconUrl} title={entry.pin.Title} size={32} onPress={() => onPinPressRef.current?.(entry.pin)} />);
     };
 
     const currentIds = new Set<string>();
@@ -113,7 +113,8 @@ const MapPins: React.FC<MapPinsProps> = ({ map, pins, onPinPress, isMapReady }) 
         existing.marker.setLngLat([pin.Longitude, pin.Latitude]);
       }
 
-      if (previous.ImagePath !== pin.ImagePath || previous.Title !== pin.Title) {
+      // Everything the marker is drawn from: a new upload is a new IconUrl, and must replace the old image.
+      if (previous.ImagePath !== pin.ImagePath || previous.Title !== pin.Title || (previous.IconUrl ?? null) !== (pin.IconUrl ?? null)) {
         renderPin(existing);
       }
     });

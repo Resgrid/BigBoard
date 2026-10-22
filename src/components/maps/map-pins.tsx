@@ -28,7 +28,7 @@ const MapPin = React.memo(({ pin, onPinPress }: MapPinProps) => {
 
   return (
     <Mapbox.MarkerView id={`pin-${pin.Id}`} coordinate={[pin.Longitude, pin.Latitude]} anchor={MARKER_ANCHOR} allowOverlap={true}>
-      <PinMarker imagePath={pin.ImagePath as MapIconKey} title={pin.Title} size={32} onPress={handlePress} />
+      <PinMarker imagePath={pin.ImagePath as MapIconKey} iconUrl={pin.IconUrl} title={pin.Title} size={32} onPress={handlePress} />
     </Mapbox.MarkerView>
   );
 });

@@ -23,6 +23,10 @@ export class CallResultData {
   public Type: string = 'No Type';
   /** Id of the department call type the call was logged with (matches CallTypeResultData.Id); null when none, undefined from older servers. */
   public TypeId?: string | null;
+  /** The department's uploaded icon for the call's type (absolute URL, anonymous GET, 128x128 PNG); null when none was uploaded or from older servers. */
+  public TypeIconUrl?: string | null = null;
+  /** The built-in map icon the call's type picked (lowercase MAP_ICONS key, e.g. "fire"); null when none or from older servers. */
+  public TypeMapIcon?: string | null = null;
   public LoggedOnUtc: string = '';
   public DispatchedOn: string = '';
   public DispatchedOnUtc: string = '';

@@ -66,6 +66,14 @@ jest.mock('@/components/ui/vstack', () => ({ VStack: require('react-native').Vie
 jest.mock('@/components/ui/text', () => ({ Text: require('react-native').Text }));
 jest.mock('@/components/ui/spinner', () => ({ Spinner: require('react-native').ActivityIndicator }));
 jest.mock('../WidgetContainer', () => ({ WidgetContainer: require('react-native').View }));
+// Keeps what the widget hands the icon; type-icon.test covers the image loading.
+jest.mock('@/components/common/type-icon', () => {
+  const mockReact = require('react');
+  const { View } = require('react-native');
+  return {
+    TypeIcon: (props: Record<string, unknown>) => mockReact.createElement(View, { testID: props.testID, iconUrl: props.iconUrl, mapIcon: props.mapIcon }),
+  };
+});
 
 const renderedCallNames = () =>
   screen
@@ -106,5 +114,18 @@ describe('ScheduledCallsWidget priority sort', () => {
     render(<ScheduledCallsWidget />);
 
     await waitFor(() => expect(renderedCallNames()).toEqual(['Call Urgent', 'Call Routine', 'Call Code 3']));
+  });
+});
+
+describe('ScheduledCallsWidget type icons', () => {
+  it("puts each scheduled call's type icon beside its name", async () => {
+    const iconUrl = 'https://api.resgrid.dev/api/v4/TypeIcons/0123456789abcdef0123456789abcdef';
+    mockScheduledState.callPriorities = [];
+    mockScheduledState.scheduledCalls = [{ CallId: 'a', Name: 'Call Routine', Priority: 58, TypeIconUrl: iconUrl, TypeMapIcon: 'fire' }];
+
+    render(<ScheduledCallsWidget />);
+
+    await waitFor(() => expect(screen.getByTestId('scheduled-call-type-icon-a').props.iconUrl).toBe(iconUrl));
+    expect(screen.getByTestId('scheduled-call-type-icon-a').props.mapIcon).toBe('fire');
   });
 });

@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView } from 'react-native';
 
+import { TypeIcon } from '@/components/common/type-icon';
 import { Box } from '@/components/ui/box';
 import { HStack } from '@/components/ui/hstack';
 import { Pressable } from '@/components/ui/pressable';
@@ -161,9 +162,12 @@ export const UnitAlertsWidget: React.FC<UnitAlertsWidgetProps> = ({ onRemove, is
           <AlertTriangleIcon size={14} color={rowStyle.borderLeftColor} />
         )}
         <VStack className="flex-1">
-          <Text className={`text-sm font-semibold ${isDark ? 'text-gray-100' : 'text-gray-900'}`} numberOfLines={1}>
-            {unit.Name}
-          </Text>
+          <HStack space="xs" className="items-center">
+            <TypeIcon iconUrl={unit.TypeIconUrl} mapIcon={unit.TypeMapIcon} size={16} testID={`unit-alert-type-icon-${unit.UnitId}`} />
+            <Text className={`text-sm font-semibold ${isDark ? 'text-gray-100' : 'text-gray-900'}`} style={{ flexShrink: 1 }} numberOfLines={1}>
+              {unit.Name}
+            </Text>
+          </HStack>
           <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`} numberOfLines={1}>
             {detail}
           </Text>
