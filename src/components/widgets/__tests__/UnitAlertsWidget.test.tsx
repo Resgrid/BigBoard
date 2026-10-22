@@ -45,6 +45,14 @@ jest.mock('@/components/ui/vstack', () => ({ VStack: require('react-native').Vie
 jest.mock('@/components/ui/text', () => ({ Text: require('react-native').Text }));
 jest.mock('@/components/ui/spinner', () => ({ Spinner: require('react-native').ActivityIndicator }));
 jest.mock('../WidgetContainer', () => ({ WidgetContainer: require('react-native').View }));
+// Keeps what the widget hands the icon; type-icon.test covers the image loading.
+jest.mock('@/components/common/type-icon', () => {
+  const mockReact = require('react');
+  const { View } = require('react-native');
+  return {
+    TypeIcon: (props: Record<string, unknown>) => mockReact.createElement(View, { testID: props.testID, iconUrl: props.iconUrl, mapIcon: props.mapIcon }),
+  };
+});
 
 describe('UnitAlertsWidget configuration and timers', () => {
   beforeEach(() => {
@@ -297,6 +305,17 @@ describe('UnitAlertsWidget acknowledgements', () => {
     render(<UnitAlertsWidget />);
 
     expect(screen.queryByTestId('unit-alert-row-2')).toBeNull();
+  });
+
+  it("shows the unit's type icon beside its name in an alert row", () => {
+    const iconUrl = 'https://api.resgrid.dev/api/v4/TypeIcons/0123456789abcdef0123456789abcdef';
+    mockUnitsState.units = [Object.assign(unit('2', 'Medic 2', '2026-10-02T11:48:00Z', 502), { TypeIconUrl: iconUrl, TypeMapIcon: 'ambulance' })];
+
+    render(<UnitAlertsWidget />);
+
+    const icon = screen.getByTestId('unit-alert-type-icon-2');
+    expect(icon.props.iconUrl).toBe(iconUrl);
+    expect(icon.props.mapIcon).toBe('ambulance');
   });
 });
 

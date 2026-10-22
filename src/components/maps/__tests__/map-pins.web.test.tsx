@@ -133,6 +133,31 @@ describe('MapPins (web)', () => {
     expect(mockRoots[0].render).toHaveBeenCalledTimes(2);
   });
 
+  it("hands the pin's uploaded icon to the marker, and re-renders it when a new upload replaces the icon", () => {
+    const first = 'https://api.resgrid.dev/api/v4/TypeIcons/a1';
+    const { rerender } = render(<MapPins map={fakeMap} pins={[{ ...UNIT, IconUrl: first }]} isMapReady />);
+
+    const initial = mockRoots[0].render.mock.calls[0][0] as React.ReactElement<{ iconUrl?: string | null }>;
+    expect(initial.props.iconUrl).toBe(first);
+
+    // A new upload is a new key, so a new URL; nothing else about the pin changed.
+    const second = 'https://api.resgrid.dev/api/v4/TypeIcons/b2';
+    rerender(<MapPins map={fakeMap} pins={[{ ...UNIT, IconUrl: second }]} isMapReady />);
+
+    expect(mockMarkers).toHaveLength(1);
+    expect(mockRoots[0].render).toHaveBeenCalledTimes(2);
+    const updated = mockRoots[0].render.mock.calls[1][0] as React.ReactElement<{ iconUrl?: string | null }>;
+    expect(updated.props.iconUrl).toBe(second);
+  });
+
+  it('does not re-render the marker when an older server leaves IconUrl out and a refresh fills it with null', () => {
+    const { rerender } = render(<MapPins map={fakeMap} pins={[UNIT]} isMapReady />);
+
+    rerender(<MapPins map={fakeMap} pins={[{ ...UNIT, IconUrl: null }]} isMapReady />);
+
+    expect(mockRoots[0].render).toHaveBeenCalledTimes(1);
+  });
+
   it('removes the marker and unmounts its React root when a pin disappears', () => {
     const { rerender } = render(<MapPins map={fakeMap} pins={[UNIT, STATION]} isMapReady />);
 

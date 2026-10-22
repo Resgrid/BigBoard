@@ -2,6 +2,7 @@ import { useColorScheme } from 'nativewind';
 import React, { useEffect, useMemo } from 'react';
 import { ScrollView } from 'react-native';
 
+import { TypeIcon } from '@/components/common/type-icon';
 import { Box } from '@/components/ui/box';
 import { HStack } from '@/components/ui/hstack';
 import { Spinner } from '@/components/ui/spinner';
@@ -136,11 +137,15 @@ export const PersonnelWidget: React.FC<PersonnelWidgetProps> = ({ onRemove, isEd
     if (!columnVisible[col]) return null;
     switch (col) {
       case 'name':
+        // The icon of the person's first role (in the department's role order) that has one, the same one as their map pin.
         return (
           <Box key={col} style={{ flex: columnFlex[col] }}>
-            <Text className={`text-xs ${isDark ? 'text-gray-300' : 'text-gray-700'}`} style={{ fontSize }} numberOfLines={1}>
-              {person.FirstName} {person.LastName}
-            </Text>
+            <HStack space="xs" className="items-center">
+              <TypeIcon iconUrl={person.RoleIconUrl} size={fontSize + 4} testID={`personnel-role-icon-${person.UserId}`} />
+              <Text className={`text-xs ${isDark ? 'text-gray-300' : 'text-gray-700'}`} style={{ fontSize, flexShrink: 1 }} numberOfLines={1}>
+                {person.FirstName} {person.LastName}
+              </Text>
+            </HStack>
           </Box>
         );
       case 'group':

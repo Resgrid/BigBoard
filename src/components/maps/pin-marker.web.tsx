@@ -1,17 +1,24 @@
 import { useColorScheme } from 'nativewind';
-import React from 'react';
+import React, { useState } from 'react';
 
 import { MAP_ICONS } from '@/constants/map-icons';
+import { getTypeIconUrl } from '@/lib/type-icons';
 
 interface PinMarkerProps {
   imagePath?: string;
+  /** The department's uploaded icon for the pin (its unit, call or POI type, or a person's role); wins over `imagePath`. */
+  iconUrl?: string | null;
   title: string;
   size?: number;
   onPress?: () => void;
 }
 
-const PinMarker: React.FC<PinMarkerProps> = ({ imagePath, title, size = 32, onPress }) => {
+const PinMarker: React.FC<PinMarkerProps> = ({ imagePath, iconUrl: uploadedIcon, title, size = 32, onPress }) => {
   const { colorScheme } = useColorScheme();
+  // The upload that failed to load, so the bundled icon shows instead; a new upload (a new URL) is tried afresh.
+  const [failedUploadUrl, setFailedUploadUrl] = useState<string | null>(null);
+  const uploadedIconUrl = getTypeIconUrl(uploadedIcon);
+  const showUpload = uploadedIconUrl !== null && uploadedIconUrl !== failedUploadUrl;
 
   // Convert imagePath to lowercase and clean it up
   // Remove any path separators and file extensions
@@ -53,15 +60,29 @@ const PinMarker: React.FC<PinMarkerProps> = ({ imagePath, title, size = 32, onPr
         userSelect: 'none',
       }}
     >
-      <img
-        src={iconUrl}
-        alt={title}
-        style={{
-          width: size,
-          height: size,
-          objectFit: 'cover',
-        }}
-      />
+      {showUpload ? (
+        <img
+          key={uploadedIconUrl}
+          src={uploadedIconUrl}
+          alt={title}
+          onError={() => setFailedUploadUrl(uploadedIconUrl)}
+          style={{
+            width: size,
+            height: size,
+            objectFit: 'contain',
+          }}
+        />
+      ) : (
+        <img
+          src={iconUrl}
+          alt={title}
+          style={{
+            width: size,
+            height: size,
+            objectFit: 'cover',
+          }}
+        />
+      )}
       <div
         style={{
           marginTop: 2,

@@ -5,6 +5,7 @@ import { ScrollView } from 'react-native';
 import { getAllGroups } from '@/api/groups/groups';
 import { getRecipients } from '@/api/messaging/messages';
 import { AutoScrollingDispatches } from '@/components/calls/auto-scrolling-dispatches';
+import { TypeIcon } from '@/components/common/type-icon';
 import { Box } from '@/components/ui/box';
 import { HStack } from '@/components/ui/hstack';
 import { Spinner } from '@/components/ui/spinner';
@@ -175,11 +176,15 @@ export const CallsWidget: React.FC<CallsWidgetProps> = ({ onRemove, isEditMode, 
           </Box>
         );
       case 'name':
+        // The call type's icon (uploaded, else the built-in one it picked), the same one as the call's map pin.
         return (
           <Box key={col} style={{ flex: columnFlex[col] }}>
-            <Text className={`text-xs ${isDark ? 'text-gray-300' : 'text-gray-700'}`} style={{ fontSize }} numberOfLines={1}>
-              {call.Name}
-            </Text>
+            <HStack space="xs" className="items-center">
+              <TypeIcon iconUrl={call.TypeIconUrl} mapIcon={call.TypeMapIcon} size={fontSize + 4} testID={`call-type-icon-${call.CallId}`} />
+              <Text className={`text-xs ${isDark ? 'text-gray-300' : 'text-gray-700'}`} style={{ fontSize, flexShrink: 1 }} numberOfLines={1}>
+                {call.Name}
+              </Text>
+            </HStack>
           </Box>
         );
       case 'address':

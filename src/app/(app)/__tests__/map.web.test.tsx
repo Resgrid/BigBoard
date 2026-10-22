@@ -350,4 +350,57 @@ describe('map.web live pin updates', () => {
     const markerElement = (mapboxgl.Marker as unknown as jest.Mock).mock.calls[0][0] as HTMLElement;
     expect(markerElement.style.filter).toBe('');
   });
+
+  const ICON_URL = 'https://api.resgrid.dev/api/v4/TypeIcons/0123456789abcdef0123456789abcdef';
+
+  const loadMap = async (expectedMarkers: number) => {
+    renderMap();
+
+    const onLoad = mapInstance().on.mock.calls.find(([event]) => event === 'load')?.[1] as () => void;
+    act(() => {
+      onLoad();
+    });
+
+    await waitFor(() => {
+      expect(markerInstances()).toHaveLength(expectedMarkers);
+    });
+  };
+
+  it("draws the department's uploaded icon untinted, and the tinted bundled icon when the upload fails to load", async () => {
+    (getMapDataAndMarkers as jest.Mock).mockResolvedValue({
+      Data: { MapMakerInfos: [{ ...UNIT, Color: '120deg', IconUrl: ICON_URL }], CenterLat: '', CenterLon: '', ZoomLevel: '' },
+    });
+
+    await loadMap(1);
+
+    const markerElement = (mapboxgl.Marker as unknown as jest.Mock).mock.calls[0][0] as HTMLElement;
+    const icon = markerElement.querySelector('img') as HTMLImageElement;
+    expect(icon.getAttribute('src')).toBe(ICON_URL);
+    // The hue tint recolors the bundled pins; a department's own icon keeps its colors.
+    expect(markerElement.style.filter).toBe('');
+
+    act(() => {
+      icon.dispatchEvent(new Event('error'));
+    });
+
+    expect(icon.getAttribute('src')).toContain('/assets/mapping/');
+    expect(icon.style.display).not.toBe('none');
+    expect(markerElement.style.filter).toBe('hue-rotate(120deg)');
+  });
+
+  it('rebuilds a marker when a new upload replaces its icon', async () => {
+    await loadMap(2);
+
+    const [unitMarker, stationMarker] = markerInstances();
+    const onMarkersUpdate = (useMapSignalRUpdates as jest.Mock).mock.calls.at(-1)?.[0] as (pins: MapMakerInfoData[], fetchStartedAt: number) => void;
+    act(() => {
+      onMarkersUpdate([{ ...UNIT, IconUrl: ICON_URL }, STATION], Date.now());
+    });
+
+    expect(unitMarker.remove).toHaveBeenCalledTimes(1);
+    expect(stationMarker.remove).not.toHaveBeenCalled();
+    expect(markerInstances()).toHaveLength(3);
+    const rebuilt = (mapboxgl.Marker as unknown as jest.Mock).mock.calls[2][0] as HTMLElement;
+    expect(rebuilt.querySelector('img')?.getAttribute('src')).toBe(ICON_URL);
+  });
 });
