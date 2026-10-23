@@ -121,7 +121,8 @@ jobs:
     strategy:
       matrix:
         platform: [android, ios, web]
-    runs-on: ${{ matrix.platform == 'ios' && 'macos-26' || 'ubuntu-latest' }}
+    # Android is pinned to ubuntu-24.04: on ubuntu-latest (Ubuntu 26.04) the runner is lost during the native C++ compile.
+    runs-on: ${{ matrix.platform == 'ios' && 'macos-26' || matrix.platform == 'android' && 'ubuntu-24.04' || 'ubuntu-latest' }}
     environment: RNBuild
     steps:
       - name: 🏗 Checkout repository
@@ -161,7 +162,7 @@ jobs:
           node-version: '24'
           cache: 'yarn'
 
-      # ubuntu-latest (Ubuntu 26.04) defaults to JDK 25, which breaks the CMake configure step for native modules.
+      # Pin JDK 17 so a runner image default change (Ubuntu 26.04 defaults to JDK 25) can't break the CMake configure step for native modules.
       - name: ☕ Setup Java 17
         if: matrix.platform == 'android'
         uses: actions/setup-java@v4
