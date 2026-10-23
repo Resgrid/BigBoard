@@ -161,6 +161,14 @@ jobs:
           node-version: '24'
           cache: 'yarn'
 
+      # ubuntu-latest (Ubuntu 26.04) defaults to JDK 25, which breaks the CMake configure step for native modules.
+      - name: ☕ Setup Java 17
+        if: matrix.platform == 'android'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
       - name: 🔎 Verify Xcode toolchain
         if: matrix.platform == 'ios'
         run: |
