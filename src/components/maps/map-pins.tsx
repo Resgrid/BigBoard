@@ -22,13 +22,14 @@ interface MapPinProps {
 
 // Memoised per pin: a realtime position update replaces only the moved pin's object, so only that
 // marker re-renders. The key/id never include coordinates, so the marker moves in place rather than
-// being unmounted and recreated.
+// being unmounted and recreated. A refresh hands back new pin objects, so a status change that only
+// changes the pin image (PinIconUrl) or the upload (IconUrl) is always redrawn.
 const MapPin = React.memo(({ pin, onPinPress }: MapPinProps) => {
   const handlePress = useCallback(() => onPinPress?.(pin), [onPinPress, pin]);
 
   return (
     <Mapbox.MarkerView id={`pin-${pin.Id}`} coordinate={[pin.Longitude, pin.Latitude]} anchor={MARKER_ANCHOR} allowOverlap={true}>
-      <PinMarker imagePath={pin.ImagePath as MapIconKey} iconUrl={pin.IconUrl} title={pin.Title} size={32} onPress={handlePress} />
+      <PinMarker imagePath={pin.ImagePath as MapIconKey} iconUrl={pin.IconUrl} pinIconUrl={pin.PinIconUrl} title={pin.Title} size={32} onPress={handlePress} />
     </Mapbox.MarkerView>
   );
 });

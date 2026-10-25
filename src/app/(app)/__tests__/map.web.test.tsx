@@ -403,4 +403,78 @@ describe('map.web live pin updates', () => {
     const rebuilt = (mapboxgl.Marker as unknown as jest.Mock).mock.calls[2][0] as HTMLElement;
     expect(rebuilt.querySelector('img')?.getAttribute('src')).toBe(ICON_URL);
   });
+
+  const PIN_URL = 'https://api.resgrid.dev/api/v4/TypeIcons/Pins/engine-responding?v=1';
+
+  it('draws the status pin untinted in the bundled icon element, and the tinted bundled icon when it fails to load', async () => {
+    (getMapDataAndMarkers as jest.Mock).mockResolvedValue({
+      Data: { MapMakerInfos: [{ ...UNIT, Color: '120deg', PinIconUrl: PIN_URL, IconStyle: 'responding' }], CenterLat: '', CenterLon: '', ZoomLevel: '' },
+    });
+
+    await loadMap(1);
+
+    const markerElement = (mapboxgl.Marker as unknown as jest.Mock).mock.calls[0][0] as HTMLElement;
+    const icon = markerElement.querySelector('img') as HTMLImageElement;
+    expect(icon.getAttribute('src')).toBe(PIN_URL);
+    expect(icon.style.width).toBe('32px');
+    expect(icon.style.height).toBe('32px');
+    // The status pin already carries the status color: no hue tint on top of it.
+    expect(markerElement.style.filter).toBe('');
+
+    act(() => {
+      icon.dispatchEvent(new Event('error'));
+    });
+
+    expect(icon.getAttribute('src')).toContain('/assets/mapping/');
+    expect(icon.style.display).not.toBe('none');
+    expect(markerElement.style.filter).toBe('hue-rotate(120deg)');
+  });
+
+  it('prefers the upload over the status pin, then falls through to the untinted status pin and the tinted bundled icon as images fail', async () => {
+    (getMapDataAndMarkers as jest.Mock).mockResolvedValue({
+      Data: { MapMakerInfos: [{ ...UNIT, Color: '120deg', IconUrl: ICON_URL, PinIconUrl: PIN_URL, IconStyle: 'responding' }], CenterLat: '', CenterLon: '', ZoomLevel: '' },
+    });
+
+    await loadMap(1);
+
+    const markerElement = (mapboxgl.Marker as unknown as jest.Mock).mock.calls[0][0] as HTMLElement;
+    const icon = markerElement.querySelector('img') as HTMLImageElement;
+    expect(icon.getAttribute('src')).toBe(ICON_URL);
+    expect(markerElement.style.filter).toBe('');
+
+    act(() => {
+      icon.dispatchEvent(new Event('error'));
+    });
+
+    expect(icon.getAttribute('src')).toBe(PIN_URL);
+    expect(markerElement.style.filter).toBe('');
+
+    act(() => {
+      icon.dispatchEvent(new Event('error'));
+    });
+
+    expect(icon.getAttribute('src')).toContain('/assets/mapping/');
+    expect(markerElement.style.filter).toBe('hue-rotate(120deg)');
+  });
+
+  it('rebuilds a marker when a status change swaps only its status pin', async () => {
+    (getMapDataAndMarkers as jest.Mock).mockResolvedValue({
+      Data: { MapMakerInfos: [{ ...UNIT, PinIconUrl: PIN_URL, IconStyle: 'responding' }, STATION], CenterLat: '', CenterLon: '', ZoomLevel: '' },
+    });
+
+    await loadMap(2);
+
+    const [unitMarker, stationMarker] = markerInstances();
+    const onScene = 'https://api.resgrid.dev/api/v4/TypeIcons/Pins/engine-onscene?v=1';
+    const onMarkersUpdate = (useMapSignalRUpdates as jest.Mock).mock.calls.at(-1)?.[0] as (pins: MapMakerInfoData[], fetchStartedAt: number) => void;
+    act(() => {
+      onMarkersUpdate([{ ...UNIT, PinIconUrl: onScene, IconStyle: 'onscene' }, STATION], Date.now());
+    });
+
+    expect(unitMarker.remove).toHaveBeenCalledTimes(1);
+    expect(stationMarker.remove).not.toHaveBeenCalled();
+    expect(markerInstances()).toHaveLength(3);
+    const rebuilt = (mapboxgl.Marker as unknown as jest.Mock).mock.calls[2][0] as HTMLElement;
+    expect(rebuilt.querySelector('img')?.getAttribute('src')).toBe(onScene);
+  });
 });

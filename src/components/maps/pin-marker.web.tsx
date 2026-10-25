@@ -8,17 +8,23 @@ interface PinMarkerProps {
   imagePath?: string;
   /** The department's uploaded icon for the pin (its unit, call or POI type, or a person's role); wins over `imagePath`. */
   iconUrl?: string | null;
+  /** The built-in pin recoloured to the call's priority or the unit's/person's status; wins over `imagePath`, not over `iconUrl`. */
+  pinIconUrl?: string | null;
   title: string;
   size?: number;
   onPress?: () => void;
 }
 
-const PinMarker: React.FC<PinMarkerProps> = ({ imagePath, iconUrl: uploadedIcon, title, size = 32, onPress }) => {
+const PinMarker: React.FC<PinMarkerProps> = ({ imagePath, iconUrl: uploadedIcon, pinIconUrl: statusPinIcon, title, size = 32, onPress }) => {
   const { colorScheme } = useColorScheme();
-  // The upload that failed to load, so the bundled icon shows instead; a new upload (a new URL) is tried afresh.
+  // The upload that failed to load, so the status pin (or the bundled icon) shows instead; a new upload (a new URL) is tried afresh.
   const [failedUploadUrl, setFailedUploadUrl] = useState<string | null>(null);
+  // Likewise the status/priority pin that failed to load, so the bundled icon shows instead.
+  const [failedPinUrl, setFailedPinUrl] = useState<string | null>(null);
   const uploadedIconUrl = getTypeIconUrl(uploadedIcon);
   const showUpload = uploadedIconUrl !== null && uploadedIconUrl !== failedUploadUrl;
+  const pinIconUrl = getTypeIconUrl(statusPinIcon);
+  const showPin = !showUpload && pinIconUrl !== null && pinIconUrl !== failedPinUrl;
 
   // Convert imagePath to lowercase and clean it up
   // Remove any path separators and file extensions
@@ -70,6 +76,19 @@ const PinMarker: React.FC<PinMarkerProps> = ({ imagePath, iconUrl: uploadedIcon,
             width: size,
             height: size,
             objectFit: 'contain',
+          }}
+        />
+      ) : showPin ? (
+        // The status/priority-coloured pin has the bundled pin's shape: same box and fit as the bundled icon, untinted.
+        <img
+          key={pinIconUrl}
+          src={pinIconUrl}
+          alt={title}
+          onError={() => setFailedPinUrl(pinIconUrl)}
+          style={{
+            width: size,
+            height: size,
+            objectFit: 'cover',
           }}
         />
       ) : (

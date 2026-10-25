@@ -35,9 +35,17 @@ const getIconPath = (imagePath: string): string => {
 const hasCoordinates = (pin: MapMakerInfoData): boolean =>
   Number.isFinite(pin.Latitude) && Number.isFinite(pin.Longitude) && Math.abs(pin.Latitude) <= 90 && Math.abs(pin.Longitude) <= 180 && !(pin.Latitude === 0 && pin.Longitude === 0);
 
-// Anything but the position needs the marker element (icon, label, popup) rebuilt. A new upload is a new IconUrl.
+// Anything but the position needs the marker element (icon, label, popup) rebuilt. A new upload is a new IconUrl, and a
+// status/priority change can change only the recoloured pin (PinIconUrl / IconStyle).
 const hasSameAppearance = (a: MapMakerInfoData, b: MapMakerInfoData): boolean =>
-  a.Title === b.Title && a.ImagePath === b.ImagePath && (a.IconUrl ?? null) === (b.IconUrl ?? null) && a.Color === b.Color && a.InfoWindowContent === b.InfoWindowContent && a.Type === b.Type;
+  a.Title === b.Title &&
+  a.ImagePath === b.ImagePath &&
+  (a.IconUrl ?? null) === (b.IconUrl ?? null) &&
+  (a.PinIconUrl ?? null) === (b.PinIconUrl ?? null) &&
+  (a.IconStyle ?? null) === (b.IconStyle ?? null) &&
+  a.Color === b.Color &&
+  a.InfoWindowContent === b.InfoWindowContent &&
+  a.Type === b.Type;
 
 // `filter` also accepts url(), so only a bare angle may reach hue-rotate() -- anything else could load a remote resource.
 const CSS_ANGLE_PATTERN = /^-?\d+(\.\d+)?(deg|grad|rad|turn)$/i;
@@ -454,23 +462,34 @@ export default function Map() {
       iconEl.alt = pin.Title || 'Marker';
 
       // The icon a department uploaded for the pin (its unit, call or POI type, or a person's role) wins over the
-      // bundled icon. The hue tint is for the bundled pins only: an uploaded icon keeps the department's own colors.
+      // built-in pin recoloured to the call's priority or the unit's/person's status, which wins over the bundled icon.
+      // The status pin has the bundled pin's shape, so it is drawn in the same element. The hue tint is for the bundled
+      // pins only: an uploaded icon keeps the department's own colors, and the status pin already carries its color.
       const uploadedIconUrl = getTypeIconUrl(pin.IconUrl);
+      const pinIconUrl = getTypeIconUrl(pin.PinIconUrl);
+      const bundledIconPath = getIconPath(pin.ImagePath || 'flag');
       const hueRotate = pin.Color && CSS_ANGLE_PATTERN.test(pin.Color.trim()) ? `hue-rotate(${pin.Color.trim()})` : null;
-      let showingUpload = uploadedIconUrl !== null;
+      let showing: 'upload' | 'pin' | 'bundled' = uploadedIconUrl !== null ? 'upload' : pinIconUrl !== null ? 'pin' : 'bundled';
 
-      if (hueRotate && !showingUpload) {
+      if (hueRotate && showing === 'bundled') {
         markerContainer.style.filter = hueRotate;
       }
 
       iconEl.onerror = () => {
-        if (showingUpload) {
-          // The upload failed to load: the bundled icon takes its place, tinted like any other.
-          showingUpload = false;
+        if (showing === 'upload' && pinIconUrl !== null) {
+          // The upload failed to load: the status pin takes its place, untinted.
+          showing = 'pin';
+          iconEl.src = pinIconUrl;
+          return;
+        }
+
+        if (showing !== 'bundled') {
+          // The upload or the status pin failed to load: the bundled icon takes its place, tinted like any other.
+          showing = 'bundled';
           if (hueRotate) {
             markerContainer.style.filter = hueRotate;
           }
-          iconEl.src = getIconPath(pin.ImagePath || 'flag');
+          iconEl.src = bundledIconPath;
           return;
         }
 
@@ -484,7 +503,7 @@ export default function Map() {
         markerContainer.insertBefore(fallbackIcon, markerContainer.firstChild);
       };
 
-      iconEl.src = uploadedIconUrl ?? getIconPath(pin.ImagePath || 'flag');
+      iconEl.src = uploadedIconUrl ?? pinIconUrl ?? bundledIconPath;
 
       const titleEl = document.createElement('div');
       titleEl.className = 'marker-title';

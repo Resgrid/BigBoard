@@ -74,7 +74,9 @@ const MapPins: React.FC<MapPinsProps> = ({ map, pins, onPinPress, isMapReady }) 
 
     const entries = entriesRef.current;
     const renderPin = (entry: MarkerEntry) => {
-      entry.root.render(<PinMarker imagePath={entry.pin.ImagePath as MapIconKey} iconUrl={entry.pin.IconUrl} title={entry.pin.Title} size={32} onPress={() => onPinPressRef.current?.(entry.pin)} />);
+      entry.root.render(
+        <PinMarker imagePath={entry.pin.ImagePath as MapIconKey} iconUrl={entry.pin.IconUrl} pinIconUrl={entry.pin.PinIconUrl} title={entry.pin.Title} size={32} onPress={() => onPinPressRef.current?.(entry.pin)} />
+      );
     };
 
     const currentIds = new Set<string>();
@@ -113,8 +115,15 @@ const MapPins: React.FC<MapPinsProps> = ({ map, pins, onPinPress, isMapReady }) 
         existing.marker.setLngLat([pin.Longitude, pin.Latitude]);
       }
 
-      // Everything the marker is drawn from: a new upload is a new IconUrl, and must replace the old image.
-      if (previous.ImagePath !== pin.ImagePath || previous.Title !== pin.Title || (previous.IconUrl ?? null) !== (pin.IconUrl ?? null)) {
+      // Everything the marker is drawn from: a new upload is a new IconUrl, and a status/priority change can change only
+      // the recoloured pin (PinIconUrl / IconStyle); either must replace the old image.
+      if (
+        previous.ImagePath !== pin.ImagePath ||
+        previous.Title !== pin.Title ||
+        (previous.IconUrl ?? null) !== (pin.IconUrl ?? null) ||
+        (previous.PinIconUrl ?? null) !== (pin.PinIconUrl ?? null) ||
+        (previous.IconStyle ?? null) !== (pin.IconStyle ?? null)
+      ) {
         renderPin(existing);
       }
     });

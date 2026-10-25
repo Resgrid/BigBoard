@@ -158,6 +158,38 @@ describe('MapPins (web)', () => {
     expect(mockRoots[0].render).toHaveBeenCalledTimes(1);
   });
 
+  it("hands the pin's status pin to the marker, and re-renders it when a status change swaps only the status pin", () => {
+    const responding = 'https://api.resgrid.dev/api/v4/TypeIcons/Pins/engine-responding?v=1';
+    const { rerender } = render(<MapPins map={fakeMap} pins={[{ ...UNIT, PinIconUrl: responding, IconStyle: 'responding' }]} isMapReady />);
+
+    const initial = mockRoots[0].render.mock.calls[0][0] as React.ReactElement<{ pinIconUrl?: string | null }>;
+    expect(initial.props.pinIconUrl).toBe(responding);
+
+    const onScene = 'https://api.resgrid.dev/api/v4/TypeIcons/Pins/engine-onscene?v=1';
+    rerender(<MapPins map={fakeMap} pins={[{ ...UNIT, PinIconUrl: onScene, IconStyle: 'onscene' }]} isMapReady />);
+
+    expect(mockMarkers).toHaveLength(1);
+    expect(mockRoots[0].render).toHaveBeenCalledTimes(2);
+    const updated = mockRoots[0].render.mock.calls[1][0] as React.ReactElement<{ pinIconUrl?: string | null }>;
+    expect(updated.props.pinIconUrl).toBe(onScene);
+  });
+
+  it('re-renders the marker when only its icon style changes', () => {
+    const { rerender } = render(<MapPins map={fakeMap} pins={[{ ...UNIT, IconStyle: 'available' }]} isMapReady />);
+
+    rerender(<MapPins map={fakeMap} pins={[{ ...UNIT, IconStyle: 'unavailable' }]} isMapReady />);
+
+    expect(mockRoots[0].render).toHaveBeenCalledTimes(2);
+  });
+
+  it('does not re-render the marker when an older server leaves PinIconUrl and IconStyle out and a refresh fills them with null', () => {
+    const { rerender } = render(<MapPins map={fakeMap} pins={[UNIT]} isMapReady />);
+
+    rerender(<MapPins map={fakeMap} pins={[{ ...UNIT, PinIconUrl: null, IconStyle: null }]} isMapReady />);
+
+    expect(mockRoots[0].render).toHaveBeenCalledTimes(1);
+  });
+
   it('removes the marker and unmounts its React root when a pin disappears', () => {
     const { rerender } = render(<MapPins map={fakeMap} pins={[UNIT, STATION]} isMapReady />);
 

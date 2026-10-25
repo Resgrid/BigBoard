@@ -11,6 +11,8 @@ export interface TypeIconProps {
   mapIcon?: string | null;
   /** Edge length of the square the icon is fitted into. */
   size?: number;
+  /** How the image is fitted into the square: `contain` (default) shows all of it, `cover` fills the square like the bundled map pins. */
+  contentFit?: 'contain' | 'cover';
   /** Rendered when neither icon is available (or both failed to load). */
   fallback?: React.ReactNode;
   /** Applied to the rendered image (not the fallback). */
@@ -26,7 +28,7 @@ export interface TypeIconProps {
  * built-in map icon the type picked, then `fallback` (nothing by default). An image that fails to load falls through
  * to the next option. Decorative: the name is always shown as text next to it, so it is hidden from screen readers.
  */
-export const TypeIcon: React.FC<TypeIconProps> = React.memo(({ iconUrl, mapIcon, size = 24, fallback = null, style, containerStyle, testID }) => {
+export const TypeIcon: React.FC<TypeIconProps> = React.memo(({ iconUrl, mapIcon, size = 24, contentFit = 'contain', fallback = null, style, containerStyle, testID }) => {
   const [failedUrl, setFailedUrl] = useState<string | null>(null);
   const [failedMapIcon, setFailedMapIcon] = useState<string | null>(null);
 
@@ -40,7 +42,7 @@ export const TypeIcon: React.FC<TypeIconProps> = React.memo(({ iconUrl, mapIcon,
         <ExpoImage
           source={{ uri: url }}
           style={StyleSheet.flatten([box, style])}
-          contentFit="contain"
+          contentFit={contentFit}
           cachePolicy="memory-disk"
           recyclingKey={url}
           accessible={false}
@@ -57,7 +59,7 @@ export const TypeIcon: React.FC<TypeIconProps> = React.memo(({ iconUrl, mapIcon,
         <RNImage
           source={mapIconEntry.uri}
           style={StyleSheet.flatten([box, style])}
-          resizeMode="contain"
+          resizeMode={contentFit}
           fadeDuration={0}
           accessible={false}
           onError={() => setFailedMapIcon(mapIconEntry.imgName)}
