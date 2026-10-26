@@ -86,6 +86,17 @@ describe('TypeIcon', () => {
     expect(getIcon('type-icon-url').props.source).toEqual({ uri: nextUrl });
   });
 
+  it('fills the square instead when asked to cover it, like the bundled map pins', () => {
+    const { rerender } = render(<TypeIcon iconUrl={ICON_URL} size={32} contentFit="cover" testID="type-icon" />);
+
+    expect(getIcon('type-icon-url').props.contentFit).toBe('cover');
+    expect(getIcon('type-icon-url').props.style).toEqual(expect.objectContaining({ width: 32, height: 32 }));
+
+    rerender(<TypeIcon mapIcon="ambulance" size={32} contentFit="cover" testID="type-icon" />);
+
+    expect(getIcon('type-icon-map').props.resizeMode).toBe('cover');
+  });
+
   it('is hidden from screen readers', () => {
     render(<TypeIcon mapIcon="ambulance" testID="type-icon" />);
 

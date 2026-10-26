@@ -50,3 +50,54 @@ describe('PinMarker (native) uploaded icons', () => {
     expect(bundledIcons()[0].props.source).toBe(MAP_ICONS.ambulance.uri);
   });
 });
+
+describe('PinMarker (native) status pins', () => {
+  const PIN_URL = 'https://api.resgrid.dev/api/v4/TypeIcons/Pins/ambulance-responding?v=1';
+  const remoteImages = () => screen.queryAllByTestId('uploaded-icon', hidden);
+
+  it("draws the status pin where the bundled pin goes: the bundled pin's box and cover fit, in place of the bundled pin", () => {
+    render(<PinMarker imagePath="ambulance" pinIconUrl={PIN_URL} title="Medic 1" size={32} />);
+
+    const [pinImage] = remoteImages();
+    expect(remoteImages()).toHaveLength(1);
+    expect(pinImage.props.source).toEqual({ uri: PIN_URL });
+    expect(pinImage.props.contentFit).toBe('cover');
+    expect(pinImage.props.style).toEqual(expect.objectContaining({ width: 32, height: 32 }));
+    expect(bundledIcons()).toHaveLength(0);
+    expect(screen.getByText('Medic 1')).toBeTruthy();
+  });
+
+  it('falls back to the bundled icon when the status pin fails to load', () => {
+    render(<PinMarker imagePath="ambulance" pinIconUrl={PIN_URL} title="Medic 1" />);
+
+    fireEvent(remoteImages()[0], 'error');
+
+    expect(remoteImages()).toHaveLength(0);
+    expect(bundledIcons()[0].props.source).toBe(MAP_ICONS.ambulance.uri);
+  });
+
+  it('prefers the upload over the status pin, then falls through to the status pin and the bundled icon as images fail', () => {
+    render(<PinMarker imagePath="ambulance" iconUrl={ICON_URL} pinIconUrl={PIN_URL} title="Medic 1" />);
+
+    expect(remoteImages()).toHaveLength(1);
+    expect(remoteImages()[0].props.source).toEqual({ uri: ICON_URL });
+    expect(remoteImages()[0].props.contentFit).toBe('contain');
+
+    fireEvent(remoteImages()[0], 'error');
+
+    expect(remoteImages()).toHaveLength(1);
+    expect(remoteImages()[0].props.source).toEqual({ uri: PIN_URL });
+
+    fireEvent(remoteImages()[0], 'error');
+
+    expect(remoteImages()).toHaveLength(0);
+    expect(bundledIcons()[0].props.source).toBe(MAP_ICONS.ambulance.uri);
+  });
+
+  it('ignores a status pin URL that is not an absolute http(s) URL', () => {
+    render(<PinMarker imagePath="ambulance" pinIconUrl="/api/v4/TypeIcons/Pins/ambulance-responding" title="Medic 1" />);
+
+    expect(remoteImages()).toHaveLength(0);
+    expect(bundledIcons()[0].props.source).toBe(MAP_ICONS.ambulance.uri);
+  });
+});
