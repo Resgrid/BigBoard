@@ -550,6 +550,64 @@
       "message": "Veuillez vérifier votre nom d'utilisateur et votre mot de passe, puis réessayez.",
       "title": "Échec de la connexion"
     },
+    "errors": {
+      "account_disabled": {
+        "message": "Votre compte a été désactivé par votre service. Contactez l'administrateur de votre service pour le faire réactiver.",
+        "title": "Compte désactivé"
+      },
+      "account_locked": {
+        "message": "Votre compte est verrouillé. Contactez l'administrateur de votre service pour le faire déverrouiller.",
+        "title": "Compte verrouillé"
+      },
+      "account_locked_out": {
+        "message": "Votre compte a été verrouillé après trop de tentatives de connexion échouées. Patientez {{minutes}} min puis réessayez. Si vous avez oublié votre mot de passe, réinitialisez-le depuis le site web de Resgrid avant de réessayer.",
+        "title": "Compte temporairement verrouillé"
+      },
+      "account_not_activated": {
+        "message": "Votre compte n'a pas encore été activé. Utilisez l'e-mail d'invitation de votre service pour terminer sa configuration, ou demandez à l'administrateur de votre service de vous envoyer une nouvelle invitation.",
+        "title": "Compte non activé"
+      },
+      "department_access_denied": {
+        "message": "Votre compte n'est plus autorisé à se connecter à ce service. Contactez l'administrateur de votre service.",
+        "title": "Connexion non autorisée"
+      },
+      "invalid_credentials": {
+        "message": "Le nom d'utilisateur ou le mot de passe saisi est incorrect. Les mots de passe sont sensibles à la casse : vérifiez que le verrouillage des majuscules est désactivé. Si vous avez oublié votre mot de passe, réinitialisez-le depuis le site web de Resgrid. Trop de tentatives échouées verrouilleront temporairement votre compte.",
+        "title": "Nom d'utilisateur ou mot de passe incorrect"
+      },
+      "login_failed": {
+        "message": "Un problème est survenu lors de la connexion. Réessayez. Si le problème persiste, contactez l'administrateur de votre service ou le support Resgrid.",
+        "title": "Échec de la connexion"
+      },
+      "maximum_sessions": {
+        "message": "Votre service a atteint sa limite de sessions connectées. Déconnectez-vous sur un autre appareil, ou demandez à l'administrateur de votre service de fermer une session inutilisée, puis réessayez.",
+        "title": "Trop de sessions actives"
+      },
+      "no_department": {
+        "message": "Votre compte n'est membre d'aucun service actif. Demandez à l'administrateur de votre service de vous ajouter, puis réessayez.",
+        "title": "Aucun service actif"
+      },
+      "rate_limited": {
+        "message": "Trop de tentatives de connexion ont été faites en peu de temps. Patientez une minute et réessayez.",
+        "title": "Trop de tentatives"
+      },
+      "server_error": {
+        "message": "{{server}} n'a pas pu terminer la connexion pour le moment. Patientez quelques minutes et réessayez. Si le problème persiste, contactez le support Resgrid ou l'administrateur de votre serveur.",
+        "title": "Problème de serveur"
+      },
+      "server_not_resgrid": {
+        "message": "{{server}} n'a pas répondu comme un serveur Resgrid. Vérifiez l'adresse du serveur et réessayez.",
+        "title": "Serveur non reconnu"
+      },
+      "server_unreachable": {
+        "message": "Impossible de se connecter à {{server}}. Vérifiez votre connexion internet et que le bon serveur est sélectionné, puis réessayez.",
+        "title": "Serveur injoignable"
+      },
+      "sso_required": {
+        "message": "Votre service exige l'authentification unique. Utilisez le bouton SSO pour vous connecter avec le compte de votre organisation au lieu d'un mot de passe.",
+        "title": "Authentification unique requise"
+      }
+    },
     "footer_text": "Créé avec ❤️ à Lake Tahoe",
     "login": "Connexion",
     "login_button": "Se connecter",
@@ -564,6 +622,14 @@
     "password_incorrect": "Le mot de passe est incorrect",
     "password_placeholder": "Saisissez votre mot de passe",
     "register": "S'inscrire",
+    "server": {
+      "change_hint": "Ouvre la sélection du serveur",
+      "custom_host": "Personnalisé ({{host}})",
+      "eu_central": "UE Centre",
+      "label": "Serveur :",
+      "signing_in_to": "Connexion à {{server}}",
+      "us_west": "États-Unis Ouest"
+    },
     "title": "Connexion",
     "username": "Nom d'utilisateur",
     "username_placeholder": "Saisissez votre nom d'utilisateur"

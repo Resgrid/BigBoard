@@ -550,6 +550,64 @@
       "message": "Por favor, comprueba tu nombre de usuario y contraseña e inténtalo de nuevo.",
       "title": "Inicio de sesión fallido"
     },
+    "errors": {
+      "account_disabled": {
+        "message": "Su departamento ha deshabilitado su cuenta. Contacte con el administrador de su departamento para que la vuelva a habilitar.",
+        "title": "Cuenta deshabilitada"
+      },
+      "account_locked": {
+        "message": "Su cuenta está bloqueada. Contacte con el administrador de su departamento para que la desbloquee.",
+        "title": "Cuenta bloqueada"
+      },
+      "account_locked_out": {
+        "message": "Su cuenta se bloqueó tras demasiados intentos de inicio de sesión fallidos. Espere {{minutes}} min y vuelva a intentarlo. Si olvidó su contraseña, restablézcala desde el sitio web de Resgrid antes de volver a intentarlo.",
+        "title": "Cuenta bloqueada temporalmente"
+      },
+      "account_not_activated": {
+        "message": "Su cuenta aún no se ha activado. Use el correo de invitación de su departamento para terminar de configurarla, o pida al administrador de su departamento que le envíe una nueva invitación.",
+        "title": "Cuenta no activada"
+      },
+      "department_access_denied": {
+        "message": "Su cuenta ya no puede iniciar sesión en este departamento. Contacte con el administrador de su departamento.",
+        "title": "Inicio de sesión no permitido"
+      },
+      "invalid_credentials": {
+        "message": "El usuario o la contraseña que introdujo no son correctos. Las contraseñas distinguen entre mayúsculas y minúsculas, así que compruebe que Bloq Mayús esté desactivado. Si olvidó su contraseña, restablézcala desde el sitio web de Resgrid. Demasiados intentos fallidos bloquearán su cuenta temporalmente.",
+        "title": "Usuario o contraseña incorrectos"
+      },
+      "login_failed": {
+        "message": "Algo salió mal al iniciar sesión. Vuelva a intentarlo. Si sigue ocurriendo, contacte con el administrador de su departamento o con el soporte de Resgrid.",
+        "title": "Error al iniciar sesión"
+      },
+      "maximum_sessions": {
+        "message": "Su departamento ha alcanzado su límite de sesiones iniciadas. Cierre sesión en otro dispositivo, o pida al administrador de su departamento que finalice una sesión sin uso, y vuelva a intentarlo.",
+        "title": "Demasiadas sesiones activas"
+      },
+      "no_department": {
+        "message": "Su cuenta no pertenece a ningún departamento activo. Pida al administrador de su departamento que le añada y vuelva a intentarlo.",
+        "title": "Sin departamento activo"
+      },
+      "rate_limited": {
+        "message": "Se hicieron demasiados intentos de inicio de sesión en poco tiempo. Espere un minuto y vuelva a intentarlo.",
+        "title": "Demasiados intentos"
+      },
+      "server_error": {
+        "message": "{{server}} no pudo completar el inicio de sesión en este momento. Espere unos minutos y vuelva a intentarlo. Si sigue ocurriendo, contacte con el soporte de Resgrid o con el administrador de su servidor.",
+        "title": "Problema del servidor"
+      },
+      "server_not_resgrid": {
+        "message": "{{server}} no respondió como un servidor de Resgrid. Compruebe la dirección del servidor y vuelva a intentarlo.",
+        "title": "Servidor no reconocido"
+      },
+      "server_unreachable": {
+        "message": "No se pudo conectar con {{server}}. Compruebe su conexión a internet y que esté seleccionado el servidor correcto, y vuelva a intentarlo.",
+        "title": "No se puede contactar con el servidor"
+      },
+      "sso_required": {
+        "message": "Su departamento requiere inicio de sesión único. Use el botón SSO para iniciar sesión con la cuenta de su organización en lugar de una contraseña.",
+        "title": "Se requiere inicio de sesión único"
+      }
+    },
     "footer_text": "Creado con ❤️ en Lake Tahoe",
     "login": "Iniciar sesión",
     "login_button": "Iniciar sesión",
@@ -564,6 +622,14 @@
     "password_incorrect": "La contraseña era incorrecta",
     "password_placeholder": "Introduce tu contraseña",
     "register": "Registrarse",
+    "server": {
+      "change_hint": "Abre la selección de servidor",
+      "custom_host": "Personalizado ({{host}})",
+      "eu_central": "UE Central",
+      "label": "Servidor:",
+      "signing_in_to": "Iniciando sesión en {{server}}",
+      "us_west": "EE. UU. Oeste"
+    },
     "title": "Iniciar sesión",
     "username": "Nombre de usuario",
     "username_placeholder": "Introduce tu nombre de usuario"

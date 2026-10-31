@@ -1,3 +1,5 @@
+import type { LoginFailure } from '@/lib/auth/login-errors';
+
 export interface AuthTokens {
   accessToken: string;
   refreshToken: string;
@@ -49,6 +51,8 @@ export interface LoginResponse {
   successful: boolean;
   message: string;
   authResponse: AuthResponse | null;
+  /** Why an unsuccessful sign-in failed, for the login screen's guidance. */
+  failure?: LoginFailure;
 }
 export interface ProfileModel {
   sub: string;
@@ -73,6 +77,8 @@ export interface AuthState {
   refreshTokenExpiresOn: string | null;
   status: AuthStatus;
   error: string | null;
+  /** The last failed password sign-in, with what the guidance needs beyond its code (a lockout's minutes). Never persisted. */
+  loginFailure: LoginFailure | null;
   profile: ProfileModel | null;
   userId: string | null;
   isFirstTime: boolean;

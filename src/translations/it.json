@@ -550,6 +550,64 @@
       "message": "Verificare nome utente e password e riprovare.",
       "title": "Accesso non riuscito"
     },
+    "errors": {
+      "account_disabled": {
+        "message": "Il tuo account è stato disattivato dal tuo dipartimento. Contatta l'amministratore del tuo dipartimento per farlo riattivare.",
+        "title": "Account disattivato"
+      },
+      "account_locked": {
+        "message": "Il tuo account è bloccato. Contatta l'amministratore del tuo dipartimento per farlo sbloccare.",
+        "title": "Account bloccato"
+      },
+      "account_locked_out": {
+        "message": "Il tuo account è stato bloccato dopo troppi tentativi di accesso non riusciti. Attendi {{minutes}} min e riprova. Se hai dimenticato la password, reimpostala dal sito web di Resgrid prima di riprovare.",
+        "title": "Account temporaneamente bloccato"
+      },
+      "account_not_activated": {
+        "message": "Il tuo account non è ancora stato attivato. Usa l'email di invito del tuo dipartimento per completarne la configurazione, oppure chiedi all'amministratore del tuo dipartimento di inviarti un nuovo invito.",
+        "title": "Account non attivato"
+      },
+      "department_access_denied": {
+        "message": "Il tuo account non può più accedere a questo dipartimento. Contatta l'amministratore del tuo dipartimento.",
+        "title": "Accesso non consentito"
+      },
+      "invalid_credentials": {
+        "message": "Il nome utente o la password inseriti non sono corretti. Le password distinguono tra maiuscole e minuscole, quindi verifica che il blocco maiuscole sia disattivato. Se hai dimenticato la password, reimpostala dal sito web di Resgrid. Troppi tentativi non riusciti bloccheranno temporaneamente l'account.",
+        "title": "Nome utente o password errati"
+      },
+      "login_failed": {
+        "message": "Si è verificato un problema durante l'accesso. Riprova. Se il problema persiste, contatta l'amministratore del tuo dipartimento o il supporto Resgrid.",
+        "title": "Accesso non riuscito"
+      },
+      "maximum_sessions": {
+        "message": "Il tuo dipartimento ha raggiunto il limite di sessioni connesse. Esci da un altro dispositivo, oppure chiedi all'amministratore del tuo dipartimento di chiudere una sessione inutilizzata, poi riprova.",
+        "title": "Troppe sessioni attive"
+      },
+      "no_department": {
+        "message": "Il tuo account non è membro di alcun dipartimento attivo. Chiedi all'amministratore del tuo dipartimento di aggiungerti, poi riprova.",
+        "title": "Nessun dipartimento attivo"
+      },
+      "rate_limited": {
+        "message": "Sono stati effettuati troppi tentativi di accesso in poco tempo. Attendi un minuto e riprova.",
+        "title": "Troppi tentativi"
+      },
+      "server_error": {
+        "message": "{{server}} non è riuscito a completare l'accesso in questo momento. Attendi qualche minuto e riprova. Se il problema persiste, contatta il supporto Resgrid o l'amministratore del server.",
+        "title": "Problema del server"
+      },
+      "server_not_resgrid": {
+        "message": "{{server}} non ha risposto come un server Resgrid. Verifica l'indirizzo del server e riprova.",
+        "title": "Server non riconosciuto"
+      },
+      "server_unreachable": {
+        "message": "Impossibile connettersi a {{server}}. Verifica la connessione a internet e che sia selezionato il server corretto, poi riprova.",
+        "title": "Server non raggiungibile"
+      },
+      "sso_required": {
+        "message": "Il tuo dipartimento richiede il Single Sign-On. Usa il pulsante SSO per accedere con l'account della tua organizzazione invece che con una password.",
+        "title": "Accesso Single Sign-On richiesto"
+      }
+    },
     "footer_text": "Creato con ❤️ a Lake Tahoe",
     "login": "Accedi",
     "login_button": "Accedi",
@@ -564,6 +622,14 @@
     "password_incorrect": "La password non è corretta",
     "password_placeholder": "Inserisci la tua password",
     "register": "Registrati",
+    "server": {
+      "change_hint": "Apre la selezione del server",
+      "custom_host": "Personalizzato ({{host}})",
+      "eu_central": "UE Centrale",
+      "label": "Server:",
+      "signing_in_to": "Accesso a {{server}}",
+      "us_west": "USA Ovest"
+    },
     "title": "Accesso",
     "username": "Nome utente",
     "username_placeholder": "Inserisci il tuo nome utente"

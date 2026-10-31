@@ -6,6 +6,7 @@ import queryString from 'query-string';
 import { logger } from '@/lib/logging';
 
 import { getBaseApiUrl } from '../storage/app';
+import { classifyLoginFailure, isServerLoginReason } from './login-errors';
 import type { AuthResponse, DepartmentSsoConfig, ExternalTokenRequest, LoginCredentials, LoginResponse } from './types';
 
 const authApi = axios.create({
@@ -76,26 +77,34 @@ export const loginRequest = async (credentials: LoginCredentials): Promise<Login
 
       return {
         successful: false,
-        message: 'Login failed',
+        message: 'login_failed',
         authResponse: null,
+        failure: { code: 'login_failed' },
       };
     }
   } catch (error) {
+    const failure = classifyLoginFailure(error);
+    // Only a login_error the server is known to send; anything else is response text and is never logged.
+    const responseData = axios.isAxiosError(error) ? error.response?.data : undefined;
+    const loginError = isServerLoginReason(responseData?.login_error) ? responseData.login_error : undefined;
     logger.error({
       message: 'Login API call failed with exception',
       context: {
         error: error instanceof Error ? error.message : String(error),
         status: axios.isAxiosError(error) ? error.response?.status : undefined,
+        loginFailure: failure.code,
+        ...(loginError ? { loginError } : {}),
         username_hash,
         gdpr,
       },
     });
 
-    // Return a failed response instead of throwing
+    // Return a failed response instead of throwing; the code carries the reason the login screen explains.
     return {
       successful: false,
-      message: error instanceof Error ? error.message : 'Login failed',
+      message: failure.code,
       authResponse: null,
+      failure,
     };
   }
 };

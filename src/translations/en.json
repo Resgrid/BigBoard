@@ -550,6 +550,64 @@
       "message": "Please check your username and password and try again.",
       "title": "Login Failed"
     },
+    "errors": {
+      "account_disabled": {
+        "message": "Your account has been disabled by your department. Contact your department administrator to have it re-enabled.",
+        "title": "Account disabled"
+      },
+      "account_locked": {
+        "message": "Your account is locked. Contact your department administrator to have it unlocked.",
+        "title": "Account locked"
+      },
+      "account_locked_out": {
+        "message": "Your account was locked after too many failed sign-in attempts. Wait {{minutes}} min and try again. If you forgot your password, reset it from the Resgrid website before trying again.",
+        "title": "Account temporarily locked"
+      },
+      "account_not_activated": {
+        "message": "Your account hasn't been activated yet. Use the invitation email from your department to finish setting it up, or ask your department administrator to send a new invitation.",
+        "title": "Account not activated"
+      },
+      "department_access_denied": {
+        "message": "Your account is no longer allowed to sign in to this department. Contact your department administrator.",
+        "title": "Sign-in not allowed"
+      },
+      "invalid_credentials": {
+        "message": "The username or password you entered is incorrect. Passwords are case-sensitive, so check that Caps Lock is off. If you forgot your password, reset it from the Resgrid website. Too many failed attempts will temporarily lock your account.",
+        "title": "Incorrect username or password"
+      },
+      "login_failed": {
+        "message": "Something went wrong while signing in. Try again. If it keeps happening, contact your department administrator or Resgrid support.",
+        "title": "Sign-in failed"
+      },
+      "maximum_sessions": {
+        "message": "Your department has reached its limit of signed-in sessions. Sign out on another device, or ask your department administrator to end an unused session, then try again.",
+        "title": "Too many active sessions"
+      },
+      "no_department": {
+        "message": "Your account isn't a member of an active department. Ask your department administrator to add you, then try again.",
+        "title": "No active department"
+      },
+      "rate_limited": {
+        "message": "Too many sign-in attempts were made in a short time. Wait a minute and try again.",
+        "title": "Too many attempts"
+      },
+      "server_error": {
+        "message": "{{server}} couldn't complete the sign-in right now. Wait a few minutes and try again. If it keeps happening, contact Resgrid support or your server administrator.",
+        "title": "Server problem"
+      },
+      "server_not_resgrid": {
+        "message": "{{server}} didn't respond like a Resgrid server. Check the server address and try again.",
+        "title": "Server not recognized"
+      },
+      "server_unreachable": {
+        "message": "Couldn't connect to {{server}}. Check your internet connection and that the right server is selected, then try again.",
+        "title": "Can't reach the server"
+      },
+      "sso_required": {
+        "message": "Your department requires single sign-on. Use the SSO button to sign in with your organization's account instead of a password.",
+        "title": "Single sign-on required"
+      }
+    },
     "footer_text": "Created with ❤️ in Lake Tahoe",
     "login": "Login",
     "login_button": "Login",
@@ -564,6 +622,14 @@
     "password_incorrect": "Password was incorrect",
     "password_placeholder": "Enter your password",
     "register": "Register",
+    "server": {
+      "change_hint": "Opens the server selection",
+      "custom_host": "Custom ({{host}})",
+      "eu_central": "EU Central",
+      "label": "Server:",
+      "signing_in_to": "Signing in to {{server}}",
+      "us_west": "US West"
+    },
     "title": "Login",
     "username": "Username",
     "username_placeholder": "Enter your username"
