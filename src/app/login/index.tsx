@@ -9,7 +9,9 @@ import { Button, ButtonText } from '@/components/ui/button';
 import { Modal, ModalBackdrop, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@/components/ui/modal';
 import { Text } from '@/components/ui/text';
 import { useAnalytics } from '@/hooks/use-analytics';
+import { useLoginServer } from '@/hooks/use-login-server';
 import { useAuth } from '@/lib/auth';
+import { describeLoginFailure, isLoginErrorCode } from '@/lib/auth/login-errors';
 import { logger } from '@/lib/logging';
 
 import { LoginForm } from './login-form';
@@ -21,7 +23,10 @@ export default function Login() {
   const { t } = useTranslation();
   const { trackEvent } = useAnalytics();
   const router = useRouter();
-  const { login, status, error, isAuthenticated } = useAuth();
+  const { login, status, error, loginFailure, isAuthenticated } = useAuth();
+  const { name: serverName } = useLoginServer();
+  // A failed password sign-in says why and what to do next.
+  const loginError = isLoginErrorCode(error) ? describeLoginFailure(t, loginFailure?.code === error ? loginFailure : { code: error }, serverName) : null;
 
   // Track when login view is rendered
   useEffect(() => {
@@ -85,7 +90,13 @@ export default function Login() {
   return (
     <>
       <FocusAwareStatusBar />
-      <LoginForm onSubmit={onSubmit} isLoading={status === 'loading'} error={error ?? undefined} onServerUrlPress={() => setShowServerUrl(true)} onSsoPress={() => router.push('/login/sso' as never)} />
+      <LoginForm
+        onSubmit={onSubmit}
+        isLoading={status === 'loading'}
+        error={loginError?.message ?? error ?? undefined}
+        onServerUrlPress={() => setShowServerUrl(true)}
+        onSsoPress={() => router.push('/login/sso' as never)}
+      />
 
       <Modal
         isOpen={isErrorModalVisible}
@@ -98,11 +109,9 @@ export default function Login() {
         <ModalBackdrop />
         <ModalContent className="m-4 w-full max-w-3xl rounded-2xl">
           <ModalHeader>
-            <Text className="text-xl font-semibold">{t('login.errorModal.title')}</Text>
+            <Text className="text-xl font-semibold">{loginError?.title ?? t('login.errorModal.title')}</Text>
           </ModalHeader>
-          <ModalBody>
-            <Text>{t('login.errorModal.message')}</Text>
-          </ModalBody>
+          <ModalBody>{loginError ? <Text testID="login-error-message">{loginError.message}</Text> : <Text>{t('login.errorModal.message')}</Text>}</ModalBody>
           <ModalFooter>
             <Button
               variant="solid"

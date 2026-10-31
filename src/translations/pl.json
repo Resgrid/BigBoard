@@ -550,6 +550,64 @@
       "message": "Proszę sprawdzić nazwę użytkownika i hasło, a następnie spróbować ponownie.",
       "title": "Logowanie nieudane"
     },
+    "errors": {
+      "account_disabled": {
+        "message": "Twoje konto zostało wyłączone przez Twoją jednostkę. Skontaktuj się z administratorem swojej jednostki, aby je ponownie włączyć.",
+        "title": "Konto wyłączone"
+      },
+      "account_locked": {
+        "message": "Twoje konto jest zablokowane. Skontaktuj się z administratorem swojej jednostki, aby je odblokować.",
+        "title": "Konto zablokowane"
+      },
+      "account_locked_out": {
+        "message": "Twoje konto zostało zablokowane po zbyt wielu nieudanych próbach logowania. Odczekaj {{minutes}} min i spróbuj ponownie. Jeśli nie pamiętasz hasła, zresetuj je na stronie Resgrid przed kolejną próbą.",
+        "title": "Konto tymczasowo zablokowane"
+      },
+      "account_not_activated": {
+        "message": "Twoje konto nie zostało jeszcze aktywowane. Użyj e-maila z zaproszeniem od swojej jednostki, aby dokończyć konfigurację, lub poproś administratora jednostki o wysłanie nowego zaproszenia.",
+        "title": "Konto nieaktywowane"
+      },
+      "department_access_denied": {
+        "message": "Twoje konto nie może już logować się do tej jednostki. Skontaktuj się z administratorem swojej jednostki.",
+        "title": "Logowanie niedozwolone"
+      },
+      "invalid_credentials": {
+        "message": "Wprowadzona nazwa użytkownika lub hasło są nieprawidłowe. W hasłach rozróżniana jest wielkość liter, więc sprawdź, czy Caps Lock jest wyłączony. Jeśli nie pamiętasz hasła, zresetuj je na stronie Resgrid. Zbyt wiele nieudanych prób tymczasowo zablokuje konto.",
+        "title": "Nieprawidłowa nazwa użytkownika lub hasło"
+      },
+      "login_failed": {
+        "message": "Podczas logowania wystąpił błąd. Spróbuj ponownie. Jeśli problem się powtarza, skontaktuj się z administratorem swojej jednostki lub pomocą techniczną Resgrid.",
+        "title": "Logowanie nie powiodło się"
+      },
+      "maximum_sessions": {
+        "message": "Twoja jednostka osiągnęła limit zalogowanych sesji. Wyloguj się na innym urządzeniu lub poproś administratora jednostki o zakończenie nieużywanej sesji, a następnie spróbuj ponownie.",
+        "title": "Zbyt wiele aktywnych sesji"
+      },
+      "no_department": {
+        "message": "Twoje konto nie należy do żadnej aktywnej jednostki. Poproś administratora swojej jednostki o dodanie Cię, a następnie spróbuj ponownie.",
+        "title": "Brak aktywnej jednostki"
+      },
+      "rate_limited": {
+        "message": "W krótkim czasie podjęto zbyt wiele prób logowania. Odczekaj minutę i spróbuj ponownie.",
+        "title": "Zbyt wiele prób"
+      },
+      "server_error": {
+        "message": "{{server}} nie mógł teraz dokończyć logowania. Odczekaj kilka minut i spróbuj ponownie. Jeśli problem się powtarza, skontaktuj się z pomocą techniczną Resgrid lub administratorem serwera.",
+        "title": "Problem z serwerem"
+      },
+      "server_not_resgrid": {
+        "message": "{{server}} nie odpowiedział jak serwer Resgrid. Sprawdź adres serwera i spróbuj ponownie.",
+        "title": "Nierozpoznany serwer"
+      },
+      "server_unreachable": {
+        "message": "Nie można połączyć się z {{server}}. Sprawdź połączenie z internetem i czy wybrano właściwy serwer, a następnie spróbuj ponownie.",
+        "title": "Brak połączenia z serwerem"
+      },
+      "sso_required": {
+        "message": "Twoja jednostka wymaga logowania jednokrotnego. Użyj przycisku SSO, aby zalogować się kontem swojej organizacji zamiast hasłem.",
+        "title": "Wymagane logowanie jednokrotne"
+      }
+    },
     "footer_text": "Stworzone z ❤️ w Lake Tahoe",
     "login": "Zaloguj się",
     "login_button": "Zaloguj się",
@@ -564,6 +622,14 @@
     "password_incorrect": "Hasło jest nieprawidłowe",
     "password_placeholder": "Wprowadź swoje hasło",
     "register": "Zarejestruj się",
+    "server": {
+      "change_hint": "Otwiera wybór serwera",
+      "custom_host": "Niestandardowy ({{host}})",
+      "eu_central": "UE Centrum",
+      "label": "Serwer:",
+      "signing_in_to": "Logowanie do {{server}}",
+      "us_west": "USA Zachód"
+    },
     "title": "Logowanie",
     "username": "Nazwa użytkownika",
     "username_placeholder": "Wprowadź swoją nazwę użytkownika"

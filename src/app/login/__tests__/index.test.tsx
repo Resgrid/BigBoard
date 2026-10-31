@@ -100,19 +100,29 @@ const mockUseAnalytics = jest.fn();
 
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({
-    t: (key: string) => {
+    t: (key: string, options?: Record<string, unknown>) => {
       const translations: Record<string, string> = {
         'login.errorModal.title': 'Error',
         'login.errorModal.message': 'Login failed',
         'login.errorModal.confirmButton': 'OK',
+        'login.errors.invalid_credentials.title': 'Incorrect username or password',
+        'login.errors.invalid_credentials.message': 'The username or password you entered is incorrect.',
+        'login.errors.account_locked_out.title': 'Account temporarily locked',
+        'login.errors.server_unreachable.message': "Couldn't connect to {{server}}.",
+        'login.errors.account_locked_out.message': 'Wait {{minutes}} min and try again.',
       };
-      return translations[key] || key;
+      const text = translations[key] || key;
+      return text.replace(/{{(\w+)}}/g, (_match, name: string) => String(options?.[name] ?? ''));
     },
   }),
 }));
 
 jest.mock('@/hooks/use-analytics', () => ({
   useAnalytics: () => mockUseAnalytics(),
+}));
+
+jest.mock('@/hooks/use-login-server', () => ({
+  useLoginServer: () => ({ kind: 'us_west', host: 'api.resgrid.com', name: 'US West' }),
 }));
 
 jest.mock('@/lib/auth', () => ({
@@ -193,6 +203,50 @@ describe('Login', () => {
 
     expect(screen.getByTestId('modal')).toBeTruthy();
     expect(screen.getByText('Login failed')).toBeTruthy();
+  });
+
+  it('explains a classified login failure instead of showing its code', () => {
+    mockUseAuth.mockReturnValue({
+      login: jest.fn(),
+      status: 'error',
+      error: 'invalid_credentials',
+      loginFailure: { code: 'invalid_credentials' },
+      isAuthenticated: false,
+    });
+
+    render(<Login />);
+
+    expect(screen.getByText('Incorrect username or password')).toBeTruthy();
+    // Shown in the modal and handed to the form, never as the raw code.
+    expect(screen.getAllByText('The username or password you entered is incorrect.').length).toBeGreaterThan(0);
+    expect(screen.queryByText('Login failed')).toBeNull();
+    expect(screen.queryByText('invalid_credentials')).toBeNull();
+  });
+
+  it('includes the lockout minutes and names the server in the guidance', () => {
+    mockUseAuth.mockReturnValue({
+      login: jest.fn(),
+      status: 'error',
+      error: 'account_locked_out',
+      loginFailure: { code: 'account_locked_out', lockoutMinutes: 12 },
+      isAuthenticated: false,
+    });
+
+    const { unmount } = render(<Login />);
+    expect(screen.getByText('Account temporarily locked')).toBeTruthy();
+    expect(screen.getAllByText('Wait 12 min and try again.').length).toBeGreaterThan(0);
+    unmount();
+
+    mockUseAuth.mockReturnValue({
+      login: jest.fn(),
+      status: 'error',
+      error: 'server_unreachable',
+      loginFailure: null,
+      isAuthenticated: false,
+    });
+
+    render(<Login />);
+    expect(screen.getAllByText("Couldn't connect to US West.").length).toBeGreaterThan(0);
   });
 
   it('redirects to app when authenticated', async () => {

@@ -61,6 +61,7 @@ const useAuthStore = create<AuthState>()(
       refreshTokenExpiresOn: null,
       status: 'idle',
       error: null,
+      loginFailure: null,
       profile: null,
       userId: null,
       isFirstTime: true,
@@ -68,7 +69,7 @@ const useAuthStore = create<AuthState>()(
       setHasHydrated: (value: boolean) => set({ _hasHydrated: value }),
       login: async (credentials: LoginCredentials) => {
         try {
-          set({ status: 'loading', error: null });
+          set({ status: 'loading', error: null, loginFailure: null });
           logger.info({
             message: 'Login: Calling loginRequest API',
             context: { username: credentials.username, platform: Platform.OS },
@@ -133,9 +134,11 @@ const useAuthStore = create<AuthState>()(
               message: 'Login: API returned unsuccessful response',
               context: { message: response.message },
             });
+            const failure = response.failure ?? { code: 'login_failed' };
             set({
               status: 'error',
-              error: response.message || 'Login failed',
+              error: failure.code,
+              loginFailure: failure,
             });
           }
         } catch (error) {
@@ -143,9 +146,11 @@ const useAuthStore = create<AuthState>()(
             message: 'Login: Exception caught',
             context: { error: error instanceof Error ? error.message : String(error) },
           });
+          // An unreadable token response is the server's fault, not the member's; the detail stays in the log.
           set({
             status: 'error',
-            error: error instanceof Error ? error.message : 'Login failed',
+            error: 'login_failed',
+            loginFailure: { code: 'login_failed' },
           });
         }
       },

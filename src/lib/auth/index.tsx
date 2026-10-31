@@ -13,6 +13,7 @@ export const useAuth = () => {
     isAuthenticated: !!store.accessToken,
     isLoading: store.status === 'loading',
     error: store.error,
+    loginFailure: store.loginFailure,
     login: store.login,
     logout: store.logout,
     status: store.status,

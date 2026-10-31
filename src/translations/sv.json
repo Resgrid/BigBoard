@@ -550,6 +550,64 @@
       "message": "Vänligen kontrollera ditt användarnamn och lösenord och försök igen.",
       "title": "Inloggning misslyckades"
     },
+    "errors": {
+      "account_disabled": {
+        "message": "Ditt konto har inaktiverats av din organisation. Kontakta din organisations administratör för att få det aktiverat igen.",
+        "title": "Kontot är inaktiverat"
+      },
+      "account_locked": {
+        "message": "Ditt konto är låst. Kontakta din organisations administratör för att få det upplåst.",
+        "title": "Kontot är låst"
+      },
+      "account_locked_out": {
+        "message": "Ditt konto låstes efter för många misslyckade inloggningsförsök. Vänta {{minutes}} min och försök igen. Om du har glömt ditt lösenord, återställ det på Resgrids webbplats innan du försöker igen.",
+        "title": "Kontot är tillfälligt låst"
+      },
+      "account_not_activated": {
+        "message": "Ditt konto har inte aktiverats än. Använd inbjudningsmejlet från din organisation för att slutföra konfigurationen, eller be din organisations administratör att skicka en ny inbjudan.",
+        "title": "Kontot är inte aktiverat"
+      },
+      "department_access_denied": {
+        "message": "Ditt konto får inte längre logga in i den här organisationen. Kontakta din organisations administratör.",
+        "title": "Inloggning inte tillåten"
+      },
+      "invalid_credentials": {
+        "message": "Användarnamnet eller lösenordet du angav är fel. Lösenord är skiftlägeskänsliga, så kontrollera att Caps Lock är avstängt. Om du har glömt ditt lösenord kan du återställa det på Resgrids webbplats. För många misslyckade försök låser ditt konto tillfälligt.",
+        "title": "Fel användarnamn eller lösenord"
+      },
+      "login_failed": {
+        "message": "Något gick fel vid inloggningen. Försök igen. Om det fortsätter, kontakta din organisations administratör eller Resgrids support.",
+        "title": "Inloggningen misslyckades"
+      },
+      "maximum_sessions": {
+        "message": "Din organisation har nått sin gräns för inloggade sessioner. Logga ut på en annan enhet, eller be din organisations administratör att avsluta en oanvänd session, och försök sedan igen.",
+        "title": "För många aktiva sessioner"
+      },
+      "no_department": {
+        "message": "Ditt konto är inte medlem i någon aktiv organisation. Be din organisations administratör att lägga till dig och försök sedan igen.",
+        "title": "Ingen aktiv organisation"
+      },
+      "rate_limited": {
+        "message": "För många inloggningsförsök gjordes på kort tid. Vänta en minut och försök igen.",
+        "title": "För många försök"
+      },
+      "server_error": {
+        "message": "{{server}} kunde inte slutföra inloggningen just nu. Vänta några minuter och försök igen. Om det fortsätter, kontakta Resgrids support eller din serveradministratör.",
+        "title": "Serverproblem"
+      },
+      "server_not_resgrid": {
+        "message": "{{server}} svarade inte som en Resgrid-server. Kontrollera serveradressen och försök igen.",
+        "title": "Servern känns inte igen"
+      },
+      "server_unreachable": {
+        "message": "Det gick inte att ansluta till {{server}}. Kontrollera din internetanslutning och att rätt server är vald, och försök sedan igen.",
+        "title": "Servern kan inte nås"
+      },
+      "sso_required": {
+        "message": "Din organisation kräver enkel inloggning. Använd SSO-knappen för att logga in med din organisations konto i stället för ett lösenord.",
+        "title": "Enkel inloggning krävs"
+      }
+    },
     "footer_text": "Skapat med ❤️ i Lake Tahoe",
     "login": "Logga in",
     "login_button": "Logga in",
@@ -564,6 +622,14 @@
     "password_incorrect": "Lösenordet var felaktigt",
     "password_placeholder": "Ange ditt lösenord",
     "register": "Registrera",
+    "server": {
+      "change_hint": "Öppnar serverval",
+      "custom_host": "Anpassad ({{host}})",
+      "eu_central": "EU Central",
+      "label": "Server:",
+      "signing_in_to": "Loggar in på {{server}}",
+      "us_west": "USA Väst"
+    },
     "title": "Logga in",
     "username": "Användarnamn",
     "username_placeholder": "Ange ditt användarnamn"
