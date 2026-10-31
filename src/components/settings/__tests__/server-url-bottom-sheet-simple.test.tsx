@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react-native';
 import React from 'react';
 
-import { ServerUrlBottomSheet } from '../server-url-bottom-sheet';
+import { ServerUrlBottomSheet, URL_PATTERN } from '../server-url-bottom-sheet';
 
 // Mock all dependencies with minimal implementations
 jest.mock('react-i18next', () => ({
@@ -138,5 +138,15 @@ describe('ServerUrlBottomSheet - Simple', () => {
     expect(inputField.props.autoCapitalize).toBe('none');
     expect(inputField.props.autoCorrect).toBe(false);
     expect(inputField.props.keyboardType).toBe('url');
+  });
+});
+
+describe('URL_PATTERN', () => {
+  it.each(['https://api.resgrid.com', 'https://resgrid.example.org/api/v4', 'http://localhost', 'http://localhost:5000', 'http://127.0.0.1:8080/api/v4'])('accepts %s', (url) => {
+    expect(URL_PATTERN.test(url)).toBe(true);
+  });
+
+  it.each(['http://api.resgrid.com', 'http://192.168.1.10:5000', 'http://localhost.evil.com', 'http://127.0.0.1.nip.io', 'ftp://api.resgrid.com', 'api.resgrid.com'])('rejects %s', (url) => {
+    expect(URL_PATTERN.test(url)).toBe(false);
   });
 });

@@ -441,7 +441,15 @@ export default function TabLayout() {
   return (
     <>
       {userId && config && rights?.DepartmentCode ? (
-        <NovuProvider subscriberId={`${rights?.DepartmentCode}_User_${userId}`} applicationIdentifier={config.NovuApplicationId} backendUrl={config.NovuBackendApiUrl} socketUrl={config.NovuSocketUrl}>
+        // subscriberHash: issued by the server for this user's own subscriber; Novu refuses the session
+        // without it once HMAC is enforced. Absent from older servers, which is fine until then.
+        <NovuProvider
+          subscriberId={`${rights?.DepartmentCode}_User_${userId}`}
+          subscriberHash={rights?.NovuSubscriberHash ?? undefined}
+          applicationIdentifier={config.NovuApplicationId}
+          backendUrl={config.NovuBackendApiUrl}
+          socketUrl={config.NovuSocketUrl}
+        >
           {/* NotificationInbox at the root level */}
           <NotificationInbox isOpen={isNotificationsOpen} onClose={() => setIsNotificationsOpen(false)} />
           {content}

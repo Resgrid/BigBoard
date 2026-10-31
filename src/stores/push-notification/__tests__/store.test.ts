@@ -1,5 +1,5 @@
 import { logger } from '@/lib/logging';
-import { usePushNotificationModalStore } from '../store';
+import { isSafeRouteId, usePushNotificationModalStore } from '../store';
 
 // Mock logger service
 jest.mock('@/lib/logging', () => ({
@@ -315,5 +315,15 @@ describe('usePushNotificationModalStore', () => {
       expect(parsed.id).toBe('');
       expect(parsed.eventCode).toBe('');
     });
+  });
+});
+
+describe('isSafeRouteId', () => {
+  it.each(['1234', 'abc-123', 'call_42'])('accepts %s', (id) => {
+    expect(isSafeRouteId(id)).toBe(true);
+  });
+
+  it.each(['', '../settings', '12/edit', '12\\..\\x', '12?tab=1', '12#frag'])('rejects %s', (id) => {
+    expect(isSafeRouteId(id)).toBe(false);
   });
 });

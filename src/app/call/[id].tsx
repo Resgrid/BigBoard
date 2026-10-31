@@ -28,6 +28,7 @@ import { useCallDetailStore } from '@/stores/calls/detail-store';
 import { useSecurityStore } from '@/stores/security/store';
 import { useStatusBottomSheetStore } from '@/stores/status/store';
 import { useToastStore } from '@/stores/toast/store';
+import { sanitizeHtmlContent } from '@/utils/html-sanitizer';
 
 import { useCallDetailMenu } from '../../components/calls/call-detail-menu';
 import CallFilesModal from '../../components/calls/call-files-modal';
@@ -318,7 +319,7 @@ export default function CallDetail() {
                                       }
                                     </style>
                                   </head>
-                                  <body>${call.Note}</body>
+                                  <body>${sanitizeHtmlContent(call.Note ?? '')}</body>
                                 </html>
                               `,
                     }}
@@ -395,7 +396,7 @@ export default function CallDetail() {
                                       }
                                     </style>
                                   </head>
-                                  <body>${protocol.ProtocolText}</body>
+                                  <body>${sanitizeHtmlContent(protocol.ProtocolText ?? '')}</body>
                                 </html>
                               `,
                         }}
@@ -524,7 +525,7 @@ export default function CallDetail() {
                                       }
                                     </style>
                                   </head>
-                                  <body>${call.Nature}</body>
+                                  <body>${sanitizeHtmlContent(call.Nature ?? '')}</body>
                                 </html>
                               `,
                 }}

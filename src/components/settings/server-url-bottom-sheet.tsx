@@ -33,7 +33,10 @@ interface ServerUrlBottomSheetProps {
   onUrlChanged?: () => Promise<void>;
 }
 
-const URL_PATTERN = /^https?:\/\/.+/;
+// Matches https:// URLs. Plain http:// is only allowed for local development
+// hosts (localhost / 127.0.0.1) - anything else would send the password grant
+// and bearer tokens in cleartext.
+export const URL_PATTERN = /^(https:\/\/.+|http:\/\/(localhost|127\.0\.0\.1)(:\d+)?([/?#].*)?)$/i;
 const CUSTOM_SERVER_VALUE = '__custom__';
 const API_PATH_SUFFIX = `/api/${Env.API_VERSION}`;
 const SYSTEM_CONFIG_TIMEOUT_MS = 10000;

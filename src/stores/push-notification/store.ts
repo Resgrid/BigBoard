@@ -29,6 +29,14 @@ interface PushNotificationModalState {
   parseNotification: (notificationData: PushNotificationData) => ParsedNotification;
 }
 
+/**
+ * Ids parsed out of a push event code are attacker-influenced and land straight in a route
+ * path, so anything that could steer the router elsewhere — a path separator, a query, a
+ * fragment — disqualifies the id. Same rule as the sibling apps' deep-link handlers and
+ * notification modals.
+ */
+export const isSafeRouteId = (id: string): boolean => id.length > 0 && !/[/\\?#]/.test(id);
+
 export const usePushNotificationModalStore = create<PushNotificationModalState>((set, get) => ({
   isOpen: false,
   notification: null,

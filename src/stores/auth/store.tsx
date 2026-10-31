@@ -10,6 +10,7 @@ import { logger } from '@/lib/logging';
 import { clearMapboxToken } from '@/lib/mapbox-token';
 
 import { externalTokenRequest, loginRequest, refreshTokenRequest } from '../../lib/auth/api';
+import { isRefreshCredentialRejection } from '../../lib/auth/token-refresh';
 import type { AuthState, LoginCredentials, ProfileModel, SsoLoginCredentials } from '../../lib/auth/types';
 
 // Create MMKV storage instance for auth persistence
@@ -183,7 +184,7 @@ const useAuthStore = create<AuthState>()(
           return refreshPromise;
         }
 
-        // A failed refresh clears the token, so a later caller has nothing to send. Returning here
+        // A rejected refresh clears the token, so a later caller has nothing to send. Returning here
         // rather than falling into the request keeps the session from being torn down (and the API
         // cache re-cleared) once per straggling 401 after the session has already expired.
         if (!get().refreshToken) {
@@ -213,10 +214,18 @@ const useAuthStore = create<AuthState>()(
             // Schedule next refresh 1 min before the new access token expires (minimum 60 s)
             const msUntilRefresh = Math.max(response.expires_in * 1000 - 60_000, 60_000);
             scheduleTokenRefresh(msUntilRefresh);
-          } catch {
-            // If refresh fails, log out the user and flag the session as expired
-            await get().logout();
-            set({ error: 'session_expired' });
+          } catch (error) {
+            if (!get().refreshToken || isRefreshCredentialRejection(error)) {
+              // The token endpoint explicitly rejected the refresh token (400 invalid_grant / 401), or there is none
+              // left to send: the credentials are known-bad, so log out and flag the session as expired.
+              await get().logout();
+              set({ error: 'session_expired' });
+              return;
+            }
+            // Everything else is transient (offline, timeout, 5xx, 429): keep the session and retry, otherwise a
+            // backend incident signs every wall display out at once. refreshTokenRequest has already logged the failure.
+            logger.warn({ message: 'Token refresh failed transiently, will retry' });
+            scheduleTokenRefresh(30_000);
           } finally {
             refreshPromise = null;
           }

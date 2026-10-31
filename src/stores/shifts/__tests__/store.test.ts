@@ -272,10 +272,10 @@ describe('useShiftsStore', () => {
 			const { result } = renderHook(() => useShiftsStore());
 
 			await act(async () => {
-				await result.current.signupForShift('day1', 'user1');
+				await result.current.signupForShift('day1', 'group1');
 			});
 
-			expect(mockedShiftsApi.signupForShiftDay).toHaveBeenCalledWith('day1', 'user1');
+			expect(mockedShiftsApi.signupForShiftDay).toHaveBeenCalledWith('day1', 'group1');
 			expect(mockedShiftsApi.getTodaysShifts).toHaveBeenCalled();
 			expect(mockedShiftsApi.getShiftDay).toHaveBeenCalledWith('day1');
 			expect(result.current.isSignupLoading).toBe(false);
@@ -289,7 +289,7 @@ describe('useShiftsStore', () => {
 			const { result } = renderHook(() => useShiftsStore());
 
 			await act(async () => {
-				await result.current.signupForShift('day1', 'user1');
+				await result.current.signupForShift('day1', 'group1');
 			});
 
 			expect(result.current.signupError).toBe('Failed to sign up for shift');
