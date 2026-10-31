@@ -6,7 +6,7 @@ import queryString from 'query-string';
 import { logger } from '@/lib/logging';
 
 import { getBaseApiUrl } from '../storage/app';
-import { classifyLoginFailure } from './login-errors';
+import { classifyLoginFailure, isServerLoginReason } from './login-errors';
 import type { AuthResponse, DepartmentSsoConfig, ExternalTokenRequest, LoginCredentials, LoginResponse } from './types';
 
 const authApi = axios.create({
@@ -84,9 +84,9 @@ export const loginRequest = async (credentials: LoginCredentials): Promise<Login
     }
   } catch (error) {
     const failure = classifyLoginFailure(error);
-    // The server's login_error is a fixed set of reason codes, never free text.
+    // Only a login_error the server is known to send; anything else is response text and is never logged.
     const responseData = axios.isAxiosError(error) ? error.response?.data : undefined;
-    const loginError = typeof responseData?.login_error === 'string' && /^[a-z_]{1,40}$/.test(responseData.login_error) ? responseData.login_error : undefined;
+    const loginError = isServerLoginReason(responseData?.login_error) ? responseData.login_error : undefined;
     logger.error({
       message: 'Login API call failed with exception',
       context: {

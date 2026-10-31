@@ -170,6 +170,7 @@ const useAuthStore = create<AuthState>()(
           refreshTokenExpiresOn: null,
           status: 'signedOut',
           error: null,
+          loginFailure: null,
           profile: null,
           userId: null,
           isFirstTime: true,
@@ -359,7 +360,8 @@ const useAuthStore = create<AuthState>()(
         refreshTokenExpiresOn: state.refreshTokenExpiresOn,
         profile: state.profile,
         userId: state.userId,
-        status: state.status,
+        // A failed sign-in's reason is not stored, so a restart must not reopen the failure with nothing to explain it.
+        status: state.status === 'error' ? 'signedOut' : state.status,
         isFirstTime: state.isFirstTime,
       }),
       onRehydrateStorage: () => (state) => {
