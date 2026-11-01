@@ -216,13 +216,13 @@ const useAuthStore = create<AuthState>()(
             scheduleTokenRefresh(msUntilRefresh);
           } catch (error) {
             if (!get().refreshToken || isRefreshCredentialRejection(error)) {
-              // The token endpoint explicitly rejected the refresh token (400 invalid_grant / 401), or there is none
+              // The token endpoint explicitly rejected the refresh token (a 400/401 invalid_grant), or there is none
               // left to send: the credentials are known-bad, so log out and flag the session as expired.
               await get().logout();
               set({ error: 'session_expired' });
               return;
             }
-            // Everything else is transient (offline, timeout, 5xx, 429): keep the session and retry, otherwise a
+            // Everything else is transient (offline, timeout, 5xx, 429, other OAuth errors): keep the session and retry, otherwise a
             // backend incident signs every wall display out at once. refreshTokenRequest has already logged the failure.
             logger.warn({ message: 'Token refresh failed transiently, will retry' });
             scheduleTokenRefresh(30_000);

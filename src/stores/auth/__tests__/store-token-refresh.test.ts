@@ -13,8 +13,8 @@ import useAuthStore from '../store';
 
 const mockedRefreshTokenRequest = refreshTokenRequest as jest.MockedFunction<typeof refreshTokenRequest>;
 
-const axiosErrorWithStatus = (status: number): AxiosError => {
-  const response = { status, statusText: '', data: {}, headers: {}, config: {} as InternalAxiosRequestConfig } as AxiosResponse;
+const axiosErrorWithStatus = (status: number, data: unknown = {}): AxiosError => {
+  const response = { status, statusText: '', data, headers: {}, config: {} as InternalAxiosRequestConfig } as AxiosResponse;
   return new AxiosError('Request failed', 'ERR_BAD_RESPONSE', undefined, undefined, response);
 };
 
@@ -33,12 +33,24 @@ describe('auth store: a failed token refresh', () => {
     jest.useRealTimers();
   });
 
-  it.each([400, 401])('signs out when the token endpoint rejects the refresh token (%i)', async (status) => {
-    mockedRefreshTokenRequest.mockRejectedValueOnce(axiosErrorWithStatus(status));
+  it.each([400, 401])('signs out when the token endpoint rejects the refresh token (%i invalid_grant)', async (status) => {
+    mockedRefreshTokenRequest.mockRejectedValueOnce(axiosErrorWithStatus(status, { error: 'invalid_grant' }));
 
     await useAuthStore.getState().refreshAccessToken();
 
     expect(useAuthStore.getState()).toMatchObject({ status: 'signedOut', accessToken: null, refreshToken: null, error: 'session_expired' });
+  });
+
+  it.each([
+    [400, { error: 'invalid_request' }],
+    [401, { error: 'invalid_client' }],
+    [400, '<html>Bad Request</html>'],
+  ])('keeps the session when the token endpoint answers %i without invalid_grant', async (status, data) => {
+    mockedRefreshTokenRequest.mockRejectedValueOnce(axiosErrorWithStatus(status, data));
+
+    await useAuthStore.getState().refreshAccessToken();
+
+    expect(useAuthStore.getState()).toMatchObject({ status: 'signedIn', accessToken: 'access', refreshToken: 'refresh', error: null });
   });
 
   it.each([500, 502, 503, 504, 429])('keeps the session when the token endpoint fails with %i', async (status) => {
