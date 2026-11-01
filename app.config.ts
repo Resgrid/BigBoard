@@ -218,26 +218,12 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         locationAlwaysPermission: false,
         // Motion activity APIs (getMotionActivityAsync) are not used; omit NSMotionUsageDescription.
         motionUsagePermission: false,
-        // No background location tracking on iOS — do not add 'location' to UIBackgroundModes.
+        // No background location tracking: do not add 'location' to UIBackgroundModes (iOS) or declare
+        // ACCESS_BACKGROUND_LOCATION / FOREGROUND_SERVICE_LOCATION (Android). App Review and Play reject
+        // background location that no feature uses.
         isIosBackgroundLocationEnabled: false,
-        isAndroidBackgroundLocationEnabled: true,
-        isAndroidForegroundServiceEnabled: true,
-        taskManager: {
-          locationTaskName: 'location-updates',
-          locationTaskOptions: {
-            accuracy: 'balanced',
-            distanceInterval: 10,
-            timeInterval: 5000,
-          },
-        },
-      },
-    ],
-    [
-      'expo-task-manager',
-      {
-        taskManager: {
-          taskName: 'location-updates',
-        },
+        isAndroidBackgroundLocationEnabled: false,
+        isAndroidForegroundServiceEnabled: false,
       },
     ],
     [
@@ -296,7 +282,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       '@sentry/react-native/expo',
       {
         organization: 'sentry',
-        project: 'unit',
+        project: 'bigboard',
         url: 'https://sentry.resgrid.net/',
       },
     ],

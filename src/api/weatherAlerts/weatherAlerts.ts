@@ -6,7 +6,8 @@ import { type WeatherAlertZonesResult } from '@/models/v4/weatherAlerts/weatherA
 import { createApiEndpoint } from '../common/client';
 
 const activeAlertsApi = createApiEndpoint('/WeatherAlerts/GetActiveAlerts');
-const getAlertApi = createApiEndpoint('/WeatherAlerts/GetWeatherAlert');
+// GetWeatherAlert uses a path parameter, so the endpoint is created per call
+const getAlertEndpoint = (alertId: string) => createApiEndpoint(`/WeatherAlerts/GetWeatherAlert/${encodeURIComponent(alertId)}`);
 const alertsNearLocationApi = createApiEndpoint('/WeatherAlerts/GetAlertsNearLocation');
 const alertHistoryApi = createApiEndpoint('/WeatherAlerts/GetAlertHistory');
 const settingsApi = createApiEndpoint('/WeatherAlerts/GetSettings');
@@ -18,9 +19,7 @@ export const getActiveAlerts = async () => {
 };
 
 export const getWeatherAlert = async (alertId: string) => {
-  const response = await getAlertApi.get<WeatherAlertResult>({
-    alertId: encodeURIComponent(alertId),
-  });
+  const response = await getAlertEndpoint(alertId).get<WeatherAlertResult>();
   return response.data;
 };
 

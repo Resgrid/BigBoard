@@ -100,7 +100,7 @@ axiosInstance.interceptors.response.use(
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError as Error);
-        // Refresh failure already triggers logout in the auth store
+        // The auth store logs out only when the token endpoint rejects the refresh (a 400/401 invalid_grant); a transient failure keeps the session
         logger.error({
           message: 'Token refresh failed',
           context: { error: refreshError instanceof Error ? refreshError.message : String(refreshError) },

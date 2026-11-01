@@ -10,7 +10,7 @@ const callsApi = createApiEndpoint('/Calls/GetActiveCalls');
 const getCallApi = createApiEndpoint('/Calls/GetCall');
 const getCallExtraDataApi = createApiEndpoint('/Calls/GetCallExtraData');
 const createCallApi = createApiEndpoint('/Calls/SaveCall');
-const updateCallApi = createApiEndpoint('/Calls/UpdateCall');
+const updateCallApi = createApiEndpoint('/Calls/EditCall');
 const closeCallApi = createApiEndpoint('/Calls/CloseCall');
 
 export const getCalls = async () => {
@@ -155,7 +155,7 @@ export const updateCall = async (callData: UpdateCallRequest) => {
   }
 
   const data = {
-    CallId: callData.callId,
+    Id: callData.callId,
     Name: callData.name,
     Nature: callData.nature,
     Note: callData.note || '',
@@ -170,7 +170,8 @@ export const updateCall = async (callData: UpdateCallRequest) => {
     DispatchList: dispatchList,
   };
 
-  const response = await updateCallApi.post<SaveCallResult>(data);
+  // EditCall is an HTTP PUT on the server.
+  const response = await updateCallApi.put<SaveCallResult>(data);
   return response.data;
 };
 
